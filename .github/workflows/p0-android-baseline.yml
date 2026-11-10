@@ -55,23 +55,38 @@ jobs:
       - name: Cross-check missing Gradle artifact hashes with Maven Central
         run: |
           python3 - <<'PY'
-          import hashlib, urllib.request
+          import hashlib, urllib.error, urllib.request
           artifacts = [
               "org/junit/junit-bom/5.10.2/junit-bom-5.10.2.module",
               "com/google/guava/guava-parent/33.3.1-android/guava-parent-33.3.1-android.pom",
               "org/jetbrains/kotlinx/kotlinx-coroutines-bom/1.9.0/kotlinx-coroutines-bom-1.9.0.pom",
           ]
           root = "https://repo.maven.apache.org/maven2/"
+          problems = 0
           for artifact in artifacts:
               url = root + artifact
-              with urllib.request.urlopen(url, timeout=30) as response:
-                  body = response.read()
-              with urllib.request.urlopen(url + ".sha256", timeout=30) as response:
-                  published = response.read().decode("ascii").strip().split()[0].lower()
-              actual = hashlib.sha256(body).hexdigest()
-              print(f"MAVEN_CENTRAL_SHA256 {artifact} actual={actual} published={published} match={actual == published}", flush=True)
-              if actual != published:
-                  raise SystemExit("Maven Central integrity check failed")
+              print(f"CHECKING {url}", flush=True)
+              try:
+                  with urllib.request.urlopen(url, timeout=30) as response:
+                      body = response.read()
+                  actual = hashlib.sha256(body).hexdigest()
+                  print(f"SHA256 {artifact} {actual}", flush=True)
+              except urllib.error.HTTPError as exc:
+                  print(f"ARTIFACT_HTTP_ERROR {url} status={exc.code}", flush=True)
+                  problems += 1
+                  continue
+              try:
+                  checksum_url = url + ".sha256"
+                  with urllib.request.urlopen(checksum_url, timeout=30) as response:
+                      published = response.read().decode("ascii").strip().split()[0].lower()
+                  print(f"CHECKSUM {checksum_url} published={published} matches={actual == published}", flush=True)
+                  if actual != published:
+                      problems += 1
+              except urllib.error.HTTPError as exc:
+                  print(f"CHECKSUM_HTTP_ERROR {checksum_url} status={exc.code} (NOT VERIFIED)", flush=True)
+                  problems += 1
+          if problems:
+              raise SystemExit(f"{problems} source/checksum issues; do not amend trust metadata yet")
           PY
 
       - name: Record P0 environment
