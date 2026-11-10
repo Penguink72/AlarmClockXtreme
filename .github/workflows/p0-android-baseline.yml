@@ -75,15 +75,20 @@ jobs:
                   print(f"ARTIFACT_HTTP_ERROR {url} status={exc.code}", flush=True)
                   problems += 1
                   continue
-              try:
-                  checksum_url = url + ".sha256"
-                  with urllib.request.urlopen(checksum_url, timeout=30) as response:
-                      published = response.read().decode("ascii").strip().split()[0].lower()
-                  print(f"CHECKSUM {checksum_url} published={published} matches={actual == published}", flush=True)
-                  if actual != published:
-                      problems += 1
-              except urllib.error.HTTPError as exc:
-                  print(f"CHECKSUM_HTTP_ERROR {checksum_url} status={exc.code} (NOT VERIFIED)", flush=True)
+              verified = False
+              for algo in ("sha256", "sha512", "sha1"):
+                  checksum_url = url + "." + algo
+                  try:
+                      with urllib.request.urlopen(checksum_url, timeout=30) as response:
+                          published = response.read().decode("ascii").strip().split()[0].lower()
+                      candidate = hashlib.new(algo, body).hexdigest()
+                      verified = (candidate == published)
+                      print(f"PUBLISHED_CHECKSUM {checksum_url} algo={algo} actual={candidate} published={published} matches={verified}", flush=True)
+                      break
+                  except urllib.error.HTTPError as exc:
+                      print(f"CHECKSUM_UNAVAILABLE {checksum_url} status={exc.code}", flush=True)
+              if not verified:
+                  print(f"UNVERIFIED {url}", flush=True)
                   problems += 1
           if problems:
               raise SystemExit(f"{problems} source/checksum issues; do not amend trust metadata yet")
