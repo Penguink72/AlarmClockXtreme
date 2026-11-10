@@ -1,0 +1,107 @@
+name: P0 Android baseline (F-Droid)
+# Scope: build and unit tests only; never deploy or install to a phone.
+# Initial baseline for playback-history-rotation, no app source changes.
+
+on:
+  push:
+    branches:
+      - feature/playback-history-rotation
+    paths:
+      - ".github/workflows/p0-android-baseline.yml"
+      - "app/**"
+      - "wear/**"
+      - "gradle/**"
+      - "gradlew"
+      - "settings.gradle.kts"
+      - "build.gradle.kts"
+      - "gradle.properties"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: p0-android-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  unit-and-build:
+    name: Unit tests and F-Droid debug build
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Check out exact branch commit
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Install JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Install Android command-line tools
+        uses: android-actions/setup-android@v4
+
+      - name: Install Android SDK 36
+        run: |
+          sdkmanager --install "platforms;android-36" "build-tools;36.0.0"
+          sdkmanager --list_installed
+
+      - name: Record P0 environment
+        run: |
+          echo "COMMIT=$(git rev-parse HEAD)"
+          java -version
+          ./gradlew --version
+
+      - name: Run original F-Droid unit tests
+        id: unit
+        continue-on-error: true
+        run: ./gradlew --no-daemon --stacktrace :app:testFdroidDebugUnitTest
+
+      - name: Build original F-Droid debug APK
+        id: apk
+        continue-on-error: true
+        run: ./gradlew --no-daemon --stacktrace :app:assembleFdroidDebug
+
+      - name: Upload unit-test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: p0-unit-test-reports
+          path: |
+            app/build/test-results/testFdroidDebugUnitTest/
+            app/build/reports/tests/testFdroidDebugUnitTest/
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Upload debug APK
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: p0-fdroid-debug-apk
+          path: app/build/outputs/apk/fdroid/debug/*.apk
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Summarize baseline
+        if: always()
+        env:
+          UNIT_RESULT: ${{ steps.unit.outcome }}
+          APK_RESULT: ${{ steps.apk.outcome }}
+        run: |
+          {
+            echo "## P0 Android baseline"
+            echo "- Commit: \`$(git rev-parse HEAD)\`"
+            echo "- Unit tests: ${UNIT_RESULT}"
+            echo "- F-Droid debug APK: ${APK_RESULT}"
+            echo "- Instrumentation and real-device tests: NOT RUN"
+          } >> "$GITHUB_STEP_SUMMARY"
+          if [[ "$UNIT_RESULT" != "success" || "$APK_RESULT" != "success" ]]; then
+            echo "P0 baseline has failures; inspect step logs and attached reports."
+            exit 1
+          fi
