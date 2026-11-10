@@ -56,17 +56,17 @@ jobs:
         run: |
           echo "COMMIT=$(git rev-parse HEAD)"
           java -version
-          ./gradlew --version
+          bash ./gradlew --version
 
       - name: Run original F-Droid unit tests
         id: unit
         continue-on-error: true
-        run: ./gradlew --no-daemon --stacktrace :app:testFdroidDebugUnitTest
+        run: bash ./gradlew --no-daemon --stacktrace :app:testFdroidDebugUnitTest
 
       - name: Build original F-Droid debug APK
         id: apk
         continue-on-error: true
-        run: ./gradlew --no-daemon --stacktrace :app:assembleFdroidDebug
+        run: bash ./gradlew --no-daemon --stacktrace :app:assembleFdroidDebug
 
       - name: Upload unit-test reports
         if: always()
