@@ -41,7 +41,7 @@ ACTION_SNOOZE → snoozeAlarm()
 
 ACTION_DISMISS → dismissAlarm()
     ├─ stopAlarmPlayback()
-    ├─ recordEvent(DISSMISSED)
+    ├─ recordEvent(DISMISSED)
     ├─ clear runtime / currentAlarmId=-1 / activeAlarm=null
     └─ stopSelf()
 
@@ -52,7 +52,7 @@ stopAlarmPlayback()
     └─ restore volume and audio state
 ```
 
-錯別字注意：既有程式實際常數是 `ACTION_DISMISSED`；上圖文字 `DISSMISSED` 應只當流程標示，不得複製為程式常數。
+上圖 `DISMISSED` 是流程語義；實際常數請以 `AlarmEvent.ACTION_DISMISSED` 為準。
 
 ## 3. 建議的轉換（PROPOSAL）
 
