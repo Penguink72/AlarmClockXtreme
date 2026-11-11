@@ -1,5 +1,8 @@
 # B0｜最小改動設計與相容性規劃
 
+> **歷史文件／舊設計已延後（2026-11-11）**：本頁的舊提案、實作階段、測試矩陣或設計假設**不再授權直接實作**。請改用 [CURRENT-REQUIREMENTS.md](CURRENT-REQUIREMENTS.md) 與 [G1-IMPLEMENTATION-PLAN.md](G1-IMPLEMENTATION-PLAN.md)；舊方案參見 [DEFERRED-DESIGNS.md](DEFERRED-DESIGNS.md)。原始碼現況與流程盤點仍可作為歷史事實參考。
+
+
 基準 Commit：`a0cc501bcc3514ffd36483ca0b6e266aa234aaff`  
 本文件為 **PROPOSAL**，並未實作。
 
