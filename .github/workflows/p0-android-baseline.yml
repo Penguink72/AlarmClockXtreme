@@ -74,15 +74,22 @@ jobs:
           COMMIT_SHA="$(git rev-parse HEAD)"
           APK_SHA256="$(sha256sum "$APK_PATH" | awk '{print $1}')"
           APK_BYTES="$(stat -c%s "$APK_PATH")"
+          SCHEMA_25="app/schemas/com.sysadmindoc.alarmclock.data.local.AlarmDatabase/25.json"
+          if [[ -f "$SCHEMA_25" ]]; then
+            cp "$SCHEMA_25" app/build/outputs/apk/fdroid/debug/25.json
+            ROOM_HASH="$(python3 -c 'import json; print(json.load(open("app/schemas/com.sysadmindoc.alarmclock.data.local.AlarmDatabase/25.json"))["database"]["identityHash"])')"
+            echo "ROOM_25_IDENTITY_HASH=${ROOM_HASH}"
+          fi
           {
             echo "commit=${COMMIT_SHA}"
             echo "applicationId=com.sysadmindoc.alarmclock.debug"
             echo "apk_path=${APK_PATH}"
             echo "apk_size_bytes=${APK_BYTES}"
             echo "apk_sha256=${APK_SHA256}"
+            echo "room_25_identity_hash=${ROOM_HASH:-}"
           } | tee app/build/outputs/apk/fdroid/debug/apk-metadata.txt
           {
-            echo "## G0 F-Droid Debug APK Build (Strict Verification)"
+            echo "## G0/G1 F-Droid Debug APK Build (Strict Verification)"
             echo "- Status: **PASS**"
             echo "- Runner: \`ubuntu-24.04\`"
             echo "- Commit: \`${COMMIT_SHA}\`"
@@ -90,6 +97,7 @@ jobs:
             echo "- APK File: \`app-fdroid-debug.apk\`"
             echo "- Size (bytes): \`${APK_BYTES}\`"
             echo "- SHA-256: \`${APK_SHA256}\`"
+            echo "- Room v25 Identity Hash: \`${ROOM_HASH:-}\`"
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload debug APK
@@ -99,6 +107,7 @@ jobs:
           path: |
             app/build/outputs/apk/fdroid/debug/app-fdroid-debug.apk
             app/build/outputs/apk/fdroid/debug/apk-metadata.txt
+            app/build/outputs/apk/fdroid/debug/25.json
           if-no-files-found: error
           retention-days: 14
 
