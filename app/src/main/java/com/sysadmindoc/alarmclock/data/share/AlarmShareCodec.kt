@@ -120,6 +120,7 @@ object AlarmShareCodec {
             internetRadioUrl = "",
             morningRoutine = "",
             ringtonePool = "",
+            randomMusicEnabled = false,
             firingBackgroundImageEnabled = false,
             firingBackgroundImageUri = "",
             firingBackgroundBlurEnabled = true,

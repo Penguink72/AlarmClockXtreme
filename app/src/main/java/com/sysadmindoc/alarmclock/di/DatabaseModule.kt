@@ -9,7 +9,9 @@ import com.sysadmindoc.alarmclock.data.local.AlarmDao
 import com.sysadmindoc.alarmclock.data.local.AlarmDatabase
 import com.sysadmindoc.alarmclock.data.local.AlarmEventDao
 import com.sysadmindoc.alarmclock.data.local.AlarmIncidentEventDao
+import com.sysadmindoc.alarmclock.data.local.MusicLibraryDao
 import com.sysadmindoc.alarmclock.data.local.DatabaseDowngradeNotice
+import com.sysadmindoc.alarmclock.data.local.PlaybackHistoryDao
 import com.sysadmindoc.alarmclock.data.local.PreSleepTagDao
 import com.sysadmindoc.alarmclock.data.local.SnoreEventDao
 import dagger.Module
@@ -81,4 +83,14 @@ object DatabaseModule {
     fun providePreSleepTagDao(database: AlarmDatabase): PreSleepTagDao {
         return database.preSleepTagDao()
     }
+
+    @Provides
+    @Singleton
+    fun provideMusicLibraryDao(database: AlarmDatabase): MusicLibraryDao =
+        database.musicLibraryDao()
+
+    @Provides
+    @Singleton
+    fun providePlaybackHistoryDao(database: AlarmDatabase): PlaybackHistoryDao =
+        database.playbackHistoryDao()
 }

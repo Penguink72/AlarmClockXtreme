@@ -411,6 +411,8 @@
     <string name="alarm_edit_partner_mode_hint">Sets this alarm to haptic-only: alarm audio is muted, fade-in is off, and a gentle repeating vibration stays active.</string>
     <string name="alarm_edit_haptic_profile_active">Haptic-only profile active</string>
     <string name="alarm_edit_alarm_sound">Alarm sound</string>
+    <string name="alarm_edit_random_music_library">Random music library</string>
+    <string name="alarm_edit_random_music_library_hint">After each song ends, play another randomly selected indexed track. This is off by default; import music from the sound picker.</string>
     <string name="alarm_edit_override_volume">Override system volume</string>
     <string name="alarm_edit_gradual_volume">Gradually increase volume</string>
     <string name="alarm_edit_off_full_volume">Off (full volume immediately)</string>
@@ -1506,6 +1508,15 @@
     <string name="ringtone_alarm_sound">Alarm Sound</string>
     <string name="ringtone_preview_tones_before_applying_them">Preview tones before applying them. Default and silent options stay available at the top.</string>
     <string name="ringtone_folder_source">Folder source</string>
+    <string name="music_library_title">Music library and playback history</string>
+    <string name="music_library_button">Music library</string>
+    <string name="music_library_track_count">Indexed tracks: %1$d</string>
+    <string name="music_library_scan">Scan music</string>
+    <string name="music_library_scanning">Scanning…</string>
+    <string name="music_library_add_folder">Add folder</string>
+    <string name="music_library_choose_date">Choose date</string>
+    <string name="music_library_no_history">No playback history for this date.</string>
+    <string name="music_library_close">Close</string>
     <string name="ringtone_tap_tone_preview">Tap a tone to preview</string>
     <string name="ringtone_preview_playing">Preview playing</string>
     <string name="ringtone_preview_unavailable">Preview unavailable</string>

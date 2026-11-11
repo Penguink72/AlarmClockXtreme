@@ -128,6 +128,7 @@ fun RingtonePickerSheet(
     var mediaPlayer by remember { mutableStateOf<MediaPlayer?>(null) }
     var previewError by remember { mutableStateOf("") }
     var showYouTubeDialog by rememberSaveable { mutableStateOf(false) }
+    var showMusicLibraryDialog by rememberSaveable { mutableStateOf(false) }
     val savedToAlarmsTemplate = stringResource(R.string.ringtone_saved_to_alarms)
     val savedToAlarmsMessage = { title: String -> savedToAlarmsTemplate.format(title) }
     var youTubeStatus by remember { mutableStateOf("") }
@@ -207,6 +208,9 @@ fun RingtonePickerSheet(
             onDismiss = { showYouTubeDialog = false }
         )
     }
+    if (showMusicLibraryDialog) {
+        MusicLibraryDialog(onDismiss = { showMusicLibraryDialog = false })
+    }
 
     DisposableEffect(Unit) {
         onDispose {
@@ -279,7 +283,22 @@ fun RingtonePickerSheet(
                 title = stringResource(R.string.ringtone_alarm_sound),
                 description = stringResource(R.string.ringtone_preview_tones_before_applying_them),
                 action = {
-                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Row(
+                        modifier = Modifier.horizontalScroll(rememberScrollState()),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                            OutlinedButton(
+                                onClick = { showMusicLibraryDialog = true },
+                                shape = RoundedCornerShape(12.dp),
+                                colors = ButtonDefaults.outlinedButtonColors(
+                                    contentColor = MaterialTheme.colorScheme.primary
+                                )
+                            ) {
+                                Text(
+                                    stringResource(R.string.music_library_button),
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                            }
                             OutlinedButton(
                                 onClick = { folderLauncher.launch(null) },
                                 shape = RoundedCornerShape(12.dp),

@@ -9,6 +9,8 @@ import com.sysadmindoc.alarmclock.data.local.entity.ActigraphySession
 import com.sysadmindoc.alarmclock.data.local.entity.AlarmIncidentEvent
 import com.sysadmindoc.alarmclock.data.local.entity.AlarmEvent
 import com.sysadmindoc.alarmclock.data.local.entity.PreSleepTagEntry
+import com.sysadmindoc.alarmclock.data.local.entity.MusicTrack
+import com.sysadmindoc.alarmclock.data.local.entity.PlaybackHistoryEntry
 import com.sysadmindoc.alarmclock.data.local.entity.SnoreEvent
 import com.sysadmindoc.alarmclock.data.model.Alarm
 
@@ -19,9 +21,11 @@ import com.sysadmindoc.alarmclock.data.model.Alarm
         ActigraphySession::class,
         AlarmIncidentEvent::class,
         SnoreEvent::class,
-        PreSleepTagEntry::class
+        PreSleepTagEntry::class,
+        MusicTrack::class,
+        PlaybackHistoryEntry::class
     ],
-    version = 24,
+    version = 25,
     exportSchema = true
 )
 @TypeConverters(Converters::class)
@@ -32,6 +36,8 @@ abstract class AlarmDatabase : RoomDatabase() {
     abstract fun alarmIncidentEventDao(): AlarmIncidentEventDao
     abstract fun snoreEventDao(): SnoreEventDao
     abstract fun preSleepTagDao(): PreSleepTagDao
+    abstract fun musicLibraryDao(): MusicLibraryDao
+    abstract fun playbackHistoryDao(): PlaybackHistoryDao
 
     companion object {
         val MIGRATION_1_2 = object : Migration(1, 2) {
@@ -363,6 +369,43 @@ abstract class AlarmDatabase : RoomDatabase() {
             }
         }
 
+        val MIGRATION_24_25 = object : Migration(24, 25) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    "ALTER TABLE alarms ADD COLUMN randomMusicEnabled INTEGER NOT NULL DEFAULT 0"
+                )
+                db.execSQL(
+                    """
+                    CREATE TABLE IF NOT EXISTS music_tracks (
+                        uri TEXT NOT NULL PRIMARY KEY,
+                        title TEXT NOT NULL,
+                        source TEXT NOT NULL
+                    )
+                    """.trimIndent()
+                )
+                db.execSQL(
+                    """
+                    CREATE TABLE IF NOT EXISTS playback_history (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                        fireId TEXT NOT NULL,
+                        startedAt INTEGER NOT NULL,
+                        playOrder INTEGER NOT NULL,
+                        title TEXT NOT NULL,
+                        uri TEXT NOT NULL
+                    )
+                    """.trimIndent()
+                )
+                db.execSQL(
+                    "CREATE INDEX IF NOT EXISTS index_playback_history_startedAt " +
+                        "ON playback_history(startedAt)"
+                )
+                db.execSQL(
+                    "CREATE UNIQUE INDEX IF NOT EXISTS index_playback_history_fireId_playOrder " +
+                        "ON playback_history(fireId, playOrder)"
+                )
+            }
+        }
+
         val ALL_MIGRATIONS = arrayOf(
             MIGRATION_1_2,
             MIGRATION_2_3,
@@ -387,6 +430,7 @@ abstract class AlarmDatabase : RoomDatabase() {
             MIGRATION_21_22,
             MIGRATION_22_23,
             MIGRATION_23_24,
+            MIGRATION_24_25,
         )
     }
 }

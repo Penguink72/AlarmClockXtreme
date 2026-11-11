@@ -169,6 +169,7 @@ fun AlarmFiringScreen(
     viewModel: AlarmFiringViewModel = hiltViewModel()
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val currentMusicTitle by viewModel.currentMusicTitle.collectAsStateWithLifecycle()
     // These two prefs gate optional UI surfaces below; collecting them with the
     // lifecycle keeps the firing screen reactive to a settings toggle made
     // mid-alarm (rare, but possible if user pulls down quick settings).
@@ -433,6 +434,13 @@ fun AlarmFiringScreen(
                             color = TextSecondary,
                             style = MaterialTheme.typography.bodyMedium
                         )
+                        if (state.alarm?.randomMusicEnabled == true && currentMusicTitle != null) {
+                            Text(
+                                text = currentMusicTitle.orEmpty(),
+                                color = MaterialTheme.colorScheme.primary,
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                        }
                     }
                     AppStatusChip(
                         label = when {

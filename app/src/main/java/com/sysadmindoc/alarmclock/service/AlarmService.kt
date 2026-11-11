@@ -32,12 +32,14 @@ import androidx.work.*
 import com.sysadmindoc.alarmclock.data.local.entity.AlarmIncidentEvent
 import com.sysadmindoc.alarmclock.R
 import com.sysadmindoc.alarmclock.data.local.entity.AlarmEvent
+import com.sysadmindoc.alarmclock.data.local.entity.MusicTrack
 import com.sysadmindoc.alarmclock.data.model.Alarm
 import com.sysadmindoc.alarmclock.data.remote.WeatherCodes
 import com.sysadmindoc.alarmclock.data.repository.AlarmEventRepository
 import com.sysadmindoc.alarmclock.data.repository.AlarmIncidentRepository
 import com.sysadmindoc.alarmclock.data.repository.AlarmRepository
 import com.sysadmindoc.alarmclock.data.repository.CalendarRepository
+import com.sysadmindoc.alarmclock.data.repository.MusicLibraryRepository
 import com.sysadmindoc.alarmclock.data.repository.WeatherRepository
 import com.sysadmindoc.alarmclock.domain.OnCallDndOverride
 import com.sysadmindoc.alarmclock.domain.AlarmScheduler
@@ -54,8 +56,10 @@ import com.sysadmindoc.alarmclock.worker.WakeConfirmWorker
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import java.util.Locale
+import java.util.Collections
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicLong
 import java.util.concurrent.atomic.AtomicReference
 import javax.inject.Inject
 
@@ -79,6 +83,7 @@ class AlarmService : Service() {
     @Inject lateinit var dismissActionExecutor: DismissActionExecutor
     @Inject lateinit var weatherRepository: WeatherRepository
     @Inject lateinit var calendarRepository: CalendarRepository
+    @Inject lateinit var musicLibraryRepository: MusicLibraryRepository
 
     companion object {
         const val ACTION_START_ALARM = "com.sysadmindoc.alarmclock.START_ALARM"
@@ -109,6 +114,7 @@ class AlarmService : Service() {
         // Grace period for a Media3 player to actually start before we assume it
         // stalled and fall back to the default tone.
         private const val PLAYBACK_START_TIMEOUT_MS = 8_000L
+        private const val MAX_MUSIC_TRACK_SKIPS = 5
         private const val TAG = "AlarmService"
 
         data class ActiveAlarmSnapshot(
@@ -142,6 +148,7 @@ class AlarmService : Service() {
                 setSound(null, null)
                 enableVibration(false)
             }
+
             nm.createNotificationChannel(alarmChannel)
 
             val upcomingChannel = NotificationChannel(
@@ -216,6 +223,8 @@ class AlarmService : Service() {
     // error path — if both the radio and the default fallback fail, we could
     // otherwise leak orphaned playback instances.
     private val audioStarting = AtomicBoolean(false)
+    private val musicSessionGeneration = AtomicLong(0L)
+    private val failedMusicUris = Collections.synchronizedSet(mutableSetOf<String>())
 
     // v1.11.2 (roadmap N2): Telephony-aware muting. When a call is OFFHOOK or
     // RINGING during alarm playback the player is muted (vibration and
@@ -840,7 +849,9 @@ class AlarmService : Service() {
 
     private fun startAudio(alarm: Alarm) {
         // Silent mode - skip audio entirely
-        if (alarm.ringtoneUri == "silent" || AlarmHapticController.usesMutedAlarmAudio(alarm)) {
+        if (AlarmHapticController.usesMutedAlarmAudio(alarm) ||
+            (!alarm.randomMusicEnabled && alarm.ringtoneUri == "silent")
+        ) {
             recordIncidentAsync(
                 type = AlarmIncidentEvent.TYPE_AUDIO,
                 status = AlarmIncidentEvent.STATUS_SKIPPED,
@@ -871,17 +882,165 @@ class AlarmService : Service() {
             return
         }
         try {
-            val pooledAlarm = alarm.ringtonePool.split(",")
-                .map { it.trim() }
-                .filter { it.isNotEmpty() }
-                .takeIf { it.isNotEmpty() }
-                ?.let { pool -> alarm.copy(ringtoneUri = pool.random()) }
-                ?: alarm
+            if (alarm.randomMusicEnabled) {
+                failedMusicUris.clear()
+                startRandomMusicTrack(alarm, musicSessionGeneration.get())
+            } else {
+                val pooledAlarm = alarm.ringtonePool.split(",")
+                    .map { it.trim() }
+                    .filter { it.isNotEmpty() }
+                    .takeIf { it.isNotEmpty() }
+                    ?.let { pool -> alarm.copy(ringtoneUri = pool.random()) }
+                    ?: alarm
 
-            startAudioInternal(pooledAlarm)
+                startAudioInternal(pooledAlarm)
+            }
         } finally {
             audioStarting.set(false)
         }
+    }
+
+    private fun isMusicSessionActive(alarm: Alarm, generation: Long): Boolean =
+        alarm.randomMusicEnabled &&
+            currentAlarmId == alarm.id &&
+            musicSessionGeneration.get() == generation
+
+    private fun startRandomMusicTrack(alarm: Alarm, generation: Long) {
+        serviceScope.launch {
+            if (!isMusicSessionActive(alarm, generation)) return@launch
+            val track = try {
+                val excludedUris = synchronized(failedMusicUris) { failedMusicUris.toList() }
+                musicLibraryRepository.pickRandomTrack(excludedUris)
+            } catch (error: Exception) {
+                Log.e(TAG, "Could not select an alarm music track", error)
+                null
+            }
+            if (!isMusicSessionActive(alarm, generation)) return@launch
+            if (track == null) {
+                startMusicDefaultFallback(alarm)
+                return@launch
+            }
+            startMedia3MusicTrack(alarm, track, generation)
+        }
+    }
+
+    private fun startMedia3MusicTrack(
+        alarm: Alarm,
+        track: MusicTrack,
+        generation: Long
+    ) {
+        try {
+            val fadeInMs = alarm.gradualVolumeSeconds * 1000L
+            playbackRampGain = if (fadeInMs > 0) 0f else 1f
+            MusicPlaybackState.updateTitle(null)
+            val initialVolume = alarmPlaybackGain(
+                callMuted = callMutedAudio,
+                challengeDuckingActive = challengeAudioDuckingActive,
+                challengeDuckPercent = challengeAudioDuckPercent,
+                rampGain = playbackRampGain
+            )
+            var playbackRef: AlarmPlaybackPlayer? = null
+            val playbackStarted = AtomicBoolean(false)
+            val trackLogged = AtomicBoolean(false)
+            val fireId = currentFireId
+            val playback = createMedia3Playback(
+                mediaItem = MediaItem.fromUri(Uri.parse(track.uri)),
+                audioAttributes = AlarmAudioRouting.media3AlarmSonificationAttributes(),
+                repeatMode = Player.REPEAT_MODE_OFF,
+                initialVolume = initialVolume,
+                onReady = onReady@{
+                    if (!isMusicSessionActive(alarm, generation)) return@onReady
+                    playbackStarted.set(true)
+                    cancelPlaybackWatchdog()
+                    if (alarm.overrideSystemVolume) setConfiguredAlarmStreamVolume(alarm)
+                    updateAlarmMediaSessionState(PlaybackState.STATE_PLAYING)
+                },
+                onStarted = {
+                    if (isMusicSessionActive(alarm, generation) && trackLogged.compareAndSet(false, true)) {
+                        MusicPlaybackState.updateTitle(track.title)
+                        val startedAt = System.currentTimeMillis()
+                        serviceScope.launch {
+                            runCatching {
+                                musicLibraryRepository.recordStarted(fireId, startedAt, track)
+                            }.onFailure { error ->
+                                Log.e(TAG, "Could not record started music playback", error)
+                            }
+                        }
+                    }
+                },
+                onEnded = {
+                    if (isMusicSessionActive(alarm, generation)) {
+                        cancelPlaybackWatchdog()
+                        volumeJob?.cancel()
+                        volumeJob = null
+                        MusicPlaybackState.updateTitle(null)
+                        playbackRef?.let(::releasePlaybackIfCurrent)
+                        startRandomMusicTrack(alarm, generation)
+                    }
+                },
+                onError = { error ->
+                    if (isMusicSessionActive(alarm, generation)) {
+                        cancelPlaybackWatchdog()
+                        volumeJob?.cancel()
+                        volumeJob = null
+                        failedMusicUris.add(track.uri)
+                        playbackRef?.let(::releasePlaybackIfCurrent)
+                        if (failedMusicUris.size >= MAX_MUSIC_TRACK_SKIPS) {
+                            startMusicDefaultFallback(alarm)
+                        } else {
+                            startRandomMusicTrack(alarm, generation)
+                        }
+                    }
+                    Log.w(TAG, "Skipping unavailable alarm music track", error)
+                }
+            )
+            playbackRef = playback
+            if (!isMusicSessionActive(alarm, generation)) {
+                playback.stopAndRelease()
+                return
+            }
+            alarmPlayback = playback
+            armMedia3PlaybackWatchdog(alarm, playback, playbackStarted)
+            if (fadeInMs > 0) {
+                volumeJob = serviceScope.launch {
+                    val steps = 50
+                    val stepDelay = (fadeInMs / steps).coerceAtLeast(1L)
+                    for (i in 1..steps) {
+                        delay(stepDelay)
+                        if (!isMusicSessionActive(alarm, generation) || alarmPlayback !== playback) {
+                            return@launch
+                        }
+                        playbackRampGain = i.toFloat() / steps
+                        applyPlaybackGain()
+                    }
+                }
+            }
+        } catch (error: Exception) {
+            Log.w(TAG, "Unable to start selected alarm music track", error)
+            failedMusicUris.add(track.uri)
+            if (isMusicSessionActive(alarm, generation)) {
+                if (failedMusicUris.size >= MAX_MUSIC_TRACK_SKIPS) {
+                    startMusicDefaultFallback(alarm)
+                } else {
+                    startRandomMusicTrack(alarm, generation)
+                }
+            }
+        }
+    }
+
+    private fun startMusicDefaultFallback(alarm: Alarm) {
+        volumeJob?.cancel()
+        volumeJob = null
+        MusicPlaybackState.updateTitle(null)
+        startMedia3DefaultFallback(
+            alarm.copy(
+                randomMusicEnabled = false,
+                ringtoneUri = "",
+                ringtonePool = "",
+                internetRadioUrl = "",
+                spotifyUri = ""
+            )
+        )
     }
 
     private fun startAudioInternal(alarm: Alarm) {
@@ -1270,6 +1429,7 @@ class AlarmService : Service() {
         repeatMode: Int,
         initialVolume: Float,
         onReady: () -> Unit,
+        onStarted: () -> Unit = {},
         onEnded: () -> Unit,
         onError: (PlaybackException) -> Unit
     ): AlarmPlaybackPlayer {
@@ -1284,6 +1444,10 @@ class AlarmService : Service() {
                     this.repeatMode = repeatMode
                     volume = initialVolume.coerceIn(0f, 1f)
                     addListener(object : Player.Listener {
+                        override fun onIsPlayingChanged(isPlaying: Boolean) {
+                            if (isPlaying) onStarted()
+                        }
+
                         override fun onPlaybackStateChanged(playbackState: Int) {
                             when (playbackState) {
                                 Player.STATE_READY -> {
@@ -2259,6 +2423,9 @@ class AlarmService : Service() {
     }
 
     private fun stopAlarmPlayback() {
+        musicSessionGeneration.incrementAndGet()
+        failedMusicUris.clear()
+        MusicPlaybackState.updateTitle(null)
         OnCallDndOverride.end(this)
         volumeJob?.cancel()
         volumeJob = null

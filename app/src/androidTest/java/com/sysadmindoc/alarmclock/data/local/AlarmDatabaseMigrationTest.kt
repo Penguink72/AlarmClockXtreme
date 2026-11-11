@@ -8,12 +8,14 @@ import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
+import com.sysadmindoc.alarmclock.data.local.entity.MusicTrack
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.File
+import kotlinx.coroutines.runBlocking
 
 @RunWith(AndroidJUnit4::class)
 class AlarmDatabaseMigrationTest {
@@ -330,6 +332,57 @@ class AlarmDatabaseMigrationTest {
     }
 
     @Test
+    fun migrationTwentyFourToTwentyFiveAddsMusicStorageWithoutChangingExistingAlarms() {
+        var db = helper.createDatabase("migration-24-to-25.db", 24)
+        insertSyntheticAlarm(db)
+        db.close()
+
+        db = helper.runMigrationsAndValidate(
+            "migration-24-to-25.db",
+            25,
+            true,
+            AlarmDatabase.MIGRATION_24_25,
+        )
+
+        assertEquals(1, db.queryLong("SELECT COUNT(*) FROM alarms"))
+        assertEquals(0, db.queryLong("SELECT randomMusicEnabled FROM alarms LIMIT 1"))
+        assertEquals(0, db.queryLong("SELECT COUNT(*) FROM music_tracks"))
+        assertEquals(0, db.queryLong("SELECT COUNT(*) FROM playback_history"))
+        db.close()
+    }
+
+    @Test
+    fun musicLibraryStoresThreeThousandTracksAndAppendsStartedHistoryInOrder() = runBlocking {
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        val database = Room.inMemoryDatabaseBuilder(context, AlarmDatabase::class.java)
+            .allowMainThreadQueries()
+            .build()
+        try {
+            val tracks = (0 until 3_001).map { index ->
+                MusicTrack(
+                    uri = "content://music/$index",
+                    title = "Track $index",
+                    source = "TEST"
+                )
+            }
+            database.musicLibraryDao().replaceAll(tracks)
+
+            assertEquals(3_001, database.musicLibraryDao().count())
+            val selected = database.musicLibraryDao().pickRandom()
+            assertTrue(selected != null && tracks.any { it.uri == selected.uri })
+
+            val history = database.playbackHistoryDao()
+            history.appendStarted("test-fire", 1_000L, "Track 1", tracks[1].uri)
+            history.appendStarted("test-fire", 2_000L, "Track 2", tracks[2].uri)
+            val entries = history.getForDate(0L, 3_000L)
+            assertEquals(listOf(1, 2), entries.map { it.playOrder })
+            assertEquals(listOf("Track 1", "Track 2"), entries.map { it.title })
+        } finally {
+            database.close()
+        }
+    }
+
+    @Test
     fun freshInstallVersionMatchesLatestExportedSchema() {
         val context = ApplicationProvider.getApplicationContext<Context>()
         val exportedLatest = latestExportedSchemaVersion()
@@ -532,6 +585,6 @@ class AlarmDatabaseMigrationTest {
     )
 
     private companion object {
-        const val LATEST_SCHEMA_VERSION = 24
+        const val LATEST_SCHEMA_VERSION = 25
     }
 }

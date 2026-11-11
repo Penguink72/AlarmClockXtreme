@@ -107,6 +107,7 @@ data class Alarm(
     // v1.4.0: Random pick from comma-separated ringtone URIs.
     // When set, supersedes [ringtoneUri] on each fire.
     val ringtonePool: String = "",
+    val randomMusicEnabled: Boolean = false,
     // v1.5.0: Sunrise/sunset-relative firing — when non-zero, the alarm's
     // clock time is overridden by solar anchor + offset (minutes, can be
     // negative). Uses last known location. 0 = use [hour]/[minute] directly.

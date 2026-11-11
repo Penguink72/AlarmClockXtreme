@@ -107,6 +107,7 @@ data class AlarmEditUiState(
     val holdToDismissEnabled: Boolean = false,
     // v1.4.0: Random ringtone pool (comma-separated URIs)
     val ringtonePool: String = "",
+    val randomMusicEnabled: Boolean = false,
     // v1.5.0: Sunrise/sunset-relative firing (minutes offset; 0 = use fixed time)
     val solarOffsetMinutes: Int = 0,
     // v1.5.0: Solar-offset anchor: "SUNRISE" or "SUNSET"
@@ -234,6 +235,7 @@ class AlarmEditViewModel @Inject constructor(
                         dismissAtRingtoneEnd = alarm.dismissAtRingtoneEnd,
                         holdToDismissEnabled = alarm.holdToDismissEnabled,
                         ringtonePool = alarm.ringtonePool,
+                        randomMusicEnabled = alarm.randomMusicEnabled,
                         solarOffsetMinutes = alarm.solarOffsetMinutes,
                         solarAnchor = alarm.solarAnchor,
                         vibrationDelaySeconds = alarm.vibrationDelaySeconds,
@@ -341,6 +343,10 @@ class AlarmEditViewModel @Inject constructor(
 
     fun updateRingtoneUri(uri: String) {
         _uiState.value = _uiState.value.copy(ringtoneUri = uri)
+    }
+
+    fun updateRandomMusicEnabled(enabled: Boolean) {
+        _uiState.value = _uiState.value.copy(randomMusicEnabled = enabled)
     }
 
     fun updateGroup(group: String) {
@@ -695,6 +701,7 @@ class AlarmEditViewModel @Inject constructor(
                 dismissAtRingtoneEnd = s.dismissAtRingtoneEnd,
                 holdToDismissEnabled = s.holdToDismissEnabled,
                 ringtonePool = s.ringtonePool,
+                randomMusicEnabled = s.randomMusicEnabled,
                 solarOffsetMinutes = s.solarOffsetMinutes,
                 solarAnchor = s.solarAnchor,
                 vibrationDelaySeconds = s.vibrationDelaySeconds,

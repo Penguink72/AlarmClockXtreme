@@ -131,6 +131,21 @@ internal fun LazyListScope.alarmEditSoundSections(
         )
 
         SettingsRow(
+            label = stringResource(R.string.alarm_edit_random_music_library),
+            trailing = {
+                Switch(
+                    checked = state.randomMusicEnabled,
+                    onCheckedChange = viewModel::updateRandomMusicEnabled,
+                    colors = appSwitchColors()
+                )
+            }
+        )
+        SettingsHint(
+            stringResource(R.string.alarm_edit_random_music_library_hint),
+            tone = HintTone.Neutral
+        )
+
+        SettingsRow(
             label = stringResource(R.string.alarm_edit_override_volume),
             trailing = {
                 Switch(

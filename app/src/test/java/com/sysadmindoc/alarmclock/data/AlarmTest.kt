@@ -86,9 +86,15 @@ class AlarmTest {
         assertEquals(10, alarm.snoozeDurationMinutes)
         assertEquals("NONE", alarm.challengeType)
         assertFalse(alarm.holdToDismissEnabled)
+        assertFalse(alarm.randomMusicEnabled)
         assertEquals(0, alarm.sortOrder)
         assertEquals("", alarm.shiftPattern)
         assertEquals("", alarm.shiftPatternStartDate)
+    }
+
+    @Test
+    fun `random music mode survives alarm sanitization`() {
+        assertTrue(Alarm(randomMusicEnabled = true).sanitized().randomMusicEnabled)
     }
 
     @Test

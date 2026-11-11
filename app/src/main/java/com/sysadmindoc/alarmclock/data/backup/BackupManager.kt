@@ -89,6 +89,7 @@ data class AlarmBackup(
     val hardwareButtonAction: String = "NONE",
     val dismissAtRingtoneEnd: Boolean = false,
     val ringtonePool: String = "",
+    val randomMusicEnabled: Boolean = false,
     // v1.5.0 fields
     val solarOffsetMinutes: Int = 0,
     val solarAnchor: String = "SUNRISE",

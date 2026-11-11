@@ -16,6 +16,19 @@ import java.time.DayOfWeek
 class AlarmBackupMappersTest {
 
     @Test
+    fun randomMusicModeSurvivesBackupRoundTrip() {
+        val restored = Alarm(
+            id = 1L,
+            hour = 6,
+            minute = 0,
+            randomMusicEnabled = true
+        ).toAlarmBackup().toAlarmOrNull()
+
+        assertNotNull(restored)
+        assertTrue(requireNotNull(restored).randomMusicEnabled)
+    }
+
+    @Test
     fun roundTripPreservesCoreFields() {
         val alarm = Alarm(
             id = 5L,
