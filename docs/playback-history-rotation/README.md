@@ -15,6 +15,10 @@
 
 ## 文件
 
+- [TCL-G0-G1-OVERVIEW.md](TCL-G0-G1-OVERVIEW.md) — **目前採用的精簡 G0/G1 任務座標與通過門檻**。
+- [G0-IMPLEMENTATION-PLAN.md](G0-IMPLEMENTATION-PLAN.md) — 嚴格 CI 建置／測試基線／APK 交付的具體步驟。
+- [G1-IMPLEMENTATION-PLAN.md](G1-IMPLEMENTATION-PLAN.md) — 選取記憶卡音樂／隨機連播／相容與停止安全的具體步驟。
+
 - [P0-BASELINE.md](P0-BASELINE.md) — 2026-11-11 雲端建置實測紀錄：嚴格驗證缺項，診斷版 675 項測試 1 項失敗，未交付正式 APK。
 
 1. [B-ARCHITECTURE-AUDIT.md](B-ARCHITECTURE-AUDIT.md) — 已讀源碼、已確定事實、未定問題。
