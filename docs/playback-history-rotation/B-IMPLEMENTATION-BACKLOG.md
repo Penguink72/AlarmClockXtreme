@@ -13,6 +13,8 @@ Branch：`feature/playback-history-rotation`
 
 ## P0：固定基線，先做
 
+**實測進度（2026-11-11）：[P0-BASELINE.md](P0-BASELINE.md)。嚴格依賴驗證未通過；候選 metadata 診斷版曾編譯 APK、執行 675 項測試（1 項既有睡前提醒測試失敗）。未交付正式 APK；先處理依賴信任清單與測試基線，不開始 P1。**
+
 1. 在獨立 worktree／clone 鎖定本專案當前 branch SHA。
 2. 依 [README.md](../../README.md) 使用 JDK 17/21、Android SDK 36、Gradle wrapper。
 3. 運行 `./gradlew :app:testPlayDebugUnitTest`、`./gradlew :app:assemblePlayDebug :app:assembleFdroidDebug`；若有實機／emulator 再執行 instrumentation。
