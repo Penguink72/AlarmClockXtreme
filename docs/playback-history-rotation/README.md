@@ -1,6 +1,6 @@
 # 音樂鬧鐘雙模式／播放歷史：開發交接入口
 
-狀態：**B0 原始碼只讀盤點，未修改執行程式，未執行測試**  
+狀態：**T0 G0/G1 實作規劃已建立；App 原始程式未修改；P0 曾執行診斷測試，但嚴格 CI 基線尚未通過**  
 基準：`Penguink72/AlarmClockXtreme`，`main@a0cc501bcc3514ffd36483ca0b6e266aa234aaff`  
 建立日期：2026-11-11  
 上游：`SysAdminDoc/AlarmClockXtreme`  
