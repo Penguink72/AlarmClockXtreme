@@ -1,53 +1,24 @@
-# 音樂鬧鐘雙模式／播放歷史：開發交接入口
+# 個人音樂鬧鐘｜現行規劃入口
 
-狀態：**T0 G0/G1 實作規劃已建立；App 原始程式未修改；P0 曾執行診斷測試，但嚴格 CI 基線尚未通過**  
-基準：`Penguink72/AlarmClockXtreme`，`main@a0cc501bcc3514ffd36483ca0b6e266aa234aaff`  
-建立日期：2026-11-11  
-上游：`SysAdminDoc/AlarmClockXtreme`  
-工作分支：`feature/playback-history-rotation`
+**T0：G0/G1 需求已修訂，App 功能程式未修改；G0 嚴格建置尚未通過。** 2026-11-11。Repo：Penguink72/AlarmClockXtreme，feature/playback-history-rotation；原版 main@a0cc501bcc3514ffd36483ca0b6e266aa234aaff。
 
-## 目標
+## 優先閱讀
 
-- **D 每日輪換**：每天有相對穩定的第一首歌曲；依既有 URI 池避免近期重複。分別處理同日重響、貪睡及午夜。
-- **S 同次連播**：一場正在響的鬧鐘，在歌曲自然結束時播放下一首；解除、貪睡或被另一鬧鐘搶占後不得再啟動下一首。
-- **H 歌曲播放歷史**：記錄實際開始播放、完成、停止與錯誤；同一事件重入不製造重複紀錄；能查看及重播。
-- **保留現有鬧鐘可靠性**：精準排程、前景服務、音量、振動、Direct Boot、音訊 fallback、任務式解除、備份等不能因新功能而退化。
+1. **[CURRENT-REQUIREMENTS.md](CURRENT-REQUIREMENTS.md)**：現行唯一需求權威。3,000 首一次索引、逐首獨立隨機抽、目前歌名、只記播放開始的簡單歷史。
+2. **[TCL-G0-G1-OVERVIEW.md](TCL-G0-G1-OVERVIEW.md)**：G0/G1 根—葉與實際驗收。
+3. **[G1-IMPLEMENTATION-PLAN.md](G1-IMPLEMENTATION-PLAN.md)**：音樂索引、保存、連播、歌名歷史與安全接線工作單。
+4. [G0-IMPLEMENTATION-PLAN.md](G0-IMPLEMENTATION-PLAN.md)：GitHub Actions APK 建置規劃；[P0-BASELINE.md](P0-BASELINE.md)：先前嚴格驗證問題、診斷版執行 675 項測試有 1 項失敗的歷史證據。
 
-## 文件
+## 現在要做
 
-- [TCL-G0-G1-OVERVIEW.md](TCL-G0-G1-OVERVIEW.md) — **目前採用的精簡 G0/G1 任務座標與通過門檻**。
-- [G0-IMPLEMENTATION-PLAN.md](G0-IMPLEMENTATION-PLAN.md) — 嚴格 CI 建置／測試基線／APK 交付的具體步驟。
-- [G1-IMPLEMENTATION-PLAN.md](G1-IMPLEMENTATION-PLAN.md) — 選取記憶卡音樂／隨機連播／相容與停止安全的具體步驟。
+保留既有定時鬧鐘；一次授權後自動把手機及 microSD 的音訊索引成至少 3,000 首的同一庫（必要時指定資料夾遞迴補掃）；不逐首勾選。每首自然播完重新抽一首、允許重複；真正播放才顯示曲名與追加日期／時間／順序紀錄；解除後按日期可查。失效音樂必須有內建鈴聲備援；原版舊鬧鐘未啟用新模式時不能改變。
 
-- [P0-BASELINE.md](P0-BASELINE.md) — 2026-11-11 雲端建置實測紀錄：嚴格驗證缺項，診斷版 675 項測試 1 項失敗，未交付正式 APK。
+## 舊設計延後，不自動恢復
 
-1. [B-ARCHITECTURE-AUDIT.md](B-ARCHITECTURE-AUDIT.md) — 已讀源碼、已確定事實、未定問題。
-2. [B-FLOW-MAP.md](B-FLOW-MAP.md) — 既有呼叫流程及競態接縫。
-3. [B-CHANGE-PLAN.md](B-CHANGE-PLAN.md) — 相容的模型／選曲／播放器／事件設計。
-4. [B-TEST-MATRIX.md](B-TEST-MATRIX.md) — 逐項測試與完成判準。
-5. [B-IMPLEMENTATION-BACKLOG.md](B-IMPLEMENTATION-BACKLOG.md) — Coding Agent 分工、執行順序與提交門檻。
+**[DEFERRED-DESIGNS.md](DEFERRED-DESIGNS.md)**：舊 20 首逐首選取方案、預洗牌、每日輪換、避免重複、完整播放事件狀態、跨版歷史備份等，**不是現行任務**。只有使用者日後實際需要並再次明示，才重新評估。原版 20 首 ringtonePool 必須保留相容，但新大庫不使用其容量上限。舊 G2 的曲名及歷史現在已納入 G1 必做。
 
-## 明確不做
+## 歷史參考，不是工單
 
-- 不逆向或修改第三方 ZalJatni／AVG 的 APK。
-- 不先支援 Spotify、網路電台或 YouTube 在同次連播內切歌；第一版限制於**本機可讀的 URI 歌曲池**。
-- 不在沒有 migration 測試前改 Room schema。
-- 不使用正式起床鬧鐘作為自動化測試環境。
-- 不把 `STATE_READY`、`onReady`、預定選曲，直接寫成「已播放」。
-- 不授權 Agent 推送到 `main`、合併 PR、強推或修改上游倉庫。
+[B-ARCHITECTURE-AUDIT.md](B-ARCHITECTURE-AUDIT.md)、[B-FLOW-MAP.md](B-FLOW-MAP.md) 保留原始碼事實；[B-CHANGE-PLAN.md](B-CHANGE-PLAN.md)、[B-TEST-MATRIX.md](B-TEST-MATRIX.md)、[B-IMPLEMENTATION-BACKLOG.md](B-IMPLEMENTATION-BACKLOG.md) 均已不再適用現行需求，不得直接照舊版執行。
 
-## 證據等級
-
-- **SRC**：已從固定 Commit 的源碼讀取；只證明程式寫了什麼，不保證實機正確。
-- **DOC**：README 或原專案文件聲明。
-- **PROPOSAL**：本次新增設計，還不是程式既有行為。
-- **TODO**：尚未讀全所有呼叫路徑、尚未測試或需作者決定。
-- **PASS/FAIL**：只有實際執行且具備輸出記錄才可標註。目前測試全部未執行。
-
-## A 路線同步狀態
-
-ZalJatni 的商店文字提及隨機歌曲與歷史／重播；但「能否透過 MediaSession／NotificationListener 讀取曲名、真正播放狀態、下一首能力」仍須 Android 手機實測。不能用 A 路線未證實能力阻擋 B 線只讀與本機歌曲池開發。
-
-## 下一個允許的階段
-
-先讓第二位只讀審查 Agent 核對本資料夾所引程式行號、反例與測試缺口；然後在此分支進行 P0 原專案建置與既有測試，記錄基線。正式修改應從獨立的每日選曲 pure policy 開始。
+只在 feature branch 開發，不推 main／上游、不強推、不自行合併。T0 計畫不是 T1 程式實作；G0 真正嚴格 APK 和 T3 白天手機驗收需另外取得證據。

@@ -1,120 +1,45 @@
-# G1｜自訂音樂隨機連播的最小實作工作單
+# G1｜3,000 首整批音樂庫、逐首重新抽選及簡易歷史
 
-狀態：**T0 已規劃；未修改 Kotlin／UI／資料庫**  
-前置：G0 可穩定以嚴格驗證產生可下載 Debug APK。  
-本輪不做：G2 歌名歷史頁、G3 每日輪換、Spotify／網路電台／YouTube 連播、MP4 影片播音。
+**T0 現行工作單／未修改 Kotlin、UI、資料庫**。2026-11-11。前置 G0 真正可下載 Debug APK。以 [CURRENT-REQUIREMENTS.md](CURRENT-REQUIREMENTS.md) 為準；本頁取代舊 G1 的 20 首／預洗牌計畫。
 
-## 使用者操作契約
+## 操作目標
 
-1. 設定一個鬧鐘，從手機內部儲存或 microSD 選取 3 首以上的 MP3／WAV。
-2. 開啟「隨機連播」模式並保存。
-3. 鬧鐘響時隨機選歌曲，**一首播完自動播放另一首**；一輪歌單播完後繼續循環，直到解除／貪睡／既有自動停止機制。
-4. 解除後不得再有下一首突然播放。
-5. 新模式為**自選啟用**，沒有啟用的舊鬧鐘維持原本行為。
+一次授權→自動索引手機和 microSD 音訊，必要時指定資料夾含子資料夾補掃→顯示已找到 N 首（N≥3,000 的情境可用）→鬧鐘開啟新模式→每首自然播完重新獨立抽取→顯示當前曲名，真正開播追加時間／順序／歌名→解除後按日期查看。不逐首勾選，不記完成／中斷／失敗。
 
-目前先不承諾每圈都重新洗牌：Media3 原生 shuffle 一場會建立隨機排序，`REPEAT_MODE_ALL` 循環該排序。這符合「隨機播放＋自動連播」，想每輪重新洗牌可放後續版本。
+## 架構接線
 
-## 原始碼已證實的接點
+1. MusicLibraryIndexer：非同步查 MediaStore 有權存取的全部可索引音樂，合併 SAF 已授權資料夾的遞迴結果；去重 URI，遇到權限或來源錯誤需提示；允許取消／刷新。
+2. MusicLibraryStore：App 私有輕量索引，記每首的 URI、titleOrFilename、source；支援至少 3,000 筆且重開可讀；只存位置，不複製音檔；**不同於舊 20 首 ringtonePool 字串**。
+3. AlarmEdit 模式：選擇性開啟 RANDOM_EACH_TRACK（預設舊行為）；每鬧鐘只保存新模式設定，不存 3,000 個 URI。如果改 Alarm entity，必須做正確 Room migration；不因歷史可遺失就丟掉舊鬧鐘設定。
+4. AlarmService＋Media3：新模式從索引快照取一個 URI 播**當前一首**；自然 ENDED 時檢查當前 session/generation 是否有效，再從候選以 random.nextInt(N) 抽一首，允許 A→A。不用整庫 playlist、shuffleModeEnabled 或 REPEAT_MODE_ALL，不做避免重複。每首從頭播放，不沿用舊隨機跳到中段。
+5. onTrackActuallyStarted：只有 isPlaying 或等效可靠事件確認後，顯示現在的歌曲，AppendOnlyPlaybackLog 一筆 {startedAt, playOrder, titleOrFilename, uri}；同首真正重新開播另記一筆，buffering／READY／暫停恢復不重記。
+6. History UI：按日期列出時間、順序、歌名；關鬧鐘後可查。優先私有 JSONL 等簡單格式，**沒有**結束時回寫、完成/中斷/錯誤欄或強制跨版備份。
 
-- [Alarm.kt](../../app/src/main/java/com/sysadmindoc/alarmclock/data/model/Alarm.kt)：`ringtonePool` 逗號分隔 URI、`sanitized()` 去重與最多 20 首、`dismissAtRingtoneEnd`。
-- [RingtonePickerSheet.kt](../../app/src/main/java/com/sysadmindoc/alarmclock/ui/ringtone/RingtonePickerSheet.kt)：已用 `OpenDocumentTree` 和 `takePersistableUriPermission` 取得資料夾權限。
-- [RingtoneFolderStore.kt](../../app/src/main/java/com/sysadmindoc/alarmclock/ui/ringtone/RingtoneFolderStore.kt)：能列出選取資料夾內的可辨識音樂檔，但**現有實作只列該資料夾直接子檔案，不遍歷所有子資料夾**。
-- [AlarmEditAdvancedSection.kt](../../app/src/main/java/com/sysadmindoc/alarmclock/ui/alarmedit/AlarmEditAdvancedSection.kt)：歌曲池可顯示、移除，但新增主要是手動貼入 URI；需易用的勾選入口。
-- [AlarmService.kt](../../app/src/main/java/com/sysadmindoc/alarmclock/service/AlarmService.kt)：`startAudio()` 每次 `pool.random()`，`startMedia3Tone()` 只裝載一首 `MediaItem`，單曲循環或播完解除。
-- [AlarmPlaybackPlayer.kt](../../app/src/main/java/com/sysadmindoc/alarmclock/service/AlarmPlaybackPlayer.kt)：現有音量／seek／release 抽象；尚未提供歌曲清單 callback。
-- [AlarmDatabase.kt](../../app/src/main/java/com/sysadmindoc/alarmclock/data/local/AlarmDatabase.kt)：Room v24、`exportSchema=true`。
+## 現有來源可用處
 
-## G1 架構（不另起完整播放器）
+- ui/ringtone/RingtonePickerSheet.kt：現有 OpenDocumentTree 與持續 URI 授權，可沿用。
+- ui/ringtone/RingtoneFolderStore.kt：目前只查直接子檔案，需加入遞迴及 MediaStore 索引接點。
+- data/model/Alarm.kt：原 ringtonePool 最多 20 首，**保留舊設定相容，不把 3,000 首存入它**。
+- ui/alarmedit/AlarmEditSoundSections.kt：新增模式開關／索引入口。
+- service/AlarmService.kt：原本 pool.random 一首，startMedia3Tone 單曲循環／播完解除；新模式必須與舊模式明確分流，保留音量、watchdog、fallback。
+- service/AlarmPlaybackPlayer.kt：只做必要的播放控制／回呼接線，不重寫整個播放器。
+- data/local/AlarmDatabase.kt：Room v24；需要修改 entity 時才移轉，不為歷史多狀態模型做新表。
 
-```text
-AlarmEdit（使用者選歌曲＋開啟隨機連播）
-   ↓ 保存 URI 與 G1 模式至 Alarm 設定
-AlarmRepository / Room（保留舊設定）
-   ↓ 觸發時間仍由原版 AlarmScheduler 決定
-AlarmService.startAudio()
-   ├─ 舊模式 → 原版隨機一首／單曲循環／播完解除（不變）
-   └─ SHUFFLE_CONTINUOUS
-        → PoolPlaylistPolicy（篩選去重、0/1/N、限制 20、可測試）
-        → Media3 ExoPlayer.setMediaItems(全清單)
-             shuffleModeEnabled = true
-             repeatMode = Player.REPEAT_MODE_ALL
-             ↓ 保留既有音量、通知、watchdog、fallback
-             └─ stopAlarmPlayback()／dismiss／snooze／preempt
-                → 終止整個 session，拒絕晚到 callback
+## 逐階段實作與驗收
 
-未來 G2 只在播放器「實際開始新曲」的回呼讀取現在的 MediaItem；
-G1 不必先實作歷史、JSONL 或資料庫事件。
-```
-
-Media3 既有 API 可用 `setMediaItems`、`shuffleModeEnabled`、`REPEAT_MODE_ALL` 組合；**不可把現有 `REPEAT_MODE_ONE` 當成連播**。官方參考：https://developer.android.com/media/media3/exoplayer/playlists
-
-## G1 分片／建議 Commit
-
-### G1-01｜先定義模式（pure logic＋舊資料相容）
-
-- 建議 per-alarm 新設定 `poolPlaybackMode`：`LEGACY`（預設）、`SHUFFLE_CONTINUOUS`（自選）。
-- `LEGACY` 必須保留舊 `dismissAtRingtoneEnd` 的兩種結果：原本的單曲循環／播完解除。
-- `SHUFFLE_CONTINUOUS` 時，歌曲結束必須進下一首，而非觸發 `dismissAlarm`；UI 對「播完解除」清楚禁用或說明兩者互斥。不可讓舊布林和新模式同時控制播放器。
-- `Alarm` 為 Room entity。若新增 per-alarm 欄位，**需 Room v24→v25 migration、導出 schema、測試舊資料保留，並同步更新 AlarmEditViewModel、備份讀寫**。不因「播放歷史可遺失」而放棄既有鬧鐘設定的相容性。
-- 替代方案（僅供審查）：把新模式存在獨立 per-alarm preferences 可免 DB migration，但容易造成狀態分裂、備份與刪除不同步；建議採 Room。
-
-### G1-02｜歌曲選擇 UI 接線
-
-- 優先沿用 `RingtonePickerSheet`／`RingtoneFolderStore` 的系統選取、持續授權，不要求使用者自己貼 `content://` URI。
-- 在鬧鐘「聲音」頁提供「加入歌曲到播放清單」的多選入口；可預覽、去重、刪除、顯示首數。
-- 首版沿用既有 `ringtonePool` **最多 20 首**：3 首基本驗收，0/1/20 首邊界測試。若要整個音樂庫數百首，必須另開歌曲清單持久化方案，不能假稱現有 20 首 URI 字串支援無限資料夾。
-- 目前 `RingtoneFolderStore` 只讀直接子檔案；首版可要求歌曲在所選資料夾直屬層，子資料夾遞迴搜尋另案。
-- 確認 URI 在 App 重啟、手機重開後仍授權；SD 卡移除／檔案搬移應進入 fallback。
-
-### G1-03｜實作 Media3 清單播放（核心）
-
-- 把「挑一首」與「組裝一整份 MediaItems」分流，不可直接以 `pool.random()` 覆蓋連播清單。
-- 在原本 `createMedia3Playback()` 加**最小的清單輸入**／播放模式支援，仍由原本 service 控制前景、音訊路由、漸強音量。
-- 音樂播放清單啟用 shuffle 與 repeat all；`SHUFFLE_CONTINUOUS` 禁用既有 `seekToRandomPoolOffset()`（從各曲開頭播放）。
-- 保留 `onReady`、watchdog、MediaPlayer 預設鈴聲備援及原版媒體音量／通話抑制。
-- 預留一個「當前歌曲變更」的小型 callback 給 G2 之後用，但不在 G1 寫播放日誌。
-
-### G1-04｜停止、競態與可靠性
-
-- 所有播放 callback 要綁定當前 session 身分或 generation；檢查是不是還在同一場鬧鐘，避免舊 callback 結束新鬧鐘或重新開始音樂。
-- `dismiss`、`snooze`、另一個鬧鐘搶占、auto-silence 均不可留下會繼續切歌的播放器。
-- 池為空→現有預設鈴聲；僅一首→正常循環，不可無限重新建 Player。
-- 任何 URI 無效／解碼失敗→有界處理並優先確保仍可響鈴（可直接走既有預設音源 fallback）；不因無效曲目而完全靜音。
-- 本次僅支援本地可讀 MP3/WAV（其他已支援格式可沿用，但不作為首版必過項）；Spotify、HTTP radio 不走新連播分支。
-
-### G1-05｜自動測試與 APK
-
-- pure Kotlin 測試：0、1、2、3、20 首，去重、模式切換、資料相容、隨機順序基本不變條件。
-- Media3／Service 測試：三首合成短音檔能順序切換；single-file fallback、壞 URI、解除後不再播、貪睡後不再播、兩個鬧鐘搶占。
-- Room migration：v24→v25 舊鬧鐘資料不變，新欄位預設 `LEGACY`；備份匯入保留舊行為。
-- GitHub Actions：嚴格模式產生新的 G1 Debug APK；記錄測試 pass/fail 與原版已知 1 項失敗分開。
-- 白天手機：以三首音檔設定測試鬧鐘，關屏、響鈴、自然切歌、解除、重開 App／手機再測一次。
-
-## G1 驗收契約
-
-| ID | 操作 | 預期結果 |
+| 階段 | 程式工作 | 自動化／人工驗收 |
 |---|---|---|
-| G1-A | 於手機／microSD 選 3 首 MP3/WAV | 可直接勾選並保存，不需要手貼 URI |
-| G1-B | 啟用連播並等待鬧鐘觸發 | 自動依隨機順序切換多首，不是單曲循環 |
-| G1-C | 全部歌曲播放完 | 清單繼續循環；至少 2 首時不只停在同一首 |
-| G1-D | 播放時按解除／貪睡 | 音樂立即停止，不得有晚到的下一首 |
-| G1-E | 壞 URI／記憶卡移除 | 有可聽見的預設音源 fallback，不崩潰 |
-| G1-F | 舊鬧鐘未選新模式 | 原本單曲／播完解除行為維持 |
-| G1-G | app 重啟、資料庫 v24 升級 | 已設定鬧鐘及音源保留；Room migration 通過 |
-| G1-H | GitHub Actions build | 可下載 G1 測試 APK；與原版測試結果區分 |
-| G1-I | 手機鎖屏與正常響鈴 | 用戶真機驗收，不能只用 unit test 代替 |
+| G1-01 | MediaStore 主索引＋SAF 指定目錄遞迴補掃 | 合成 0／1／3／3,000／3,001 筆、巢狀資料夾、重複 URI、權限失效；手機實際授權可查 |
+| G1-02 | 私有索引保存＋入庫數顯示＋每鬧鐘模式開關 | 關 App 重開後 3,000 筆仍在；未開新模式的鬧鐘行為不變 |
+| G1-03 | 每首播完重新隨機抽，僅播放當前一首 | N=0/1/3000、A→A 重複合法；幾首短 WAV/MP3 自然播完會切下一首 |
+| G1-04 | 歌名顯示＋只追加播放歷史 | 真播才各記一筆、相同歌可重複記、READY 與暫停恢復不重複、日期順序可查 |
+| G1-05 | 停止與安全備援 | dismiss/snooze/preempt/auto-silence、壞 URI、SD 拔除皆不會再亂響或完全失聲 |
+| G1-06 | GitHub 建置、原版回歸、手機驗收 | 有可下載 G1 Debug APK，白天鎖屏鬧鐘、3000 首來源、隨機連播、歷史驗收 |
 
-## 關鍵決策與不做事項
+每片完成須有修改檔案清單、Commit、實際測試命令與結果。T2 無法取代 T3 手機測試。不要用正常起床鬧鐘當初版測試環境。
 
-- 先做「單場次隨機排序＋全部循環」，不先做每日跨日輪換／每圈重新洗牌。
-- 先保留 **20 首** 舊歌曲池上限；要無上限歌曲庫再做獨立存放和資料夾同步。
-- 音樂歷史的需求已簡化為「開始播放就記錄」，但它屬 **G2**；G1 不做完成／中斷／失敗事件與資料庫。
-- 不重寫 `AlarmScheduler`、整份 Compose UI、MediaPlayer fallback、電話／振動／精準鬧鐘機制。
-- 不碰上游與 `main`，每一片葉一個小 Commit，只有驗收成立才合併。
+## 舊設計停止排程
 
-## Agent 交接順序
+20 首手動多選、Media3 shuffle＋repeat all、每日輪換／避免重複、完整播放事件狀態、跨版本歷史保證、統計／串流／MP4 影片等，都列 [DEFERRED-DESIGNS.md](DEFERRED-DESIGNS.md)；只有使用者未來明確需要才恢復。
 
-1. Agent B：只讀確認本文提及的程式 API／路徑、備份欄位及 migration 影響，提交缺口修正建議。
-2. G0 通過後，Agent B 依 G1-01→05 逐片提交，不一次重構整個 service。
-3. Agent C：獨立核對「舊行為相容、可靠響鈴、解除競態、SD 授權與 CI 真實結果」。
-4. 作者在手機上做 G1-I；未實測記 `NOT RUN`。
+**GitHub 只改 feature/playback-history-rotation，不更動 main 或上游，不自行合併或強推。**
