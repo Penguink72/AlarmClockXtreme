@@ -1,6 +1,5 @@
 name: P0 Android baseline (F-Droid)
-# Scope: build and unit tests only; never deploy or install to a phone.
-# Initial baseline for playback-history-rotation, no app source changes.
+# Scope: strict F-Droid debug APK build and unit tests in separate jobs; never deploy or install to a phone.
 
 on:
   push:
@@ -15,6 +14,7 @@ on:
       - "settings.gradle.kts"
       - "build.gradle.kts"
       - "gradle.properties"
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -24,9 +24,98 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  unit-and-build:
-    name: Unit tests and F-Droid debug build
-    runs-on: ubuntu-latest
+  build-fdroid-debug-apk:
+    name: Build F-Droid debug APK (strict)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Check out exact branch commit
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Install JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Install Android command-line tools
+        uses: android-actions/setup-android@v4
+
+      - name: Install Android SDK 36
+        run: |
+          sdkmanager --install "platforms;android-36" "build-tools;36.0.0"
+          sdkmanager --list_installed
+
+      - name: Record build environment
+        run: |
+          echo "COMMIT=$(git rev-parse HEAD)"
+          uname -a
+          java -version
+          bash ./gradlew --version
+
+      - name: Build F-Droid debug APK under strict dependency verification
+        id: apk
+        run: bash ./gradlew --no-daemon --stacktrace :app:assembleFdroidDebug
+
+      - name: Verify APK file and record SHA-256
+        id: apk_meta
+        run: |
+          APK_PATH="app/build/outputs/apk/fdroid/debug/app-fdroid-debug.apk"
+          if [[ ! -s "$APK_PATH" ]]; then
+            echo "ERROR: Expected non-empty APK at $APK_PATH"
+            exit 1
+          fi
+          COMMIT_SHA="$(git rev-parse HEAD)"
+          APK_SHA256="$(sha256sum "$APK_PATH" | awk '{print $1}')"
+          APK_BYTES="$(stat -c%s "$APK_PATH")"
+          {
+            echo "commit=${COMMIT_SHA}"
+            echo "applicationId=com.sysadmindoc.alarmclock.debug"
+            echo "apk_path=${APK_PATH}"
+            echo "apk_size_bytes=${APK_BYTES}"
+            echo "apk_sha256=${APK_SHA256}"
+          } | tee app/build/outputs/apk/fdroid/debug/apk-metadata.txt
+          {
+            echo "## G0 F-Droid Debug APK Build (Strict Verification)"
+            echo "- Status: **PASS**"
+            echo "- Runner: \`ubuntu-24.04\`"
+            echo "- Commit: \`${COMMIT_SHA}\`"
+            echo "- Application ID: \`com.sysadmindoc.alarmclock.debug\`"
+            echo "- APK File: \`app-fdroid-debug.apk\`"
+            echo "- Size (bytes): \`${APK_BYTES}\`"
+            echo "- SHA-256: \`${APK_SHA256}\`"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: p0-fdroid-debug-apk
+          path: |
+            app/build/outputs/apk/fdroid/debug/app-fdroid-debug.apk
+            app/build/outputs/apk/fdroid/debug/apk-metadata.txt
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Upload Gradle dependency verification reports on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: p0-build-dependency-verification-reports
+          path: |
+            build/reports/dependency-verification/
+            app/build/reports/dependency-verification/
+          if-no-files-found: warn
+          retention-days: 14
+
+  unit-test-fdroid-debug:
+    name: Unit tests F-Droid debug (strict)
+    runs-on: ubuntu-24.04
     timeout-minutes: 50
     defaults:
       run:
@@ -52,73 +141,78 @@ jobs:
           sdkmanager --install "platforms;android-36" "build-tools;36.0.0"
           sdkmanager --list_installed
 
-      - name: Cross-check missing Gradle artifact hashes with Maven Central
-        run: |
-          python3 - <<'PY'
-          import hashlib, urllib.error, urllib.request
-          artifacts = [
-              "org/junit/junit-bom/5.10.2/junit-bom-5.10.2.module",
-              "com/google/guava/guava-parent/33.3.1-android/guava-parent-33.3.1-android.pom",
-              "org/jetbrains/kotlinx/kotlinx-coroutines-bom/1.9.0/kotlinx-coroutines-bom-1.9.0.pom",
-          ]
-          root = "https://repo.maven.apache.org/maven2/"
-          problems = 0
-          for artifact in artifacts:
-              url = root + artifact
-              print(f"CHECKING {url}", flush=True)
-              try:
-                  with urllib.request.urlopen(url, timeout=30) as response:
-                      body = response.read()
-                  actual = hashlib.sha256(body).hexdigest()
-                  print(f"SHA256 {artifact} {actual}", flush=True)
-              except urllib.error.HTTPError as exc:
-                  print(f"ARTIFACT_HTTP_ERROR {url} status={exc.code}", flush=True)
-                  problems += 1
-                  continue
-              verified = False
-              for algo in ("sha256", "sha512", "sha1"):
-                  checksum_url = url + "." + algo
-                  try:
-                      with urllib.request.urlopen(checksum_url, timeout=30) as response:
-                          published = response.read().decode("ascii").strip().split()[0].lower()
-                      candidate = hashlib.new(algo, body).hexdigest()
-                      verified = (candidate == published)
-                      print(f"PUBLISHED_CHECKSUM {checksum_url} algo={algo} actual={candidate} published={published} matches={verified}", flush=True)
-                      break
-                  except urllib.error.HTTPError as exc:
-                      print(f"CHECKSUM_UNAVAILABLE {checksum_url} status={exc.code}", flush=True)
-              if not verified:
-                  print(f"UNVERIFIED {url}", flush=True)
-                  problems += 1
-          if problems:
-              raise SystemExit(f"{problems} source/checksum issues; do not amend trust metadata yet")
-          PY
-
-      - name: Record P0 environment
+      - name: Record unit-test environment
         run: |
           echo "COMMIT=$(git rev-parse HEAD)"
+          uname -a
           java -version
           bash ./gradlew --version
 
-      - name: Run original F-Droid unit tests
+      - name: Run original F-Droid unit tests under strict dependency verification
         id: unit
         run: bash ./gradlew --no-daemon --stacktrace :app:testFdroidDebugUnitTest
 
-      - name: Build original F-Droid debug APK
-        id: apk
-        if: ${{ always() && steps.unit.outcome != 'skipped' }}
-        run: bash ./gradlew --no-daemon --stacktrace :app:assembleFdroidDebug
-
-      - name: Upload Gradle dependency verification reports
+      - name: Extract unit-test XML summary and failure details
         if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: p0-dependency-verification-reports
-          path: |
-            build/reports/dependency-verification/
-            app/build/reports/dependency-verification/
-          if-no-files-found: warn
-          retention-days: 14
+        env:
+          UNIT_OUTCOME: ${{ steps.unit.outcome }}
+        run: |
+          python3 - <<'PY'
+          import glob, os, xml.etree.ElementTree as ET
+
+          xml_files = sorted(glob.glob("app/build/test-results/testFdroidDebugUnitTest/TEST-*.xml"))
+          total_tests = 0
+          total_failures = 0
+          total_errors = 0
+          total_skipped = 0
+          failure_details = []
+
+          for path in xml_files:
+              try:
+                  tree = ET.parse(path)
+                  root = tree.getroot()
+              except Exception as exc:
+                  print(f"XML_PARSE_ERROR {path}: {exc}")
+                  continue
+              total_tests += int(root.attrib.get("tests", 0))
+              total_failures += int(root.attrib.get("failures", 0))
+              total_errors += int(root.attrib.get("errors", 0))
+              total_skipped += int(root.attrib.get("skipped", 0))
+              for testcase in root.findall("testcase"):
+                  cls = testcase.attrib.get("classname", "")
+                  name = testcase.attrib.get("name", "")
+                  for tag in ("failure", "error"):
+                      for node in testcase.findall(tag):
+                          msg = node.attrib.get("message", "")
+                          typ = node.attrib.get("type", "")
+                          body = (node.text or "").strip()
+                          failure_details.append((cls, name, typ, msg, body))
+
+          print(f"UNIT_TEST_COUNTS files={len(xml_files)} tests={total_tests} failures={total_failures} errors={total_errors} skipped={total_skipped}", flush=True)
+          for cls, name, typ, msg, body in failure_details:
+              print("=" * 80, flush=True)
+              print(f"FAILED_TEST: {cls} > {name}", flush=True)
+              print(f"TYPE: {typ}", flush=True)
+              print(f"MESSAGE: {msg}", flush=True)
+              print("STACKTRACE:", flush=True)
+              print(body[:2000], flush=True)
+
+          summary_path = os.environ.get("GITHUB_STEP_SUMMARY")
+          if summary_path:
+              with open(summary_path, "a", encoding="utf-8") as fh:
+                  fh.write("## G0 F-Droid Debug Unit Tests (Strict Verification)\n")
+                  fh.write(f"- Step outcome: **{os.environ.get('UNIT_OUTCOME', 'unknown').upper()}**\n")
+                  fh.write(f"- Suites parsed: `{len(xml_files)}`\n")
+                  fh.write(f"- Total tests: `{total_tests}` | Failures: `{total_failures}` | Errors: `{total_errors}` | Skipped: `{total_skipped}`\n")
+                  if failure_details:
+                      fh.write("\n### Failure Details\n")
+                      for cls, name, typ, msg, body in failure_details:
+                          fh.write(f"- **{cls} > {name}** (`{typ}`)\n")
+                          fh.write(f"  - Message: `{msg}`\n")
+                          fh.write("  ```text\n")
+                          fh.write(body[:1500] + "\n")
+                          fh.write("  ```\n")
+          PY
 
       - name: Upload unit-test reports
         if: always()
@@ -131,54 +225,13 @@ jobs:
           if-no-files-found: warn
           retention-days: 14
 
-      - name: Upload debug APK
-        if: always()
+      - name: Upload Gradle dependency verification reports on failure
+        if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: p0-fdroid-debug-apk
-          path: app/build/outputs/apk/fdroid/debug/*.apk
+          name: p0-test-dependency-verification-reports
+          path: |
+            build/reports/dependency-verification/
+            app/build/reports/dependency-verification/
           if-no-files-found: warn
           retention-days: 14
-
-      # Diagnostic only: Gradle's proposed checksums are NOT trusted, and nothing is pushed.
-      - name: Generate candidate metadata for review (not trusted)
-        if: ${{ always() && (steps.unit.outcome == 'failure' || steps.apk.outcome == 'failure') }}
-        continue-on-error: true
-        run: |
-          set +e
-          bash ./gradlew --no-daemon --write-verification-metadata sha256 :app:testFdroidDebugUnitTest :app:assembleFdroidDebug
-          metadata_exit=$?
-          set -e
-          mkdir -p p0-metadata-candidate
-          cp gradle/verification-metadata.xml p0-metadata-candidate/verification-metadata.candidate.xml
-          git diff -- gradle/verification-metadata.xml > p0-metadata-candidate/proposed.patch || true
-          echo "Metadata candidate diagnostic exit: ${metadata_exit}"
-          git diff --stat -- gradle/verification-metadata.xml || true
-          sed -n '1,220p' p0-metadata-candidate/proposed.patch || true
-
-      - name: Upload unreviewed metadata candidate
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: p0-metadata-candidate-NOT-TRUSTED
-          path: p0-metadata-candidate/
-          if-no-files-found: warn
-          retention-days: 7
-
-      - name: Summarize baseline
-        if: always()
-        env:
-          UNIT_RESULT: ${{ steps.unit.outcome }}
-          APK_RESULT: ${{ steps.apk.outcome }}
-        run: |
-          {
-            echo "## P0 Android baseline"
-            echo "- Commit: \`$(git rev-parse HEAD)\`"
-            echo "- Unit tests: ${UNIT_RESULT}"
-            echo "- F-Droid debug APK: ${APK_RESULT}"
-            echo "- Instrumentation and real-device tests: NOT RUN"
-          } >> "$GITHUB_STEP_SUMMARY"
-          if [[ "$UNIT_RESULT" != "success" || "$APK_RESULT" != "success" ]]; then
-            echo "P0 baseline has failures; inspect step logs and attached reports."
-            exit 1
-          fi
