@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 25,
-    "identityHash": "f2578f3cdcb515f46430b82094d33a93",
+    "identityHash": "c93f6e3b9bc5f1f1bd4295c7aff61c29",
     "entities": [
       {
         "tableName": "alarms",
@@ -1121,7 +1121,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'f2578f3cdcb515f46430b82094d33a93')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'c93f6e3b9bc5f1f1bd4295c7aff61c29')"
     ]
   }
 }
