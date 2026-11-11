@@ -102,13 +102,23 @@ jobs:
 
       - name: Run original F-Droid unit tests
         id: unit
-        continue-on-error: true
         run: bash ./gradlew --no-daemon --stacktrace :app:testFdroidDebugUnitTest
 
       - name: Build original F-Droid debug APK
         id: apk
-        continue-on-error: true
+        if: ${{ steps.unit.outcome == 'success' || steps.unit.outcome == 'failure' }}
         run: bash ./gradlew --no-daemon --stacktrace :app:assembleFdroidDebug
+
+      - name: Upload Gradle dependency verification reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: p0-dependency-verification-reports
+          path: |
+            build/reports/dependency-verification/
+            app/build/reports/dependency-verification/
+          if-no-files-found: warn
+          retention-days: 14
 
       - name: Upload unit-test reports
         if: always()
