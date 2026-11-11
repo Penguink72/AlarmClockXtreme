@@ -106,7 +106,7 @@ jobs:
 
       - name: Build original F-Droid debug APK
         id: apk
-        if: ${{ steps.unit.outcome == 'success' || steps.unit.outcome == 'failure' }}
+        if: ${{ always() && steps.unit.outcome != 'skipped' }}
         run: bash ./gradlew --no-daemon --stacktrace :app:assembleFdroidDebug
 
       - name: Upload Gradle dependency verification reports
@@ -139,6 +139,31 @@ jobs:
           path: app/build/outputs/apk/fdroid/debug/*.apk
           if-no-files-found: warn
           retention-days: 14
+
+      # Diagnostic only: Gradle's proposed checksums are NOT trusted, and nothing is pushed.
+      - name: Generate candidate metadata for review (not trusted)
+        if: ${{ always() && (steps.unit.outcome == 'failure' || steps.apk.outcome == 'failure') }}
+        continue-on-error: true
+        run: |
+          set +e
+          bash ./gradlew --no-daemon --write-verification-metadata sha256 :app:testFdroidDebugUnitTest :app:assembleFdroidDebug
+          metadata_exit=$?
+          set -e
+          mkdir -p p0-metadata-candidate
+          cp gradle/verification-metadata.xml p0-metadata-candidate/verification-metadata.candidate.xml
+          git diff -- gradle/verification-metadata.xml > p0-metadata-candidate/proposed.patch || true
+          echo "Metadata candidate diagnostic exit: ${metadata_exit}"
+          git diff --stat -- gradle/verification-metadata.xml || true
+          sed -n '1,220p' p0-metadata-candidate/proposed.patch || true
+
+      - name: Upload unreviewed metadata candidate
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: p0-metadata-candidate-NOT-TRUSTED
+          path: p0-metadata-candidate/
+          if-no-files-found: warn
+          retention-days: 7
 
       - name: Summarize baseline
         if: always()
