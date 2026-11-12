@@ -161,16 +161,6 @@ internal class SafMusicLibraryTreeAccess(
 
     override suspend fun hasPlayableAudioTrack(uri: String): Boolean {
         val contentUri = android.net.Uri.parse(uri)
-        return try {
-            audioTrackProbe.hasAudioTrack(contentUri)
-        } catch (error: SecurityException) {
-            throw error
-        } catch (error: java.io.FileNotFoundException) {
-            throw error
-        } catch (_: java.io.IOException) {
-            false
-        } catch (_: Exception) {
-            false
-        }
+        return audioTrackProbe.hasAudioTrack(contentUri)
     }
 }

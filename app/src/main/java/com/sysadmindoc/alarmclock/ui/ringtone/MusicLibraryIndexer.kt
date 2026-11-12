@@ -60,6 +60,7 @@ class MusicLibraryIndexer @Inject constructor(
         val tracks = LinkedHashMap<String, MusicTrack>()
         val warnings = mutableListOf<MusicScanWarning>()
         val allSources = MusicLibrarySourceStore.getSources(context)
+        val updatedSources = allSources.toMutableList()
         val selectedSources = if (sourceIds == null) {
             allSources
         } else {
@@ -109,7 +110,7 @@ class MusicLibraryIndexer @Inject constructor(
                     trackUris = result.tracks.mapTo(LinkedHashSet(), MusicTrack::uri),
                     error = ""
                 )
-                MusicLibrarySourceStore.update(context, updated)
+                updatedSources[updatedSources.indexOfFirst { it.id == source.id }] = updated
             } catch (error: CancellationException) {
                 throw error
             } catch (error: Exception) {
@@ -117,7 +118,7 @@ class MusicLibraryIndexer @Inject constructor(
                     status = MusicSourceStatus.ERROR,
                     error = error.message ?: error.javaClass.simpleName
                 )
-                MusicLibrarySourceStore.update(context, updated)
+                updatedSources[updatedSources.indexOfFirst { it.id == source.id }] = updated
                 warnings += MusicScanWarning(
                     MusicScanWarning.Kind.FOLDER_FAILED,
                     "${source.name}: ${updated.error}"
@@ -128,7 +129,7 @@ class MusicLibraryIndexer @Inject constructor(
         MusicScanResult(
             tracks = tracks.values.toList(),
             warnings = warnings,
-            sources = MusicLibrarySourceStore.getSources(context),
+            sources = updatedSources,
             mediaStoreScanned = mediaStoreScanned,
             rejectedAudio = rejectedAudio,
             rejectedVideos = rejectedVideos

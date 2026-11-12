@@ -96,6 +96,11 @@ internal object MusicLibrarySourceStore {
     }
 
     @Synchronized
+    fun updateAll(context: Context, sources: List<MusicLibrarySource>) {
+        write(context, sources)
+    }
+
+    @Synchronized
     fun remove(context: Context, sourceId: String): MusicLibrarySource? {
         val sources = getSources(context)
         val removed = sources.firstOrNull { it.id == sourceId } ?: return null

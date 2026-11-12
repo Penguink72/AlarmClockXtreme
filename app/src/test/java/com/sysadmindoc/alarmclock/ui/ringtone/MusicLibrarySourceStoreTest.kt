@@ -71,6 +71,37 @@ class MusicLibrarySourceStoreTest {
     }
 
     @Test
+    fun atomicallyPersistsTheUpdatedSourceSnapshot() {
+        val directory = createTempDirectory()
+        try {
+            val context = isolatedContext(directory)
+            val uri = Uri.parse("content://documents/tree/primary%3AMusic")
+            val first = MusicLibrarySourceStore.addSource(context, uri, "primary:Music/A", "A")
+            MusicLibrarySourceStore.addSource(context, uri, "primary:Music/B", "B")
+            val updated = MusicLibrarySourceStore.getSources(context).map {
+                if (it.id == first.id) {
+                    it.copy(
+                        indexed = true,
+                        status = MusicSourceStatus.READY,
+                        trackUris = setOf("content://documents/track/1")
+                    )
+                } else {
+                    it
+                }
+            }
+
+            MusicLibrarySourceStore.updateAll(context, updated)
+
+            val restored = MusicLibrarySourceStore.getSources(context)
+            assertEquals(2, restored.size)
+            assertTrue(restored.first { it.id == first.id }.indexed)
+            assertEquals(setOf("content://documents/track/1"), restored.first { it.id == first.id }.trackUris)
+        } finally {
+            directory.deleteRecursively()
+        }
+    }
+
+    @Test
     fun migratesLegacyRingtoneFolderGrantsOnceAndDoesNotReAddRemovedSources() {
         val directory = createTempDirectory()
         try {

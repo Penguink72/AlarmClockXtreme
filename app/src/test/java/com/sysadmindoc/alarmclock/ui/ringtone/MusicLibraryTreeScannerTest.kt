@@ -80,6 +80,21 @@ class MusicLibraryTreeScannerTest {
     }
 
     @Test
+    fun propagatesProbeFailureInsteadOfTreatingTheTrackAsUnplayable() {
+        val source = source(1, "content://provider/tree/root", "root")
+        val access = FakeTreeAccess().apply {
+            documents["root"] = listOf(audio("possibly-readable.mp3", "track"))
+            probeFailure = java.io.IOException("Temporary provider failure")
+        }
+
+        val failure = runCatching {
+            runBlocking { MusicLibraryTreeScanner(access).scan(source) }
+        }.exceptionOrNull()
+
+        assertTrue(failure is java.io.IOException)
+    }
+
+    @Test
     fun handlesThreeThousandOneTracksAndDeduplicatesRepeatedDocumentUris() = runBlocking {
         val source = source(1, "content://provider/tree/root", "root")
         val entries = (0 until 3_001).map { index ->
@@ -139,6 +154,7 @@ class MusicLibraryTreeScannerTest {
     private class FakeTreeAccess : MusicLibraryTreeAccess {
         val documents = mutableMapOf<String, List<MusicDocumentEntry>>()
         val playableAudioUris = mutableSetOf<String>()
+        var probeFailure: Exception? = null
 
         override suspend fun children(
             treeUri: String,
@@ -149,6 +165,6 @@ class MusicLibraryTreeScannerTest {
             "$treeUri/document/$documentId"
 
         override suspend fun hasPlayableAudioTrack(uri: String): Boolean =
-            uri in playableAudioUris
+            probeFailure?.let { throw it } ?: (uri in playableAudioUris)
     }
 }

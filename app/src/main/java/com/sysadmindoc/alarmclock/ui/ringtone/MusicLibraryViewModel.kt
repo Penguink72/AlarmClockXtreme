@@ -114,19 +114,21 @@ class MusicLibraryViewModel @Inject constructor(
     fun removeSource(sourceId: String) {
         viewModelScope.launch {
             try {
-                val remainingSources = withContext(Dispatchers.IO) {
-                    if (MusicLibrarySourceStore.remove(context, sourceId) == null) {
-                        null
-                    } else {
-                        MusicLibrarySourceStore.getSources(context)
-                    }
+                val sources = withContext(Dispatchers.IO) {
+                    MusicLibrarySourceStore.getSources(context)
                 }
-                if (remainingSources != null) {
+                if (sources.any { it.id == sourceId }) {
+                    val remainingSources = sources.filterNot { it.id == sourceId }
                     val retainedTracks = MusicTrackIndexReconciler.afterSourceRemoval(
                         existing = repository.allTracks(),
                         remainingSources = remainingSources
                     )
                     repository.replaceTracks(retainedTracks)
+                    withContext(Dispatchers.IO) {
+                        check(MusicLibrarySourceStore.remove(context, sourceId) != null) {
+                            "Music folder source no longer exists"
+                        }
+                    }
                     updateTrackCounts(retainedTracks)
                     _uiState.value = _uiState.value.copy(sources = remainingSources)
                     scan()
@@ -242,6 +244,9 @@ class MusicLibraryViewModel @Inject constructor(
                     mediaStoreScanned = result.mediaStoreScanned
                 )
                 repository.replaceTracks(combined)
+                withContext(Dispatchers.IO) {
+                    MusicLibrarySourceStore.updateAll(context, result.sources)
+                }
                 updateTrackCounts(combined)
                 _uiState.value = _uiState.value.copy(
                     sources = result.sources,
