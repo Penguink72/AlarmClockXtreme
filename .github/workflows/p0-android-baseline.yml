@@ -6,7 +6,9 @@ on:
     branches:
       - feature/playback-history-rotation
       - fix/g1-ringtone-picker-crash
+      - fix/db25-schema-01
       - fix/b7-ci-persistent-debug-signing
+      - preview/music-alarm-1
     paths:
       - ".github/workflows/p0-android-baseline.yml"
       - "app/**"
@@ -142,7 +144,12 @@ jobs:
 
       - name: Build F-Droid debug APK under strict dependency verification
         id: apk
-        run: bash ./gradlew --no-daemon --stacktrace :app:assembleFdroidDebug
+        run: |
+          cp app/schemas/com.sysadmindoc.alarmclock.data.local.AlarmDatabase/25.json /tmp/committed-25.json
+          rm -f app/schemas/com.sysadmindoc.alarmclock.data.local.AlarmDatabase/25.json
+          bash ./gradlew --no-daemon --stacktrace :app:assembleFdroidDebug
+          diff -u /tmp/committed-25.json app/schemas/com.sysadmindoc.alarmclock.data.local.AlarmDatabase/25.json
+          git diff --exit-code -- app/schemas
 
       - name: Verify APK file, package metadata, and persistent signing certificate
         id: apk_meta
@@ -481,7 +488,11 @@ jobs:
               for testcase in root.findall("testcase"):
                   cls = testcase.attrib.get("classname", "")
                   name = testcase.attrib.get("name", "")
+<<<<<<< HEAD
                   if "RingtonePickerSheetTest" in cls or "MusicLibraryDatabaseTest" in cls:
+=======
+                  if "MusicLibraryDatabaseTest" in cls:
+>>>>>>> f799dd3 (fix(db): replace Room v25 schema with canonical KSP export and add schema/migration verification tests (DB25-SCHEMA-01))
                       failed = any(testcase.findall(t) for t in ("failure", "error"))
                       print(f"TARGET_TEST: {cls} > {name} => {'FAIL' if failed else 'PASS'}", flush=True)
                   for tag in ("failure", "error"):
