@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - feature/playback-history-rotation
+      - fix/g1-ringtone-picker-crash
     paths:
       - ".github/workflows/p0-android-baseline.yml"
       - "app/**"
@@ -190,6 +191,9 @@ jobs:
               for testcase in root.findall("testcase"):
                   cls = testcase.attrib.get("classname", "")
                   name = testcase.attrib.get("name", "")
+                  if "RingtonePickerSheetTest" in cls or "MusicLibraryDatabaseTest" in cls:
+                      failed = any(testcase.findall(t) for t in ("failure", "error"))
+                      print(f"TARGET_TEST: {cls} > {name} => {'FAIL' if failed else 'PASS'}", flush=True)
                   for tag in ("failure", "error"):
                       for node in testcase.findall(tag):
                           msg = node.attrib.get("message", "")

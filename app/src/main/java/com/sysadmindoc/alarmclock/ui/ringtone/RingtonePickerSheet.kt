@@ -279,60 +279,11 @@ fun RingtonePickerSheet(
                 .padding(horizontal = 16.dp, vertical = 8.dp),
             verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
-            AppSectionTitle(
-                title = stringResource(R.string.ringtone_alarm_sound),
-                description = stringResource(R.string.ringtone_preview_tones_before_applying_them),
-                action = {
-                    Row(
-                        modifier = Modifier.horizontalScroll(rememberScrollState()),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                            OutlinedButton(
-                                onClick = { showMusicLibraryDialog = true },
-                                shape = RoundedCornerShape(12.dp),
-                                colors = ButtonDefaults.outlinedButtonColors(
-                                    contentColor = MaterialTheme.colorScheme.primary
-                                )
-                            ) {
-                                Text(
-                                    stringResource(R.string.music_library_button),
-                                    fontWeight = FontWeight.SemiBold
-                                )
-                            }
-                            OutlinedButton(
-                                onClick = { folderLauncher.launch(null) },
-                                shape = RoundedCornerShape(12.dp),
-                                colors = ButtonDefaults.outlinedButtonColors(
-                                    contentColor = MaterialTheme.colorScheme.primary
-                                )
-                            ) {
-                                Icon(
-                                    Icons.Default.FolderOpen,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(18.dp)
-                                )
-                                Spacer(modifier = Modifier.size(6.dp))
-                                Text(stringResource(R.string.ringtone_folder), fontWeight = FontWeight.SemiBold)
-                            }
-                            if (youTubeAvailable) {
-                                OutlinedButton(
-                                    onClick = { showYouTubeDialog = true },
-                                    shape = RoundedCornerShape(12.dp),
-                                    colors = ButtonDefaults.outlinedButtonColors(
-                                        contentColor = MaterialTheme.colorScheme.primary
-                                    )
-                                ) {
-                                    Icon(
-                                        Icons.Default.CloudDownload,
-                                        contentDescription = null,
-                                        modifier = Modifier.size(18.dp)
-                                    )
-                                    Spacer(modifier = Modifier.size(6.dp))
-                                    Text(stringResource(R.string.ringtone_youtube), fontWeight = FontWeight.SemiBold)
-                                }
-                            }
-                    }
-                }
+            RingtonePickerHeader(
+                youTubeAvailable = youTubeAvailable,
+                onOpenMusicLibrary = { showMusicLibraryDialog = true },
+                onOpenFolderPicker = { folderLauncher.launch(null) },
+                onOpenYouTubeDialog = { showYouTubeDialog = true }
             )
 
             if (youTubeStatus.isNotBlank()) {
@@ -435,13 +386,7 @@ fun RingtonePickerSheet(
                 ) {
                     items(
                         items = filteredRingtones,
-                        key = { ringtone ->
-                            when {
-                                ringtone.isDefault -> "default"
-                                ringtone.isSilent -> "silent"
-                                else -> ringtone.uri
-                            }
-                        }
+                        key = ::ringtoneLazyKey
                     ) { ringtone ->
                         val isSelected = when {
                             ringtone.isSilent -> currentUri == "silent"
@@ -611,6 +556,99 @@ private fun ringtoneSearchText(ringtone: RingtoneItem): String = buildString {
     if (ringtone.isSilent) append(" silent quiet")
 }
 
+@Composable
+internal fun RingtonePickerHeader(
+    youTubeAvailable: Boolean,
+    onOpenMusicLibrary: () -> Unit,
+    onOpenFolderPicker: () -> Unit,
+    onOpenYouTubeDialog: () -> Unit
+) {
+    AppSectionTitle(
+        title = stringResource(R.string.ringtone_alarm_sound),
+        description = stringResource(R.string.ringtone_preview_tones_before_applying_them),
+        action = {
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                OutlinedButton(
+                    onClick = onOpenMusicLibrary,
+                    shape = RoundedCornerShape(12.dp),
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        contentColor = MaterialTheme.colorScheme.primary
+                    )
+                ) {
+                    Text(
+                        stringResource(R.string.music_library_button),
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
+                OutlinedButton(
+                    onClick = onOpenFolderPicker,
+                    shape = RoundedCornerShape(12.dp),
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        contentColor = MaterialTheme.colorScheme.primary
+                    )
+                ) {
+                    Icon(
+                        Icons.Default.FolderOpen,
+                        contentDescription = null,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Spacer(modifier = Modifier.size(6.dp))
+                    Text(stringResource(R.string.ringtone_folder), fontWeight = FontWeight.SemiBold)
+                }
+                if (youTubeAvailable) {
+                    OutlinedButton(
+                        onClick = onOpenYouTubeDialog,
+                        shape = RoundedCornerShape(12.dp),
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            contentColor = MaterialTheme.colorScheme.primary
+                        )
+                    ) {
+                        Icon(
+                            Icons.Default.CloudDownload,
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Spacer(modifier = Modifier.size(6.dp))
+                        Text(stringResource(R.string.ringtone_youtube), fontWeight = FontWeight.SemiBold)
+                    }
+                }
+            }
+        }
+    )
+}
+
+internal fun ringtoneLazyKey(ringtone: RingtoneItem): String = when {
+    ringtone.isDefault -> "default"
+    ringtone.isSilent -> "silent"
+    else -> "uri:${ringtone.uri}"
+}
+
+internal fun deduplicateRingtoneItems(items: List<RingtoneItem>): List<RingtoneItem> {
+    val result = mutableListOf<RingtoneItem>()
+    val seenUris = HashSet<String>()
+    var seenDefault = false
+    var seenSilent = false
+    for (item in items) {
+        when {
+            item.isDefault -> if (!seenDefault) {
+                seenDefault = true
+                result += item
+            }
+            item.isSilent -> if (!seenSilent) {
+                seenSilent = true
+                result += item
+            }
+            else -> {
+                val cleanUri = item.uri.trim()
+                if (cleanUri.isNotEmpty() && cleanUri != "null" && seenUris.add(cleanUri)) {
+                    result += if (cleanUri == item.uri) item else item.copy(uri = cleanUri)
+                }
+            }
+        }
+    }
+    return result
+}
+
 internal fun ringtoneEnumerationWarning(youTubeAvailable: Boolean): String =
     if (youTubeAvailable) {
         "Couldn't read this device's sound list. Default and Silent are still available, and you can add a new sound from YouTube."
@@ -618,23 +656,28 @@ internal fun ringtoneEnumerationWarning(youTubeAvailable: Boolean): String =
         "Couldn't read this device's sound list. Default and Silent are still available."
     }
 
-private fun loadRingtones(context: Context): RingtoneLoadResult {
+internal fun loadRingtones(context: Context): RingtoneLoadResult {
     val ringtones = mutableListOf<RingtoneItem>()
     var enumerationFailed = false
 
     ringtones += RingtoneItem("Default Alarm", "", isDefault = true)
     ringtones += RingtoneItem("Silent", "", isSilent = true)
 
-    val alarmManager = RingtoneManager(context).apply {
-        setType(RingtoneManager.TYPE_ALARM)
-    }
-
     try {
+        val alarmManager = RingtoneManager(context).apply {
+            setType(RingtoneManager.TYPE_ALARM)
+        }
         val cursor = alarmManager.cursor
-        while (cursor.moveToNext()) {
-            val title = cursor.getString(RingtoneManager.TITLE_COLUMN_INDEX)
-            val uri = alarmManager.getRingtoneUri(cursor.position).toString()
-            ringtones += RingtoneItem(title = title, uri = uri)
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+                val uri = alarmManager.getRingtoneUri(cursor.position)?.toString()
+                    ?.takeIf { it.isNotBlank() && it != "null" }
+                    ?: continue
+                val title = cursor.getString(RingtoneManager.TITLE_COLUMN_INDEX)
+                    ?.takeIf { it.isNotBlank() }
+                    ?: uri
+                ringtones += RingtoneItem(title = title, uri = uri)
+            }
         }
     } catch (_: Exception) {
         // The device's alarm-tone list couldn't be read — surface this so the
@@ -642,20 +685,25 @@ private fun loadRingtones(context: Context): RingtoneLoadResult {
         enumerationFailed = true
     }
 
-    val notificationManager = RingtoneManager(context).apply {
-        setType(RingtoneManager.TYPE_NOTIFICATION)
-    }
-
     try {
+        val notificationManager = RingtoneManager(context).apply {
+            setType(RingtoneManager.TYPE_NOTIFICATION)
+        }
         val cursor = notificationManager.cursor
-        while (cursor.moveToNext()) {
-            val title = cursor.getString(RingtoneManager.TITLE_COLUMN_INDEX)
-            val uri = notificationManager.getRingtoneUri(cursor.position).toString()
-            if (ringtones.none { it.uri == uri }) {
-                ringtones += RingtoneItem(
-                    title = context.getString(R.string.ringtone_notification_item, title),
-                    uri = uri
-                )
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+                val uri = notificationManager.getRingtoneUri(cursor.position)?.toString()
+                    ?.takeIf { it.isNotBlank() && it != "null" }
+                    ?: continue
+                val rawTitle = cursor.getString(RingtoneManager.TITLE_COLUMN_INDEX)
+                    ?.takeIf { it.isNotBlank() }
+                    ?: uri
+                if (ringtones.none { it.uri == uri }) {
+                    ringtones += RingtoneItem(
+                        title = context.getString(R.string.ringtone_notification_item, rawTitle),
+                        uri = uri
+                    )
+                }
             }
         }
     } catch (_: Exception) {
@@ -664,7 +712,10 @@ private fun loadRingtones(context: Context): RingtoneLoadResult {
 
     ringtones += RingtoneFolderStore.loadItems(context)
 
-    return RingtoneLoadResult(items = ringtones, enumerationFailed = enumerationFailed)
+    return RingtoneLoadResult(
+        items = deduplicateRingtoneItems(ringtones),
+        enumerationFailed = enumerationFailed
+    )
 }
 
 // v1.7.1: The YouTube download dialog and its Hilt entry point moved to

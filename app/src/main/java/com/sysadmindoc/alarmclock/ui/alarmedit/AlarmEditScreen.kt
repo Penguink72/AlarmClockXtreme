@@ -65,6 +65,7 @@ import com.sysadmindoc.alarmclock.ui.components.AppSurfaceCard
 import com.sysadmindoc.alarmclock.ui.components.AppInputShape
 import com.sysadmindoc.alarmclock.ui.components.appOutlinedTextFieldColors
 import com.sysadmindoc.alarmclock.ui.components.appSwitchColors
+import com.sysadmindoc.alarmclock.ui.ringtone.MusicLibraryDialog
 import com.sysadmindoc.alarmclock.ui.ringtone.RingtonePickerSheet
 import com.sysadmindoc.alarmclock.ui.theme.*
 import com.sysadmindoc.alarmclock.util.LocationHelper
@@ -188,6 +189,7 @@ fun AlarmEditScreen(
     var timeNumpadDigits by rememberSaveable { mutableStateOf("") }
     var timeNumpadIsPm by rememberSaveable { mutableStateOf(false) }
     var showRingtonePicker by remember { mutableStateOf(false) }
+    var showMusicLibraryDialog by rememberSaveable { mutableStateOf(false) }
     var showChainPicker by remember { mutableStateOf(false) }
     var photoReferenceStatus by remember { mutableStateOf("") }
     var firingBackgroundStatus by remember { mutableStateOf("") }
@@ -358,6 +360,12 @@ fun AlarmEditScreen(
             currentUri = state.ringtoneUri,
             onSelect = viewModel::updateRingtoneUri,
             onDismiss = { showRingtonePicker = false }
+        )
+    }
+
+    if (showMusicLibraryDialog) {
+        MusicLibraryDialog(
+            onDismiss = { showMusicLibraryDialog = false }
         )
     }
 
@@ -540,7 +548,8 @@ fun AlarmEditScreen(
                     editorPage = editorPage,
                     state = state,
                     viewModel = viewModel,
-                    onOpenRingtonePicker = { showRingtonePicker = true }
+                    onOpenRingtonePicker = { showRingtonePicker = true },
+                    onOpenMusicLibrary = { showMusicLibraryDialog = true }
                 )
                 AlarmEditorPage.DISMISS -> alarmEditDismissSections(
                     editorPage = editorPage,
