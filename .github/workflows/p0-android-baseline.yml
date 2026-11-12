@@ -68,46 +68,75 @@ jobs:
           CI_DEBUG_KEY_ALIAS: ${{ secrets.CI_DEBUG_KEY_ALIAS }}
           CI_DEBUG_KEY_PASSWORD: ${{ secrets.CI_DEBUG_KEY_PASSWORD }}
         run: |
-          CLEAN_B64="$(printf '%s' "${CI_DEBUG_KEYSTORE_BASE64}" | tr -d ' \t\r\n')"
-          CLEAN_STORE_PASS="$(printf '%s' "${CI_DEBUG_KEYSTORE_PASSWORD}" | tr -d '\r\n')"
-          CLEAN_KEY_ALIAS="$(printf '%s' "${CI_DEBUG_KEY_ALIAS}" | tr -d '\r\n')"
-          CLEAN_KEY_PASS="$(printf '%s' "${CI_DEBUG_KEY_PASSWORD}" | tr -d '\r\n')"
-          if [[ -z "${CLEAN_B64}" || -z "${CLEAN_STORE_PASS}" || -z "${CLEAN_KEY_ALIAS}" || -z "${CLEAN_KEY_PASS}" ]]; then
-            echo "ERROR: Missing persistent CI debug signing secrets in GitHub Actions."
-            exit 1
-          fi
-          echo "::add-mask::${CLEAN_STORE_PASS}"
-          echo "::add-mask::${CLEAN_KEY_PASS}"
           RAW_P12="${RUNNER_TEMP}/ci-debug-raw.p12"
           DEST_KEYSTORE="${RUNNER_TEMP}/ci-debug-signing.p12"
-          printf '%s' "${CLEAN_B64}" | base64 --decode > "${RAW_P12}"
-          chmod 600 "${RAW_P12}"
-          SRC_ALIAS="$(keytool -list -v -keystore "${RAW_P12}" -storetype PKCS12 -storepass "${CLEAN_STORE_PASS}" | sed -n 's/^Alias name: //p' | head -n 1 | tr -d '\r')"
-          if [[ -z "${SRC_ALIAS}" ]]; then
-            echo "ERROR: No Alias name found in decoded CI debug keystore."
-            exit 1
-          fi
+          NORM_JAVA="${RUNNER_TEMP}/NormalizeKeystore.java"
+          python3 - "$RAW_P12" <<'PY'
+          import base64, os, pathlib, sys
+
+          def clean(name: str) -> str:
+              return os.environ.get(name, "").lstrip("\ufeff").strip()
+
+          b64 = "".join(clean("CI_DEBUG_KEYSTORE_BASE64").split())
+          store_pass = clean("CI_DEBUG_KEYSTORE_PASSWORD")
+          key_alias = clean("CI_DEBUG_KEY_ALIAS")
+          key_pass = clean("CI_DEBUG_KEY_PASSWORD")
+          if not b64 or not store_pass or not key_alias or not key_pass:
+              raise SystemExit("ERROR: Missing persistent CI debug signing secrets in GitHub Actions.")
+
+          print(f"::add-mask::{store_pass}")
+          print(f"::add-mask::{key_pass}")
+          pathlib.Path(sys.argv[1]).write_bytes(base64.b64decode(b64))
+          with open(os.environ["GITHUB_ENV"], "a", encoding="utf-8") as env_file:
+              env_file.write(f"CI_DEBUG_KEYSTORE_PASSWORD={store_pass}\n")
+              env_file.write(f"CI_DEBUG_KEY_ALIAS={key_alias}\n")
+              env_file.write(f"CI_DEBUG_KEY_PASSWORD={key_pass}\n")
+          PY
+          cat > "${NORM_JAVA}" <<'JAVA'
+          import java.io.*;
+          import java.nio.file.*;
+          import java.security.*;
+          import java.security.cert.Certificate;
+          public class NormalizeKeystore {
+              public static void main(String[] args) throws Exception {
+                  char[] storePass = args[2].toCharArray();
+                  String targetAlias = args[3];
+                  char[] keyPass = args[4].toCharArray();
+                  KeyStore src = KeyStore.getInstance("PKCS12");
+                  try (InputStream in = Files.newInputStream(Path.of(args[0]))) {
+                      src.load(in, storePass);
+                  }
+                  if (!src.aliases().hasMoreElements()) {
+                      throw new IllegalStateException("No aliases in source PKCS12 keystore");
+                  }
+                  String srcAlias = src.aliases().nextElement();
+                  Key key;
+                  try {
+                      key = src.getKey(srcAlias, storePass);
+                  } catch (Exception e) {
+                      key = src.getKey(srcAlias, new char[0]);
+                  }
+                  Certificate[] chain = src.getCertificateChain(srcAlias);
+                  KeyStore dst = KeyStore.getInstance("PKCS12");
+                  dst.load(null, storePass);
+                  dst.setKeyEntry(targetAlias, key, keyPass, chain);
+                  try (OutputStream out = Files.newOutputStream(Path.of(args[1]))) {
+                      dst.store(out, storePass);
+                  }
+              }
+          }
+          JAVA
+          CLEAN_STORE_PASS="$(python3 -c 'import os; print(os.environ["CI_DEBUG_KEYSTORE_PASSWORD"].lstrip("\ufeff").strip())')"
+          CLEAN_KEY_ALIAS="$(python3 -c 'import os; print(os.environ["CI_DEBUG_KEY_ALIAS"].lstrip("\ufeff").strip())')"
+          CLEAN_KEY_PASS="$(python3 -c 'import os; print(os.environ["CI_DEBUG_KEY_PASSWORD"].lstrip("\ufeff").strip())')"
           rm -f "${DEST_KEYSTORE}"
-          keytool -importkeystore \
-            -srckeystore "${RAW_P12}" \
-            -srcstoretype PKCS12 \
-            -srcstorepass "${CLEAN_STORE_PASS}" \
-            -srcalias "${SRC_ALIAS}" \
-            -destkeystore "${DEST_KEYSTORE}" \
-            -deststoretype PKCS12 \
-            -deststorepass "${CLEAN_STORE_PASS}" \
-            -destkeypass "${CLEAN_KEY_PASS}" \
-            -destalias "${CLEAN_KEY_ALIAS}" \
-            -noprompt
-          rm -f "${RAW_P12}"
+          java "${NORM_JAVA}" "${RAW_P12}" "${DEST_KEYSTORE}" "${CLEAN_STORE_PASS}" "${CLEAN_KEY_ALIAS}" "${CLEAN_KEY_PASS}"
+          rm -f "${RAW_P12}" "${NORM_JAVA}"
           chmod 600 "${DEST_KEYSTORE}"
           KEYSTORE_CERT_SHA256="$(keytool -list -v -keystore "${DEST_KEYSTORE}" -storetype PKCS12 -storepass "${CLEAN_STORE_PASS}" -alias "${CLEAN_KEY_ALIAS}" | awk '/SHA256:/ {print $2; exit}')"
           echo "KEYSTORE_CERT_SHA256=${KEYSTORE_CERT_SHA256}"
           {
             echo "CI_DEBUG_KEYSTORE_PATH=${DEST_KEYSTORE}"
-            echo "CI_DEBUG_KEYSTORE_PASSWORD=${CLEAN_STORE_PASS}"
-            echo "CI_DEBUG_KEY_ALIAS=${CLEAN_KEY_ALIAS}"
-            echo "CI_DEBUG_KEY_PASSWORD=${CLEAN_KEY_PASS}"
             echo "EXPECTED_CERT_SHA256=${KEYSTORE_CERT_SHA256}"
           } >> "$GITHUB_ENV"
 
@@ -255,37 +284,66 @@ jobs:
           CI_DEBUG_KEY_ALIAS: ${{ secrets.CI_DEBUG_KEY_ALIAS }}
           CI_DEBUG_KEY_PASSWORD: ${{ secrets.CI_DEBUG_KEY_PASSWORD }}
         run: |
-          CLEAN_B64="$(printf '%s' "${CI_DEBUG_KEYSTORE_BASE64}" | tr -d ' \t\r\n')"
-          CLEAN_STORE_PASS="$(printf '%s' "${CI_DEBUG_KEYSTORE_PASSWORD}" | tr -d '\r\n')"
-          CLEAN_KEY_ALIAS="$(printf '%s' "${CI_DEBUG_KEY_ALIAS}" | tr -d '\r\n')"
-          CLEAN_KEY_PASS="$(printf '%s' "${CI_DEBUG_KEY_PASSWORD}" | tr -d '\r\n')"
-          echo "::add-mask::${CLEAN_STORE_PASS}"
-          echo "::add-mask::${CLEAN_KEY_PASS}"
           RAW_P12="${RUNNER_TEMP}/ci-debug-raw.p12"
           DEST_KEYSTORE="${RUNNER_TEMP}/ci-debug-signing.p12"
-          printf '%s' "${CLEAN_B64}" | base64 --decode > "${RAW_P12}"
-          chmod 600 "${RAW_P12}"
-          SRC_ALIAS="$(keytool -list -v -keystore "${RAW_P12}" -storetype PKCS12 -storepass "${CLEAN_STORE_PASS}" | sed -n 's/^Alias name: //p' | head -n 1 | tr -d '\r')"
+          NORM_JAVA="${RUNNER_TEMP}/NormalizeKeystore.java"
+          python3 - "$RAW_P12" <<'PY'
+          import base64, os, pathlib, sys
+
+          def clean(name: str) -> str:
+              return os.environ.get(name, "").lstrip("\ufeff").strip()
+
+          b64 = "".join(clean("CI_DEBUG_KEYSTORE_BASE64").split())
+          store_pass = clean("CI_DEBUG_KEYSTORE_PASSWORD")
+          key_alias = clean("CI_DEBUG_KEY_ALIAS")
+          key_pass = clean("CI_DEBUG_KEY_PASSWORD")
+          print(f"::add-mask::{store_pass}")
+          print(f"::add-mask::{key_pass}")
+          pathlib.Path(sys.argv[1]).write_bytes(base64.b64decode(b64))
+          with open(os.environ["GITHUB_ENV"], "a", encoding="utf-8") as env_file:
+              env_file.write(f"CI_DEBUG_KEYSTORE_PASSWORD={store_pass}\n")
+              env_file.write(f"CI_DEBUG_KEY_ALIAS={key_alias}\n")
+              env_file.write(f"CI_DEBUG_KEY_PASSWORD={key_pass}\n")
+          PY
+          cat > "${NORM_JAVA}" <<'JAVA'
+          import java.io.*;
+          import java.nio.file.*;
+          import java.security.*;
+          import java.security.cert.Certificate;
+          public class NormalizeKeystore {
+              public static void main(String[] args) throws Exception {
+                  char[] storePass = args[2].toCharArray();
+                  String targetAlias = args[3];
+                  char[] keyPass = args[4].toCharArray();
+                  KeyStore src = KeyStore.getInstance("PKCS12");
+                  try (InputStream in = Files.newInputStream(Path.of(args[0]))) {
+                      src.load(in, storePass);
+                  }
+                  String srcAlias = src.aliases().nextElement();
+                  Key key;
+                  try {
+                      key = src.getKey(srcAlias, storePass);
+                  } catch (Exception e) {
+                      key = src.getKey(srcAlias, new char[0]);
+                  }
+                  Certificate[] chain = src.getCertificateChain(srcAlias);
+                  KeyStore dst = KeyStore.getInstance("PKCS12");
+                  dst.load(null, storePass);
+                  dst.setKeyEntry(targetAlias, key, keyPass, chain);
+                  try (OutputStream out = Files.newOutputStream(Path.of(args[1]))) {
+                      dst.store(out, storePass);
+                  }
+              }
+          }
+          JAVA
+          CLEAN_STORE_PASS="$(python3 -c 'import os; print(os.environ["CI_DEBUG_KEYSTORE_PASSWORD"].lstrip("\ufeff").strip())')"
+          CLEAN_KEY_ALIAS="$(python3 -c 'import os; print(os.environ["CI_DEBUG_KEY_ALIAS"].lstrip("\ufeff").strip())')"
+          CLEAN_KEY_PASS="$(python3 -c 'import os; print(os.environ["CI_DEBUG_KEY_PASSWORD"].lstrip("\ufeff").strip())')"
           rm -f "${DEST_KEYSTORE}"
-          keytool -importkeystore \
-            -srckeystore "${RAW_P12}" \
-            -srcstoretype PKCS12 \
-            -srcstorepass "${CLEAN_STORE_PASS}" \
-            -srcalias "${SRC_ALIAS}" \
-            -destkeystore "${DEST_KEYSTORE}" \
-            -deststoretype PKCS12 \
-            -deststorepass "${CLEAN_STORE_PASS}" \
-            -destkeypass "${CLEAN_KEY_PASS}" \
-            -destalias "${CLEAN_KEY_ALIAS}" \
-            -noprompt
-          rm -f "${RAW_P12}"
+          java "${NORM_JAVA}" "${RAW_P12}" "${DEST_KEYSTORE}" "${CLEAN_STORE_PASS}" "${CLEAN_KEY_ALIAS}" "${CLEAN_KEY_PASS}"
+          rm -f "${RAW_P12}" "${NORM_JAVA}"
           chmod 600 "${DEST_KEYSTORE}"
-          {
-            echo "CI_DEBUG_KEYSTORE_PATH=${DEST_KEYSTORE}"
-            echo "CI_DEBUG_KEYSTORE_PASSWORD=${CLEAN_STORE_PASS}"
-            echo "CI_DEBUG_KEY_ALIAS=${CLEAN_KEY_ALIAS}"
-            echo "CI_DEBUG_KEY_PASSWORD=${CLEAN_KEY_PASS}"
-          } >> "$GITHUB_ENV"
+          echo "CI_DEBUG_KEYSTORE_PATH=${DEST_KEYSTORE}" >> "$GITHUB_ENV"
 
       - name: Build 2nd F-Droid debug APK (versionCode=138) on 2nd runner
         run: bash ./gradlew --no-daemon --stacktrace :app:assembleFdroidDebug -PciVersionCode=138
