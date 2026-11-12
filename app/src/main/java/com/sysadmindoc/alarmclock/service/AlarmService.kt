@@ -22,11 +22,13 @@ import android.telephony.TelephonyCallback
 import android.telephony.TelephonyManager
 import android.util.Log
 import androidx.annotation.OptIn as AndroidXOptIn
+import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
 import androidx.core.app.NotificationCompat
 import androidx.work.*
 import com.sysadmindoc.alarmclock.data.local.entity.AlarmIncidentEvent
@@ -115,7 +117,6 @@ class AlarmService : Service() {
         // Grace period for a Media3 player to actually start before we assume it
         // stalled and fall back to the default tone.
         private const val PLAYBACK_START_TIMEOUT_MS = 8_000L
-        private const val MAX_MUSIC_TRACK_SKIPS = 5
         private const val TAG = "AlarmService"
 
         data class ActiveAlarmSnapshot(
@@ -986,14 +987,11 @@ class AlarmService : Service() {
                         volumeJob = null
                         failedMusicUris.add(track.uri)
                         playbackRef?.let(::releasePlaybackIfCurrent)
-                        if (failedMusicUris.size >= MAX_MUSIC_TRACK_SKIPS) {
-                            startMusicDefaultFallback(alarm)
-                        } else {
-                            startRandomMusicTrack(alarm, generation)
-                        }
+                        startRandomMusicTrack(alarm, generation)
                     }
                     Log.w(TAG, "Skipping unavailable alarm music track", error)
-                }
+                },
+                disableVideoTracks = true
             )
             playbackRef = playback
             if (!isMusicSessionActive(alarm, generation)) {
@@ -1001,7 +999,18 @@ class AlarmService : Service() {
                 return
             }
             alarmPlayback = playback
-            armMedia3PlaybackWatchdog(alarm, playback, playbackStarted)
+            armMedia3PlaybackWatchdog(
+                alarm = alarm,
+                playback = playback,
+                playbackStarted = playbackStarted,
+                onStartTimeout = {
+                    if (isMusicSessionActive(alarm, generation)) {
+                        failedMusicUris.add(track.uri)
+                        Log.w(TAG, "Skipping alarm music track that did not start: ${track.uri}")
+                        startRandomMusicTrack(alarm, generation)
+                    }
+                }
+            )
             if (fadeInMs > 0) {
                 volumeJob = serviceScope.launch {
                     val steps = 50
@@ -1020,11 +1029,7 @@ class AlarmService : Service() {
             Log.w(TAG, "Unable to start selected alarm music track", error)
             failedMusicUris.add(track.uri)
             if (isMusicSessionActive(alarm, generation)) {
-                if (failedMusicUris.size >= MAX_MUSIC_TRACK_SKIPS) {
-                    startMusicDefaultFallback(alarm)
-                } else {
-                    startRandomMusicTrack(alarm, generation)
-                }
+                startRandomMusicTrack(alarm, generation)
             }
         }
     }
@@ -1305,7 +1310,8 @@ class AlarmService : Service() {
     private fun armMedia3PlaybackWatchdog(
         alarm: Alarm,
         playback: AlarmPlaybackPlayer,
-        playbackStarted: AtomicBoolean
+        playbackStarted: AtomicBoolean,
+        onStartTimeout: (() -> Unit)? = null
     ) {
         cancelPlaybackWatchdog()
         playbackWatchdogJob = serviceScope.launch {
@@ -1318,7 +1324,11 @@ class AlarmService : Service() {
                     source = "AlarmService"
                 )
                 releasePlaybackIfCurrent(playback)
-                escalateMedia3PlaybackFailure(alarm)
+                if (onStartTimeout == null) {
+                    escalateMedia3PlaybackFailure(alarm)
+                } else {
+                    onStartTimeout()
+                }
             }
         }
     }
@@ -1432,46 +1442,54 @@ class AlarmService : Service() {
         onReady: () -> Unit,
         onStarted: () -> Unit = {},
         onEnded: () -> Unit,
-        onError: (PlaybackException) -> Unit
+        onError: (PlaybackException) -> Unit,
+        disableVideoTracks: Boolean = false
     ): AlarmPlaybackPlayer {
         return callOnPlaybackMainThread {
             var readyReported = false
-            val player = ExoPlayer.Builder(this)
+            val playerBuilder = ExoPlayer.Builder(this)
                 .setLooper(Looper.getMainLooper())
-                .build()
-                .apply {
-                    setAudioAttributes(audioAttributes, false)
-                    setMediaItem(mediaItem)
-                    this.repeatMode = repeatMode
-                    volume = initialVolume.coerceIn(0f, 1f)
-                    addListener(object : Player.Listener {
-                        override fun onIsPlayingChanged(isPlaying: Boolean) {
-                            if (isPlaying) onStarted()
-                        }
+            if (disableVideoTracks) {
+                playerBuilder.setTrackSelector(
+                    DefaultTrackSelector(this).apply {
+                        parameters = buildUponParameters()
+                            .setTrackTypeDisabled(C.TRACK_TYPE_VIDEO, true)
+                            .build()
+                    }
+                )
+            }
+            val player = playerBuilder.build().apply {
+                setAudioAttributes(audioAttributes, false)
+                setMediaItem(mediaItem)
+                this.repeatMode = repeatMode
+                volume = initialVolume.coerceIn(0f, 1f)
+                addListener(object : Player.Listener {
+                    override fun onIsPlayingChanged(isPlaying: Boolean) {
+                        if (isPlaying) onStarted()
+                    }
 
-                        override fun onPlaybackStateChanged(playbackState: Int) {
-                            when (playbackState) {
-                                Player.STATE_READY -> {
-                                    if (!readyReported) {
-                                        readyReported = true
-                                        onReady()
-                                    }
+                    override fun onPlaybackStateChanged(playbackState: Int) {
+                        when (playbackState) {
+                            Player.STATE_READY -> {
+                                if (!readyReported) {
+                                    readyReported = true
+                                    onReady()
                                 }
-                                Player.STATE_ENDED -> onEnded()
-                                // Buffering and idle are transitions, not
-                                // outcomes. The playback watchdog is what
-                                // catches a ring that never leaves either.
-                                Player.STATE_BUFFERING, Player.STATE_IDLE -> Unit
                             }
+                            Player.STATE_ENDED -> onEnded()
+                            // Buffering and idle are transitions, not outcomes.
+                            // The playback watchdog catches a player that stays there.
+                            Player.STATE_BUFFERING, Player.STATE_IDLE -> Unit
                         }
+                    }
 
-                        override fun onPlayerError(error: PlaybackException) {
-                            onError(error)
-                        }
-                    })
-                    prepare()
-                    playWhenReady = true
-                }
+                    override fun onPlayerError(error: PlaybackException) {
+                        onError(error)
+                    }
+                })
+                prepare()
+                playWhenReady = true
+            }
             forcedSpeakerDevice()?.let { runCatching { player.setPreferredAudioDevice(it) } }
             Media3AlarmPlaybackPlayer(player)
         }

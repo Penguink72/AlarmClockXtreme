@@ -23,6 +23,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import java.util.UUID
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [30])
@@ -386,21 +387,20 @@ class MusicLibraryDatabaseTest {
     }
 
     @Test
-    fun exportedSchema26MatchesEntitiesAndRoomRuntimeIdentityHash() {
-        val schema26 = readSchemaJson(26).getJSONObject("database")
-        assertEquals(26, schema26.getInt("version"))
-        val expectedHash = "abe054d5b6249289dbd8203ce72c4e2c"
-        assertEquals(expectedHash, schema26.getString("identityHash"))
+    fun exportedSchema27MatchesEntitiesAndRoomRuntimeIdentityHash() {
+        val schema27 = readSchemaJson(27).getJSONObject("database")
+        assertEquals(27, schema27.getInt("version"))
+        val expectedHash = schema27.getString("identityHash")
 
-        val setupQueries = schema26.getJSONArray("setupQueries").toStringList()
+        val setupQueries = schema27.getJSONArray("setupQueries").toStringList()
         assertTrue(
             setupQueries.contains(
                 "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '$expectedHash')"
             )
         )
 
-        val entities = schema26.getJSONArray("entities").toObjectMap("tableName")
-        assertEquals(8, entities.size)
+        val entities = schema27.getJSONArray("entities").toObjectMap("tableName")
+        assertEquals(9, entities.size)
 
         val musicTracks = requireNotNull(entities["music_tracks"])
         assertEquals(
@@ -417,6 +417,21 @@ class MusicLibraryDatabaseTest {
         val musicTracksPk = musicTracks.getJSONObject("primaryKey")
         assertFalse(musicTracksPk.getBoolean("autoGenerate"))
         assertEquals(listOf("uri"), musicTracksPk.getJSONArray("columnNames").toStringList())
+        val poolMembers = requireNotNull(entities["music_pool_members"])
+        val poolFields = poolMembers.getJSONArray("fields")
+        assertEquals(3, poolFields.length())
+        assertField(poolFields.getJSONObject(0), "uri", "uri", "TEXT", true)
+        assertField(poolFields.getJSONObject(1), "state", "state", "TEXT", true)
+        assertField(poolFields.getJSONObject(2), "updatedAt", "updatedAt", "INTEGER", true)
+        assertEquals(
+            "CREATE TABLE IF NOT EXISTS `\${TABLE_NAME}` (`uri` TEXT NOT NULL, `state` TEXT NOT NULL, `updatedAt` INTEGER NOT NULL, PRIMARY KEY(`uri`))",
+            poolMembers.getString("createSql")
+        )
+        assertTrue(
+            poolMembers.getJSONArray("indices")
+                .toObjectMap("name")
+                .containsKey("index_music_pool_members_state")
+        )
 
         val context: Context = ApplicationProvider.getApplicationContext<Application>()
         val database = Room.inMemoryDatabaseBuilder(context, AlarmDatabase::class.java)
@@ -434,9 +449,9 @@ class MusicLibraryDatabaseTest {
     }
 
     @Test
-    fun migrationFromExportedSchema24To25To26PreservesAlarmsTracksAndHistoryAndMatchesSchema26() {
+    fun migrationFromExportedSchema24To27PreservesAlarmsTracksAndHistoryAndMatchesSchema27() {
         val schema24 = readSchemaJson(24).getJSONObject("database")
-        val schema26 = readSchemaJson(26).getJSONObject("database")
+        val schema27 = readSchemaJson(27).getJSONObject("database")
         val context = ApplicationProvider.getApplicationContext<Application>()
 
         val helper = FrameworkSQLiteOpenHelperFactory().create(
@@ -512,6 +527,8 @@ class MusicLibraryDatabaseTest {
 
             // Step 2: 25 -> 26
             AlarmDatabase.MIGRATION_25_26.migrate(db)
+            // Step 3: 26 -> 27
+            AlarmDatabase.MIGRATION_26_27.migrate(db)
 
             db.query("SELECT id, hour, minute, label, isEnabled, randomMusicEnabled FROM alarms WHERE id = 42").use { cursor ->
                 assertTrue(cursor.moveToFirst())
@@ -547,9 +564,27 @@ class MusicLibraryDatabaseTest {
                 assertEquals("content://music/1", cursor.getString(4))
             }
 
-            val entities26 = schema26.getJSONArray("entities")
-            for (i in 0 until entities26.length()) {
-                val entity = entities26.getJSONObject(i)
+            db.query(
+                "SELECT uri, state FROM music_pool_members ORDER BY uri"
+            ).use { cursor ->
+                assertTrue(cursor.moveToFirst())
+                assertEquals("content://music/1", cursor.getString(0))
+                assertEquals(MusicPoolEntry.INCLUDED, cursor.getString(1))
+                assertTrue(cursor.moveToNext())
+                assertEquals("content://music/2", cursor.getString(0))
+                assertEquals(MusicPoolEntry.INCLUDED, cursor.getString(1))
+                assertFalse(cursor.moveToNext())
+            }
+            db.query("PRAGMA index_list(`music_pool_members`)").use { cursor ->
+                val indexColumn = cursor.getColumnIndexOrThrow("name")
+                val indexNames = mutableSetOf<String>()
+                while (cursor.moveToNext()) indexNames += cursor.getString(indexColumn)
+                assertTrue("index_music_pool_members_state" in indexNames)
+            }
+
+            val entities27 = schema27.getJSONArray("entities")
+            for (i in 0 until entities27.length()) {
+                val entity = entities27.getJSONObject(i)
                 val tableName = entity.getString("tableName")
                 val expectedColumns = entity.getJSONArray("fields")
                 val actualColumns = mutableMapOf<String, Triple<String, Boolean, Int>>()
@@ -592,6 +627,7 @@ class MusicLibraryDatabaseTest {
                 metadataTitle = "晴天"
             )
             repository.replaceTracks(listOf(original))
+            repository.setPoolMembership(listOf(original.uri), included = true)
             repository.recordStarted("fire-1", 1_234L, original)
 
             repository.replaceTracks(
@@ -626,11 +662,34 @@ class MusicLibraryDatabaseTest {
                 )
             }
             repository.replaceTracks(tracks)
+            repository.setPoolMembership(tracks.map { it.uri }, included = true)
 
             assertEquals(3_001, repository.count())
+            assertEquals(3_001, repository.includedPoolCount())
             val picked = repository.pickRandomTrack()
             assertNotNull(picked)
             assertTrue(tracks.any { it.uri == picked!!.uri })
+
+            val excludedUris = tracks.take(12).map { it.uri }
+            repository.setPoolMembership(excludedUris, included = false)
+            repository.replaceTracks(tracks.map { it.copy(title = "${it.title} refreshed") })
+
+            assertEquals(2_989, repository.includedPoolCount())
+            assertTrue(
+                repository.poolCandidates()
+                    .filter { it.track.uri in excludedUris }
+                    .all { it.membershipState == MusicPoolEntry.EXCLUDED }
+            )
+            val afterExclusion = repository.pickRandomTrack(excludedUris)
+            assertNotNull(afterExclusion)
+            assertFalse(afterExclusion!!.uri in excludedUris)
+            val manyFailedUris = tracks.take(1_200).map { it.uri }
+            val afterManyFailures = repository.pickRandomTrack(manyFailedUris)
+            assertNotNull(afterManyFailures)
+            assertFalse(afterManyFailures!!.uri in manyFailedUris)
+
+            repository.setPoolMembership(listOf(excludedUris.first()), included = true)
+            assertEquals(2_990, repository.includedPoolCount())
 
             // Verify A -> A duplicate playback is recorded as distinct playOrder entries
             repository.recordStarted("fire-a", 1_000L, tracks[0])
@@ -642,6 +701,92 @@ class MusicLibraryDatabaseTest {
             assertEquals(listOf("Track 0", "Track 0", "Track 1"), history.map { it.title })
         } finally {
             database.close()
+        }
+    }
+
+    @Test
+    fun newlyIndexedCandidatesAreNotRandomlyPlayableUntilExplicitlyAdded() = runBlocking {
+        val context = ApplicationProvider.getApplicationContext<Application>()
+        val database = Room.inMemoryDatabaseBuilder(context, AlarmDatabase::class.java)
+            .allowMainThreadQueries()
+            .build()
+        try {
+            val repository = MusicLibraryRepository(
+                database.musicLibraryDao(),
+                database.playbackHistoryDao()
+            )
+            val videoCandidate = MusicTrack(
+                uri = "content://music/candidate-video.mp4",
+                title = "A video audio track",
+                source = "SAF_VIDEO",
+                fileName = "A video.mp4"
+            )
+            val audioCandidate = MusicTrack(
+                uri = "content://music/candidate-audio.mp3",
+                title = "An audio track",
+                source = "SAF",
+                fileName = "A song.mp3"
+            )
+            repository.replaceTracks(listOf(audioCandidate, videoCandidate))
+
+            assertEquals(null, repository.pickRandomTrack())
+            assertEquals(null, repository.pickRandomTrack(listOf("content://other/failed")))
+            assertTrue(repository.poolCandidates().all { it.membershipState == null })
+
+            repository.setPoolMembership(
+                listOf(audioCandidate.uri, videoCandidate.uri),
+                included = true
+            )
+
+            val selected = repository.pickRandomTrack()
+            assertNotNull(selected)
+            assertTrue(selected!!.uri in setOf(audioCandidate.uri, videoCandidate.uri))
+        } finally {
+            database.close()
+        }
+    }
+
+    @Test
+    fun excludedMembershipSurvivesDatabaseReopenAndTrackIndexRefresh() = runBlocking {
+        val context = ApplicationProvider.getApplicationContext<Application>()
+        val databaseName = "music-pool-${UUID.randomUUID()}.db"
+        val track = MusicTrack(
+            uri = "content://music/excluded",
+            title = "Excluded track",
+            source = "SAF",
+            fileName = "Excluded track.mp3"
+        )
+        try {
+            Room.databaseBuilder(context, AlarmDatabase::class.java, databaseName)
+                .build()
+                .use { database ->
+                    val repository = MusicLibraryRepository(
+                        database.musicLibraryDao(),
+                        database.playbackHistoryDao()
+                    )
+                    repository.replaceTracks(listOf(track))
+                    repository.setPoolMembership(listOf(track.uri), included = false)
+                }
+
+            Room.databaseBuilder(context, AlarmDatabase::class.java, databaseName)
+                .allowMainThreadQueries()
+                .build()
+                .use { reopened ->
+                    val repository = MusicLibraryRepository(
+                        reopened.musicLibraryDao(),
+                        reopened.playbackHistoryDao()
+                    )
+                    repository.replaceTracks(listOf(track.copy(title = "Refreshed title")))
+
+                    assertEquals(0, repository.includedPoolCount())
+                    assertEquals(
+                        MusicPoolEntry.EXCLUDED,
+                        repository.poolCandidates().single().membershipState
+                    )
+                    assertEquals(null, repository.pickRandomTrack())
+                }
+        } finally {
+            context.deleteDatabase(databaseName)
         }
     }
 

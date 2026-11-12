@@ -42,6 +42,7 @@ fun MusicLibraryDialog(
     val context = LocalContext.current
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     var showSources by remember { mutableStateOf(false) }
+    var showPool by remember { mutableStateOf(false) }
     val permission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         Manifest.permission.READ_MEDIA_AUDIO
     } else {
@@ -77,6 +78,12 @@ fun MusicLibraryDialog(
                             } else {
                                 permissionLauncher.launch(permission)
                             }
+                        }
+                        OutlinedButton(
+                            enabled = !state.scanning,
+                            onClick = { showPool = true }
+                        ) {
+                            Text(stringResource(R.string.music_library_pool_manage))
                         }
                     ) {
                         if (state.scanning) {
@@ -162,6 +169,12 @@ fun MusicLibraryDialog(
         MusicLibrarySourcesDialog(
             viewModel = viewModel,
             onDismiss = { showSources = false }
+        )
+    }
+    if (showPool) {
+        MusicPoolDialog(
+            viewModel = viewModel,
+            onDismiss = { showPool = false }
         )
     }
 }

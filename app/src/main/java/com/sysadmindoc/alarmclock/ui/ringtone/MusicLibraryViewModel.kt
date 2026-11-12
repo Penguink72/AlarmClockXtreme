@@ -5,8 +5,10 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sysadmindoc.alarmclock.R
+import com.sysadmindoc.alarmclock.data.local.MusicPoolTrack
 import com.sysadmindoc.alarmclock.data.local.entity.MusicTrack
 import com.sysadmindoc.alarmclock.data.local.entity.PlaybackHistoryEntry
+import com.sysadmindoc.alarmclock.data.local.entity.displayTitle
 import com.sysadmindoc.alarmclock.data.repository.MusicLibraryRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -19,6 +21,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.time.LocalDate
 import java.time.ZoneId
+import java.util.Locale
 import javax.inject.Inject
 
 data class MusicLibraryUiState(
@@ -34,7 +37,24 @@ data class MusicLibraryUiState(
     val folderPickerSourceId: String? = null,
     val folderCandidates: List<MusicFolderCandidate> = emptyList(),
     val selectedFolderIds: Set<String> = emptySet(),
-    val loadingSubfolders: Boolean = false
+    val loadingSubfolders: Boolean = false,
+    val poolTracks: List<MusicPoolUiTrack> = emptyList(),
+    val poolFilter: MusicPoolFilter = MusicPoolFilter.ALL_CANDIDATES,
+    val poolSearch: String = "",
+    val selectedPoolUris: Set<String> = emptySet(),
+    val loadingPool: Boolean = false
+)
+
+enum class MusicPoolFilter {
+    ALL_CANDIDATES,
+    INCLUDED,
+    EXCLUDED
+}
+
+data class MusicPoolUiTrack(
+    val track: MusicTrack,
+    val membershipState: String?,
+    val sourceName: String
 )
 
 @HiltViewModel
@@ -55,7 +75,7 @@ class MusicLibraryViewModel @Inject constructor(
     fun refreshCount() {
         viewModelScope.launch {
             try {
-                updateTrackCounts(repository.allTracks())
+                updatePoolCounts(repository.poolCandidates())
             } catch (error: CancellationException) {
                 throw error
             } catch (error: Exception) {
@@ -129,7 +149,7 @@ class MusicLibraryViewModel @Inject constructor(
                             "Music folder source no longer exists"
                         }
                     }
-                    updateTrackCounts(retainedTracks)
+                    updatePoolCounts(repository.poolCandidates())
                     _uiState.value = _uiState.value.copy(sources = remainingSources)
                     scan()
                 }
@@ -247,7 +267,7 @@ class MusicLibraryViewModel @Inject constructor(
                 withContext(Dispatchers.IO) {
                     MusicLibrarySourceStore.updateAll(context, result.sources)
                 }
-                updateTrackCounts(combined)
+                updatePoolCounts(repository.poolCandidates())
                 _uiState.value = _uiState.value.copy(
                     sources = result.sources,
                     status = buildString {
@@ -297,6 +317,7 @@ class MusicLibraryViewModel @Inject constructor(
                         }
                     }
                 )
+                updatePoolCounts(repository.poolCandidates())
             } catch (error: CancellationException) {
                 throw error
             } catch (error: Exception) {
@@ -315,12 +336,114 @@ class MusicLibraryViewModel @Inject constructor(
         }
     }
 
-    private fun updateTrackCounts(tracks: List<MusicTrack>) {
+    private fun updatePoolCounts(tracks: List<MusicPoolTrack>) {
+        val included = tracks.filter { it.membershipState == "INCLUDED" }
         _uiState.value = _uiState.value.copy(
-            count = tracks.size,
-            audioCount = tracks.count { it.source != MusicLibraryIndexer.SOURCE_SAF_VIDEO },
-            videoCount = tracks.count { it.source == MusicLibraryIndexer.SOURCE_SAF_VIDEO }
+            count = included.size,
+            audioCount = included.count { it.track.source != MusicLibraryIndexer.SOURCE_SAF_VIDEO },
+            videoCount = included.count { it.track.source == MusicLibraryIndexer.SOURCE_SAF_VIDEO }
         )
+    }
+
+    fun loadPoolCandidates() {
+        if (_uiState.value.loadingPool) return
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(loadingPool = true)
+            try {
+                val candidates = repository.poolCandidates()
+                val sources = withContext(Dispatchers.IO) {
+                    MusicLibrarySourceStore.getSources(context)
+                }
+                val sourceNames = buildMap {
+                    sources.forEach { source ->
+                        source.trackUris.forEach { uri -> putIfAbsent(uri, source.name) }
+                    }
+                }
+                val uiTracks = candidates.map { candidate ->
+                    MusicPoolUiTrack(
+                        track = candidate.track,
+                        membershipState = candidate.membershipState,
+                        sourceName = sourceNames[candidate.track.uri].orEmpty()
+                    )
+                }
+                updatePoolCounts(candidates)
+                _uiState.value = _uiState.value.copy(
+                    poolTracks = uiTracks,
+                    selectedPoolUris = emptySet()
+                )
+            } catch (error: CancellationException) {
+                throw error
+            } catch (error: Exception) {
+                reportStatus(
+                    context.getString(
+                        R.string.music_library_pool_read_failed,
+                        error.message.orEmpty()
+                    )
+                )
+            } finally {
+                _uiState.value = _uiState.value.copy(loadingPool = false)
+            }
+        }
+    }
+
+    fun setPoolFilter(filter: MusicPoolFilter) {
+        _uiState.value = _uiState.value.copy(poolFilter = filter, selectedPoolUris = emptySet())
+    }
+
+    fun setPoolSearch(query: String) {
+        _uiState.value = _uiState.value.copy(
+            poolSearch = query,
+            selectedPoolUris = emptySet()
+        )
+    }
+
+    fun togglePoolSelection(uri: String) {
+        val selected = _uiState.value.selectedPoolUris.toMutableSet()
+        if (!selected.add(uri)) selected.remove(uri)
+        _uiState.value = _uiState.value.copy(selectedPoolUris = selected)
+    }
+
+    fun selectVisiblePoolTracks(uris: List<String>) {
+        _uiState.value = _uiState.value.copy(selectedPoolUris = uris.toSet())
+    }
+
+    fun updateSelectedPoolMembership(included: Boolean) {
+        val selected = _uiState.value.selectedPoolUris
+        if (selected.isEmpty()) return
+        viewModelScope.launch {
+            try {
+                repository.setPoolMembership(selected, included)
+                loadPoolCandidates()
+            } catch (error: CancellationException) {
+                throw error
+            } catch (error: Exception) {
+                reportStatus(
+                    context.getString(
+                        R.string.music_library_pool_update_failed,
+                        error.message.orEmpty()
+                    )
+                )
+            }
+        }
+    }
+
+    fun visiblePoolTracks(): List<MusicPoolUiTrack> {
+        val state = _uiState.value
+        val query = state.poolSearch.trim().lowercase(Locale.ROOT)
+        return state.poolTracks.filter { item ->
+            val matchesFilter = when (state.poolFilter) {
+                MusicPoolFilter.ALL_CANDIDATES -> true
+                MusicPoolFilter.INCLUDED -> item.membershipState == "INCLUDED"
+                MusicPoolFilter.EXCLUDED -> item.membershipState == "EXCLUDED"
+            }
+            val searchable = listOf(
+                item.track.displayTitle,
+                item.track.fileName,
+                item.track.metadataTitle,
+                item.sourceName
+            ).joinToString(" ").lowercase(Locale.ROOT)
+            matchesFilter && (query.isBlank() || query in searchable)
+        }
     }
 
     fun loadHistory(date: LocalDate) {

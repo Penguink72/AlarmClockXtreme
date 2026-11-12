@@ -10,6 +10,7 @@ import com.sysadmindoc.alarmclock.data.local.entity.AlarmIncidentEvent
 import com.sysadmindoc.alarmclock.data.local.entity.AlarmEvent
 import com.sysadmindoc.alarmclock.data.local.entity.PreSleepTagEntry
 import com.sysadmindoc.alarmclock.data.local.entity.MusicTrack
+import com.sysadmindoc.alarmclock.data.local.entity.MusicPoolEntry
 import com.sysadmindoc.alarmclock.data.local.entity.PlaybackHistoryEntry
 import com.sysadmindoc.alarmclock.data.local.entity.SnoreEvent
 import com.sysadmindoc.alarmclock.data.model.Alarm
@@ -23,9 +24,10 @@ import com.sysadmindoc.alarmclock.data.model.Alarm
         SnoreEvent::class,
         PreSleepTagEntry::class,
         MusicTrack::class,
+        MusicPoolEntry::class,
         PlaybackHistoryEntry::class
     ],
-    version = 26,
+    version = 27,
     exportSchema = true
 )
 @TypeConverters(Converters::class)
@@ -417,6 +419,30 @@ abstract class AlarmDatabase : RoomDatabase() {
             }
         }
 
+        val MIGRATION_26_27 = object : Migration(26, 27) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    """
+                    CREATE TABLE IF NOT EXISTS music_pool_members (
+                        uri TEXT NOT NULL PRIMARY KEY,
+                        state TEXT NOT NULL,
+                        updatedAt INTEGER NOT NULL
+                    )
+                    """.trimIndent()
+                )
+                db.execSQL(
+                    "CREATE INDEX IF NOT EXISTS index_music_pool_members_state " +
+                        "ON music_pool_members (state)"
+                )
+                db.execSQL(
+                    """
+                    INSERT INTO music_pool_members (uri, state, updatedAt)
+                    SELECT uri, '${MusicPoolEntry.INCLUDED}', 0 FROM music_tracks
+                    """.trimIndent()
+                )
+            }
+        }
+
         val ALL_MIGRATIONS = arrayOf(
             MIGRATION_1_2,
             MIGRATION_2_3,
@@ -443,6 +469,7 @@ abstract class AlarmDatabase : RoomDatabase() {
             MIGRATION_23_24,
             MIGRATION_24_25,
             MIGRATION_25_26,
+            MIGRATION_26_27,
         )
     }
 }
