@@ -21,6 +21,13 @@ android {
         targetSdk = 36
         versionCode = 137
         versionName = "1.15.35"
+        providers.gradleProperty("ciVersionCode").orNull?.toIntOrNull()?.let { overrideVersionCode ->
+            val baseVersionCode = requireNotNull(versionCode)
+            check(overrideVersionCode >= baseVersionCode) {
+                "ciVersionCode ($overrideVersionCode) must be >= base versionCode ($baseVersionCode) to prevent downgrade errors."
+            }
+            this.versionCode = overrideVersionCode
+        }
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -36,6 +43,32 @@ android {
     //   keyAlias=...
     //   keyPassword=...
     signingConfigs {
+        getByName("debug") {
+            val debugKeystorePath = providers.gradleProperty("ciDebugKeystorePath").orNull
+                ?: System.getenv("CI_DEBUG_KEYSTORE_PATH")
+            val debugKeystorePassword = providers.gradleProperty("ciDebugKeystorePassword").orNull
+                ?: System.getenv("CI_DEBUG_KEYSTORE_PASSWORD")
+            val debugKeyAlias = providers.gradleProperty("ciDebugKeyAlias").orNull
+                ?: System.getenv("CI_DEBUG_KEY_ALIAS")
+            val debugKeyPassword = providers.gradleProperty("ciDebugKeyPassword").orNull
+                ?: System.getenv("CI_DEBUG_KEY_PASSWORD")
+            if (!debugKeystorePath.isNullOrBlank() &&
+                !debugKeystorePassword.isNullOrBlank() &&
+                !debugKeyAlias.isNullOrBlank() &&
+                !debugKeyPassword.isNullOrBlank()
+            ) {
+                val resolvedStoreFile = file(debugKeystorePath).let { candidate ->
+                    if (candidate.isAbsolute) candidate else rootProject.file(debugKeystorePath)
+                }
+                check(resolvedStoreFile.isFile) {
+                    "Configured CI debug keystore file does not exist: ${resolvedStoreFile.path}"
+                }
+                storeFile = resolvedStoreFile
+                storePassword = debugKeystorePassword
+                keyAlias = debugKeyAlias
+                keyPassword = debugKeyPassword
+            }
+        }
         create("release") {
             val keystorePropertiesFile = rootProject.file("keystore.properties")
             if (keystorePropertiesFile.exists()) {
@@ -65,6 +98,7 @@ android {
         debug {
             applicationIdSuffix = ".debug"
             isDebuggable = true
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
 
