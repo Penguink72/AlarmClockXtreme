@@ -21,6 +21,30 @@ class AppLanguageManagerTest {
     }
 
     @Test
+    fun traditionalChineseAndJapaneseTagsSelectTheirAppLanguages() {
+        assertEquals(
+            AppLanguageOption.TRADITIONAL_CHINESE,
+            AppLanguageManager.optionForLanguageTags("zh-TW")
+        )
+        assertEquals(
+            AppLanguageOption.TRADITIONAL_CHINESE,
+            AppLanguageManager.optionForLanguageTags("zh-Hant-TW")
+        )
+        assertEquals(
+            AppLanguageOption.JAPANESE,
+            AppLanguageManager.optionForLanguageTags("ja-JP")
+        )
+    }
+
+    @Test
+    fun unsupportedChineseRegionFallsBackToSystemDefault() {
+        assertEquals(
+            AppLanguageOption.SYSTEM_DEFAULT,
+            AppLanguageManager.optionForLanguageTags("zh-CN")
+        )
+    }
+
+    @Test
     fun unsupportedLanguageFallsBackToSystemDefault() {
         assertEquals(
             AppLanguageOption.SYSTEM_DEFAULT,

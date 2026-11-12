@@ -21,8 +21,19 @@ import javax.inject.Singleton
 
 data class MusicScanResult(
     val tracks: List<MusicTrack>,
-    val warnings: List<String>
+    val warnings: List<MusicScanWarning>
 )
+
+data class MusicScanWarning(
+    val kind: Kind,
+    val detail: String = ""
+) {
+    enum class Kind {
+        MEDIA_STORE_FAILED,
+        AUDIO_PERMISSION_DENIED,
+        FOLDER_FAILED
+    }
+}
 
 @Singleton
 class MusicLibraryIndexer @Inject constructor(
@@ -45,10 +56,13 @@ class MusicLibraryIndexer @Inject constructor(
             } catch (error: CancellationException) {
                 throw error
             } catch (error: Exception) {
-                warnings += "MediaStore: ${error.message ?: error.javaClass.simpleName}"
+                warnings += MusicScanWarning(
+                    MusicScanWarning.Kind.MEDIA_STORE_FAILED,
+                    error.message ?: error.javaClass.simpleName
+                )
             }
         } else {
-            warnings += "Audio library permission was not granted; scanning selected folders only."
+            warnings += MusicScanWarning(MusicScanWarning.Kind.AUDIO_PERMISSION_DENIED)
         }
 
         RingtoneFolderStore.folderUris(context).forEach { rawUri ->
@@ -58,7 +72,10 @@ class MusicLibraryIndexer @Inject constructor(
             } catch (error: CancellationException) {
                 throw error
             } catch (error: Exception) {
-                warnings += "A selected folder could not be read: ${error.message ?: error.javaClass.simpleName}"
+                warnings += MusicScanWarning(
+                    MusicScanWarning.Kind.FOLDER_FAILED,
+                    error.message ?: error.javaClass.simpleName
+                )
             }
         }
 
@@ -86,9 +103,18 @@ class MusicLibraryIndexer @Inject constructor(
                     contentUri,
                     cursor.getLong(idColumn)
                 )
-                val filename = cursor.getString(nameColumn).orEmpty().ifBlank { uri.lastPathSegment.orEmpty() }
-                val title = cursor.getString(titleColumn).orEmpty().ifBlank { filename }
-                output[uri.toString()] = MusicTrack(uri.toString(), title, SOURCE_MEDIA_STORE)
+                val fileName = cursor.getString(nameColumn).orEmpty().ifBlank {
+                    uri.lastPathSegment.orEmpty()
+                }
+                val metadataTitle = cursor.getString(titleColumn).orEmpty()
+                val displayTitle = MusicTrackTitleResolver.resolve(fileName, metadataTitle)
+                output[uri.toString()] = MusicTrack(
+                    uri = uri.toString(),
+                    title = displayTitle,
+                    source = SOURCE_MEDIA_STORE,
+                    fileName = fileName,
+                    metadataTitle = metadataTitle
+                )
             }
         } ?: error("MediaStore returned no query cursor")
     }
@@ -126,8 +152,10 @@ class MusicLibraryIndexer @Inject constructor(
                         val uri = DocumentsContract.buildDocumentUriUsingTree(treeUri, documentId)
                         output[uri.toString()] = MusicTrack(
                             uri = uri.toString(),
-                            title = name.ifBlank { uri.lastPathSegment.orEmpty() },
-                            source = SOURCE_SAF
+                            title = MusicTrackTitleResolver.resolve(name, ""),
+                            source = SOURCE_SAF,
+                            fileName = name.ifBlank { uri.lastPathSegment.orEmpty() },
+                            metadataTitle = ""
                         )
                     }
                 }

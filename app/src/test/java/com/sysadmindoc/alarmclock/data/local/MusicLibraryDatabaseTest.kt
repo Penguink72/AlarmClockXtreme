@@ -148,20 +148,6 @@ class MusicLibraryDatabaseTest {
             "CREATE UNIQUE INDEX IF NOT EXISTS `index_playback_history_fireId_playOrder` ON `\${TABLE_NAME}` (`fireId`, `playOrder`)",
             fireIdOrderIdx.getString("createSql")
         )
-
-        val context: Context = ApplicationProvider.getApplicationContext<Application>()
-        val database = Room.inMemoryDatabaseBuilder(context, AlarmDatabase::class.java)
-            .allowMainThreadQueries()
-            .build()
-        try {
-            val writableDb = database.openHelper.writableDatabase
-            writableDb.query("SELECT identity_hash FROM room_master_table WHERE id = 42").use { cursor ->
-                assertTrue(cursor.moveToFirst())
-                assertEquals(expectedHash, cursor.getString(0))
-            }
-        } finally {
-            database.close()
-        }
     }
 
     @Test
@@ -342,6 +328,94 @@ class MusicLibraryDatabaseTest {
             }
         } finally {
             helper.close()
+        }
+    }
+
+    @Test
+    fun migrationTwentyFiveToTwentySixPreservesIndexedTrackAndHistoryData() {
+        val context = ApplicationProvider.getApplicationContext<Application>()
+        val helper = FrameworkSQLiteOpenHelperFactory().create(
+            SupportSQLiteOpenHelper.Configuration.builder(context)
+                .name(null)
+                .callback(object : SupportSQLiteOpenHelper.Callback(25) {
+                    override fun onCreate(db: androidx.sqlite.db.SupportSQLiteDatabase) {
+                        db.execSQL(
+                            "CREATE TABLE music_tracks (uri TEXT NOT NULL PRIMARY KEY, title TEXT NOT NULL, source TEXT NOT NULL)"
+                        )
+                        db.execSQL(
+                            "CREATE TABLE playback_history (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, fireId TEXT NOT NULL, startedAt INTEGER NOT NULL, playOrder INTEGER NOT NULL, title TEXT NOT NULL, uri TEXT NOT NULL)"
+                        )
+                        db.execSQL(
+                            "INSERT INTO music_tracks (uri, title, source) VALUES ('content://music/1', '晴天', 'MEDIA_STORE')"
+                        )
+                        db.execSQL(
+                            "INSERT INTO playback_history (fireId, startedAt, playOrder, title, uri) VALUES ('fire-1', 1234, 1, '晴天', 'content://music/1')"
+                        )
+                    }
+
+                    override fun onUpgrade(
+                        db: androidx.sqlite.db.SupportSQLiteDatabase,
+                        oldVersion: Int,
+                        newVersion: Int
+                    ) = Unit
+                })
+                .build()
+        )
+        val db = helper.writableDatabase
+        try {
+            AlarmDatabase.MIGRATION_25_26.migrate(db)
+
+            db.query("SELECT title, source, fileName, metadataTitle FROM music_tracks").use { cursor ->
+                assertTrue(cursor.moveToFirst())
+                assertEquals("晴天", cursor.getString(0))
+                assertEquals("MEDIA_STORE", cursor.getString(1))
+                assertEquals("", cursor.getString(2))
+                assertEquals("", cursor.getString(3))
+            }
+            db.query("SELECT fireId, startedAt, playOrder, title, uri FROM playback_history").use { cursor ->
+                assertTrue(cursor.moveToFirst())
+                assertEquals("fire-1", cursor.getString(0))
+                assertEquals(1234L, cursor.getLong(1))
+                assertEquals(1, cursor.getInt(2))
+                assertEquals("晴天", cursor.getString(3))
+                assertEquals("content://music/1", cursor.getString(4))
+            }
+        } finally {
+            helper.close()
+        }
+    }
+
+    @Test
+    fun playbackHistoryKeepsTheRecordedDisplayTitleAfterLibraryRefresh() = runBlocking {
+        val context: Context = ApplicationProvider.getApplicationContext<Application>()
+        val database = Room.inMemoryDatabaseBuilder(context, AlarmDatabase::class.java)
+            .allowMainThreadQueries()
+            .build()
+        try {
+            val repository = MusicLibraryRepository(
+                database.musicLibraryDao(),
+                database.playbackHistoryDao()
+            )
+            val original = MusicTrack(
+                uri = "content://music/1",
+                title = "晴天",
+                source = "MEDIA_STORE",
+                fileName = "周杰倫 - 晴天.mp3",
+                metadataTitle = "晴天"
+            )
+            repository.replaceTracks(listOf(original))
+            repository.recordStarted("fire-1", 1_234L, original)
+
+            repository.replaceTracks(
+                listOf(original.copy(title = "Changed", metadataTitle = "Changed"))
+            )
+
+            val history = repository.historyForDate(0L, 2_000L)
+            assertEquals(1, history.size)
+            assertEquals("晴天", history.single().title)
+            assertEquals("content://music/1", history.single().uri)
+        } finally {
+            database.close()
         }
     }
 

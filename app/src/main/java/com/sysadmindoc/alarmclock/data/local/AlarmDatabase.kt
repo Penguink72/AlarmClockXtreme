@@ -25,7 +25,7 @@ import com.sysadmindoc.alarmclock.data.model.Alarm
         MusicTrack::class,
         PlaybackHistoryEntry::class
     ],
-    version = 25,
+    version = 26,
     exportSchema = true
 )
 @TypeConverters(Converters::class)
@@ -406,6 +406,17 @@ abstract class AlarmDatabase : RoomDatabase() {
             }
         }
 
+        val MIGRATION_25_26 = object : Migration(25, 26) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    "ALTER TABLE music_tracks ADD COLUMN fileName TEXT NOT NULL DEFAULT ''"
+                )
+                db.execSQL(
+                    "ALTER TABLE music_tracks ADD COLUMN metadataTitle TEXT NOT NULL DEFAULT ''"
+                )
+            }
+        }
+
         val ALL_MIGRATIONS = arrayOf(
             MIGRATION_1_2,
             MIGRATION_2_3,
@@ -431,6 +442,7 @@ abstract class AlarmDatabase : RoomDatabase() {
             MIGRATION_22_23,
             MIGRATION_23_24,
             MIGRATION_24_25,
+            MIGRATION_25_26,
         )
     }
 }

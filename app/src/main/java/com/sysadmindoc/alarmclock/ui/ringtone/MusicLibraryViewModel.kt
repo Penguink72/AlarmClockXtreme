@@ -1,11 +1,14 @@
 package com.sysadmindoc.alarmclock.ui.ringtone
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.sysadmindoc.alarmclock.R
 import com.sysadmindoc.alarmclock.data.local.entity.MusicTrack
 import com.sysadmindoc.alarmclock.data.local.entity.PlaybackHistoryEntry
 import com.sysadmindoc.alarmclock.data.repository.MusicLibraryRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -26,7 +29,8 @@ data class MusicLibraryUiState(
 @HiltViewModel
 class MusicLibraryViewModel @Inject constructor(
     private val indexer: MusicLibraryIndexer,
-    private val repository: MusicLibraryRepository
+    private val repository: MusicLibraryRepository,
+    @ApplicationContext private val context: Context
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(MusicLibraryUiState())
     val uiState: StateFlow<MusicLibraryUiState> = _uiState.asStateFlow()
@@ -44,7 +48,10 @@ class MusicLibraryViewModel @Inject constructor(
                 throw error
             } catch (error: Exception) {
                 _uiState.value = _uiState.value.copy(
-                    status = "Could not read the music index: ${error.message.orEmpty()}"
+                    status = context.getString(
+                        R.string.music_library_index_read_failed,
+                        error.message.orEmpty()
+                    )
                 )
             }
         }
@@ -57,7 +64,10 @@ class MusicLibraryViewModel @Inject constructor(
     fun scan() {
         if (_uiState.value.scanning) return
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(scanning = true, status = "Scanning audio sources…")
+            _uiState.value = _uiState.value.copy(
+                scanning = true,
+                status = context.getString(R.string.music_library_scanning_status)
+            )
             try {
                 val result = indexer.scan()
                 val combined = if (result.warnings.isEmpty()) {
@@ -69,10 +79,30 @@ class MusicLibraryViewModel @Inject constructor(
                 _uiState.value = _uiState.value.copy(
                     count = repository.count(),
                     status = buildString {
-                        append("Found ${result.tracks.size} audio files.")
+                        append(
+                            context.getString(
+                                R.string.music_library_scan_found_count,
+                                result.tracks.size
+                            )
+                        )
                         if (result.warnings.isNotEmpty()) {
                             append(' ')
-                            append(result.warnings.joinToString(" "))
+                            append(result.warnings.joinToString(" ") { warning ->
+                                when (warning.kind) {
+                                    MusicScanWarning.Kind.MEDIA_STORE_FAILED ->
+                                        context.getString(
+                                            R.string.music_library_mediastore_failed,
+                                            warning.detail
+                                        )
+                                    MusicScanWarning.Kind.AUDIO_PERMISSION_DENIED ->
+                                        context.getString(R.string.music_library_permission_denied)
+                                    MusicScanWarning.Kind.FOLDER_FAILED ->
+                                        context.getString(
+                                            R.string.music_library_folder_failed,
+                                            warning.detail
+                                        )
+                                }
+                            })
                         }
                     }
                 )
@@ -80,7 +110,10 @@ class MusicLibraryViewModel @Inject constructor(
                 throw error
             } catch (error: Exception) {
                 _uiState.value = _uiState.value.copy(
-                    status = "Music scan failed: ${error.message ?: error.javaClass.simpleName}"
+                    status = context.getString(
+                        R.string.music_library_scan_failed,
+                        error.message ?: error.javaClass.simpleName
+                    )
                 )
             }
             _uiState.value = _uiState.value.copy(scanning = false)
@@ -101,7 +134,10 @@ class MusicLibraryViewModel @Inject constructor(
                 throw error
             } catch (error: Exception) {
                 _uiState.value = _uiState.value.copy(
-                    status = "Could not read playback history: ${error.message.orEmpty()}"
+                    status = context.getString(
+                        R.string.music_library_history_read_failed,
+                        error.message.orEmpty()
+                    )
                 )
             }
         }

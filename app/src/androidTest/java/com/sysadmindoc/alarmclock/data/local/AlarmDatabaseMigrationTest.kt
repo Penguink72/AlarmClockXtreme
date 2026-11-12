@@ -585,6 +585,6 @@ class AlarmDatabaseMigrationTest {
     )
 
     private companion object {
-        const val LATEST_SCHEMA_VERSION = 25
+        const val LATEST_SCHEMA_VERSION = 26
     }
 }

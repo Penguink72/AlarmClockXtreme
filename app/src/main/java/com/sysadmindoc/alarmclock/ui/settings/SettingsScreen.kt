@@ -831,6 +831,8 @@ fun SettingsScreen(
                         when (selectedLanguageOption) {
                             AppLanguageOption.SYSTEM_DEFAULT -> R.string.settings_language_system_default
                             AppLanguageOption.ENGLISH -> R.string.settings_language_english
+                            AppLanguageOption.TRADITIONAL_CHINESE -> R.string.settings_language_traditional_chinese
+                            AppLanguageOption.JAPANESE -> R.string.settings_language_japanese
                         }
                     ),
                     supportingText = stringResource(
@@ -1031,6 +1033,27 @@ fun SettingsScreen(
                         onSelect = {
                             selectedLanguageOption = AppLanguageOption.ENGLISH
                             AppLanguageManager.setOption(context, AppLanguageOption.ENGLISH)
+                            showLanguageDialog = false
+                        }
+                    )
+                    AppLanguageOptionRow(
+                        label = stringResource(R.string.settings_language_traditional_chinese),
+                        selected = selectedLanguageOption == AppLanguageOption.TRADITIONAL_CHINESE,
+                        onSelect = {
+                            selectedLanguageOption = AppLanguageOption.TRADITIONAL_CHINESE
+                            AppLanguageManager.setOption(
+                                context,
+                                AppLanguageOption.TRADITIONAL_CHINESE
+                            )
+                            showLanguageDialog = false
+                        }
+                    )
+                    AppLanguageOptionRow(
+                        label = stringResource(R.string.settings_language_japanese),
+                        selected = selectedLanguageOption == AppLanguageOption.JAPANESE,
+                        onSelect = {
+                            selectedLanguageOption = AppLanguageOption.JAPANESE
+                            AppLanguageManager.setOption(context, AppLanguageOption.JAPANESE)
                             showLanguageDialog = false
                         }
                     )

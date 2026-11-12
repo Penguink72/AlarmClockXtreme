@@ -29,7 +29,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import java.text.DateFormat
 import java.util.Date
 import com.sysadmindoc.alarmclock.R
 
@@ -62,7 +61,10 @@ fun MusicLibraryDialog(
                 viewModel.scan()
             }.onFailure { error ->
                 viewModel.reportStatus(
-                    "Could not keep access to that folder: ${error.message.orEmpty()}"
+                    context.getString(
+                        R.string.music_library_folder_access_failed,
+                        error.message.orEmpty()
+                    )
                 )
             }
         }
@@ -114,7 +116,13 @@ fun MusicLibraryDialog(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text(state.selectedDate.toString(), style = MaterialTheme.typography.titleSmall)
+                    Text(
+                        java.time.format.DateTimeFormatter
+                            .ofLocalizedDate(java.time.format.FormatStyle.MEDIUM)
+                            .withLocale(context.resources.configuration.locales[0])
+                            .format(state.selectedDate),
+                        style = MaterialTheme.typography.titleSmall
+                    )
                     TextButton(
                         onClick = {
                             val date = state.selectedDate
@@ -140,10 +148,17 @@ fun MusicLibraryDialog(
                         verticalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
                         items(state.history, key = { it.id }) { entry ->
-                            val time = DateFormat.getTimeInstance(DateFormat.SHORT).format(
+                            val time = android.text.format.DateFormat.getTimeFormat(context).format(
                                 Date(entry.startedAt)
                             )
-                            Text("${entry.playOrder}. $time — ${entry.title}")
+                            Text(
+                                stringResource(
+                                    R.string.music_library_history_row,
+                                    entry.playOrder,
+                                    time,
+                                    entry.title
+                                )
+                            )
                         }
                     }
                 }

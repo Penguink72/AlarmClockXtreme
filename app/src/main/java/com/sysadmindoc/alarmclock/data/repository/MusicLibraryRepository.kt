@@ -3,6 +3,7 @@ package com.sysadmindoc.alarmclock.data.repository
 import com.sysadmindoc.alarmclock.data.local.MusicLibraryDao
 import com.sysadmindoc.alarmclock.data.local.PlaybackHistoryDao
 import com.sysadmindoc.alarmclock.data.local.entity.MusicTrack
+import com.sysadmindoc.alarmclock.data.local.entity.displayTitle
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -24,7 +25,7 @@ class MusicLibraryRepository @Inject constructor(
         else musicLibraryDao.pickRandomExcluding(excludedUris)
 
     suspend fun recordStarted(fireId: String, startedAt: Long, track: MusicTrack) {
-        playbackHistoryDao.appendStarted(fireId, startedAt, track.title, track.uri)
+        playbackHistoryDao.appendStarted(fireId, startedAt, track.displayTitle, track.uri)
     }
 
     suspend fun historyForDate(fromMillis: Long, toMillis: Long) =
