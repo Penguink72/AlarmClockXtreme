@@ -966,14 +966,8 @@
       },
       {
         "tableName": "music_tracks",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `uri` TEXT NOT NULL, `title` TEXT NOT NULL, `sourceType` TEXT NOT NULL, `sourceRootUri` TEXT NOT NULL, `addedAt` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uri` TEXT NOT NULL, `title` TEXT NOT NULL, `source` TEXT NOT NULL, PRIMARY KEY(`uri`))",
         "fields": [
-          {
-            "fieldPath": "id",
-            "columnName": "id",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
           {
             "fieldPath": "uri",
             "columnName": "uri",
@@ -987,55 +981,24 @@
             "notNull": true
           },
           {
-            "fieldPath": "sourceType",
-            "columnName": "sourceType",
+            "fieldPath": "source",
+            "columnName": "source",
             "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "sourceRootUri",
-            "columnName": "sourceRootUri",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "addedAt",
-            "columnName": "addedAt",
-            "affinity": "INTEGER",
             "notNull": true
           }
         ],
         "primaryKey": {
-          "autoGenerate": true,
+          "autoGenerate": false,
           "columnNames": [
-            "id"
+            "uri"
           ]
         },
-        "indices": [
-          {
-            "name": "index_music_tracks_uri",
-            "unique": true,
-            "columnNames": [
-              "uri"
-            ],
-            "orders": [],
-            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_music_tracks_uri` ON `${TABLE_NAME}` (`uri`)"
-          },
-          {
-            "name": "index_music_tracks_sourceType",
-            "unique": false,
-            "columnNames": [
-              "sourceType"
-            ],
-            "orders": [],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_music_tracks_sourceType` ON `${TABLE_NAME}` (`sourceType`)"
-          }
-        ],
+        "indices": [],
         "foreignKeys": []
       },
       {
         "tableName": "playback_history",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `alarmId` INTEGER NOT NULL, `sessionStartedAt` INTEGER NOT NULL, `playedAt` INTEGER NOT NULL, `localDate` TEXT NOT NULL, `playOrder` INTEGER NOT NULL, `trackTitle` TEXT NOT NULL, `trackUri` TEXT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `fireId` TEXT NOT NULL, `startedAt` INTEGER NOT NULL, `playOrder` INTEGER NOT NULL, `title` TEXT NOT NULL, `uri` TEXT NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -1044,27 +1007,15 @@
             "notNull": true
           },
           {
-            "fieldPath": "alarmId",
-            "columnName": "alarmId",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "sessionStartedAt",
-            "columnName": "sessionStartedAt",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "playedAt",
-            "columnName": "playedAt",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "localDate",
-            "columnName": "localDate",
+            "fieldPath": "fireId",
+            "columnName": "fireId",
             "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "startedAt",
+            "columnName": "startedAt",
+            "affinity": "INTEGER",
             "notNull": true
           },
           {
@@ -1074,14 +1025,14 @@
             "notNull": true
           },
           {
-            "fieldPath": "trackTitle",
-            "columnName": "trackTitle",
+            "fieldPath": "title",
+            "columnName": "title",
             "affinity": "TEXT",
             "notNull": true
           },
           {
-            "fieldPath": "trackUri",
-            "columnName": "trackUri",
+            "fieldPath": "uri",
+            "columnName": "uri",
             "affinity": "TEXT",
             "notNull": true
           }
@@ -1094,25 +1045,23 @@
         },
         "indices": [
           {
-            "name": "index_playback_history_localDate_playedAt_playOrder",
+            "name": "index_playback_history_startedAt",
             "unique": false,
             "columnNames": [
-              "localDate",
-              "playedAt",
-              "playOrder"
+              "startedAt"
             ],
             "orders": [],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_playback_history_localDate_playedAt_playOrder` ON `${TABLE_NAME}` (`localDate`, `playedAt`, `playOrder`)"
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_playback_history_startedAt` ON `${TABLE_NAME}` (`startedAt`)"
           },
           {
-            "name": "index_playback_history_sessionStartedAt_playOrder",
-            "unique": false,
+            "name": "index_playback_history_fireId_playOrder",
+            "unique": true,
             "columnNames": [
-              "sessionStartedAt",
+              "fireId",
               "playOrder"
             ],
             "orders": [],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_playback_history_sessionStartedAt_playOrder` ON `${TABLE_NAME}` (`sessionStartedAt`, `playOrder`)"
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_playback_history_fireId_playOrder` ON `${TABLE_NAME}` (`fireId`, `playOrder`)"
           }
         ],
         "foreignKeys": []
