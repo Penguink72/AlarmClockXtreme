@@ -68,44 +68,51 @@ jobs:
           CI_DEBUG_KEY_ALIAS: ${{ secrets.CI_DEBUG_KEY_ALIAS }}
           CI_DEBUG_KEY_PASSWORD: ${{ secrets.CI_DEBUG_KEY_PASSWORD }}
         run: |
-          if [[ -z "${CI_DEBUG_KEYSTORE_BASE64}" || -z "${CI_DEBUG_KEYSTORE_PASSWORD}" || -z "${CI_DEBUG_KEY_ALIAS}" || -z "${CI_DEBUG_KEY_PASSWORD}" ]]; then
+          CLEAN_B64="$(printf '%s' "${CI_DEBUG_KEYSTORE_BASE64}" | tr -d ' \t\r\n')"
+          CLEAN_STORE_PASS="$(printf '%s' "${CI_DEBUG_KEYSTORE_PASSWORD}" | tr -d '\r\n')"
+          CLEAN_KEY_ALIAS="$(printf '%s' "${CI_DEBUG_KEY_ALIAS}" | tr -d '\r\n')"
+          CLEAN_KEY_PASS="$(printf '%s' "${CI_DEBUG_KEY_PASSWORD}" | tr -d '\r\n')"
+          if [[ -z "${CLEAN_B64}" || -z "${CLEAN_STORE_PASS}" || -z "${CLEAN_KEY_ALIAS}" || -z "${CLEAN_KEY_PASS}" ]]; then
             echo "ERROR: Missing persistent CI debug signing secrets in GitHub Actions."
             exit 1
           fi
+          echo "::add-mask::${CLEAN_STORE_PASS}"
+          echo "::add-mask::${CLEAN_KEY_PASS}"
           RAW_P12="${RUNNER_TEMP}/ci-debug-raw.p12"
           DEST_KEYSTORE="${RUNNER_TEMP}/ci-debug-signing.p12"
-          printf '%s' "${CI_DEBUG_KEYSTORE_BASE64}" | base64 --decode > "${RAW_P12}"
+          printf '%s' "${CLEAN_B64}" | base64 --decode > "${RAW_P12}"
           chmod 600 "${RAW_P12}"
-          SRC_ALIAS="$(keytool -list -keystore "${RAW_P12}" -storetype PKCS12 -storepass "${CI_DEBUG_KEYSTORE_PASSWORD}" | awk -F, '/PrivateKeyEntry/ {print $1; exit}')"
+          SRC_ALIAS="$(keytool -list -v -keystore "${RAW_P12}" -storetype PKCS12 -storepass "${CLEAN_STORE_PASS}" | sed -n 's/^Alias name: //p' | head -n 1 | tr -d '\r')"
           if [[ -z "${SRC_ALIAS}" ]]; then
-            echo "ERROR: No PrivateKeyEntry found in decoded CI debug keystore."
+            echo "ERROR: No Alias name found in decoded CI debug keystore."
             exit 1
           fi
           rm -f "${DEST_KEYSTORE}"
           keytool -importkeystore \
             -srckeystore "${RAW_P12}" \
             -srcstoretype PKCS12 \
-            -srcstorepass "${CI_DEBUG_KEYSTORE_PASSWORD}" \
+            -srcstorepass "${CLEAN_STORE_PASS}" \
             -srcalias "${SRC_ALIAS}" \
             -destkeystore "${DEST_KEYSTORE}" \
             -deststoretype PKCS12 \
-            -deststorepass "${CI_DEBUG_KEYSTORE_PASSWORD}" \
-            -destkeypass "${CI_DEBUG_KEY_PASSWORD}" \
-            -destalias "${CI_DEBUG_KEY_ALIAS}" \
+            -deststorepass "${CLEAN_STORE_PASS}" \
+            -destkeypass "${CLEAN_KEY_PASS}" \
+            -destalias "${CLEAN_KEY_ALIAS}" \
             -noprompt
           rm -f "${RAW_P12}"
           chmod 600 "${DEST_KEYSTORE}"
-          echo "CI_DEBUG_KEYSTORE_PATH=${DEST_KEYSTORE}" >> "$GITHUB_ENV"
-          KEYSTORE_CERT_SHA256="$(keytool -list -v -keystore "${DEST_KEYSTORE}" -storetype PKCS12 -storepass "${CI_DEBUG_KEYSTORE_PASSWORD}" -alias "${CI_DEBUG_KEY_ALIAS}" | awk '/SHA256:/ {print $2; exit}')"
+          KEYSTORE_CERT_SHA256="$(keytool -list -v -keystore "${DEST_KEYSTORE}" -storetype PKCS12 -storepass "${CLEAN_STORE_PASS}" -alias "${CLEAN_KEY_ALIAS}" | awk '/SHA256:/ {print $2; exit}')"
           echo "KEYSTORE_CERT_SHA256=${KEYSTORE_CERT_SHA256}"
-          echo "EXPECTED_CERT_SHA256=${KEYSTORE_CERT_SHA256}" >> "$GITHUB_ENV"
+          {
+            echo "CI_DEBUG_KEYSTORE_PATH=${DEST_KEYSTORE}"
+            echo "CI_DEBUG_KEYSTORE_PASSWORD=${CLEAN_STORE_PASS}"
+            echo "CI_DEBUG_KEY_ALIAS=${CLEAN_KEY_ALIAS}"
+            echo "CI_DEBUG_KEY_PASSWORD=${CLEAN_KEY_PASS}"
+            echo "EXPECTED_CERT_SHA256=${KEYSTORE_CERT_SHA256}"
+          } >> "$GITHUB_ENV"
 
       - name: Build F-Droid debug APK under strict dependency verification
         id: apk
-        env:
-          CI_DEBUG_KEYSTORE_PASSWORD: ${{ secrets.CI_DEBUG_KEYSTORE_PASSWORD }}
-          CI_DEBUG_KEY_ALIAS: ${{ secrets.CI_DEBUG_KEY_ALIAS }}
-          CI_DEBUG_KEY_PASSWORD: ${{ secrets.CI_DEBUG_KEY_PASSWORD }}
         run: bash ./gradlew --no-daemon --stacktrace :app:assembleFdroidDebug
 
       - name: Verify APK file, package metadata, and persistent signing certificate
@@ -248,32 +255,39 @@ jobs:
           CI_DEBUG_KEY_ALIAS: ${{ secrets.CI_DEBUG_KEY_ALIAS }}
           CI_DEBUG_KEY_PASSWORD: ${{ secrets.CI_DEBUG_KEY_PASSWORD }}
         run: |
+          CLEAN_B64="$(printf '%s' "${CI_DEBUG_KEYSTORE_BASE64}" | tr -d ' \t\r\n')"
+          CLEAN_STORE_PASS="$(printf '%s' "${CI_DEBUG_KEYSTORE_PASSWORD}" | tr -d '\r\n')"
+          CLEAN_KEY_ALIAS="$(printf '%s' "${CI_DEBUG_KEY_ALIAS}" | tr -d '\r\n')"
+          CLEAN_KEY_PASS="$(printf '%s' "${CI_DEBUG_KEY_PASSWORD}" | tr -d '\r\n')"
+          echo "::add-mask::${CLEAN_STORE_PASS}"
+          echo "::add-mask::${CLEAN_KEY_PASS}"
           RAW_P12="${RUNNER_TEMP}/ci-debug-raw.p12"
           DEST_KEYSTORE="${RUNNER_TEMP}/ci-debug-signing.p12"
-          printf '%s' "${CI_DEBUG_KEYSTORE_BASE64}" | base64 --decode > "${RAW_P12}"
+          printf '%s' "${CLEAN_B64}" | base64 --decode > "${RAW_P12}"
           chmod 600 "${RAW_P12}"
-          SRC_ALIAS="$(keytool -list -keystore "${RAW_P12}" -storetype PKCS12 -storepass "${CI_DEBUG_KEYSTORE_PASSWORD}" | awk -F, '/PrivateKeyEntry/ {print $1; exit}')"
+          SRC_ALIAS="$(keytool -list -v -keystore "${RAW_P12}" -storetype PKCS12 -storepass "${CLEAN_STORE_PASS}" | sed -n 's/^Alias name: //p' | head -n 1 | tr -d '\r')"
           rm -f "${DEST_KEYSTORE}"
           keytool -importkeystore \
             -srckeystore "${RAW_P12}" \
             -srcstoretype PKCS12 \
-            -srcstorepass "${CI_DEBUG_KEYSTORE_PASSWORD}" \
+            -srcstorepass "${CLEAN_STORE_PASS}" \
             -srcalias "${SRC_ALIAS}" \
             -destkeystore "${DEST_KEYSTORE}" \
             -deststoretype PKCS12 \
-            -deststorepass "${CI_DEBUG_KEYSTORE_PASSWORD}" \
-            -destkeypass "${CI_DEBUG_KEY_PASSWORD}" \
-            -destalias "${CI_DEBUG_KEY_ALIAS}" \
+            -deststorepass "${CLEAN_STORE_PASS}" \
+            -destkeypass "${CLEAN_KEY_PASS}" \
+            -destalias "${CLEAN_KEY_ALIAS}" \
             -noprompt
           rm -f "${RAW_P12}"
           chmod 600 "${DEST_KEYSTORE}"
-          echo "CI_DEBUG_KEYSTORE_PATH=${DEST_KEYSTORE}" >> "$GITHUB_ENV"
+          {
+            echo "CI_DEBUG_KEYSTORE_PATH=${DEST_KEYSTORE}"
+            echo "CI_DEBUG_KEYSTORE_PASSWORD=${CLEAN_STORE_PASS}"
+            echo "CI_DEBUG_KEY_ALIAS=${CLEAN_KEY_ALIAS}"
+            echo "CI_DEBUG_KEY_PASSWORD=${CLEAN_KEY_PASS}"
+          } >> "$GITHUB_ENV"
 
       - name: Build 2nd F-Droid debug APK (versionCode=138) on 2nd runner
-        env:
-          CI_DEBUG_KEYSTORE_PASSWORD: ${{ secrets.CI_DEBUG_KEYSTORE_PASSWORD }}
-          CI_DEBUG_KEY_ALIAS: ${{ secrets.CI_DEBUG_KEY_ALIAS }}
-          CI_DEBUG_KEY_PASSWORD: ${{ secrets.CI_DEBUG_KEY_PASSWORD }}
         run: bash ./gradlew --no-daemon --stacktrace :app:assembleFdroidDebug -PciVersionCode=138
 
       - name: Compare signing certificates and package metadata between Runner 1 and Runner 2
