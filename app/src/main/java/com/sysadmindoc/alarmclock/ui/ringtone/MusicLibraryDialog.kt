@@ -1,7 +1,6 @@
 package com.sysadmindoc.alarmclock.ui.ringtone
 
 import android.Manifest
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -22,6 +21,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -29,8 +31,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import java.util.Date
 import com.sysadmindoc.alarmclock.R
+import java.util.Date
 
 @Composable
 fun MusicLibraryDialog(
@@ -39,6 +41,7 @@ fun MusicLibraryDialog(
 ) {
     val context = LocalContext.current
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    var showSources by remember { mutableStateOf(false) }
     val permission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         Manifest.permission.READ_MEDIA_AUDIO
     } else {
@@ -47,29 +50,6 @@ fun MusicLibraryDialog(
     val permissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { viewModel.scan() }
-    val folderLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.OpenDocumentTree()
-    ) { uri ->
-        if (uri != null) {
-            runCatching {
-                context.contentResolver.takePersistableUriPermission(
-                    uri,
-                    Intent.FLAG_GRANT_READ_URI_PERMISSION
-                )
-                RingtoneFolderStore.addFolder(context, uri)
-            }.onSuccess {
-                viewModel.scan()
-            }.onFailure { error ->
-                viewModel.reportStatus(
-                    context.getString(
-                        R.string.music_library_folder_access_failed,
-                        error.message.orEmpty()
-                    )
-                )
-            }
-        }
-    }
-
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(stringResource(R.string.music_library_title)) },
@@ -78,7 +58,14 @@ fun MusicLibraryDialog(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                Text(stringResource(R.string.music_library_track_count, state.count))
+                Text(
+                    stringResource(
+                        R.string.music_library_media_counts,
+                        state.count,
+                        state.audioCount,
+                        state.videoCount
+                    )
+                )
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     OutlinedButton(
                         enabled = !state.scanning,
@@ -104,9 +91,9 @@ fun MusicLibraryDialog(
                     }
                     OutlinedButton(
                         enabled = !state.scanning,
-                        onClick = { folderLauncher.launch(null) }
+                        onClick = { showSources = true }
                     ) {
-                        Text(stringResource(R.string.music_library_add_folder))
+                        Text(stringResource(R.string.music_library_sources_button))
                     }
                 }
                 if (state.status.isNotBlank()) {
@@ -170,4 +157,11 @@ fun MusicLibraryDialog(
             }
         }
     )
+
+    if (showSources) {
+        MusicLibrarySourcesDialog(
+            viewModel = viewModel,
+            onDismiss = { showSources = false }
+        )
+    }
 }

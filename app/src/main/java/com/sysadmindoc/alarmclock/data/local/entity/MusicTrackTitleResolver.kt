@@ -11,7 +11,8 @@ object MusicTrackTitleResolver {
     )
 
     private val audioExtensions = setOf(
-        "3gp", "aac", "amr", "flac", "m4a", "mid", "midi", "mp3", "ogg", "opus", "wav"
+        "3gp", "aac", "amr", "flac", "m4a", "mid", "midi", "mkv", "mp3", "mp4",
+        "mov", "m4v", "ogg", "opus", "wav", "webm"
     )
 
     fun resolve(fileName: String, metadataTitle: String, legacyTitle: String = ""): String {

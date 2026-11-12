@@ -24,6 +24,14 @@ class MusicTrackTitleResolverTest {
     }
 
     @Test
+    fun removesSupportedVideoContainerExtensionFromDisplayTitle() {
+        assertEquals(
+            "夏の雨 - 回家 Home",
+            MusicTrackTitleResolver.resolve("夏の雨 - 回家 Home.mkv", "")
+        )
+    }
+
+    @Test
     fun keepsCorrectUtf8AndUtf16MetadataWithoutRewritingSourceValues() {
         val expected = "夏の雨 - 回家 Home"
         val utf8Tag = String(expected.toByteArray(StandardCharsets.UTF_8), StandardCharsets.UTF_8)
