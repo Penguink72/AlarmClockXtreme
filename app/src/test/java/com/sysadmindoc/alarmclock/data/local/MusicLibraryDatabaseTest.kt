@@ -386,6 +386,190 @@ class MusicLibraryDatabaseTest {
     }
 
     @Test
+    fun exportedSchema26MatchesEntitiesAndRoomRuntimeIdentityHash() {
+        val schema26 = readSchemaJson(26).getJSONObject("database")
+        assertEquals(26, schema26.getInt("version"))
+        val expectedHash = schema26.getString("identityHash")
+        assertTrue(expectedHash.isNotBlank())
+
+        val setupQueries = schema26.getJSONArray("setupQueries").toStringList()
+        assertTrue(
+            setupQueries.contains(
+                "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '$expectedHash')"
+            )
+        )
+
+        val entities = schema26.getJSONArray("entities").toObjectMap("tableName")
+        assertEquals(8, entities.size)
+
+        val musicTracks = requireNotNull(entities["music_tracks"])
+        val musicTrackFields = musicTracks.getJSONArray("fields")
+        assertEquals(5, musicTrackFields.length())
+        assertField(musicTrackFields.getJSONObject(0), "uri", "uri", "TEXT", true)
+        assertField(musicTrackFields.getJSONObject(1), "title", "title", "TEXT", true)
+        assertField(musicTrackFields.getJSONObject(2), "source", "source", "TEXT", true)
+        assertField(musicTrackFields.getJSONObject(3), "fileName", "fileName", "TEXT", true)
+        assertField(musicTrackFields.getJSONObject(4), "metadataTitle", "metadataTitle", "TEXT", true)
+        val musicTracksPk = musicTracks.getJSONObject("primaryKey")
+        assertFalse(musicTracksPk.getBoolean("autoGenerate"))
+        assertEquals(listOf("uri"), musicTracksPk.getJSONArray("columnNames").toStringList())
+
+        val context: Context = ApplicationProvider.getApplicationContext<Application>()
+        val database = Room.inMemoryDatabaseBuilder(context, AlarmDatabase::class.java)
+            .allowMainThreadQueries()
+            .build()
+        try {
+            val writableDb = database.openHelper.writableDatabase
+            writableDb.query("SELECT identity_hash FROM room_master_table WHERE id = 42").use { cursor ->
+                assertTrue(cursor.moveToFirst())
+                assertEquals(expectedHash, cursor.getString(0))
+            }
+        } finally {
+            database.close()
+        }
+    }
+
+    @Test
+    fun migrationFromExportedSchema24To25To26PreservesAlarmsTracksAndHistoryAndMatchesSchema26() {
+        val schema24 = readSchemaJson(24).getJSONObject("database")
+        val schema26 = readSchemaJson(26).getJSONObject("database")
+        val context = ApplicationProvider.getApplicationContext<Application>()
+
+        val helper = FrameworkSQLiteOpenHelperFactory().create(
+            SupportSQLiteOpenHelper.Configuration.builder(context)
+                .name(null)
+                .callback(object : SupportSQLiteOpenHelper.Callback(24) {
+                    override fun onCreate(db: SupportSQLiteDatabase) {
+                        val entities24 = schema24.getJSONArray("entities")
+                        for (i in 0 until entities24.length()) {
+                            val entity = entities24.getJSONObject(i)
+                            val tableName = entity.getString("tableName")
+                            db.execSQL(entity.getString("createSql").replace("\${TABLE_NAME}", tableName))
+                            val indices = entity.getJSONArray("indices")
+                            for (j in 0 until indices.length()) {
+                                val idx = indices.getJSONObject(j)
+                                db.execSQL(idx.getString("createSql").replace("\${TABLE_NAME}", tableName))
+                            }
+                        }
+                    }
+
+                    override fun onUpgrade(
+                        db: SupportSQLiteDatabase,
+                        oldVersion: Int,
+                        newVersion: Int
+                    ) = Unit
+                })
+                .build()
+        )
+
+        val db = helper.writableDatabase
+        try {
+            val alarms24Fields = schema24.getJSONArray("entities")
+                .toObjectMap("tableName")
+                .getValue("alarms")
+                .getJSONArray("fields")
+            val colNames = mutableListOf<String>()
+            val colValues = mutableListOf<Any>()
+            for (i in 0 until alarms24Fields.length()) {
+                val field = alarms24Fields.getJSONObject(i)
+                val name = field.getString("columnName")
+                val affinity = field.getString("affinity")
+                colNames += "`$name`"
+                colValues += when (name) {
+                    "id" -> 42L
+                    "hour" -> 7
+                    "minute" -> 15
+                    "label" -> "Morning Wake"
+                    "isEnabled" -> 1
+                    else -> when (affinity) {
+                        "INTEGER" -> 0
+                        "REAL" -> 0.0
+                        else -> ""
+                    }
+                }
+            }
+            val placeholders = List(colNames.size) { "?" }.joinToString(", ")
+            db.execSQL(
+                "INSERT INTO `alarms` (${colNames.joinToString(", ")}) VALUES ($placeholders)",
+                colValues.toTypedArray()
+            )
+
+            // Step 1: 24 -> 25
+            AlarmDatabase.MIGRATION_24_25.migrate(db)
+            db.execSQL(
+                "INSERT INTO music_tracks (uri, title, source) VALUES ('content://music/1', '晴天', 'MEDIA_STORE')"
+            )
+            db.execSQL(
+                "INSERT INTO music_tracks (uri, title, source) VALUES ('content://music/2', '宇多田ヒカル - 光', 'SAF')"
+            )
+            db.execSQL(
+                "INSERT INTO playback_history (fireId, startedAt, playOrder, title, uri) VALUES ('fire-25', 1700000000000, 1, '晴天', 'content://music/1')"
+            )
+
+            // Step 2: 25 -> 26
+            AlarmDatabase.MIGRATION_25_26.migrate(db)
+
+            db.query("SELECT id, hour, minute, label, isEnabled, randomMusicEnabled FROM alarms WHERE id = 42").use { cursor ->
+                assertTrue(cursor.moveToFirst())
+                assertEquals(42L, cursor.getLong(0))
+                assertEquals(7, cursor.getInt(1))
+                assertEquals(15, cursor.getInt(2))
+                assertEquals("Morning Wake", cursor.getString(3))
+                assertEquals(1, cursor.getInt(4))
+                assertEquals(0, cursor.getInt(5))
+            }
+
+            db.query("SELECT uri, title, source, fileName, metadataTitle FROM music_tracks ORDER BY uri").use { cursor ->
+                assertTrue(cursor.moveToFirst())
+                assertEquals("content://music/1", cursor.getString(0))
+                assertEquals("晴天", cursor.getString(1))
+                assertEquals("MEDIA_STORE", cursor.getString(2))
+                assertEquals("", cursor.getString(3))
+                assertEquals("", cursor.getString(4))
+                assertTrue(cursor.moveToNext())
+                assertEquals("content://music/2", cursor.getString(0))
+                assertEquals("宇多田ヒカル - 光", cursor.getString(1))
+                assertEquals("SAF", cursor.getString(2))
+                assertEquals("", cursor.getString(3))
+                assertEquals("", cursor.getString(4))
+            }
+
+            db.query("SELECT fireId, startedAt, playOrder, title, uri FROM playback_history WHERE fireId = 'fire-25'").use { cursor ->
+                assertTrue(cursor.moveToFirst())
+                assertEquals("fire-25", cursor.getString(0))
+                assertEquals(1700000000000L, cursor.getLong(1))
+                assertEquals(1, cursor.getInt(2))
+                assertEquals("晴天", cursor.getString(3))
+                assertEquals("content://music/1", cursor.getString(4))
+            }
+
+            val entities26 = schema26.getJSONArray("entities")
+            for (i in 0 until entities26.length()) {
+                val entity = entities26.getJSONObject(i)
+                val tableName = entity.getString("tableName")
+                val expectedColumns = entity.getJSONArray("fields")
+                val actualColumns = mutableMapOf<String, Triple<String, Boolean, Int>>()
+                db.query("PRAGMA table_info(`$tableName`)").use { cursor ->
+                    val nameIdx = cursor.getColumnIndexOrThrow("name")
+                    val typeIdx = cursor.getColumnIndexOrThrow("type")
+                    val notNullIdx = cursor.getColumnIndexOrThrow("notnull")
+                    val pkIdx = cursor.getColumnIndexOrThrow("pk")
+                    while (cursor.moveToNext()) {
+                        actualColumns[cursor.getString(nameIdx)] = Triple(
+                            cursor.getString(typeIdx),
+                            cursor.getInt(notNullIdx) != 0,
+                            cursor.getInt(pkIdx)
+                        )
+                    }
+                }
+                assertEquals("Column count mismatch in $tableName", expectedColumns.length(), actualColumns.size)
+            }
+        } finally {
+            helper.close()
+        }
+    }
+
+    @Test
     fun playbackHistoryKeepsTheRecordedDisplayTitleAfterLibraryRefresh() = runBlocking {
         val context: Context = ApplicationProvider.getApplicationContext<Application>()
         val database = Room.inMemoryDatabaseBuilder(context, AlarmDatabase::class.java)

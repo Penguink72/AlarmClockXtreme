@@ -33,6 +33,7 @@ import com.sysadmindoc.alarmclock.data.local.entity.AlarmIncidentEvent
 import com.sysadmindoc.alarmclock.R
 import com.sysadmindoc.alarmclock.data.local.entity.AlarmEvent
 import com.sysadmindoc.alarmclock.data.local.entity.MusicTrack
+import com.sysadmindoc.alarmclock.data.local.entity.displayTitle
 import com.sysadmindoc.alarmclock.data.model.Alarm
 import com.sysadmindoc.alarmclock.data.remote.WeatherCodes
 import com.sysadmindoc.alarmclock.data.repository.AlarmEventRepository
@@ -957,7 +958,7 @@ class AlarmService : Service() {
                 },
                 onStarted = {
                     if (isMusicSessionActive(alarm, generation) && trackLogged.compareAndSet(false, true)) {
-                        MusicPlaybackState.updateTitle(track.title)
+                        MusicPlaybackState.updateTitle(track.displayTitle)
                         val startedAt = System.currentTimeMillis()
                         serviceScope.launch {
                             runCatching {
