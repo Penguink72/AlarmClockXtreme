@@ -389,8 +389,8 @@ class MusicLibraryDatabaseTest {
     fun exportedSchema26MatchesEntitiesAndRoomRuntimeIdentityHash() {
         val schema26 = readSchemaJson(26).getJSONObject("database")
         assertEquals(26, schema26.getInt("version"))
-        val expectedHash = schema26.getString("identityHash")
-        assertTrue(expectedHash.isNotBlank())
+        val expectedHash = "abe054d5b6249289dbd8203ce72c4e2c"
+        assertEquals(expectedHash, schema26.getString("identityHash"))
 
         val setupQueries = schema26.getJSONArray("setupQueries").toStringList()
         assertTrue(
@@ -403,6 +403,10 @@ class MusicLibraryDatabaseTest {
         assertEquals(8, entities.size)
 
         val musicTracks = requireNotNull(entities["music_tracks"])
+        assertEquals(
+            "CREATE TABLE IF NOT EXISTS `\${TABLE_NAME}` (`uri` TEXT NOT NULL, `title` TEXT NOT NULL, `source` TEXT NOT NULL, `fileName` TEXT NOT NULL, `metadataTitle` TEXT NOT NULL, PRIMARY KEY(`uri`))",
+            musicTracks.getString("createSql")
+        )
         val musicTrackFields = musicTracks.getJSONArray("fields")
         assertEquals(5, musicTrackFields.length())
         assertField(musicTrackFields.getJSONObject(0), "uri", "uri", "TEXT", true)
