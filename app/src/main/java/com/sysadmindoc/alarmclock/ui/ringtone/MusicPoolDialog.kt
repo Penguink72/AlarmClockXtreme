@@ -38,9 +38,15 @@ internal fun MusicPoolDialog(
     LaunchedEffect(viewModel) {
         viewModel.loadPoolCandidates()
     }
-    val visible = viewModel.visiblePoolTracks()
+    val visible = viewModel.visiblePoolTracks(state)
     val allVisibleSelected = visible.isNotEmpty() &&
         visible.all { it.track.uri in state.selectedPoolUris }
+    val scopeLabel = when (val scope = state.poolSourceScope) {
+        MusicPoolSourceScope.Folders -> stringResource(R.string.music_library_pool_scope_folders)
+        MusicPoolSourceScope.DeviceMedia -> stringResource(R.string.music_library_pool_device_source)
+        is MusicPoolSourceScope.Folder -> state.sources.firstOrNull { it.id == scope.sourceId }?.name
+            ?: stringResource(R.string.music_library_pool_unknown_source)
+    }
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -57,6 +63,34 @@ internal fun MusicPoolDialog(
                     label = { Text(stringResource(R.string.music_library_pool_search)) },
                     singleLine = true
                 )
+                Text(
+                    stringResource(R.string.music_library_pool_source_label),
+                    style = MaterialTheme.typography.labelMedium
+                )
+                Row(
+                    modifier = Modifier.horizontalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    PoolFilterChip(
+                        label = stringResource(R.string.music_library_pool_scope_folders),
+                        selected = state.poolSourceScope == MusicPoolSourceScope.Folders,
+                        onClick = { viewModel.setPoolSourceScope(MusicPoolSourceScope.Folders) }
+                    )
+                    state.sources.forEach { source ->
+                        PoolFilterChip(
+                            label = source.name,
+                            selected = state.poolSourceScope == MusicPoolSourceScope.Folder(source.id),
+                            onClick = {
+                                viewModel.setPoolSourceScope(MusicPoolSourceScope.Folder(source.id))
+                            }
+                        )
+                    }
+                    PoolFilterChip(
+                        label = stringResource(R.string.music_library_pool_device_source),
+                        selected = state.poolSourceScope == MusicPoolSourceScope.DeviceMedia,
+                        onClick = { viewModel.setPoolSourceScope(MusicPoolSourceScope.DeviceMedia) }
+                    )
+                }
                 Row(
                     modifier = Modifier.horizontalScroll(rememberScrollState()),
                     horizontalArrangement = Arrangement.spacedBy(6.dp)
@@ -83,6 +117,21 @@ internal fun MusicPoolDialog(
                         visible.size,
                         state.selectedPoolUris.size
                     ),
+                    style = MaterialTheme.typography.bodySmall
+                )
+                Text(
+                    stringResource(R.string.music_library_pool_scope_summary, scopeLabel, visible.size),
+                    style = MaterialTheme.typography.bodySmall
+                )
+                if (state.poolSourceScope == MusicPoolSourceScope.DeviceMedia) {
+                    Text(
+                        stringResource(R.string.music_library_pool_device_warning),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+                Text(
+                    stringResource(R.string.music_library_pool_non_destructive_hint),
                     style = MaterialTheme.typography.bodySmall
                 )
                 Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
@@ -130,7 +179,7 @@ internal fun MusicPoolDialog(
                     Text(stringResource(R.string.music_library_pool_empty))
                 } else {
                     LazyColumn(
-                        modifier = Modifier.heightIn(max = 360.dp),
+                        modifier = Modifier.heightIn(max = 280.dp),
                         verticalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
                         items(visible, key = { it.track.uri }) { item ->
@@ -157,6 +206,16 @@ internal fun MusicPoolDialog(
                                     Text(
                                         item.sourceName.ifBlank { sourceFallback },
                                         style = MaterialTheme.typography.bodySmall
+                                    )
+                                    Text(
+                                        stringResource(
+                                            if (item.track.isVideoAudio()) {
+                                                R.string.music_library_pool_type_video_audio
+                                            } else {
+                                                R.string.music_library_pool_type_audio
+                                            }
+                                        ),
+                                        style = MaterialTheme.typography.labelSmall
                                     )
                                     Text(
                                         stringResource(

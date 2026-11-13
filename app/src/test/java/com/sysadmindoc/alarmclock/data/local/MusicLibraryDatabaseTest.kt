@@ -387,6 +387,43 @@ class MusicLibraryDatabaseTest {
     }
 
     @Test
+    fun exportedSchema26IsFrozenHistoricalSchema() {
+        val schema26 = readSchemaJson(26).getJSONObject("database")
+        assertEquals(26, schema26.getInt("version"))
+        val expectedHash = "abe054d5b6249289dbd8203ce72c4e2c"
+        assertEquals(expectedHash, schema26.getString("identityHash"))
+
+        val setupQueries = schema26.getJSONArray("setupQueries").toStringList()
+        assertTrue(
+            setupQueries.contains(
+                "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '$expectedHash')"
+            )
+        )
+
+        val entities = schema26.getJSONArray("entities").toObjectMap("tableName")
+        assertEquals(8, entities.size)
+
+        val musicTracks = requireNotNull(entities["music_tracks"])
+        assertEquals(
+            "CREATE TABLE IF NOT EXISTS `\${TABLE_NAME}` (`uri` TEXT NOT NULL, `title` TEXT NOT NULL, `source` TEXT NOT NULL, `fileName` TEXT NOT NULL, `metadataTitle` TEXT NOT NULL, PRIMARY KEY(`uri`))",
+            musicTracks.getString("createSql")
+        )
+        val musicTrackFields = musicTracks.getJSONArray("fields")
+        assertEquals(5, musicTrackFields.length())
+        assertField(musicTrackFields.getJSONObject(0), "uri", "uri", "TEXT", true)
+        assertField(musicTrackFields.getJSONObject(1), "title", "title", "TEXT", true)
+        assertField(musicTrackFields.getJSONObject(2), "source", "source", "TEXT", true)
+        assertField(musicTrackFields.getJSONObject(3), "fileName", "fileName", "TEXT", true)
+        assertField(musicTrackFields.getJSONObject(4), "metadataTitle", "metadataTitle", "TEXT", true)
+        val musicTracksPk = musicTracks.getJSONObject("primaryKey")
+        assertFalse(musicTracksPk.getBoolean("autoGenerate"))
+        assertEquals(listOf("uri"), musicTracksPk.getJSONArray("columnNames").toStringList())
+        // v26 is history now: it must stay byte-identical (CI diff) and must
+        // not contain the v27 music_pool_members table.
+        assertFalse(entities.containsKey("music_pool_members"))
+    }
+
+    @Test
     fun exportedSchema27MatchesEntitiesAndRoomRuntimeIdentityHash() {
         val schema27 = readSchemaJson(27).getJSONObject("database")
         assertEquals(27, schema27.getInt("version"))

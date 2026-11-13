@@ -138,6 +138,15 @@
     <string name="music_library_pool_unknown_source">已選取的媒體來源</string>
     <string name="music_library_pool_read_failed">無法讀取音樂池候選項目：%1$s</string>
     <string name="music_library_pool_update_failed">無法更新音樂池：%1$s</string>
+    <string name="music_library_pool_source_label">來源</string>
+    <string name="music_library_pool_scope_folders">已選資料夾</string>
+    <string name="music_library_pool_scope_summary">範圍：%1$s · 顯示 %2$d 項。全選可見與批量操作只套用於此清單。</string>
+    <string name="music_library_pool_device_warning">裝置媒體可能包含系統鈴聲與通知音效，加入前請確認。</string>
+    <string name="music_library_pool_non_destructive_hint">排除只會讓曲目不在鬧鐘中播放，絕不會刪除裝置上的檔案。</string>
+    <string name="music_library_pool_type_audio">音訊檔</string>
+    <string name="music_library_pool_type_video_audio">影片 · 僅播放音軌</string>
+    <string name="music_library_pool_add_folder">將此資料夾加入音樂池</string>
+    <string name="music_library_pool_folder_added">已從 %2$s 加入 %1$d 首候選曲目；已排除的曲目維持排除。</string>
     <string name="ringtone_tap_tone_preview">點選鈴聲即可試聽</string>
     <string name="ringtone_preview_playing">正在試聽</string>
     <string name="ringtone_preview_unavailable">無法試聽</string>

@@ -1576,6 +1576,15 @@
     <string name="music_library_pool_unknown_source">Selected media source</string>
     <string name="music_library_pool_read_failed">Could not read music pool candidates: %1$s</string>
     <string name="music_library_pool_update_failed">Could not update music pool: %1$s</string>
+    <string name="music_library_pool_source_label">Source</string>
+    <string name="music_library_pool_scope_folders">Selected folders</string>
+    <string name="music_library_pool_scope_summary">Scope: %1$s · %2$d shown. Select visible and batch actions apply only to this list.</string>
+    <string name="music_library_pool_device_warning">Device media can include system ringtones and notification sounds. Review before adding.</string>
+    <string name="music_library_pool_non_destructive_hint">Excluding only removes a track from alarm playback. Files on your device are never deleted.</string>
+    <string name="music_library_pool_type_audio">Audio file</string>
+    <string name="music_library_pool_type_video_audio">Video · audio only</string>
+    <string name="music_library_pool_add_folder">Add this folder to pool</string>
+    <string name="music_library_pool_folder_added">Added %1$d candidates from %2$s. Excluded tracks stayed excluded.</string>
     <string name="ringtone_tap_tone_preview">Tap a tone to preview</string>
     <string name="ringtone_preview_playing">Preview playing</string>
     <string name="ringtone_preview_unavailable">Preview unavailable</string>

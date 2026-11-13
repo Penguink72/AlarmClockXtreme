@@ -138,6 +138,15 @@
     <string name="music_library_pool_unknown_source">選択したメディアソース</string>
     <string name="music_library_pool_read_failed">音楽プール候補を読み取れませんでした：%1$s</string>
     <string name="music_library_pool_update_failed">音楽プールを更新できませんでした：%1$s</string>
+    <string name="music_library_pool_source_label">ソース</string>
+    <string name="music_library_pool_scope_folders">選択したフォルダー</string>
+    <string name="music_library_pool_scope_summary">範囲：%1$s · %2$d 件表示。「表示項目を選択」と一括操作はこの一覧にのみ適用されます。</string>
+    <string name="music_library_pool_device_warning">端末のメディアにはシステムの着信音や通知音が含まれる場合があります。追加前に確認してください。</string>
+    <string name="music_library_pool_non_destructive_hint">除外はアラームでの再生対象から外すだけで、端末上のファイルは削除されません。</string>
+    <string name="music_library_pool_type_audio">音声ファイル</string>
+    <string name="music_library_pool_type_video_audio">動画 · 音声のみ</string>
+    <string name="music_library_pool_add_folder">このフォルダーをプールに追加</string>
+    <string name="music_library_pool_folder_added">%2$s から候補 %1$d 件を追加しました。除外済みの曲は除外のままです。</string>
     <string name="ringtone_tap_tone_preview">タップして着信音を試聴</string>
     <string name="ringtone_preview_playing">試聴中</string>
     <string name="ringtone_preview_unavailable">試聴できません</string>

@@ -117,6 +117,7 @@ class AlarmService : Service() {
         // Grace period for a Media3 player to actually start before we assume it
         // stalled and fall back to the default tone.
         private const val PLAYBACK_START_TIMEOUT_MS = 8_000L
+        internal const val MAX_MUSIC_TRACK_SKIPS = 5
         private const val TAG = "AlarmService"
 
         data class ActiveAlarmSnapshot(
@@ -227,6 +228,10 @@ class AlarmService : Service() {
     private val audioStarting = AtomicBoolean(false)
     private val musicSessionGeneration = AtomicLong(0L)
     private val failedMusicUris = Collections.synchronizedSet(mutableSetOf<String>())
+    // Bounded skip: an unmounted SD card with thousands of pool tracks must not
+    // keep the alarm silent while every URI is tried. After this many
+    // consecutive tracks fail to actually start, fall back to the default tone.
+    private val consecutiveMusicFailures = java.util.concurrent.atomic.AtomicInteger(0)
 
     // v1.11.2 (roadmap N2): Telephony-aware muting. When a call is OFFHOOK or
     // RINGING during alarm playback the player is muted (vibration and
@@ -886,6 +891,7 @@ class AlarmService : Service() {
         try {
             if (alarm.randomMusicEnabled) {
                 failedMusicUris.clear()
+                consecutiveMusicFailures.set(0)
                 startRandomMusicTrack(alarm, musicSessionGeneration.get())
             } else {
                 val pooledAlarm = alarm.ringtonePool.split(",")
@@ -951,14 +957,18 @@ class AlarmService : Service() {
                 repeatMode = Player.REPEAT_MODE_OFF,
                 initialVolume = initialVolume,
                 onReady = onReady@{
+                    // READY only means the media is buffered. Playback can still
+                    // be suppressed without sound, so the start watchdog stays
+                    // armed until onIsPlayingChanged(true) (onStarted) arrives.
                     if (!isMusicSessionActive(alarm, generation)) return@onReady
-                    playbackStarted.set(true)
-                    cancelPlaybackWatchdog()
                     if (alarm.overrideSystemVolume) setConfiguredAlarmStreamVolume(alarm)
                     updateAlarmMediaSessionState(PlaybackState.STATE_PLAYING)
                 },
                 onStarted = {
                     if (isMusicSessionActive(alarm, generation) && trackLogged.compareAndSet(false, true)) {
+                        playbackStarted.set(true)
+                        cancelPlaybackWatchdog()
+                        consecutiveMusicFailures.set(0)
                         MusicPlaybackState.updateTitle(track.displayTitle)
                         val startedAt = System.currentTimeMillis()
                         serviceScope.launch {
@@ -977,7 +987,13 @@ class AlarmService : Service() {
                         volumeJob = null
                         MusicPlaybackState.updateTitle(null)
                         playbackRef?.let(::releasePlaybackIfCurrent)
-                        startRandomMusicTrack(alarm, generation)
+                        if (playbackStarted.get()) {
+                            startRandomMusicTrack(alarm, generation)
+                        } else {
+                            // Ended without ever producing sound (empty/corrupt file):
+                            // count it so a pool of broken files still falls back.
+                            skipFailedMusicTrack(alarm, track, generation, "ENDED_WITHOUT_START")
+                        }
                     }
                 },
                 onError = { error ->
@@ -985,9 +1001,8 @@ class AlarmService : Service() {
                         cancelPlaybackWatchdog()
                         volumeJob?.cancel()
                         volumeJob = null
-                        failedMusicUris.add(track.uri)
                         playbackRef?.let(::releasePlaybackIfCurrent)
-                        startRandomMusicTrack(alarm, generation)
+                        skipFailedMusicTrack(alarm, track, generation, "ERROR")
                     }
                     Log.w(TAG, "Skipping unavailable alarm music track", error)
                 },
@@ -1005,9 +1020,8 @@ class AlarmService : Service() {
                 playbackStarted = playbackStarted,
                 onStartTimeout = {
                     if (isMusicSessionActive(alarm, generation)) {
-                        failedMusicUris.add(track.uri)
                         Log.w(TAG, "Skipping alarm music track that did not start: ${track.uri}")
-                        startRandomMusicTrack(alarm, generation)
+                        skipFailedMusicTrack(alarm, track, generation, "START_TIMEOUT")
                     }
                 }
             )
@@ -1027,10 +1041,35 @@ class AlarmService : Service() {
             }
         } catch (error: Exception) {
             Log.w(TAG, "Unable to start selected alarm music track", error)
-            failedMusicUris.add(track.uri)
             if (isMusicSessionActive(alarm, generation)) {
-                startRandomMusicTrack(alarm, generation)
+                skipFailedMusicTrack(alarm, track, generation, "SETUP_FAILED")
             }
+        }
+    }
+
+    /**
+     * Marks [track] as failed for this alarm session and either tries another
+     * pool track or, after [MAX_MUSIC_TRACK_SKIPS] consecutive failures,
+     * falls back to the default alarm tone so the alarm is never silent.
+     */
+    private fun skipFailedMusicTrack(
+        alarm: Alarm,
+        track: MusicTrack,
+        generation: Long,
+        reason: String
+    ) {
+        failedMusicUris.add(track.uri)
+        val failures = consecutiveMusicFailures.incrementAndGet()
+        if (MusicSkipPolicy.shouldFallBack(failures)) {
+            recordIncidentAsync(
+                type = AlarmIncidentEvent.TYPE_AUDIO,
+                status = AlarmIncidentEvent.STATUS_FAILED,
+                reasonCode = "MUSIC_SKIP_LIMIT_${reason}_$failures",
+                source = "AlarmService"
+            )
+            startMusicDefaultFallback(alarm)
+        } else {
+            startRandomMusicTrack(alarm, generation)
         }
     }
 
@@ -2444,6 +2483,7 @@ class AlarmService : Service() {
     private fun stopAlarmPlayback() {
         musicSessionGeneration.incrementAndGet()
         failedMusicUris.clear()
+        consecutiveMusicFailures.set(0)
         MusicPlaybackState.updateTitle(null)
         OnCallDndOverride.end(this)
         volumeJob?.cancel()

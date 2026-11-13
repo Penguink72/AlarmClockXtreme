@@ -9,6 +9,7 @@ on:
       - fix/db25-schema-01
       - fix/b7-ci-persistent-debug-signing
       - preview/music-alarm-1
+      - preview/music-alarm-2
     paths:
       - ".github/workflows/p0-android-baseline.yml"
       - "app/**"
@@ -146,18 +147,18 @@ jobs:
         id: apk
         run: |
           SCHEMA_DIR="app/schemas/com.sysadmindoc.alarmclock.data.local.AlarmDatabase"
-          if [[ -f "${SCHEMA_DIR}/26.json" ]]; then
-            cp "${SCHEMA_DIR}/26.json" /tmp/committed-26.json
-            rm -f "${SCHEMA_DIR}/26.json"
+          if [[ -f "${SCHEMA_DIR}/27.json" ]]; then
+            cp "${SCHEMA_DIR}/27.json" /tmp/committed-27.json
+            rm -f "${SCHEMA_DIR}/27.json"
           fi
-          bash ./gradlew --no-daemon --stacktrace :app:assembleFdroidDebug -PciVersionCode=139
-          git diff --exit-code -- "${SCHEMA_DIR}/25.json"
-          if [[ ! -s "${SCHEMA_DIR}/26.json" ]]; then
-            echo "ERROR: KSP did not generate ${SCHEMA_DIR}/26.json"
+          bash ./gradlew --no-daemon --stacktrace :app:assembleFdroidDebug -PciVersionCode=141
+          git diff --exit-code -- "${SCHEMA_DIR}/25.json" "${SCHEMA_DIR}/26.json"
+          if [[ ! -s "${SCHEMA_DIR}/27.json" ]]; then
+            echo "ERROR: KSP did not generate ${SCHEMA_DIR}/27.json"
             exit 1
           fi
-          if [[ -f /tmp/committed-26.json ]]; then
-            diff -u /tmp/committed-26.json "${SCHEMA_DIR}/26.json"
+          if [[ -f /tmp/committed-27.json ]]; then
+            diff -u /tmp/committed-27.json "${SCHEMA_DIR}/27.json"
             git diff --exit-code -- app/schemas
           fi
 
@@ -182,8 +183,8 @@ jobs:
             echo "ERROR: Unexpected package name: $PKG_NAME"
             exit 1
           fi
-          if [[ "$VERSION_CODE" != "139" ]]; then
-            echo "ERROR: Expected Preview 1 versionCode=139, got: $VERSION_CODE"
+          if [[ "$VERSION_CODE" != "141" ]]; then
+            echo "ERROR: Expected Preview 2 versionCode=141, got: $VERSION_CODE"
             exit 1
           fi
           APKSIGNER_OUT="$("${BUILD_TOOLS_DIR}/apksigner" verify --verbose --print-certs "$APK_PATH")"
@@ -201,6 +202,7 @@ jobs:
           fi
           SCHEMA_25="app/schemas/com.sysadmindoc.alarmclock.data.local.AlarmDatabase/25.json"
           SCHEMA_26="app/schemas/com.sysadmindoc.alarmclock.data.local.AlarmDatabase/26.json"
+          SCHEMA_27="app/schemas/com.sysadmindoc.alarmclock.data.local.AlarmDatabase/27.json"
           if [[ -f "$SCHEMA_25" ]]; then
             cp "$SCHEMA_25" app/build/outputs/apk/fdroid/debug/25.json
             ROOM_25_HASH="$(python3 -c 'import json; print(json.load(open("app/schemas/com.sysadmindoc.alarmclock.data.local.AlarmDatabase/25.json"))["database"]["identityHash"])')"
@@ -210,6 +212,11 @@ jobs:
             cp "$SCHEMA_26" app/build/outputs/apk/fdroid/debug/26.json
             ROOM_26_HASH="$(python3 -c 'import json; print(json.load(open("app/schemas/com.sysadmindoc.alarmclock.data.local.AlarmDatabase/26.json"))["database"]["identityHash"])')"
             echo "ROOM_26_IDENTITY_HASH=${ROOM_26_HASH}"
+          fi
+          if [[ -f "$SCHEMA_27" ]]; then
+            cp "$SCHEMA_27" app/build/outputs/apk/fdroid/debug/27.json
+            ROOM_27_HASH="$(python3 -c 'import json; print(json.load(open("app/schemas/com.sysadmindoc.alarmclock.data.local.AlarmDatabase/27.json"))["database"]["identityHash"])')"
+            echo "ROOM_27_IDENTITY_HASH=${ROOM_27_HASH}"
           fi
           {
             echo "commit=${COMMIT_SHA}"
@@ -224,9 +231,10 @@ jobs:
             echo "signing_cert_sha1=${CERT_SHA1_COLON}"
             echo "room_25_identity_hash=${ROOM_25_HASH:-}"
             echo "room_26_identity_hash=${ROOM_26_HASH:-}"
+            echo "room_27_identity_hash=${ROOM_27_HASH:-}"
           } | tee app/build/outputs/apk/fdroid/debug/apk-metadata.txt
           {
-            echo "## Preview 1 F-Droid Debug APK Build (Strict Verification & Persistent Signing)"
+            echo "## Preview 2 F-Droid Debug APK Build (Strict Verification & Persistent Signing)"
             echo "- Status: **PASS**"
             echo "- Runner: \`ubuntu-24.04\`"
             echo "- Commit: \`${COMMIT_SHA}\`"
@@ -240,6 +248,7 @@ jobs:
             echo "- Signing Cert SHA-1: \`${CERT_SHA1_COLON}\`"
             echo "- Room v25 Identity Hash: \`${ROOM_25_HASH:-}\`"
             echo "- Room v26 Identity Hash: \`${ROOM_26_HASH:-}\`"
+            echo "- Room v27 Identity Hash: \`${ROOM_27_HASH:-}\`"
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Clean up temporary keystore
@@ -255,6 +264,7 @@ jobs:
             app/build/outputs/apk/fdroid/debug/apk-metadata.txt
             app/build/outputs/apk/fdroid/debug/25.json
             app/build/outputs/apk/fdroid/debug/26.json
+            app/build/outputs/apk/fdroid/debug/27.json
           if-no-files-found: error
           retention-days: 14
 
@@ -270,7 +280,7 @@ jobs:
           retention-days: 14
 
   verify-persistent-signing-second-runner:
-    name: Verify persistent signing on 2nd runner (v140 upgrade APK)
+    name: Verify persistent signing on 2nd runner (v142 upgrade APK)
     needs: build-fdroid-debug-apk
     runs-on: ubuntu-24.04
     timeout-minutes: 40
@@ -371,8 +381,8 @@ jobs:
           chmod 600 "${DEST_KEYSTORE}"
           echo "CI_DEBUG_KEYSTORE_PATH=${DEST_KEYSTORE}" >> "$GITHUB_ENV"
 
-      - name: Build 2nd F-Droid debug APK (versionCode=140) on 2nd runner
-        run: bash ./gradlew --no-daemon --stacktrace :app:assembleFdroidDebug -PciVersionCode=140
+      - name: Build 2nd F-Droid debug APK (versionCode=142) on 2nd runner
+        run: bash ./gradlew --no-daemon --stacktrace :app:assembleFdroidDebug -PciVersionCode=142
 
       - name: Compare signing certificates and package metadata between Runner 1 and Runner 2
         run: |
@@ -397,8 +407,8 @@ jobs:
             echo "ERROR: Package mismatch ($PKG1 vs $PKG2)"
             exit 1
           fi
-          if [[ "$VC1" != "139" || "$VC2" != "140" ]]; then
-            echo "ERROR: Unexpected versionCodes ($VC1 -> $VC2), expected (139 -> 140)"
+          if [[ "$VC1" != "141" || "$VC2" != "142" ]]; then
+            echo "ERROR: Unexpected versionCodes ($VC1 -> $VC2), expected (141 -> 142)"
             exit 1
           fi
           if [[ -z "$CERT1_COLON" || "$CERT1_COLON" != "$CERT2_COLON" ]]; then
@@ -416,26 +426,26 @@ jobs:
             echo "runner1_signing_cert_sha256=${CERT1_COLON}"
             echo "runner2_signing_cert_sha256=${CERT2_COLON}"
             echo "signing_cert_match=true"
-          } | tee app/build/outputs/apk/fdroid/debug/apk-v140-metadata.txt
+          } | tee app/build/outputs/apk/fdroid/debug/apk-v142-metadata.txt
           {
             echo "## B7 Cross-Runner Signing Consistency Verification"
             echo "- Runner 1 APK (\`versionCode=${VC1}\`) Cert SHA-256: \`${CERT1_COLON}\`"
             echo "- Runner 2 APK (\`versionCode=${VC2}\`) Cert SHA-256: \`${CERT2_COLON}\`"
             echo "- Certificate Match: **EXACT MATCH (PASS)**"
-            echo "- Upgrade APK SHA-256 (\`v140\`): \`${APK2_SHA256}\`"
+            echo "- Upgrade APK SHA-256 (\`v142\`): \`${APK2_SHA256}\`"
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Clean up temporary keystore on 2nd runner
         if: always()
         run: rm -f "${RUNNER_TEMP}/ci-debug-raw.p12" "${RUNNER_TEMP}/ci-debug-signing.p12"
 
-      - name: Upload 2nd runner upgrade APK (versionCode=140)
+      - name: Upload 2nd runner upgrade APK (versionCode=142)
         uses: actions/upload-artifact@v4
         with:
-          name: p0-fdroid-debug-apk-v140-upgrade-test
+          name: p0-fdroid-debug-apk-v142-upgrade-test
           path: |
             app/build/outputs/apk/fdroid/debug/app-fdroid-debug.apk
-            app/build/outputs/apk/fdroid/debug/apk-v140-metadata.txt
+            app/build/outputs/apk/fdroid/debug/apk-v142-metadata.txt
           if-no-files-found: error
           retention-days: 14
 
@@ -501,6 +511,9 @@ jobs:
               "MusicTrackIndexReconcilerTest",
               "SupportedMediaFileTest",
               "AppLanguageManagerTest",
+              "AppLanguageResourcesTest",
+              "MusicSkipPolicyTest",
+              "MusicPoolFilterLogicTest",
               "RingtoneFolderStoreTest",
           )
 

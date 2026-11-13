@@ -85,7 +85,8 @@ internal fun MusicLibrarySourcesDialog(
                                         source.id in state.scanningSourceIds),
                                 onScan = { viewModel.scan(setOf(source.id)) },
                                 onRemove = { viewModel.removeSource(source.id) },
-                                onSelectSubfolders = { viewModel.loadSubfolders(source.id) }
+                                onSelectSubfolders = { viewModel.loadSubfolders(source.id) },
+                                onAddToPool = { viewModel.addSourceToPool(source.id) }
                             )
                         }
                     }
@@ -122,7 +123,8 @@ private fun MusicLibrarySourceRow(
     scanning: Boolean,
     onScan: () -> Unit,
     onRemove: () -> Unit,
-    onSelectSubfolders: () -> Unit
+    onSelectSubfolders: () -> Unit,
+    onAddToPool: () -> Unit
 ) {
     val statusText = when (source.status) {
         MusicSourceStatus.NEEDS_SCAN -> stringResource(R.string.music_library_source_needs_scan)
@@ -176,6 +178,12 @@ private fun MusicLibrarySourceRow(
             }
             TextButton(enabled = !scanning, onClick = onSelectSubfolders) {
                 Text(stringResource(R.string.music_library_choose_subfolders))
+            }
+            TextButton(
+                enabled = !scanning && source.indexed && source.trackCount > 0,
+                onClick = onAddToPool
+            ) {
+                Text(stringResource(R.string.music_library_pool_add_folder))
             }
         }
     }

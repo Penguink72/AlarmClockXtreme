@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.AlertDialog
@@ -67,8 +68,21 @@ fun MusicLibraryDialog(
                         state.videoCount
                     )
                 )
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                // Stacked full-width actions: three side-by-side buttons were
+                // clipped on narrow phones, especially with zh-TW / ja labels.
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
                     OutlinedButton(
+                        modifier = Modifier.fillMaxWidth(),
+                        enabled = !state.scanning,
+                        onClick = { showSources = true }
+                    ) {
+                        Text(stringResource(R.string.music_library_sources_button))
+                    }
+                    OutlinedButton(
+                        modifier = Modifier.fillMaxWidth(),
                         enabled = !state.scanning,
                         onClick = {
                             if (ContextCompat.checkSelfPermission(context, permission) ==
@@ -81,7 +95,10 @@ fun MusicLibraryDialog(
                         }
                     ) {
                         if (state.scanning) {
-                            CircularProgressIndicator(modifier = Modifier.padding(end = 8.dp))
+                            CircularProgressIndicator(
+                                modifier = Modifier.padding(end = 8.dp).size(18.dp),
+                                strokeWidth = 2.dp
+                            )
                         }
                         Text(
                             stringResource(
@@ -91,16 +108,11 @@ fun MusicLibraryDialog(
                         )
                     }
                     OutlinedButton(
+                        modifier = Modifier.fillMaxWidth(),
                         enabled = !state.scanning,
                         onClick = { showPool = true }
                     ) {
                         Text(stringResource(R.string.music_library_pool_manage))
-                    }
-                    OutlinedButton(
-                        enabled = !state.scanning,
-                        onClick = { showSources = true }
-                    ) {
-                        Text(stringResource(R.string.music_library_sources_button))
                     }
                 }
                 if (state.status.isNotBlank()) {

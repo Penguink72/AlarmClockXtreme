@@ -21,7 +21,7 @@ android {
         targetSdk = 36
         versionCode = 137
         versionName = "1.15.35"
-        val minAllowedCiVersionCode = 139
+        val minAllowedCiVersionCode = 141
         providers.gradleProperty("ciVersionCode").orNull?.toIntOrNull()?.let { overrideVersionCode ->
             val baseVersionCode = maxOf(requireNotNull(versionCode), minAllowedCiVersionCode)
             check(overrideVersionCode >= baseVersionCode) {
