@@ -564,16 +564,21 @@ class MusicLibraryDatabaseTest {
                 assertEquals("content://music/1", cursor.getString(4))
             }
 
-            db.query(
-                "SELECT uri, state FROM music_pool_members ORDER BY uri"
-            ).use { cursor ->
+            db.query("SELECT uri, state FROM music_pool_members").use { cursor ->
                 assertTrue(cursor.moveToFirst())
-                assertEquals("content://music/1", cursor.getString(0))
-                assertEquals(MusicPoolEntry.INCLUDED, cursor.getString(1))
-                assertTrue(cursor.moveToNext())
                 assertEquals("content://music/2", cursor.getString(0))
                 assertEquals(MusicPoolEntry.INCLUDED, cursor.getString(1))
                 assertFalse(cursor.moveToNext())
+            }
+            db.query(
+                """
+                SELECT COUNT(*) FROM music_tracks
+                LEFT JOIN music_pool_members ON music_tracks.uri = music_pool_members.uri
+                WHERE music_tracks.source = 'MEDIA_STORE' AND music_pool_members.uri IS NULL
+                """
+            ).use { cursor ->
+                assertTrue(cursor.moveToFirst())
+                assertEquals(1, cursor.getInt(0))
             }
             db.query("PRAGMA index_list(`music_pool_members`)").use { cursor ->
                 val indexColumn = cursor.getColumnIndexOrThrow("name")

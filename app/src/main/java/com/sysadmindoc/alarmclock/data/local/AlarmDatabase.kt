@@ -437,7 +437,9 @@ abstract class AlarmDatabase : RoomDatabase() {
                 db.execSQL(
                     """
                     INSERT INTO music_pool_members (uri, state, updatedAt)
-                    SELECT uri, '${MusicPoolEntry.INCLUDED}', 0 FROM music_tracks
+                    SELECT uri, '${MusicPoolEntry.INCLUDED}', 0
+                    FROM music_tracks
+                    WHERE source IN ('SAF', 'SAF_VIDEO')
                     """.trimIndent()
                 )
             }
