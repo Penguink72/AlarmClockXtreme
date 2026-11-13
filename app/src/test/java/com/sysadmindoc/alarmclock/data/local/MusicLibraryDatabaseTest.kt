@@ -8,6 +8,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.sqlite.db.SupportSQLiteOpenHelper
 import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory
 import androidx.test.core.app.ApplicationProvider
+import com.sysadmindoc.alarmclock.data.local.entity.MusicPoolEntry
 import com.sysadmindoc.alarmclock.data.local.entity.MusicTrack
 import com.sysadmindoc.alarmclock.data.repository.MusicLibraryRepository
 import java.io.File
@@ -427,7 +428,8 @@ class MusicLibraryDatabaseTest {
     fun exportedSchema27MatchesEntitiesAndRoomRuntimeIdentityHash() {
         val schema27 = readSchemaJson(27).getJSONObject("database")
         assertEquals(27, schema27.getInt("version"))
-        val expectedHash = schema27.getString("identityHash")
+        val expectedHash = "0b18378748a4fed271f938c1b52392f6"
+        assertEquals(expectedHash, schema27.getString("identityHash"))
 
         val setupQueries = schema27.getJSONArray("setupQueries").toStringList()
         assertTrue(
