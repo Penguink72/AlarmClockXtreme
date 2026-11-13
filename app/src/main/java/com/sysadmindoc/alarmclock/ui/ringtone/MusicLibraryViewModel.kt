@@ -450,6 +450,7 @@ class MusicLibraryViewModel @Inject constructor(
     }
 
     fun updateSelectedPoolMembership(included: Boolean) {
+        if (_uiState.value.loadingPool || _uiState.value.scanning) return
         // Only act on selected rows that are still inside the current
         // filter + source scope, so a stale selection can never leak into
         // another folder or into device-wide MediaStore media.
@@ -457,9 +458,12 @@ class MusicLibraryViewModel @Inject constructor(
         val selected = _uiState.value.selectedPoolUris.filterTo(LinkedHashSet()) { it in visibleUris }
         if (selected.isEmpty()) return
         viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(loadingPool = true)
             try {
                 repository.setPoolMembership(selected, included)
-                loadPoolCandidates()
+                // Refresh in the same coroutine; otherwise repeated taps can
+                // schedule overlapping writes while old rows remain selected.
+                loadPoolCandidatesNow()
             } catch (error: CancellationException) {
                 throw error
             } catch (error: Exception) {
@@ -469,6 +473,8 @@ class MusicLibraryViewModel @Inject constructor(
                         error.message.orEmpty()
                     )
                 )
+            } finally {
+                _uiState.value = _uiState.value.copy(loadingPool = false)
             }
         }
     }
@@ -488,16 +494,20 @@ class MusicLibraryViewModel @Inject constructor(
      * other folders are never touched.
      */
     fun addSourceToPool(sourceId: String) {
+        if (_uiState.value.scanning || _uiState.value.loadingPool) return
         viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(loadingPool = true)
             try {
-                if (_uiState.value.poolTracks.isEmpty()) {
-                    loadPoolCandidatesNow()
-                }
-                val uris = folderCandidatesToInclude(_uiState.value.poolTracks, sourceId)
-                repository.setPoolMembership(uris, included = true)
-                val name = _uiState.value.sources.firstOrNull { it.id == sourceId }?.name.orEmpty()
-                reportStatus(context.getString(R.string.music_library_pool_folder_added, uris.size, name))
+                // The pool dialog may have been opened before a later rescan.
+                // Read the selected source and current indexed candidates
+                // again rather than trusting the previous poolTracks snapshot.
+                val source = withContext(Dispatchers.IO) {
+                    MusicLibrarySourceStore.getSources(context)
+                        .firstOrNull { it.id == sourceId }
+                } ?: error("Music folder source no longer exists")
+                val added = repository.includeUnselectedSourceTracks(source.trackUris)
                 loadPoolCandidatesNow()
+                reportStatus(context.getString(R.string.music_library_pool_folder_added, added, source.name))
             } catch (error: CancellationException) {
                 throw error
             } catch (error: Exception) {
@@ -507,6 +517,8 @@ class MusicLibraryViewModel @Inject constructor(
                         error.message.orEmpty()
                     )
                 )
+            } finally {
+                _uiState.value = _uiState.value.copy(loadingPool = false)
             }
         }
     }
