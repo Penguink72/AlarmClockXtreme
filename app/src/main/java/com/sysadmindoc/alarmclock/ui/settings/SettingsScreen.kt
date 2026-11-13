@@ -268,7 +268,10 @@ fun SettingsScreen(
     var showClearCommuteHistoryDialog by remember { mutableStateOf(false) }
     var showLanguageDialog by rememberSaveable { mutableStateOf(false) }
     val context = LocalContext.current
-    var selectedLanguageOption by remember(context) {
+    // Language changes from this screen or Android's per-app language settings must
+    // refresh the selected label even when the Activity context instance is reused.
+    val configurationLocaleTags = LocalConfiguration.current.locales.toLanguageTags()
+    var selectedLanguageOption by remember(context, configurationLocaleTags) {
         mutableStateOf(AppLanguageManager.currentOption(context))
     }
     val languagePickerSupported = AppLanguageManager.isSupported()
@@ -369,6 +372,18 @@ fun SettingsScreen(
                             title = stringResource(R.string.settings_title),
                             subtitle = state.appVersion
                         )
+                    }
+                    settingsItem("settings-home-language") {
+                        SettingsGroup(title = stringResource(R.string.settings_language)) {
+                            AppLanguageSelectionRow(
+                                selectedLanguageOption = selectedLanguageOption,
+                                languagePickerSupported = languagePickerSupported,
+                                onClick = {
+                                    selectedLanguageOption = AppLanguageManager.currentOption(context)
+                                    showLanguageDialog = true
+                                }
+                            )
+                        }
                     }
                     settingsItem("settings-home-readiness") {
                         WakeReadinessSection(
@@ -825,25 +840,13 @@ fun SettingsScreen(
                 title = stringResource(R.string.settings_utilities),
                 description = stringResource(R.string.settings_utilities_description)
             ) {
-                SettingsActionRow(
-                    label = stringResource(R.string.settings_language),
-                    value = stringResource(
-                        when (selectedLanguageOption) {
-                            AppLanguageOption.SYSTEM_DEFAULT -> R.string.settings_language_system_default
-                            AppLanguageOption.ENGLISH -> R.string.settings_language_english
-                            AppLanguageOption.TRADITIONAL_CHINESE -> R.string.settings_language_traditional_chinese
-                            AppLanguageOption.JAPANESE -> R.string.settings_language_japanese
-                        }
-                    ),
-                    supportingText = stringResource(
-                        if (languagePickerSupported) {
-                            R.string.settings_language_description
-                        } else {
-                            R.string.settings_language_android_required
-                        }
-                    ),
-                    enabled = languagePickerSupported,
-                    onClick = { showLanguageDialog = true }
+                AppLanguageSelectionRow(
+                    selectedLanguageOption = selectedLanguageOption,
+                    languagePickerSupported = languagePickerSupported,
+                    onClick = {
+                        selectedLanguageOption = AppLanguageManager.currentOption(context)
+                        showLanguageDialog = true
+                    }
                 )
                 HorizontalDivider(color = TextMuted.copy(alpha = 0.14f))
                 UtilityShortcutCard(
@@ -1066,6 +1069,34 @@ fun SettingsScreen(
             }
         )
     }
+}
+
+@Composable
+private fun AppLanguageSelectionRow(
+    selectedLanguageOption: AppLanguageOption,
+    languagePickerSupported: Boolean,
+    onClick: () -> Unit
+) {
+    SettingsActionRow(
+        label = stringResource(R.string.settings_language),
+        value = stringResource(
+            when (selectedLanguageOption) {
+                AppLanguageOption.SYSTEM_DEFAULT -> R.string.settings_language_system_default
+                AppLanguageOption.ENGLISH -> R.string.settings_language_english
+                AppLanguageOption.TRADITIONAL_CHINESE -> R.string.settings_language_traditional_chinese
+                AppLanguageOption.JAPANESE -> R.string.settings_language_japanese
+            }
+        ),
+        supportingText = stringResource(
+            if (languagePickerSupported) {
+                R.string.settings_language_description
+            } else {
+                R.string.settings_language_android_required
+            }
+        ),
+        enabled = languagePickerSupported,
+        onClick = onClick
+    )
 }
 
 @Composable
