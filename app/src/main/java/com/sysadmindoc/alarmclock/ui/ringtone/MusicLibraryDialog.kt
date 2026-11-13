@@ -79,12 +79,6 @@ fun MusicLibraryDialog(
                                 permissionLauncher.launch(permission)
                             }
                         }
-                        OutlinedButton(
-                            enabled = !state.scanning,
-                            onClick = { showPool = true }
-                        ) {
-                            Text(stringResource(R.string.music_library_pool_manage))
-                        }
                     ) {
                         if (state.scanning) {
                             CircularProgressIndicator(modifier = Modifier.padding(end = 8.dp))
@@ -95,6 +89,12 @@ fun MusicLibraryDialog(
                                 else R.string.music_library_scan
                             )
                         )
+                    }
+                    OutlinedButton(
+                        enabled = !state.scanning,
+                        onClick = { showPool = true }
+                    ) {
+                        Text(stringResource(R.string.music_library_pool_manage))
                     }
                     OutlinedButton(
                         enabled = !state.scanning,
