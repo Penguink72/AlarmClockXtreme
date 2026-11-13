@@ -28,6 +28,10 @@ class MusicLibraryRepository @Inject constructor(
 
     suspend fun includedPoolCount(): Int = musicLibraryDao.includedCount()
 
+    /** Read current catalog inside the DAO transaction, not a cached UI snapshot. */
+    suspend fun includeUnselectedSourceTracks(sourceUris: Collection<String>): Int =
+        musicLibraryDao.includeUnselectedSourceTracks(sourceUris)
+
     suspend fun setPoolMembership(uris: Collection<String>, included: Boolean) {
         if (uris.isEmpty()) return
         val state = if (included) MusicPoolEntry.INCLUDED else MusicPoolEntry.EXCLUDED

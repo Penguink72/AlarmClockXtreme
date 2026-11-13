@@ -65,7 +65,7 @@ internal fun MusicLibrarySourcesDialog(
             ) {
                 Text(stringResource(R.string.music_library_source_management_hint))
                 OutlinedButton(
-                    enabled = !state.scanning,
+                    enabled = !state.scanning && !state.loadingPool,
                     onClick = { folderLauncher.launch(null) }
                 ) {
                     Text(stringResource(R.string.music_library_add_folder))
@@ -80,9 +80,9 @@ internal fun MusicLibrarySourcesDialog(
                         items(state.sources, key = MusicLibrarySource::id) { source ->
                             MusicLibrarySourceRow(
                                 source = source,
-                                scanning = state.scanning &&
-                                    (state.scanningSourceIds.isEmpty() ||
-                                        source.id in state.scanningSourceIds),
+                                // Catalog writes and membership updates must not overlap
+                                // with source mutations from another row.
+                                scanning = state.scanning || state.loadingPool,
                                 onScan = { viewModel.scan(setOf(source.id)) },
                                 onRemove = { viewModel.removeSource(source.id) },
                                 onSelectSubfolders = { viewModel.loadSubfolders(source.id) },
@@ -104,7 +104,7 @@ internal fun MusicLibrarySourcesDialog(
         },
         dismissButton = {
             TextButton(
-                enabled = !state.scanning,
+                enabled = !state.scanning && !state.loadingPool,
                 onClick = { viewModel.scan() }
             ) {
                 Text(stringResource(R.string.music_library_scan_all_sources))

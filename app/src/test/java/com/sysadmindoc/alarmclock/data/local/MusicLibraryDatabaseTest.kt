@@ -749,6 +749,80 @@ class MusicLibraryDatabaseTest {
     }
 
     @Test
+    fun sourceBulkAddUsesLatestCatalogAndPreservesExplicitExclusions() = runBlocking {
+        val context: Context = ApplicationProvider.getApplicationContext<Application>()
+        val database = Room.inMemoryDatabaseBuilder(context, AlarmDatabase::class.java)
+            .allowMainThreadQueries()
+            .build()
+        try {
+            val repository = MusicLibraryRepository(
+                database.musicLibraryDao(),
+                database.playbackHistoryDao()
+            )
+            val original = MusicTrack(
+                uri = "content://source/old.mp3",
+                title = "Old song",
+                source = "SAF"
+            )
+            val excluded = MusicTrack(
+                uri = "content://source/excluded.mp4",
+                title = "Excluded video audio",
+                source = "SAF_VIDEO"
+            )
+            val newTrack = MusicTrack(
+                uri = "content://source/after-rescan.flac",
+                title = "New after rescan",
+                source = "SAF"
+            )
+            val otherSource = MusicTrack(
+                uri = "content://other/unselected.mp3",
+                title = "Other folder",
+                source = "SAF"
+            )
+            val deviceMedia = MusicTrack(
+                uri = "content://media/system-tone.ogg",
+                title = "System tone",
+                source = "MEDIA_STORE"
+            )
+            repository.replaceTracks(listOf(original, excluded))
+            repository.setPoolMembership(listOf(excluded.uri), included = false)
+            // Simulate a dialog caching its candidate list before a later rescan.
+            val staleUiCandidates = repository.poolCandidates()
+            assertEquals(2, staleUiCandidates.size)
+
+            repository.replaceTracks(listOf(original, excluded, newTrack, otherSource, deviceMedia))
+            val folderUris = listOf(
+                original.uri, excluded.uri, newTrack.uri, newTrack.uri,
+                "content://source/missing-from-catalog.mp3"
+            )
+            assertEquals(2, repository.includeUnselectedSourceTracks(folderUris))
+            assertEquals(0, repository.includeUnselectedSourceTracks(folderUris))
+
+            val membership = repository.poolCandidates().associate {
+                it.track.uri to it.membershipState
+            }
+            assertEquals(MusicPoolEntry.INCLUDED, membership[original.uri])
+            assertEquals(MusicPoolEntry.EXCLUDED, membership[excluded.uri])
+            assertEquals(MusicPoolEntry.INCLUDED, membership[newTrack.uri])
+            assertEquals(null, membership[otherSource.uri])
+            assertEquals(null, membership[deviceMedia.uri])
+            assertEquals(2, repository.includedPoolCount())
+
+            // Retain membership independently of index removal, but only count
+            // currently indexed members as playable.
+            repository.replaceTracks(listOf(excluded, newTrack, otherSource, deviceMedia))
+            assertEquals(1, repository.includedPoolCount())
+            assertEquals(newTrack.uri, repository.pickRandomTrack()?.uri)
+            repository.replaceTracks(listOf(original, excluded, newTrack, otherSource, deviceMedia))
+            assertEquals(2, repository.includedPoolCount())
+            assertEquals(MusicPoolEntry.EXCLUDED,
+                repository.poolCandidates().first { it.track.uri == excluded.uri }.membershipState)
+        } finally {
+            database.close()
+        }
+    }
+
+    @Test
     fun newlyIndexedCandidatesAreNotRandomlyPlayableUntilExplicitlyAdded() = runBlocking {
         val context = ApplicationProvider.getApplicationContext<Application>()
         val database = Room.inMemoryDatabaseBuilder(context, AlarmDatabase::class.java)
