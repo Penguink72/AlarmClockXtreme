@@ -56,11 +56,44 @@ interface MusicLibraryDao {
     )
     suspend fun getPoolCandidates(): List<MusicPoolTrack>
 
-    @Query("SELECT COUNT(*) FROM music_pool_members WHERE state = '${MusicPoolEntry.INCLUDED}'")
+    @Query(
+        """
+        SELECT COUNT(*) FROM music_tracks
+        INNER JOIN music_pool_members ON music_tracks.uri = music_pool_members.uri
+        WHERE music_pool_members.state = '${MusicPoolEntry.INCLUDED}'
+        """
+    )
     suspend fun includedCount(): Int
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun setPoolEntries(entries: List<MusicPoolEntry>)
+
+    /**
+     * Add newly indexed candidates from the *current* catalog for one selected
+     * SAF source. This intentionally does not rely on the pool dialog's cached
+     * row list. In one Room transaction, existing INCLUDED and explicitly
+     * EXCLUDED entries are left untouched.
+     */
+    @Transaction
+    suspend fun includeUnselectedSourceTracks(sourceUris: Collection<String>): Int {
+        val sourceSet = sourceUris.toHashSet()
+        if (sourceSet.isEmpty()) return 0
+        val toInclude = getPoolCandidates()
+            .asSequence()
+            .filter { it.track.uri in sourceSet && it.membershipState == null }
+            .map { it.track.uri }
+            .distinct()
+            .toList()
+        if (toInclude.isNotEmpty()) {
+            val now = System.currentTimeMillis()
+            setPoolEntries(
+                toInclude.map { uri ->
+                    MusicPoolEntry(uri, MusicPoolEntry.INCLUDED, now)
+                }
+            )
+        }
+        return toInclude.size
+    }
 
     @Query("DELETE FROM music_tracks")
     suspend fun clear()
