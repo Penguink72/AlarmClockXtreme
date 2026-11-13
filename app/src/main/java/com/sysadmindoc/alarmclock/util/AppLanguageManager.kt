@@ -5,6 +5,7 @@ import android.content.Context
 import android.os.Build
 import android.os.LocaleList
 import androidx.annotation.RequiresApi
+import java.util.Locale
 
 internal enum class AppLanguageOption(val languageTag: String?) {
     SYSTEM_DEFAULT(null),
@@ -27,17 +28,22 @@ internal object AppLanguageManager {
     }
 
     internal fun optionForLanguageTags(languageTags: String): AppLanguageOption {
-        val firstLanguage = languageTags
-            .substringBefore(',')
-            .trim()
-            .substringBefore('-')
-            .lowercase()
-        return when {
-            firstLanguage == "en" -> AppLanguageOption.ENGLISH
-            firstLanguage == "ja" -> AppLanguageOption.JAPANESE
-            firstLanguage == "zh" &&
-                languageTags.substringBefore(',').contains("TW", ignoreCase = true) ->
+        val firstTag = languageTags.substringBefore(',').trim()
+        if (firstTag.isEmpty()) return AppLanguageOption.SYSTEM_DEFAULT
+        val locale = Locale.forLanguageTag(firstTag)
+        return when (locale.language.lowercase(Locale.ROOT)) {
+            "en" -> AppLanguageOption.ENGLISH
+            "ja" -> AppLanguageOption.JAPANESE
+            "zh" -> if (
+                locale.script.equals("Hant", ignoreCase = true) ||
+                locale.country.equals("TW", ignoreCase = true) ||
+                locale.country.equals("HK", ignoreCase = true) ||
+                locale.country.equals("MO", ignoreCase = true)
+            ) {
                 AppLanguageOption.TRADITIONAL_CHINESE
+            } else {
+                AppLanguageOption.SYSTEM_DEFAULT
+            }
             else -> AppLanguageOption.SYSTEM_DEFAULT
         }
     }
