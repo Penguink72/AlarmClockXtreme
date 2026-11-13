@@ -43,7 +43,7 @@ class AppLanguageResourcesTest {
             Labels(
                 "zh-TW", "設定", "預設設定",
                 "音樂庫與播放歷史", "音樂池曲目",
-                "應用程式語言", "碼錶"
+                "App 語言", "碼錶"
             ),
             Labels(
                 "ja", "設定", "初期設定",
