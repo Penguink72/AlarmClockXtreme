@@ -9,6 +9,7 @@ on:
       - fix/db25-schema-01
       - fix/b7-ci-persistent-debug-signing
       - preview/music-alarm-1
+      - feature/ui-language-switch-zh-en-ja-20261113
     paths:
       - ".github/workflows/p0-android-baseline.yml"
       - "app/**"
