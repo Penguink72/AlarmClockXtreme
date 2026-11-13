@@ -100,3 +100,9 @@
 - 目前三語已在 GitHub 提交；第一個語言分支 Run `43364070557` APK Build 成功、719 單測 1 筆 BedtimeReminderBaselineTest 失敗；新增語系資源 Robolectric 測試所在最新 Run `43364202338` 須獨立查結果，不可提前宣稱通過。
 - B9 的 `9db14a3` 不在遠端；其 Migration、Media3 軌選擇與池 UI 僅為 Copilot 回報，未獨立讀碼與編譯。
 - `T0` 契約可確認；`T1` B9 讀碼、`T2` Preview 2 CI、`T3` Android16 實機尚待完成。
+
+
+## 7. CI 追加核對（2026-11-13）
+
+- 語言分支最新 `613cf491` 對應 GitHub Actions [Run 43364202338](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/43364202338)：`testFdroidDebugUnitTest` 完成，**720 tests / 2 failed**；失敗為 `BedtimeReminderBaselineTest` 與 `TimerAlarmServiceTest`，本輪新增語系資源測試不在失敗清單。APK Build Job 在本次檢查時仍進行中，勿稱此 Run 全綠。
+- 前一筆語言分支 [Run 43364070557](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/43364070557)：嚴格 APK Build 成功，719 tests / 1 failed（BedtimeReminderBaselineTest）；固定簽章第二 Runner Job 成功。這個前次 Build 並未包含最後新增的 `AppLanguageResourcesTest` 提交。
