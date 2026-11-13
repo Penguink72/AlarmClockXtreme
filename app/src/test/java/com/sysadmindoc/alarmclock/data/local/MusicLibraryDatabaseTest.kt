@@ -801,34 +801,37 @@ class MusicLibraryDatabaseTest {
             fileName = "Excluded track.mp3"
         )
         try {
-            Room.databaseBuilder(context, AlarmDatabase::class.java, databaseName)
-                .build()
-                .use { database ->
-                    val repository = MusicLibraryRepository(
-                        database.musicLibraryDao(),
-                        database.playbackHistoryDao()
-                    )
-                    repository.replaceTracks(listOf(track))
-                    repository.setPoolMembership(listOf(track.uri), included = false)
-                }
+            val db1 = Room.databaseBuilder(context, AlarmDatabase::class.java, databaseName).build()
+            try {
+                val repository = MusicLibraryRepository(
+                    db1.musicLibraryDao(),
+                    db1.playbackHistoryDao()
+                )
+                repository.replaceTracks(listOf(track))
+                repository.setPoolMembership(listOf(track.uri), included = false)
+            } finally {
+                db1.close()
+            }
 
-            Room.databaseBuilder(context, AlarmDatabase::class.java, databaseName)
+            val reopened = Room.databaseBuilder(context, AlarmDatabase::class.java, databaseName)
                 .allowMainThreadQueries()
                 .build()
-                .use { reopened ->
-                    val repository = MusicLibraryRepository(
-                        reopened.musicLibraryDao(),
-                        reopened.playbackHistoryDao()
-                    )
-                    repository.replaceTracks(listOf(track.copy(title = "Refreshed title")))
+            try {
+                val repository = MusicLibraryRepository(
+                    reopened.musicLibraryDao(),
+                    reopened.playbackHistoryDao()
+                )
+                repository.replaceTracks(listOf(track.copy(title = "Refreshed title")))
 
-                    assertEquals(0, repository.includedPoolCount())
-                    assertEquals(
-                        MusicPoolEntry.EXCLUDED,
-                        repository.poolCandidates().single().membershipState
-                    )
-                    assertEquals(null, repository.pickRandomTrack())
-                }
+                assertEquals(0, repository.includedPoolCount())
+                assertEquals(
+                    MusicPoolEntry.EXCLUDED,
+                    repository.poolCandidates().single().membershipState
+                )
+                assertEquals(null, repository.pickRandomTrack())
+            } finally {
+                reopened.close()
+            }
         } finally {
             context.deleteDatabase(databaseName)
         }
