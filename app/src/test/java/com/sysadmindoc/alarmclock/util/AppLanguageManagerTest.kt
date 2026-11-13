@@ -37,6 +37,33 @@ class AppLanguageManagerTest {
     }
 
     @Test
+    fun traditionalChineseScriptAndHongKongMacauLocalesAreRecognized() {
+        listOf("zh-Hant", "zh-HK", "zh-MO", "zh-Hant-HK").forEach { tag ->
+            assertEquals(
+                tag,
+                AppLanguageOption.TRADITIONAL_CHINESE,
+                AppLanguageManager.optionForLanguageTags(tag)
+            )
+        }
+    }
+
+    @Test
+    fun simplifiedChineseScriptDoesNotChooseTraditionalChinese() {
+        assertEquals(
+            AppLanguageOption.SYSTEM_DEFAULT,
+            AppLanguageManager.optionForLanguageTags("zh-Hans-CN")
+        )
+    }
+
+    @Test
+    fun theFirstConfiguredLocaleDeterminesTheSelection() {
+        assertEquals(
+            AppLanguageOption.ENGLISH,
+            AppLanguageManager.optionForLanguageTags("en-US,zh-TW")
+        )
+    }
+
+    @Test
     fun unsupportedChineseRegionFallsBackToSystemDefault() {
         assertEquals(
             AppLanguageOption.SYSTEM_DEFAULT,
