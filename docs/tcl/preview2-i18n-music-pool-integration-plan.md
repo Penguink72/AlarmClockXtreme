@@ -106,3 +106,11 @@
 
 - 語言分支最新 `613cf491` 對應 GitHub Actions [Run 43364202338](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/43364202338)：`testFdroidDebugUnitTest` 完成，**720 tests / 2 failed**；失敗為 `BedtimeReminderBaselineTest` 與 `TimerAlarmServiceTest`，本輪新增語系資源測試不在失敗清單。APK Build Job 在本次檢查時仍進行中，勿稱此 Run 全綠。
 - 前一筆語言分支 [Run 43364070557](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/43364070557)：嚴格 APK Build 成功，719 tests / 1 failed（BedtimeReminderBaselineTest）；固定簽章第二 Runner Job 成功。這個前次 Build 並未包含最後新增的 `AppLanguageResourcesTest` 提交。
+
+## 8. 2026-11-13 更新：B9 已推送，交付基準更正
+
+- 原文仍保留「B9 未推送」作為編製當時的快照；**現況以本節為準**。遠端 B9 正式 HEAD 為 `5799d7ba913961d42d8bc01a59ecef4755c3249b`，含原 `9db14a3`，共比 Preview 1 多兩筆提交。
+- GPT 遠端讀碼發現 `MusicLibraryDialog.kt` 的 `OutlinedButton` 語法錯置，已隔離修復至 `fix/b9-pool-dialog-compile-20261113@03d9e596ac1d67c0cbd2779bc8f99377d68272c9`；[Draft PR #2](https://github.com/Penguink72/AlarmClockXtreme/pull/2) 只包含這一筆修補。**Argon 應以修補分支為 B9 整合基準**，但須自行跑 Gradle/KSP。
+- Argon 的整合起點現為 `preview/music-alarm-1@e7125b3` → B9＋語法修補 `03d9e596` → 三語 [PR #1](https://github.com/Penguink72/AlarmClockXtreme/pull/1) → I1 音樂池 UI 三語資源 → 正式 Room v27 Schema → Preview 2 v141/142。
+- Argon 重點補驗：音樂池 UI 依**指定來源精確批量選取**（目前只可搜尋來源名稱並全選可見，不等於精確來源篩選）；Media3 `STATE_READY` 與 `onIsPlayingChanged(true)` 之間的播放啟動 watchdog；Android 小螢幕上 3 個管理按鈕是否溢出。
+- 交付／驗收證據見 [B9 接縫文件](./B9-preview2-integration-seams.md)。原 B9 和三語分支、新建 PR 均不等於已經完成 Preview 2 APK。
