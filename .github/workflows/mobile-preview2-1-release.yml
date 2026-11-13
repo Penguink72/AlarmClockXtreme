@@ -1,0 +1,56 @@
+name: Publish mobile Preview 2.1 APK downloads
+
+on:
+  push:
+    branches:
+      - release/mobile-preview2-1-20261113
+    paths:
+      - ".github/workflows/mobile-preview2-1-release.yml"
+
+permissions:
+  actions: read
+  contents: write
+
+jobs:
+  publish-verified-preview-apks:
+    name: Publish direct APK downloads as GitHub prerelease
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Download and verify exact CI artifacts
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/v143 /tmp/v144 release
+          gh run download 43445966739 --repo "$GITHUB_REPOSITORY" --name p0-fdroid-debug-apk --dir /tmp/v143
+          gh run download 43445966739 --repo "$GITHUB_REPOSITORY" --name p0-fdroid-debug-apk-v142-upgrade-test --dir /tmp/v144
+
+          echo "94ad418844edc0798e11b295e94e046874447b5a1bae9ac348c2688a89f80c62  /tmp/v143/app-fdroid-debug.apk" | sha256sum --check --status
+          echo "5232d851568d7ffae64a1e73a4bb205cf138b5a2de352d20a1f86a6abf66e142  /tmp/v144/app-fdroid-debug.apk" | sha256sum --check --status
+          grep -Fx "commit=d74c412fb9f02a047680dd8e8ab727815122fc3a" /tmp/v143/apk-metadata.txt
+          grep -Fx "commit=d74c412fb9f02a047680dd8e8ab727815122fc3a" /tmp/v144/apk-v142-metadata.txt
+          grep -Fx "versionCode=143" /tmp/v143/apk-metadata.txt
+          grep -Fx "versionCode=144" /tmp/v144/apk-v142-metadata.txt
+          grep -Fx "applicationId=com.sysadmindoc.alarmclock.debug" /tmp/v143/apk-metadata.txt
+          grep -Fx "signing_cert_sha256=4F:15:3F:91:16:0F:A5:89:C6:CF:D5:5C:DE:1B:4A:CA:B3:81:A7:0B:0D:CF:31:D7:55:FF:39:40:4C:56:A2:1E" /tmp/v143/apk-metadata.txt
+          grep -Fx "signing_cert_match=true" /tmp/v144/apk-v142-metadata.txt
+
+          cp /tmp/v143/app-fdroid-debug.apk release/AlarmClockXtreme-Preview2.1-v143.apk
+          cp /tmp/v144/app-fdroid-debug.apk release/AlarmClockXtreme-Preview2.1-v144.apk
+
+      - name: Publish APK files as an experimental GitHub prerelease
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh release create "preview2.1-v143-v144-20261113" \
+            "release/AlarmClockXtreme-Preview2.1-v143.apk" \
+            "release/AlarmClockXtreme-Preview2.1-v144.apk" \
+            --repo "$GITHUB_REPOSITORY" \
+            --target "d74c412fb9f02a047680dd8e8ab727815122fc3a" \
+            --prerelease \
+            --title "AlarmClockXtreme Preview 2.1 (Android APK v143/v144)" \
+            --notes "Experimental F-Droid debug APK for Android device testing. VersionCode 143 is the main install; versionCode 144 is the update test. These APKs were built from commit d74c412 and signed with the project's persistent Preview debug certificate. CI: APK build PASS; second-runner signing PASS; 729/730 unit tests PASS, with one preexisting BedtimeReminderBaselineTest failure. Real phone wake-up reliability, audio-only video playback, and the upgrade path still require user testing. Do not rely on this preview as the only wake-up alarm."
