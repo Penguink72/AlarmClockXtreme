@@ -136,7 +136,7 @@ class MusicLibraryViewModel @Inject constructor(
         )
     )
     val uiState: StateFlow<MusicLibraryUiState> = _uiState.asStateFlow()
-    private var initialAutoScanRequested = false
+    private var lastAutoScanElapsedMs = -1L
 
     init {
         refreshCount()
@@ -144,16 +144,21 @@ class MusicLibraryViewModel @Inject constructor(
         loadHistory(LocalDate.now())
     }
 
-    /** A music library opens ready to use. Repeat scans remain available manually. */
+    /**
+     * A library opens ready to use. Avoid costly repeated scans on rapid
+     * dialog reopen, but detect newly added music on later visits.
+     */
     fun autoScanIfNeeded() {
-        if (initialAutoScanRequested) return
-        initialAutoScanRequested = true
+        if (_uiState.value.scanning || _uiState.value.loadingPool) return
+        val now = android.os.SystemClock.elapsedRealtime()
+        if (!MusicAutoPoolPolicy.shouldAutoRefresh(lastAutoScanElapsedMs, now)) return
+        lastAutoScanElapsedMs = now
         scan()
     }
 
     /** Permission response must always trigger a scan, even after a prior denial. */
     fun scanAfterPermissionResponse() {
-        initialAutoScanRequested = true
+        lastAutoScanElapsedMs = android.os.SystemClock.elapsedRealtime()
         scan()
     }
 
