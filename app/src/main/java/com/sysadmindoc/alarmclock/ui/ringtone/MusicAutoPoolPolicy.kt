@@ -66,6 +66,18 @@ internal object MusicAutoPoolPolicy {
 internal object MusicAutoPoolPreferences {
     private const val PREFS = "music_auto_pool_preferences"
     private const val DURATION_KEY = "minimum_duration_seconds"
+    @Volatile
+    private var lastScanElapsedMs: Long = -1L
+
+    fun shouldAutoRefresh(nowElapsedMs: Long = android.os.SystemClock.elapsedRealtime()): Boolean =
+        MusicAutoPoolPolicy.shouldAutoRefresh(lastScanElapsedMs, nowElapsedMs)
+
+    fun recordScanCompleted(
+        @Suppress("UNUSED_PARAMETER") context: android.content.Context? = null,
+        nowElapsedMs: Long = android.os.SystemClock.elapsedRealtime()
+    ) {
+        lastScanElapsedMs = nowElapsedMs
+    }
 
     fun minimumDurationSeconds(context: android.content.Context): Int {
         val saved = context.getSharedPreferences(PREFS, android.content.Context.MODE_PRIVATE)

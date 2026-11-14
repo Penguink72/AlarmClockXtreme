@@ -403,10 +403,9 @@ class AlarmEditViewModel @Inject constructor(
                 val sourceId = _alarmMusicSettingsState.value.draft.playlistId ?: return
                 viewModelScope.launch {
                     runCatching {
-                        val copy = musicLibraryRepository.duplicatePlaylist(
+                        val copy = musicLibraryRepository.duplicate(
                             playlistId = sourceId,
-                            newName = action.newName,
-                            kind = com.sysadmindoc.alarmclock.ui.ringtone.MusicPlaylistKind.ALARM_COPY
+                            ownerAlarmId = action.alarmId.takeIf { it > 0L }
                         )
                         _alarmMusicSettingsState.update { state ->
                             state.copy(

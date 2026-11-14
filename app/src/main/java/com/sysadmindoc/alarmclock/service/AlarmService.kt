@@ -974,7 +974,7 @@ class AlarmService : Service() {
                     recordIncidentAsync(
                         type = AlarmIncidentEvent.TYPE_AUDIO,
                         status = AlarmIncidentEvent.STATUS_FAILED,
-                        reasonCode = "MUSIC_SESSION_FALLBACK_${decision.reason}_${session.consecutiveFailures()}",
+                        reasonCode = "MUSIC_SESSION_FALLBACK_${decision.reasonCode}_${session.consecutiveFailureCount()}",
                         source = "AlarmService"
                     )
                     startMusicDefaultFallback(alarm)
@@ -1125,7 +1125,7 @@ class AlarmService : Service() {
         failedMusicUris.add(candidate.uri)
         when (val decision = session.onTrackFailed(candidate, reason)) {
             is NextAlarmTrackDecision.PlayTrack -> {
-                consecutiveMusicFailures.set(session.consecutiveFailures())
+                consecutiveMusicFailures.set(session.consecutiveFailureCount())
                 serviceScope.launch {
                     if (isMusicSessionActive(alarm, generation) && activeMusicSession.get() === session) {
                         startMedia3MusicTrack(alarm, session, decision.candidate, generation)
@@ -1133,7 +1133,7 @@ class AlarmService : Service() {
                 }
             }
             is NextAlarmTrackDecision.FallbackToDefaultTone -> {
-                val failures = session.consecutiveFailures()
+                val failures = session.consecutiveFailureCount()
                 consecutiveMusicFailures.set(failures)
                 recordIncidentAsync(
                     type = AlarmIncidentEvent.TYPE_AUDIO,
