@@ -18,7 +18,7 @@ class SupportedMediaFileTest {
 
     @Test
     fun acceptsSupportedVideoContainersForAudioTrackInspection() {
-        listOf("mp4", "mkv", "webm", "3gp", "m4v", "mov").forEach { extension ->
+        listOf("mp4", "mkv", "webm", "3gp", "m4v", "mov", "flv").forEach { extension ->
             assertEquals(
                 MusicMediaKind.VIDEO,
                 SupportedMediaFile.classify("clip.$extension", "video/mp4")
@@ -28,6 +28,36 @@ class SupportedMediaFileTest {
             MusicMediaKind.VIDEO,
             SupportedMediaFile.classify("clip.mp4", "application/octet-stream")
         )
+        assertEquals(
+            MusicMediaKind.VIDEO,
+            SupportedMediaFile.classify("live.flv", "application/octet-stream")
+        )
+        assertEquals(
+            MusicMediaKind.VIDEO,
+            SupportedMediaFile.classify("live.flv", "video/x-flv")
+        )
+        assertEquals(
+            MusicMediaKind.VIDEO,
+            SupportedMediaFile.classify("live.flv", "application/x-flash-video")
+        )
+    }
+
+    @Test
+    fun flvHeaderParserRecognizesAudioFlagAndMarksSeekUnsupported() {
+        // 'F','L','V', version=1, flags=0x05 (audio + video), dataOffset=9
+        val headerWithAudio = byteArrayOf(
+            0x46, 0x4C, 0x56, 0x01, 0x05, 0x00, 0x00, 0x00, 0x09
+        )
+        val probeWithAudio = FlvAudioHeaderParser.parse(headerWithAudio)
+        assertEquals(true, probeWithAudio?.hasPlayableAudio)
+        assertEquals(false, probeWithAudio?.seekSupported)
+
+        // 'F','L','V', version=1, flags=0x01 (video only), dataOffset=9
+        val headerVideoOnly = byteArrayOf(
+            0x46, 0x4C, 0x56, 0x01, 0x01, 0x00, 0x00, 0x00, 0x09
+        )
+        val probeVideoOnly = FlvAudioHeaderParser.parse(headerVideoOnly)
+        assertEquals(false, probeVideoOnly?.hasPlayableAudio)
     }
 
     @Test

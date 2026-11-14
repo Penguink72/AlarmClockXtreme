@@ -135,6 +135,76 @@ class MusicLibraryTreeScannerTest {
         assertTrue(result.tracks.all { it.uri.startsWith("content://provider/tree/root/") })
     }
 
+    @Test
+    fun classifiesFlvByMimeOrExtensionFallback() {
+        assertEquals(
+            MusicMediaKind.VIDEO,
+            SupportedMediaFile.classify("concert.flv", "video/x-flv")
+        )
+        assertEquals(
+            MusicMediaKind.VIDEO,
+            SupportedMediaFile.classify("concert.flv", "video/flv")
+        )
+        assertEquals(
+            MusicMediaKind.VIDEO,
+            SupportedMediaFile.classify("concert.flv", "application/x-flash-video")
+        )
+        assertEquals(
+            MusicMediaKind.VIDEO,
+            SupportedMediaFile.classify("concert.flv", "application/octet-stream")
+        )
+        assertEquals("flv", SupportedMediaFile.containerFor("concert.flv", "application/octet-stream"))
+        assertTrue(SupportedMediaFile.isFlv("concert.flv", null))
+    }
+
+    @Test
+    fun flvAudioHeaderParserDistinguishesPlayableSilentUnsupportedAndCorruptStreams() {
+        // 1. Valid FLV with AAC audio tag (SoundFormat = 10 -> 0xA0)
+        val aacFlv = buildFlvBytes(typeFlags = 0x05, tagType = 8, firstTagByte = 0xAF)
+        val aacResult = FlvAudioHeaderParser.parse(aacFlv)
+        assertEquals(MediaAvailability.PLAYABLE, aacResult.availability)
+        assertEquals("aac", aacResult.audioCodec)
+        assertEquals("flv", aacResult.container)
+        assertEquals(false, aacResult.seekSupported)
+
+        // 2. Valid FLV with MP3 audio tag (SoundFormat = 2 -> 0x20)
+        val mp3Flv = buildFlvBytes(typeFlags = 0x05, tagType = 8, firstTagByte = 0x2F)
+        val mp3Result = FlvAudioHeaderParser.parse(mp3Flv)
+        assertEquals(MediaAvailability.PLAYABLE, mp3Result.availability)
+        assertEquals("mp3", mp3Result.audioCodec)
+
+        // 3. Video-only FLV (typeFlags = 0x01, video tag = 9) -> NO_AUDIO_TRACK
+        val silentFlv = buildFlvBytes(typeFlags = 0x01, tagType = 9, firstTagByte = 0x17)
+        val silentResult = FlvAudioHeaderParser.parse(silentFlv)
+        assertEquals(MediaAvailability.NO_AUDIO_TRACK, silentResult.availability)
+
+        // 4. Unsupported audio codec FLV (Nellymoser SoundFormat = 6 -> 0x60) -> CODEC_UNSUPPORTED
+        val nellyFlv = buildFlvBytes(typeFlags = 0x05, tagType = 8, firstTagByte = 0x60)
+        val nellyResult = FlvAudioHeaderParser.parse(nellyFlv)
+        assertEquals(MediaAvailability.CODEC_UNSUPPORTED, nellyResult.availability)
+        assertEquals("nellymoser", nellyResult.audioCodec)
+
+        // 5. Corrupt / non-FLV bytes -> UNREADABLE
+        val corruptResult = FlvAudioHeaderParser.parse(byteArrayOf(0x00, 0x01, 0x02))
+        assertEquals(MediaAvailability.UNREADABLE, corruptResult.availability)
+    }
+
+    private fun buildFlvBytes(typeFlags: Int, tagType: Int, firstTagByte: Int): ByteArray {
+        return byteArrayOf(
+            'F'.code.toByte(), 'L'.code.toByte(), 'V'.code.toByte(),
+            0x01,
+            typeFlags.toByte(),
+            0x00, 0x00, 0x00, 0x09, // dataOffset = 9
+            0x00, 0x00, 0x00, 0x00, // PreviousTagSize0 = 0
+            tagType.toByte(),
+            0x00, 0x00, 0x02,       // dataSize = 2
+            0x00, 0x00, 0x00, 0x00, // timestamp = 0
+            0x00, 0x00, 0x00,       // streamId = 0
+            firstTagByte.toByte(), 0x00, // 2 bytes tag payload
+            0x00, 0x00, 0x00, 0x0D  // PreviousTagSize1 = 13
+        )
+    }
+
     private fun source(index: Int, treeUri: String, documentId: String) = MusicLibrarySource(
         id = "$treeUri|$documentId",
         treeUri = treeUri,

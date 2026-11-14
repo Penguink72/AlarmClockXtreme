@@ -118,12 +118,43 @@ data class AlarmBackup(
 )
 
 @JsonClass(generateAdapter = true)
+data class MusicPlaylistItemBackup(
+    val playlistItemId: String,
+    val trackUri: String,
+    val position: Int,
+    val addedAt: Long = 0L
+)
+
+@JsonClass(generateAdapter = true)
+data class MusicPlaylistBackup(
+    val playlistId: String,
+    val name: String,
+    val kind: String = "NAMED",
+    val ownerAlarmId: Long? = null,
+    val createdAt: Long = 0L,
+    val updatedAt: Long = 0L,
+    val items: List<MusicPlaylistItemBackup> = emptyList()
+)
+
+@JsonClass(generateAdapter = true)
+data class AlarmMusicSettingsBackup(
+    val alarmId: Long,
+    val playlistId: String? = null,
+    val playbackStrategy: String = "RANDOM_WITH_REPEATS",
+    val artistFilters: List<String> = emptyList(),
+    val folderFilters: List<String> = emptyList(),
+    val continuousUntilDismiss: Boolean = true
+)
+
+@JsonClass(generateAdapter = true)
 data class BackupData(
     val version: Int = 20,
     val appVersion: String = BuildConfig.VERSION_NAME,
     val exportedAt: Long = System.currentTimeMillis(),
     val alarms: List<AlarmBackup>,
-    val settings: SettingsBackup?
+    val settings: SettingsBackup?,
+    val musicPlaylists: List<MusicPlaylistBackup> = emptyList(),
+    val alarmMusicSettings: List<AlarmMusicSettingsBackup> = emptyList()
 )
 
 @JsonClass(generateAdapter = true)
@@ -283,8 +314,15 @@ class BackupManager @Inject constructor(
     @ApplicationContext private val context: Context,
     private val repository: AlarmRepository,
     private val preferencesManager: PreferencesManager,
-    private val scheduler: AlarmScheduler
+    private val scheduler: AlarmScheduler,
+    private val musicLibraryRepository: com.sysadmindoc.alarmclock.data.repository.MusicLibraryRepository?
 ) {
+    constructor(
+        context: Context,
+        repository: AlarmRepository,
+        preferencesManager: PreferencesManager,
+        scheduler: AlarmScheduler
+    ) : this(context, repository, preferencesManager, scheduler, null)
     private val moshi = Moshi.Builder().build()
 
     private val adapter = moshi.adapter(BackupData::class.java).indent("  ")
@@ -532,9 +570,17 @@ class BackupManager @Inject constructor(
     suspend fun export(): String {
         val alarms = repository.getAll()
         val settings = preferencesManager.getCurrentSettings()
+        val playlistsBackup = runCatching {
+            musicLibraryRepository?.exportPlaylistsForBackup().orEmpty()
+        }.getOrDefault(emptyList())
+        val alarmMusicSettingsBackup = runCatching {
+            musicLibraryRepository?.exportAlarmMusicSettingsForBackup(alarms.map { it.id }).orEmpty()
+        }.getOrDefault(emptyList())
 
         val backup = BackupData(
             alarms = alarms.map { alarm -> alarm.toAlarmBackup() },
+            musicPlaylists = playlistsBackup,
+            alarmMusicSettings = alarmMusicSettingsBackup,
             settings = SettingsBackup(
                 is24HourFormat = settings.is24HourFormat,
                 defaultSnoozeDuration = settings.defaultSnoozeDuration,
@@ -915,15 +961,31 @@ class BackupManager @Inject constructor(
             // entire import after partially saving earlier rows. Wrap each
             // save+schedule so genuine bad rows are skipped with a log
             // entry while the rest of the backup still lands.
+            if (backup.musicPlaylists.isNotEmpty()) {
+                runCatching {
+                    musicLibraryRepository?.importPlaylistsFromBackup(backup.musicPlaylists)
+                }
+            }
+            val musicSettingsByOriginalId = backup.alarmMusicSettings.associateBy { it.alarmId }
+
             var count = 0
             val savedIds = mutableSetOf<Long>()
             val alarmsToSchedule = mutableListOf<Alarm>()
             for (alarm in importedAlarms) {
                 try {
+                    val originalId = alarm.id
                     val alarmToSave = alarm.prepareForImport(options)
                     val savedId = repository.save(alarmToSave)
                     savedIds += savedId
                     val savedAlarm = alarmToSave.copy(id = savedId)
+                    musicSettingsByOriginalId[originalId]?.let { musicSettings ->
+                        runCatching {
+                            musicLibraryRepository?.importAlarmMusicSettingsFromBackup(
+                                savedAlarm.id,
+                                musicSettings
+                            )
+                        }
+                    }
                     if (savedAlarm.isEnabled) {
                         alarmsToSchedule += savedAlarm
                     }

@@ -22,7 +22,17 @@ data class PlaybackTrackCandidate(
     val artistId: String = "",
     val folderIds: Set<String> = emptySet(),
     val isPlayableAtRuntime: Boolean = true
-)
+) {
+    val uri: String
+        get() = track.uri
+
+    val displayTitle: String
+        get() = com.sysadmindoc.alarmclock.data.local.entity.MusicTrackTitleResolver.resolve(
+            fileName = track.fileName,
+            metadataTitle = track.metadataTitle,
+            legacyTitle = track.title
+        )
+}
 
 data class PlaylistSnapshot(
     val playlistId: String?,

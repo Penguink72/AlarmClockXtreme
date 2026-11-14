@@ -8,6 +8,7 @@ import com.sysadmindoc.alarmclock.R
 import com.sysadmindoc.alarmclock.data.model.Alarm
 import com.sysadmindoc.alarmclock.data.model.ShiftPattern
 import com.sysadmindoc.alarmclock.data.repository.AlarmRepository
+import com.sysadmindoc.alarmclock.data.repository.MusicLibraryRepository
 import com.sysadmindoc.alarmclock.domain.AlarmScheduler
 import com.sysadmindoc.alarmclock.domain.LocationDismissPolicy
 import com.sysadmindoc.alarmclock.domain.NextAlarmCalculator
@@ -16,8 +17,10 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -150,7 +153,8 @@ class AlarmEditViewModel @Inject constructor(
     private val repository: AlarmRepository,
     private val scheduler: AlarmScheduler,
     private val calculator: NextAlarmCalculator,
-    private val preferencesManager: com.sysadmindoc.alarmclock.data.preferences.PreferencesManager
+    private val preferencesManager: com.sysadmindoc.alarmclock.data.preferences.PreferencesManager,
+    private val musicLibraryRepository: MusicLibraryRepository
 ) : ViewModel() {
 
     private val alarmId: Long = savedStateHandle.get<Long>("alarmId") ?: -1
@@ -164,6 +168,12 @@ class AlarmEditViewModel @Inject constructor(
             )
         }
         .stateIn(viewModelScope, SharingStarted.Eagerly, _uiState.value)
+
+    private val _alarmMusicSettingsState = MutableStateFlow(
+        AlarmMusicSettingsUiState(integrationAvailable = true, loading = true)
+    )
+    val alarmMusicSettingsState: StateFlow<AlarmMusicSettingsUiState> =
+        _alarmMusicSettingsState.asStateFlow()
 
     init {
         viewModelScope.launch {
@@ -267,6 +277,179 @@ class AlarmEditViewModel @Inject constructor(
                     gradualVolumeSeconds = settings.defaultGradualVolume
                 )
                 loadedDraft = _uiState.value
+            }
+            val initialMusicDraft = if (alarmId > 0) {
+                runCatching { musicLibraryRepository.getSettings(alarmId) }
+                    .getOrElse { AlarmMusicSettingsDraft() }
+            } else {
+                AlarmMusicSettingsDraft()
+            }
+            _alarmMusicSettingsState.update {
+                it.copy(draft = initialMusicDraft, loading = true, error = null)
+            }
+            refreshMusicSettingsEvaluation()
+        }
+    }
+
+    fun refreshMusicSettingsEvaluation() {
+        viewModelScope.launch {
+            runCatching {
+                val currentDraft = _alarmMusicSettingsState.value.draft
+                val evaluated = musicLibraryRepository.evaluateAlarmMusicDraft(currentDraft)
+                _alarmMusicSettingsState.update { state ->
+                    state.copy(
+                        draft = currentDraft,
+                        playlists = evaluated.playlists,
+                        artists = evaluated.artists,
+                        folders = evaluated.folders,
+                        matchingPlayableTrackCount = evaluated.matchingPlayableTrackCount,
+                        unavailableTrackCount = evaluated.unavailableTrackCount,
+                        loading = false,
+                        error = null,
+                        integrationAvailable = true
+                    )
+                }
+            }.onFailure { error ->
+                _alarmMusicSettingsState.update { state ->
+                    state.copy(
+                        loading = false,
+                        error = error.message ?: context.getString(R.string.alarm_edit_save_error_generic)
+                    )
+                }
+            }
+        }
+    }
+
+    fun onAlarmMusicSettingsAction(action: AlarmMusicSettingsAction) {
+        when (action) {
+            is AlarmMusicSettingsAction.SelectPlaylist -> {
+                val nextStrategy = if (
+                    action.playlistId == null &&
+                    _alarmMusicSettingsState.value.draft.playbackStrategy ==
+                    AlarmMusicPlaybackStrategy.PLAYLIST_ORDER
+                ) {
+                    AlarmMusicPlaybackStrategy.RANDOM_WITH_REPEATS
+                } else {
+                    _alarmMusicSettingsState.value.draft.playbackStrategy
+                }
+                _alarmMusicSettingsState.update { state ->
+                    state.copy(
+                        draft = state.draft.copy(
+                            playlistId = action.playlistId,
+                            playbackStrategy = nextStrategy
+                        ),
+                        saved = false,
+                        error = null
+                    )
+                }
+                refreshMusicSettingsEvaluation()
+            }
+            is AlarmMusicSettingsAction.SetPlaybackStrategy -> {
+                _alarmMusicSettingsState.update { state ->
+                    state.copy(
+                        draft = state.draft.copy(playbackStrategy = action.strategy),
+                        saved = false,
+                        error = null
+                    )
+                }
+                refreshMusicSettingsEvaluation()
+            }
+            is AlarmMusicSettingsAction.ToggleArtist -> {
+                _alarmMusicSettingsState.update { state ->
+                    val current = state.draft.artistFilters
+                    val updated = if (action.artistId in current) {
+                        current - action.artistId
+                    } else {
+                        current + action.artistId
+                    }
+                    state.copy(
+                        draft = state.draft.copy(artistFilters = updated),
+                        saved = false,
+                        error = null
+                    )
+                }
+                refreshMusicSettingsEvaluation()
+            }
+            is AlarmMusicSettingsAction.ToggleFolder -> {
+                _alarmMusicSettingsState.update { state ->
+                    val current = state.draft.folderFilters
+                    val updated = if (action.folderId in current) {
+                        current - action.folderId
+                    } else {
+                        current + action.folderId
+                    }
+                    state.copy(
+                        draft = state.draft.copy(folderFilters = updated),
+                        saved = false,
+                        error = null
+                    )
+                }
+                refreshMusicSettingsEvaluation()
+            }
+            AlarmMusicSettingsAction.ClearFilters -> {
+                _alarmMusicSettingsState.update { state ->
+                    state.copy(
+                        draft = state.draft.copy(
+                            artistFilters = emptySet(),
+                            folderFilters = emptySet()
+                        ),
+                        saved = false,
+                        error = null
+                    )
+                }
+                refreshMusicSettingsEvaluation()
+            }
+            is AlarmMusicSettingsAction.DuplicateSelectedPlaylistForAlarm -> {
+                val sourceId = _alarmMusicSettingsState.value.draft.playlistId ?: return
+                viewModelScope.launch {
+                    runCatching {
+                        val copy = musicLibraryRepository.duplicatePlaylist(
+                            playlistId = sourceId,
+                            newName = action.newName,
+                            kind = com.sysadmindoc.alarmclock.ui.ringtone.MusicPlaylistKind.ALARM_COPY
+                        )
+                        _alarmMusicSettingsState.update { state ->
+                            state.copy(
+                                draft = state.draft.copy(playlistId = copy.playlistId),
+                                saved = false,
+                                error = null
+                            )
+                        }
+                        refreshMusicSettingsEvaluation()
+                    }.onFailure { error ->
+                        _alarmMusicSettingsState.update { state ->
+                            state.copy(
+                                error = error.message ?: context.getString(R.string.alarm_edit_save_error_generic)
+                            )
+                        }
+                    }
+                }
+            }
+            AlarmMusicSettingsAction.Save -> {
+                val draft = _alarmMusicSettingsState.value.draft
+                if (alarmId > 0) {
+                    viewModelScope.launch {
+                        _alarmMusicSettingsState.update { it.copy(saving = true, error = null) }
+                        runCatching {
+                            musicLibraryRepository.saveSettings(alarmId, draft)
+                        }.onSuccess {
+                            _alarmMusicSettingsState.update {
+                                it.copy(saving = false, saved = true, error = null)
+                            }
+                        }.onFailure { error ->
+                            _alarmMusicSettingsState.update {
+                                it.copy(
+                                    saving = false,
+                                    error = error.message ?: context.getString(R.string.alarm_edit_save_error_generic)
+                                )
+                            }
+                        }
+                    }
+                } else {
+                    _alarmMusicSettingsState.update {
+                        it.copy(saving = false, saved = true, error = null)
+                    }
+                }
             }
         }
     }
@@ -720,6 +903,12 @@ class AlarmEditViewModel @Inject constructor(
                 val savedAlarm = alarm.copy(
                     id = if (s.isEditing) alarmId else savedId
                 )
+                runCatching {
+                    musicLibraryRepository.saveSettings(
+                        savedAlarm.id,
+                        _alarmMusicSettingsState.value.draft
+                    )
+                }
                 if (savedAlarm.isEnabled) {
                     scheduler.schedule(savedAlarm)
                 } else {

@@ -55,7 +55,7 @@ object SnoozeCapPolicy {
     fun outcomeFor(alarm: Alarm, snoozeCount: Int): SnoozeCapOutcome {
         val next = snoozeCount.coerceAtLeast(0) + 1
         if (!isCapped(alarm) || next <= alarm.maxSnoozeCount) return SnoozeCapOutcome.SNOOZE
-        return if (hasDismissGate(alarm)) {
+        return if (hasDismissGate(alarm) || alarm.randomMusicEnabled) {
             SnoozeCapOutcome.REFUSE
         } else {
             SnoozeCapOutcome.AUTO_DISMISS

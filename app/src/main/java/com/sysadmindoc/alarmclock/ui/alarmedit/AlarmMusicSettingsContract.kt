@@ -20,7 +20,7 @@ data class AlarmMusicSettingsDraft(
 )
 
 data class AlarmMusicPlaylistOption(
-    val playlistId: String?,
+    val playlistId: String,
     val name: String,
     val kind: MusicPlaylistKind = MusicPlaylistKind.NAMED,
     val playableTrackCount: Int = 0,

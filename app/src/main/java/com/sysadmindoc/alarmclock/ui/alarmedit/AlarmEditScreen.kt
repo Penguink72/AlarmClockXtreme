@@ -190,6 +190,7 @@ fun AlarmEditScreen(
     var timeNumpadIsPm by rememberSaveable { mutableStateOf(false) }
     var showRingtonePicker by remember { mutableStateOf(false) }
     var showMusicLibraryDialog by rememberSaveable { mutableStateOf(false) }
+    var showAlarmMusicSettings by rememberSaveable { mutableStateOf(false) }
     var showChainPicker by remember { mutableStateOf(false) }
     var photoReferenceStatus by remember { mutableStateOf("") }
     var firingBackgroundStatus by remember { mutableStateOf("") }
@@ -365,7 +366,21 @@ fun AlarmEditScreen(
 
     if (showMusicLibraryDialog) {
         MusicLibraryDialog(
-            onDismiss = { showMusicLibraryDialog = false }
+            onDismiss = {
+                showMusicLibraryDialog = false
+                viewModel.refreshMusicSettingsEvaluation()
+            }
+        )
+    }
+    if (showAlarmMusicSettings) {
+        val musicSettingsState by viewModel.alarmMusicSettingsState.collectAsStateWithLifecycle()
+        LaunchedEffect(Unit) {
+            viewModel.refreshMusicSettingsEvaluation()
+        }
+        AlarmMusicSettingsScreen(
+            state = musicSettingsState,
+            onAction = viewModel::onAlarmMusicSettingsAction,
+            onDismiss = { showAlarmMusicSettings = false }
         )
     }
 
@@ -549,7 +564,8 @@ fun AlarmEditScreen(
                     state = state,
                     viewModel = viewModel,
                     onOpenRingtonePicker = { showRingtonePicker = true },
-                    onOpenMusicLibrary = { showMusicLibraryDialog = true }
+                    onOpenMusicLibrary = { showMusicLibraryDialog = true },
+                    onOpenAlarmMusicSettings = { showAlarmMusicSettings = true }
                 )
                 AlarmEditorPage.DISMISS -> alarmEditDismissSections(
                     editorPage = editorPage,

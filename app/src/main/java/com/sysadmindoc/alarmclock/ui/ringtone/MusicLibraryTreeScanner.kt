@@ -3,6 +3,7 @@ package com.sysadmindoc.alarmclock.ui.ringtone
 import android.provider.DocumentsContract
 import com.sysadmindoc.alarmclock.data.local.entity.MusicTrack
 import com.sysadmindoc.alarmclock.data.local.entity.MusicTrackTitleResolver
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 import java.util.ArrayDeque
@@ -18,6 +19,32 @@ internal interface MusicLibraryTreeAccess {
     suspend fun children(treeUri: String, documentId: String): List<MusicDocumentEntry>
     fun documentUri(treeUri: String, documentId: String): String
     suspend fun hasPlayableAudioTrack(uri: String): Boolean
+
+    suspend fun probeAudioTrack(
+        uri: String,
+        displayName: String = "",
+        mimeType: String? = null
+    ): AudioProbeResult {
+        val container = SupportedMediaFile.containerFor(displayName, mimeType)
+        val playable = hasPlayableAudioTrack(uri)
+        return if (playable) {
+            AudioProbeResult(
+                availability = MediaAvailability.PLAYABLE,
+                container = container,
+                seekSupported = container != "flv"
+            )
+        } else {
+            AudioProbeResult(
+                availability = MediaAvailability.NO_AUDIO_TRACK,
+                container = container,
+                seekSupported = container != "flv",
+                failureReason = "NO_AUDIO_TRACK"
+            )
+        }
+    }
+
+    /** Unknown duration returns null and cannot be automatically classified as full song. */
+    suspend fun durationMs(uri: String): Long? = null
 }
 
 internal data class MusicFolderScanResult(
@@ -25,20 +52,35 @@ internal data class MusicFolderScanResult(
     val audioCount: Int,
     val videoCount: Int,
     val rejectedAudio: Int,
-    val rejectedVideos: Int
+    val rejectedVideos: Int,
+    val evaluatedUris: Set<String> = emptySet(),
+    val automaticallyEligibleUris: Set<String> = emptySet(),
+    val rejectedNoAudioCount: Int = 0,
+    val rejectedUnsupportedCodecCount: Int = 0,
+    val unreadableCount: Int = 0,
+    val metadataByUri: Map<String, MusicCatalogTrackMetadata> = emptyMap()
 )
 
 internal class MusicLibraryTreeScanner(
     private val treeAccess: MusicLibraryTreeAccess
 ) {
-    suspend fun scan(source: MusicLibrarySource): MusicFolderScanResult {
+    suspend fun scan(
+        source: MusicLibrarySource,
+        minimumSeconds: Int = MusicAutoPoolPolicy.DEFAULT_MIN_SECONDS
+    ): MusicFolderScanResult {
         val pendingDirectories = ArrayDeque<String>().apply { add(source.documentId) }
         val visitedDirectories = HashSet<String>()
         val tracks = LinkedHashMap<String, MusicTrack>()
+        val metadataByUri = LinkedHashMap<String, MusicCatalogTrackMetadata>()
         var audioCount = 0
         var videoCount = 0
         var rejectedAudio = 0
         var rejectedVideos = 0
+        var rejectedNoAudioCount = 0
+        var rejectedUnsupportedCodecCount = 0
+        var unreadableCount = 0
+        val evaluatedUris = LinkedHashSet<String>()
+        val automaticallyEligibleUris = LinkedHashSet<String>()
 
         while (pendingDirectories.isNotEmpty()) {
             currentCoroutineContext().ensureActive()
@@ -53,8 +95,16 @@ internal class MusicLibraryTreeScanner(
                 val kind = SupportedMediaFile.classify(entry.displayName, entry.mimeType)
                     ?: continue
                 val uri = treeAccess.documentUri(source.treeUri, entry.documentId)
-                if (!MusicMediaTrackPolicy.isIndexable(treeAccess.hasPlayableAudioTrack(uri))) {
+                val probe = treeAccess.probeAudioTrack(uri, entry.displayName, entry.mimeType)
+                if (!MusicMediaTrackPolicy.isIndexable(probe.availability)) {
                     if (kind == MusicMediaKind.VIDEO) rejectedVideos++ else rejectedAudio++
+                    when (probe.availability) {
+                        MediaAvailability.NO_AUDIO_TRACK -> rejectedNoAudioCount++
+                        MediaAvailability.CODEC_UNSUPPORTED -> rejectedUnsupportedCodecCount++
+                        MediaAvailability.UNREADABLE,
+                        MediaAvailability.PERMISSION_MISSING -> unreadableCount++
+                        else -> Unit
+                    }
                     continue
                 }
                 val track = MusicTrack(
@@ -69,6 +119,48 @@ internal class MusicLibraryTreeScanner(
                     metadataTitle = ""
                 )
                 if (tracks.putIfAbsent(uri, track) == null) {
+                    val duration = probe.durationMs ?: try {
+                        treeAccess.durationMs(uri)
+                    } catch (cancelled: CancellationException) {
+                        throw cancelled
+                    } catch (_: Exception) {
+                        null
+                    }
+                    val directoryPath = entry.documentId.substringAfter(':', "")
+                        .substringBeforeLast('/', "")
+                        .ifBlank { source.name }
+                    val isSystemTone = MusicAutoPoolPolicy.isSystemSound(directoryPath)
+                    if (MusicAutoPoolPolicy.hasDecisiveMetadata(duration, directoryPath)) {
+                        evaluatedUris += uri
+                    }
+                    if (MusicAutoPoolPolicy.isEligible(
+                            durationMs = duration,
+                            relativePath = directoryPath,
+                            minimumSeconds = minimumSeconds
+                        )
+                    ) {
+                        automaticallyEligibleUris += uri
+                    }
+                    val container = probe.container.ifBlank {
+                        SupportedMediaFile.containerFor(entry.displayName, entry.mimeType)
+                    }
+                    metadataByUri[uri] = MusicCatalogTrackMetadata(
+                        uri = uri,
+                        artist = "",
+                        album = "",
+                        folderPath = directoryPath,
+                        durationMillis = duration,
+                        mediaType = if (kind == MusicMediaKind.VIDEO) {
+                            CatalogMediaType.VIDEO_AUDIO
+                        } else {
+                            CatalogMediaType.AUDIO
+                        },
+                        availability = MediaAvailability.PLAYABLE,
+                        codecWarning = if (container == "flv") "FLV" else "",
+                        container = container,
+                        seekSupported = probe.seekSupported && container != "flv",
+                        isSystemTone = isSystemTone
+                    )
                     if (kind == MusicMediaKind.VIDEO) videoCount++ else audioCount++
                 }
             }
@@ -78,7 +170,13 @@ internal class MusicLibraryTreeScanner(
             audioCount = audioCount,
             videoCount = videoCount,
             rejectedAudio = rejectedAudio,
-            rejectedVideos = rejectedVideos
+            rejectedVideos = rejectedVideos,
+            evaluatedUris = evaluatedUris,
+            automaticallyEligibleUris = automaticallyEligibleUris,
+            rejectedNoAudioCount = rejectedNoAudioCount,
+            rejectedUnsupportedCodecCount = rejectedUnsupportedCodecCount,
+            unreadableCount = unreadableCount,
+            metadataByUri = metadataByUri
         )
     }
 
@@ -162,5 +260,26 @@ internal class SafMusicLibraryTreeAccess(
     override suspend fun hasPlayableAudioTrack(uri: String): Boolean {
         val contentUri = android.net.Uri.parse(uri)
         return audioTrackProbe.hasAudioTrack(contentUri)
+    }
+
+    override suspend fun probeAudioTrack(
+        uri: String,
+        displayName: String,
+        mimeType: String?
+    ): AudioProbeResult {
+        val contentUri = android.net.Uri.parse(uri)
+        return audioTrackProbe.probe(contentUri, displayName, mimeType)
+    }
+
+    override suspend fun durationMs(uri: String): Long? {
+        val retriever = android.media.MediaMetadataRetriever()
+        return try {
+            retriever.setDataSource(context, android.net.Uri.parse(uri))
+            retriever.extractMetadata(android.media.MediaMetadataRetriever.METADATA_KEY_DURATION)
+                ?.toLongOrNull()
+                ?.takeIf { it > 0 }
+        } finally {
+            runCatching { retriever.release() }
+        }
     }
 }

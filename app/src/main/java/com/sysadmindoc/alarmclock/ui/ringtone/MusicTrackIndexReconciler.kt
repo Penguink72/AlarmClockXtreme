@@ -33,5 +33,5 @@ internal object MusicTrackIndexReconciler {
     }
 
     private fun isMediaStoreTrack(track: MusicTrack): Boolean =
-        track.source == MusicLibraryIndexer.SOURCE_MEDIA_STORE
+        MusicLibraryIndexer.isMediaStoreSource(track.source)
 }

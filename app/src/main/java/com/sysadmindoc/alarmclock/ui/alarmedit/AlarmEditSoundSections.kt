@@ -82,7 +82,8 @@ internal fun LazyListScope.alarmEditSoundSections(
     state: AlarmEditUiState,
     viewModel: AlarmEditViewModel,
     onOpenRingtonePicker: () -> Unit,
-    onOpenMusicLibrary: () -> Unit = {}
+    onOpenMusicLibrary: () -> Unit = {},
+    onOpenAlarmMusicSettings: () -> Unit = {}
 ) {
     // Sound settings
     SettingsSection(editorPage, AlarmEditorSection.SOUND) {
@@ -151,6 +152,19 @@ internal fun LazyListScope.alarmEditSoundSections(
                 SettingsValueButton(
                     label = stringResource(R.string.music_library_button),
                     onClick = onOpenMusicLibrary
+                )
+            }
+        )
+        SettingsHint(
+            stringResource(R.string.alarm_music_settings_repeat_lifecycle),
+            tone = HintTone.Neutral
+        )
+        SettingsRow(
+            label = stringResource(R.string.alarm_music_settings_playlist_label),
+            trailing = {
+                SettingsValueButton(
+                    label = stringResource(R.string.alarm_music_settings_open),
+                    onClick = onOpenAlarmMusicSettings
                 )
             }
         )

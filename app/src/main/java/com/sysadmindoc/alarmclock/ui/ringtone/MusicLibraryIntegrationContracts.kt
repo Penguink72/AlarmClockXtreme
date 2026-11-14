@@ -51,7 +51,13 @@ data class MediaCatalogItem(
     val seekSupported: Boolean = true,
     val isSystemTone: Boolean = false,
     val failureReason: String = ""
-)
+) {
+    val playable: Boolean
+        get() = availability == MediaAvailability.PLAYABLE
+
+    val unplayableReason: String?
+        get() = failureReason.ifBlank { null }
+}
 
 enum class MediaProviderKind {
     MEDIA_STORE_AUDIO,
@@ -71,7 +77,10 @@ enum class MediaAvailability {
     NO_AUDIO_TRACK,
     CODEC_UNSUPPORTED,
     PERMISSION_MISSING,
-    UNREADABLE
+    UNREADABLE,
+    UNSUPPORTED,
+    PERMISSION_REQUIRED,
+    UNAVAILABLE
 }
 
 sealed interface MediaCatalogScope {
@@ -142,7 +151,8 @@ data class MusicPlaylist(
     val ownerAlarmId: Long? = null,
     val playableTrackCount: Int = 0,
     val unavailableTrackCount: Int = 0,
-    val referencedAlarmCount: Int = 0
+    val referencingAlarmCount: Int = 0,
+    val referencedAlarmCount: Int = referencingAlarmCount
 )
 
 enum class MusicPlaylistKind {
@@ -182,5 +192,10 @@ data class AddTracksResult(
 
 sealed interface DeletePlaylistResult {
     data object Deleted : DeletePlaylistResult
-    data class BlockedByAlarmReferences(val referencedAlarmCount: Int) : DeletePlaylistResult
+    data class BlockedByAlarmReferences(
+        val referencingAlarmCount: Int
+    ) : DeletePlaylistResult {
+        val referencedAlarmCount: Int
+            get() = referencingAlarmCount
+    }
 }

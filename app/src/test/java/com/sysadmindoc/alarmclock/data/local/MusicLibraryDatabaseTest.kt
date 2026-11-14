@@ -11,6 +11,11 @@ import androidx.test.core.app.ApplicationProvider
 import com.sysadmindoc.alarmclock.data.local.entity.MusicPoolEntry
 import com.sysadmindoc.alarmclock.data.local.entity.MusicTrack
 import com.sysadmindoc.alarmclock.data.repository.MusicLibraryRepository
+import com.sysadmindoc.alarmclock.ui.alarmedit.AlarmMusicPlaybackStrategy
+import com.sysadmindoc.alarmclock.ui.alarmedit.AlarmMusicSettingsDraft
+import com.sysadmindoc.alarmclock.ui.ringtone.DeletePlaylistResult
+import com.sysadmindoc.alarmclock.ui.ringtone.ExcludedTrackResolution
+import kotlinx.coroutines.flow.first
 import java.io.File
 import kotlinx.coroutines.runBlocking
 import org.json.JSONArray
@@ -471,6 +476,20 @@ class MusicLibraryDatabaseTest {
                 .toObjectMap("name")
                 .containsKey("index_music_pool_members_state")
         )
+        assertFalse(entities.containsKey("music_playlists"))
+    }
+
+    @Test
+    fun exportedSchema28MatchesEntitiesAndRoomRuntimeIdentityHash() {
+        val schema28 = readSchemaJson(28).getJSONObject("database")
+        assertEquals(28, schema28.getInt("version"))
+        val entities = schema28.getJSONArray("entities").toObjectMap("tableName")
+        assertEquals(14, entities.size)
+        assertTrue(entities.containsKey("media_catalog_metadata"))
+        assertTrue(entities.containsKey("music_playlists"))
+        assertTrue(entities.containsKey("music_playlist_items"))
+        assertTrue(entities.containsKey("alarm_music_settings"))
+        assertTrue(entities.containsKey("alarm_music_facet_filters"))
 
         val context: Context = ApplicationProvider.getApplicationContext<Application>()
         val database = Room.inMemoryDatabaseBuilder(context, AlarmDatabase::class.java)
@@ -480,7 +499,7 @@ class MusicLibraryDatabaseTest {
             val writableDb = database.openHelper.writableDatabase
             writableDb.query("SELECT identity_hash FROM room_master_table WHERE id = 42").use { cursor ->
                 assertTrue(cursor.moveToFirst())
-                assertEquals(expectedHash, cursor.getString(0))
+                assertEquals(schema28.getString("identityHash"), cursor.getString(0))
             }
         } finally {
             database.close()
@@ -647,8 +666,147 @@ class MusicLibraryDatabaseTest {
                 }
                 assertEquals("Column count mismatch in $tableName", expectedColumns.length(), actualColumns.size)
             }
+
+            // Step 4: 27 -> 28
+            db.execSQL("UPDATE alarms SET randomMusicEnabled = 1 WHERE id = 42")
+            AlarmDatabase.MIGRATION_27_28.migrate(db)
+
+            db.query("SELECT playlistId, playbackStrategy, continuousUntilDismiss FROM alarm_music_settings WHERE alarmId = 42").use { cursor ->
+                assertTrue(cursor.moveToFirst())
+                assertTrue(cursor.isNull(0))
+                assertEquals("RANDOM_WITH_REPEATS", cursor.getString(1))
+                assertEquals(1, cursor.getInt(2))
+            }
+            db.query("SELECT name, kind FROM music_playlists WHERE playlistId = 'favorites'").use { cursor ->
+                assertTrue(cursor.moveToFirst())
+                assertEquals("Favorites", cursor.getString(0))
+                assertEquals("FAVORITES", cursor.getString(1))
+            }
+            db.query("SELECT COUNT(*) FROM media_catalog_metadata").use { cursor ->
+                assertTrue(cursor.moveToFirst())
+                assertEquals(2, cursor.getInt(0))
+            }
+            val schema28 = readSchemaJson(28).getJSONObject("database")
+            val entities28 = schema28.getJSONArray("entities")
+            for (i in 0 until entities28.length()) {
+                val entity = entities28.getJSONObject(i)
+                val tableName = entity.getString("tableName")
+                val expectedColumns = entity.getJSONArray("fields")
+                val actualColumns = mutableMapOf<String, Triple<String, Boolean, Int>>()
+                db.query("PRAGMA table_info(`$tableName`)").use { cursor ->
+                    val nameIdx = cursor.getColumnIndexOrThrow("name")
+                    val typeIdx = cursor.getColumnIndexOrThrow("type")
+                    val notNullIdx = cursor.getColumnIndexOrThrow("notnull")
+                    val pkIdx = cursor.getColumnIndexOrThrow("pk")
+                    while (cursor.moveToNext()) {
+                        actualColumns[cursor.getString(nameIdx)] = Triple(
+                            cursor.getString(typeIdx),
+                            cursor.getInt(notNullIdx) != 0,
+                            cursor.getInt(pkIdx)
+                        )
+                    }
+                }
+                assertEquals("Column count mismatch in $tableName", expectedColumns.length(), actualColumns.size)
+            }
         } finally {
             helper.close()
+        }
+    }
+
+    @Test
+    fun namedPlaylistCrudAutoIncludesCandidatesProtectsExcludedTracksSupportsDuplicatesAndBlocksReferencedDeletes() = runBlocking {
+        val context = ApplicationProvider.getApplicationContext<Application>()
+        val database = Room.inMemoryDatabaseBuilder(context, AlarmDatabase::class.java)
+            .allowMainThreadQueries()
+            .build()
+        try {
+            val repository = MusicLibraryRepository(
+                database.musicLibraryDao(),
+                database.playbackHistoryDao()
+            )
+            val candidateTracks = (1..20).map { i ->
+                MusicTrack(
+                    uri = "content://media/audio/$i",
+                    title = "Song $i",
+                    source = "MEDIA_STORE",
+                    fileName = "Song $i.mp3"
+                )
+            }
+            val excludedTrack = MusicTrack(
+                uri = "content://media/audio/excluded",
+                title = "Excluded Song",
+                source = "MEDIA_STORE",
+                fileName = "Excluded.mp3"
+            )
+            repository.replaceTracks(candidateTracks + excludedTrack)
+            repository.setPoolMembership(listOf(excludedTrack.uri), included = false)
+
+            val playlist = repository.create("Morning Japanese")
+            val addResult = repository.addTracks(
+                playlistId = playlist.playlistId,
+                selectedUris = candidateTracks.map { it.uri } + excludedTrack.uri,
+                excludedResolution = ExcludedTrackResolution.KEEP_EXCLUDED
+            )
+            assertEquals(20, addResult.addedItems)
+            assertEquals(20, addResult.autoIncludedCandidates)
+            assertEquals(1, addResult.excludedItemsSkipped)
+            assertEquals(listOf(excludedTrack.uri), addResult.excludedTrackUris)
+            assertEquals(20, repository.includedPoolCount())
+
+            // Explicit restore of excluded track after confirmation
+            val restoreResult = repository.addTracks(
+                playlistId = playlist.playlistId,
+                selectedUris = listOf(excludedTrack.uri),
+                excludedResolution = ExcludedTrackResolution.RESTORE_EXCLUDED
+            )
+            assertEquals(1, restoreResult.addedItems)
+            assertEquals(1, restoreResult.excludedItemsRestored)
+            assertEquals(21, repository.includedPoolCount())
+
+            // Duplicate URI in the same ordered playlist creates a distinct playlistItemId
+            val dupUri = candidateTracks.first().uri
+            repository.addTracks(
+                playlistId = playlist.playlistId,
+                selectedUris = listOf(dupUri)
+            )
+            val itemsAfterDup = repository.observeItems(playlist.playlistId).first()
+            assertEquals(22, itemsAfterDup.size)
+            val matchingDupItems = itemsAfterDup.filter { it.trackUri == dupUri }
+            assertEquals(2, matchingDupItems.size)
+            assertTrue(matchingDupItems[0].playlistItemId != matchingDupItems[1].playlistItemId)
+
+            // Removing only the first occurrence leaves the second occurrence intact
+            repository.removeItem(matchingDupItems[0].playlistItemId)
+            val itemsAfterRemove = repository.observeItems(playlist.playlistId).first()
+            assertEquals(21, itemsAfterRemove.size)
+            assertEquals(
+                listOf(matchingDupItems[1].playlistItemId),
+                itemsAfterRemove.filter { it.trackUri == dupUri }.map { it.playlistItemId }
+            )
+
+            // Reference check blocks deletion while an alarm uses the playlist
+            repository.saveSettings(
+                alarmId = 7L,
+                draft = AlarmMusicSettingsDraft(
+                    playlistId = playlist.playlistId,
+                    playbackStrategy = AlarmMusicPlaybackStrategy.PLAYLIST_ORDER
+                )
+            )
+            val blocked = repository.deleteWithReferencesCheck(playlist.playlistId)
+            assertEquals(DeletePlaylistResult.BlockedByAlarmReferences(1), blocked)
+
+            // Switching alarm back to SMART_ALL allows deletion
+            repository.saveSettings(
+                alarmId = 7L,
+                draft = AlarmMusicSettingsDraft(
+                    playlistId = null,
+                    playbackStrategy = AlarmMusicPlaybackStrategy.SHUFFLE_WITHOUT_REPEATS
+                )
+            )
+            val deleted = repository.deleteWithReferencesCheck(playlist.playlistId)
+            assertEquals(DeletePlaylistResult.Deleted, deleted)
+        } finally {
+            database.close()
         }
     }
 

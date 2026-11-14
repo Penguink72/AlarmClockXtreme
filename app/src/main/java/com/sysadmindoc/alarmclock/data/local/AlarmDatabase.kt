@@ -8,6 +8,11 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import com.sysadmindoc.alarmclock.data.local.entity.ActigraphySession
 import com.sysadmindoc.alarmclock.data.local.entity.AlarmIncidentEvent
 import com.sysadmindoc.alarmclock.data.local.entity.AlarmEvent
+import com.sysadmindoc.alarmclock.data.local.entity.AlarmMusicFacetFilterEntity
+import com.sysadmindoc.alarmclock.data.local.entity.AlarmMusicSettingsEntity
+import com.sysadmindoc.alarmclock.data.local.entity.MediaCatalogMetadataEntity
+import com.sysadmindoc.alarmclock.data.local.entity.MusicPlaylistEntity
+import com.sysadmindoc.alarmclock.data.local.entity.MusicPlaylistItemEntity
 import com.sysadmindoc.alarmclock.data.local.entity.PreSleepTagEntry
 import com.sysadmindoc.alarmclock.data.local.entity.MusicTrack
 import com.sysadmindoc.alarmclock.data.local.entity.MusicPoolEntry
@@ -25,9 +30,14 @@ import com.sysadmindoc.alarmclock.data.model.Alarm
         PreSleepTagEntry::class,
         MusicTrack::class,
         MusicPoolEntry::class,
-        PlaybackHistoryEntry::class
+        PlaybackHistoryEntry::class,
+        MediaCatalogMetadataEntity::class,
+        MusicPlaylistEntity::class,
+        MusicPlaylistItemEntity::class,
+        AlarmMusicSettingsEntity::class,
+        AlarmMusicFacetFilterEntity::class
     ],
-    version = 27,
+    version = 28,
     exportSchema = true
 )
 @TypeConverters(Converters::class)
@@ -445,6 +455,176 @@ abstract class AlarmDatabase : RoomDatabase() {
             }
         }
 
+        val MIGRATION_27_28 = object : Migration(27, 28) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    """
+                    CREATE TABLE IF NOT EXISTS `media_catalog_metadata` (
+                        `uri` TEXT NOT NULL,
+                        `providerKind` TEXT NOT NULL,
+                        `mediaType` TEXT NOT NULL,
+                        `volumeName` TEXT NOT NULL,
+                        `relativePath` TEXT NOT NULL,
+                        `folderName` TEXT NOT NULL,
+                        `artist` TEXT NOT NULL,
+                        `album` TEXT NOT NULL,
+                        `mimeType` TEXT NOT NULL,
+                        `container` TEXT NOT NULL,
+                        `durationMs` INTEGER,
+                        `audioProbeStatus` TEXT NOT NULL,
+                        `decoderStatus` TEXT NOT NULL,
+                        `isSystemTone` INTEGER NOT NULL,
+                        `permissionAvailability` TEXT NOT NULL,
+                        `failureReason` TEXT NOT NULL,
+                        `lastSeenAt` INTEGER NOT NULL,
+                        PRIMARY KEY(`uri`)
+                    )
+                    """.trimIndent()
+                )
+                db.execSQL(
+                    "CREATE INDEX IF NOT EXISTS `index_media_catalog_metadata_mediaType` " +
+                        "ON `media_catalog_metadata` (`mediaType`)"
+                )
+                db.execSQL(
+                    "CREATE INDEX IF NOT EXISTS `index_media_catalog_metadata_artist` " +
+                        "ON `media_catalog_metadata` (`artist`)"
+                )
+                db.execSQL(
+                    "CREATE INDEX IF NOT EXISTS `index_media_catalog_metadata_folderName` " +
+                        "ON `media_catalog_metadata` (`folderName`)"
+                )
+                db.execSQL(
+                    "CREATE INDEX IF NOT EXISTS `index_media_catalog_metadata_audioProbeStatus` " +
+                        "ON `media_catalog_metadata` (`audioProbeStatus`)"
+                )
+                db.execSQL(
+                    """
+                    INSERT OR IGNORE INTO `media_catalog_metadata` (
+                        `uri`, `providerKind`, `mediaType`, `volumeName`, `relativePath`, `folderName`,
+                        `artist`, `album`, `mimeType`, `container`, `durationMs`,
+                        `audioProbeStatus`, `decoderStatus`, `isSystemTone`, `permissionAvailability`,
+                        `failureReason`, `lastSeenAt`
+                    )
+                    SELECT
+                        `uri`,
+                        CASE
+                            WHEN `source` = 'SAF_VIDEO' THEN 'SAF_VIDEO_TREE'
+                            WHEN `source` = 'SAF' THEN 'SAF_TREE'
+                            WHEN `source` = 'MEDIA_STORE_VIDEO' THEN 'MEDIA_STORE_VIDEO'
+                            ELSE 'MEDIA_STORE_AUDIO'
+                        END,
+                        CASE
+                            WHEN `source` IN ('SAF_VIDEO', 'MEDIA_STORE_VIDEO') THEN 'VIDEO_AUDIO'
+                            ELSE 'AUDIO'
+                        END,
+                        '',
+                        '',
+                        '',
+                        '',
+                        '',
+                        '',
+                        '',
+                        NULL,
+                        'PLAYABLE',
+                        'PLAYABLE',
+                        0,
+                        'GRANTED',
+                        '',
+                        0
+                    FROM `music_tracks`
+                    """.trimIndent()
+                )
+
+                db.execSQL(
+                    """
+                    CREATE TABLE IF NOT EXISTS `music_playlists` (
+                        `playlistId` TEXT NOT NULL,
+                        `name` TEXT NOT NULL,
+                        `kind` TEXT NOT NULL,
+                        `ownerAlarmId` INTEGER,
+                        `createdAt` INTEGER NOT NULL,
+                        `updatedAt` INTEGER NOT NULL,
+                        PRIMARY KEY(`playlistId`)
+                    )
+                    """.trimIndent()
+                )
+                db.execSQL(
+                    "CREATE INDEX IF NOT EXISTS `index_music_playlists_kind` " +
+                        "ON `music_playlists` (`kind`)"
+                )
+                db.execSQL(
+                    """
+                    INSERT OR IGNORE INTO `music_playlists` (
+                        `playlistId`, `name`, `kind`, `ownerAlarmId`, `createdAt`, `updatedAt`
+                    ) VALUES ('favorites', 'Favorites', 'FAVORITES', NULL, 0, 0)
+                    """.trimIndent()
+                )
+
+                db.execSQL(
+                    """
+                    CREATE TABLE IF NOT EXISTS `music_playlist_items` (
+                        `playlistItemId` TEXT NOT NULL,
+                        `playlistId` TEXT NOT NULL,
+                        `trackUri` TEXT NOT NULL,
+                        `position` INTEGER NOT NULL,
+                        `addedAt` INTEGER NOT NULL,
+                        PRIMARY KEY(`playlistItemId`)
+                    )
+                    """.trimIndent()
+                )
+                db.execSQL(
+                    "CREATE INDEX IF NOT EXISTS `index_music_playlist_items_playlistId_position` " +
+                        "ON `music_playlist_items` (`playlistId`, `position`)"
+                )
+                db.execSQL(
+                    "CREATE INDEX IF NOT EXISTS `index_music_playlist_items_trackUri` " +
+                        "ON `music_playlist_items` (`trackUri`)"
+                )
+
+                db.execSQL(
+                    """
+                    CREATE TABLE IF NOT EXISTS `alarm_music_settings` (
+                        `alarmId` INTEGER NOT NULL,
+                        `playlistId` TEXT,
+                        `playbackStrategy` TEXT NOT NULL,
+                        `continuousUntilDismiss` INTEGER NOT NULL,
+                        `updatedAt` INTEGER NOT NULL,
+                        PRIMARY KEY(`alarmId`)
+                    )
+                    """.trimIndent()
+                )
+                db.execSQL(
+                    "CREATE INDEX IF NOT EXISTS `index_alarm_music_settings_playlistId` " +
+                        "ON `alarm_music_settings` (`playlistId`)"
+                )
+                db.execSQL(
+                    """
+                    INSERT OR IGNORE INTO `alarm_music_settings` (
+                        `alarmId`, `playlistId`, `playbackStrategy`, `continuousUntilDismiss`, `updatedAt`
+                    )
+                    SELECT `id`, NULL, 'RANDOM_WITH_REPEATS', 1, 0
+                    FROM `alarms`
+                    WHERE `randomMusicEnabled` != 0
+                    """.trimIndent()
+                )
+
+                db.execSQL(
+                    """
+                    CREATE TABLE IF NOT EXISTS `alarm_music_facet_filters` (
+                        `alarmId` INTEGER NOT NULL,
+                        `kind` TEXT NOT NULL,
+                        `facetId` TEXT NOT NULL,
+                        PRIMARY KEY(`alarmId`, `kind`, `facetId`)
+                    )
+                    """.trimIndent()
+                )
+                db.execSQL(
+                    "CREATE INDEX IF NOT EXISTS `index_alarm_music_facet_filters_alarmId` " +
+                        "ON `alarm_music_facet_filters` (`alarmId`)"
+                )
+            }
+        }
+
         val ALL_MIGRATIONS = arrayOf(
             MIGRATION_1_2,
             MIGRATION_2_3,
@@ -472,6 +652,7 @@ abstract class AlarmDatabase : RoomDatabase() {
             MIGRATION_24_25,
             MIGRATION_25_26,
             MIGRATION_26_27,
+            MIGRATION_27_28,
         )
     }
 }

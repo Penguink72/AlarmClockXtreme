@@ -95,4 +95,14 @@ class SnoozeCapPolicyTest {
         assertTrue(SnoozeCapPolicy.canSnooze(strict, 0))
         assertFalse(SnoozeCapPolicy.canSnooze(strict, 1))
     }
+
+    @Test
+    fun `a continuous music alarm refuses snooze at cap instead of auto-dismissing`() {
+        val musicAlarm = alarm(maxSnoozeCount = 2).copy(randomMusicEnabled = true)
+        assertFalse(SnoozeCapPolicy.hasDismissGate(musicAlarm))
+        assertEquals(SnoozeCapOutcome.SNOOZE, SnoozeCapPolicy.outcomeFor(musicAlarm, 0))
+        assertEquals(SnoozeCapOutcome.SNOOZE, SnoozeCapPolicy.outcomeFor(musicAlarm, 1))
+        assertEquals(SnoozeCapOutcome.REFUSE, SnoozeCapPolicy.outcomeFor(musicAlarm, 2))
+        assertFalse(SnoozeCapPolicy.canSnooze(musicAlarm, 2))
+    }
 }

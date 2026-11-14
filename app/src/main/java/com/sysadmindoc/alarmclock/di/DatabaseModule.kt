@@ -14,6 +14,12 @@ import com.sysadmindoc.alarmclock.data.local.DatabaseDowngradeNotice
 import com.sysadmindoc.alarmclock.data.local.PlaybackHistoryDao
 import com.sysadmindoc.alarmclock.data.local.PreSleepTagDao
 import com.sysadmindoc.alarmclock.data.local.SnoreEventDao
+import com.sysadmindoc.alarmclock.data.repository.MusicLibraryRepository
+import com.sysadmindoc.alarmclock.ui.alarmedit.AlarmMusicSettingsRepository
+import com.sysadmindoc.alarmclock.ui.ringtone.Media3PreviewAudioController
+import com.sysadmindoc.alarmclock.ui.ringtone.MediaCatalogRepository
+import com.sysadmindoc.alarmclock.ui.ringtone.MusicCatalogPreviewController
+import com.sysadmindoc.alarmclock.ui.ringtone.MusicPlaylistRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -41,6 +47,16 @@ object DatabaseModule {
             // alarms quietly would be its own failure, so say so.
             .fallbackToDestructiveMigrationOnDowngrade()
             .addCallback(object : RoomDatabase.Callback() {
+                override fun onCreate(db: SupportSQLiteDatabase) {
+                    db.execSQL(
+                        """
+                        INSERT OR IGNORE INTO `music_playlists` (
+                            `playlistId`, `name`, `kind`, `ownerAlarmId`, `createdAt`, `updatedAt`
+                        ) VALUES ('favorites', 'Favorites', 'FAVORITES', NULL, 0, 0)
+                        """.trimIndent()
+                    )
+                }
+
                 override fun onDestructiveMigration(db: SupportSQLiteDatabase) {
                     DatabaseDowngradeNotice.post(context)
                 }
@@ -93,4 +109,26 @@ object DatabaseModule {
     @Singleton
     fun providePlaybackHistoryDao(database: AlarmDatabase): PlaybackHistoryDao =
         database.playbackHistoryDao()
+
+    @Provides
+    @Singleton
+    fun provideMediaCatalogRepository(repository: MusicLibraryRepository): MediaCatalogRepository =
+        repository
+
+    @Provides
+    @Singleton
+    fun provideMusicPlaylistRepository(repository: MusicLibraryRepository): MusicPlaylistRepository =
+        repository
+
+    @Provides
+    @Singleton
+    fun provideAlarmMusicSettingsRepository(
+        repository: MusicLibraryRepository
+    ): AlarmMusicSettingsRepository = repository
+
+    @Provides
+    @Singleton
+    fun provideMusicCatalogPreviewController(
+        controller: Media3PreviewAudioController
+    ): MusicCatalogPreviewController = controller
 }

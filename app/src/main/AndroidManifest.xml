@@ -49,8 +49,10 @@
     <!-- Battery Optimization Exemption (legitimate for alarm apps) -->
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 
-    <!-- Custom Ringtone Access -->
+    <!-- Custom Ringtone & Video-Audio Access -->
     <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+    <uses-permission android:name="android.permission.READ_MEDIA_VISUAL_USER_SELECTED" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" />
     <!-- v1.7.0: Required only on API ≤28 to write downloaded YouTube audio
