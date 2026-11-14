@@ -85,6 +85,24 @@ class MusicPoolFilterLogicTest {
     }
 
     @Test
+    fun automaticallyDetectedDeviceMusicAppearsInDefaultScopeButRingtonesDoNot() {
+        val autoSong = poolItemMediaStore.copy(
+            membershipState = MusicPoolEntry.AUTO_INCLUDED,
+            track = mediaStoreTrack.copy(title = "Full song")
+        )
+        val manuallyExcludedTone = poolItemMediaStore.copy(
+            membershipState = MusicPoolEntry.EXCLUDED
+        )
+        val visible = filterPoolTracks(
+            tracks = listOf(autoSong, manuallyExcludedTone, poolItemSaf1),
+            filter = MusicPoolFilter.INCLUDED,
+            scope = MusicPoolSourceScope.Folders,
+            search = ""
+        )
+        assertEquals(listOf(autoSong), visible)
+    }
+
+    @Test
     fun batchAddFolderIncludesOnlyUnexcludedCandidatesOfThatFolder() {
         val excludedItem = poolItemSaf1.copy(membershipState = MusicPoolEntry.EXCLUDED)
         val alreadyIncludedItem = poolItemVideo.copy(membershipState = MusicPoolEntry.INCLUDED)
