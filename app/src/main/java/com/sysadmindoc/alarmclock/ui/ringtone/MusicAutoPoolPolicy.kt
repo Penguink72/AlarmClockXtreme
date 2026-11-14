@@ -13,6 +13,26 @@ internal object MusicAutoPoolPolicy {
         "ringtones", "notifications", "alarms"
     )
 
+    /**
+     * An unavailable duration is inconclusive: retain the previous automatic
+     * decision rather than demoting a playable song after a transient metadata
+     * provider failure. System-sound flags/paths are independent evidence.
+     */
+    fun hasDecisiveMetadata(
+        durationMs: Long?,
+        relativePath: String,
+        isRingtone: Boolean = false,
+        isNotification: Boolean = false,
+        isAlarm: Boolean = false
+    ): Boolean =
+        (durationMs != null && durationMs > 0L) ||
+            isRingtone || isNotification || isAlarm || isSystemSoundPath(relativePath)
+
+    private fun isSystemSoundPath(relativePath: String): Boolean =
+        relativePath.split('/', '\\').any {
+            it.lowercase() in systemSoundDirectories
+        }
+
     fun isEligible(
         durationMs: Long?,
         relativePath: String,
@@ -25,9 +45,7 @@ internal object MusicAutoPoolPolicy {
         if (durationMs == null || durationMs <= 0L) return false
         if (durationMs < minimumSeconds.toLong() * 1000L) return false
         if (isRingtone || isNotification || isAlarm) return false
-        if (relativePath.split('/', '\\').any { it.lowercase() in systemSoundDirectories }) {
-            return false
-        }
+        if (isSystemSoundPath(relativePath)) return false
         return true
     }
 }
