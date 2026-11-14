@@ -33,6 +33,15 @@ class MusicAutoPoolPolicyTest {
     }
 
     @Test
+    fun unknownMetadataCannotInvalidateExistingMusicOnTemporaryRescanFailure() {
+        assertFalse(MusicAutoPoolPolicy.hasDecisiveMetadata(null, "Music/"))
+        assertFalse(MusicAutoPoolPolicy.hasDecisiveMetadata(0L, "Music/"))
+        assertTrue(MusicAutoPoolPolicy.hasDecisiveMetadata(60_000L, "Music/"))
+        assertTrue(MusicAutoPoolPolicy.hasDecisiveMetadata(null, "Notifications/"))
+        assertTrue(MusicAutoPoolPolicy.hasDecisiveMetadata(null, "Music/", isAlarm = true))
+    }
+
+    @Test
     fun nearNamedFolderIsNotMistakenForSystemSoundDirectory() {
         assertTrue(MusicAutoPoolPolicy.isEligible(90_000L, "Music/My Ringtones Collection/"))
         assertTrue(MusicAutoPoolPolicy.isEligible(90_000L, "Music/Alarms Album/"))
