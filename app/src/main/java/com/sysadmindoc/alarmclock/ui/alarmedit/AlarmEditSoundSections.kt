@@ -154,6 +154,10 @@ internal fun LazyListScope.alarmEditSoundSections(
                 )
             }
         )
+        SettingsHint(
+            stringResource(R.string.alarm_music_settings_pending),
+            tone = HintTone.Neutral
+        )
 
         SettingsRow(
             label = stringResource(R.string.alarm_edit_override_volume),

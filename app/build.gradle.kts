@@ -547,7 +547,9 @@ dependencies {
     // SettingsBackup constructor parameters so a new settings field can't ship
     // without a backup round-trip again.
     testImplementation(kotlin("reflect"))
+    androidTestImplementation(platform("androidx.compose:compose-bom:2026.06.00"))
     androidTestImplementation("androidx.room:room-testing:2.6.1")
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     androidTestImplementation("androidx.test:core:1.6.1")
     androidTestImplementation("androidx.test:runner:1.6.2")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
