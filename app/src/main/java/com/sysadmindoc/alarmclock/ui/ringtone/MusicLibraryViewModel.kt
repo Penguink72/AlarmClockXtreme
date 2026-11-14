@@ -44,7 +44,8 @@ data class MusicLibraryUiState(
     val poolSearch: String = "",
     val selectedPoolUris: Set<String> = emptySet(),
     val loadingPool: Boolean = false,
-    val poolSourceScope: MusicPoolSourceScope = MusicPoolSourceScope.Folders
+    val poolSourceScope: MusicPoolSourceScope = MusicPoolSourceScope.Folders,
+    val minimumAutoDurationSeconds: Int = MusicAutoPoolPolicy.DEFAULT_MIN_SECONDS
 )
 
 enum class MusicPoolFilter {
@@ -75,7 +76,9 @@ data class MusicPoolUiTrack(
 internal fun MusicTrack.isVideoAudio(): Boolean = source == MusicLibraryIndexer.SOURCE_SAF_VIDEO
 
 internal fun MusicPoolUiTrack.matchesScope(scope: MusicPoolSourceScope): Boolean = when (scope) {
-    MusicPoolSourceScope.Folders -> track.source != MusicLibraryIndexer.SOURCE_MEDIA_STORE
+    MusicPoolSourceScope.Folders ->
+        track.source != MusicLibraryIndexer.SOURCE_MEDIA_STORE ||
+            membershipState == MusicPoolEntry.AUTO_INCLUDED
     MusicPoolSourceScope.DeviceMedia -> track.source == MusicLibraryIndexer.SOURCE_MEDIA_STORE
     is MusicPoolSourceScope.Folder ->
         track.source != MusicLibraryIndexer.SOURCE_MEDIA_STORE && scope.sourceId in sourceIds
@@ -92,7 +95,9 @@ internal fun filterPoolTracks(
     return tracks.filter { item ->
         val matchesFilter = when (filter) {
             MusicPoolFilter.ALL_CANDIDATES -> true
-            MusicPoolFilter.INCLUDED -> item.membershipState == MusicPoolEntry.INCLUDED
+            MusicPoolFilter.INCLUDED ->
+                item.membershipState == MusicPoolEntry.INCLUDED ||
+                    item.membershipState == MusicPoolEntry.AUTO_INCLUDED
             MusicPoolFilter.EXCLUDED -> item.membershipState == MusicPoolEntry.EXCLUDED
         }
         if (!matchesFilter || !item.matchesScope(scope)) return@filter false
@@ -125,13 +130,41 @@ class MusicLibraryViewModel @Inject constructor(
     private val repository: MusicLibraryRepository,
     @ApplicationContext private val context: Context
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow(MusicLibraryUiState())
+    private val _uiState = MutableStateFlow(
+        MusicLibraryUiState(
+            minimumAutoDurationSeconds = MusicAutoPoolPreferences.minimumDurationSeconds(context)
+        )
+    )
     val uiState: StateFlow<MusicLibraryUiState> = _uiState.asStateFlow()
+    private var initialAutoScanRequested = false
 
     init {
         refreshCount()
         refreshSources()
         loadHistory(LocalDate.now())
+    }
+
+    /** A music library opens ready to use. Repeat scans remain available manually. */
+    fun autoScanIfNeeded() {
+        if (initialAutoScanRequested) return
+        initialAutoScanRequested = true
+        scan()
+    }
+
+    fun updateMinimumAutoDuration(seconds: Int) {
+        if (seconds !in MusicAutoPoolPolicy.availableMinimumSeconds ||
+            _uiState.value.scanning || _uiState.value.loadingPool
+        ) return
+        try {
+            MusicAutoPoolPreferences.setMinimumDurationSeconds(context, seconds)
+            _uiState.value = _uiState.value.copy(minimumAutoDurationSeconds = seconds)
+            scan()
+        } catch (error: Exception) {
+            reportStatus(
+                context.getString(R.string.music_library_auto_filter_save_failed,
+                    error.message.orEmpty())
+            )
+        }
     }
 
     fun refreshCount() {
@@ -310,13 +343,15 @@ class MusicLibraryViewModel @Inject constructor(
     }
 
     fun scan(sourceIds: Set<String>? = null) {
-        if (_uiState.value.scanning) return
+        if (_uiState.value.scanning || _uiState.value.loadingPool) return
+        // Mark scanning before launching so repeated clicks cannot schedule
+        // overlapping runs that could overwrite newly indexed source state.
+        _uiState.value = _uiState.value.copy(
+            scanning = true,
+            scanningSourceIds = sourceIds.orEmpty(),
+            status = context.getString(R.string.music_library_scanning_status)
+        )
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(
-                scanning = true,
-                scanningSourceIds = sourceIds.orEmpty(),
-                status = context.getString(R.string.music_library_scanning_status)
-            )
             try {
                 val result = indexer.scan(sourceIds)
                 val combined = MusicTrackIndexReconciler.afterScan(
@@ -329,6 +364,12 @@ class MusicLibraryViewModel @Inject constructor(
                 withContext(Dispatchers.IO) {
                     MusicLibrarySourceStore.updateAll(context, result.sources)
                 }
+                // Automatic membership is based on this successful scan only.
+                // The DAO transaction preserves explicit user includes/excludes.
+                val autoAdded = repository.reconcileAutomaticallyEvaluated(
+                    result.evaluatedUris,
+                    result.automaticallyEligibleUris
+                )
                 updatePoolCounts(repository.poolCandidates())
                 _uiState.value = _uiState.value.copy(
                     sources = result.sources,
@@ -340,6 +381,12 @@ class MusicLibraryViewModel @Inject constructor(
                                 result.tracks.count { it.source == MusicLibraryIndexer.SOURCE_SAF_VIDEO }
                             )
                         )
+                        append(' ')
+                        append(context.getString(
+                            R.string.music_library_auto_scan_summary,
+                            autoAdded,
+                            result.evaluatedUris.size - result.automaticallyEligibleUris.size
+                        ))
                         if (result.rejectedAudio > 0) {
                             append(' ')
                             append(
@@ -399,7 +446,10 @@ class MusicLibraryViewModel @Inject constructor(
     }
 
     private fun updatePoolCounts(tracks: List<MusicPoolTrack>) {
-        val included = tracks.filter { it.membershipState == MusicPoolEntry.INCLUDED }
+        val included = tracks.filter {
+            it.membershipState == MusicPoolEntry.INCLUDED ||
+                it.membershipState == MusicPoolEntry.AUTO_INCLUDED
+        }
         _uiState.value = _uiState.value.copy(
             count = included.size,
             audioCount = included.count { it.track.source != MusicLibraryIndexer.SOURCE_SAF_VIDEO },
