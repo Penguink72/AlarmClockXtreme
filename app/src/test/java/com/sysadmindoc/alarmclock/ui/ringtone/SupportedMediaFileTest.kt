@@ -44,9 +44,16 @@ class SupportedMediaFileTest {
 
     @Test
     fun flvHeaderParserRecognizesAudioFlagAndMarksSeekUnsupported() {
-        // 'F','L','V', version=1, flags=0x05 (audio + video), dataOffset=9
+        // 'F','L','V', version=1, flags=0x05 (audio + video), dataOffset=9, followed by AAC audio tag
         val headerWithAudio = byteArrayOf(
-            0x46, 0x4C, 0x56, 0x01, 0x05, 0x00, 0x00, 0x00, 0x09
+            0x46, 0x4C, 0x56, 0x01, 0x05, 0x00, 0x00, 0x00, 0x09,
+            0x00, 0x00, 0x00, 0x00, // PreviousTagSize0 = 0
+            0x08,                   // tagType = 8 (audio)
+            0x00, 0x00, 0x02,       // dataSize = 2
+            0x00, 0x00, 0x00, 0x00, // timestamp = 0
+            0x00, 0x00, 0x00,       // streamId = 0
+            0xAF.toByte(), 0x00,    // SoundFormat = 10 (AAC)
+            0x00, 0x00, 0x00, 0x0D  // PreviousTagSize1 = 13
         )
         val probeWithAudio = FlvAudioHeaderParser.parse(headerWithAudio)
         assertEquals(true, probeWithAudio.hasPlayableAudio)

@@ -104,6 +104,7 @@ internal fun filterPoolTracks(
         if (query.isBlank()) return@filter true
         val searchable = listOf(
             item.track.displayTitle,
+            item.track.title,
             item.track.fileName,
             item.track.metadataTitle,
             item.sourceName
@@ -133,6 +134,7 @@ internal fun filterLibraryCatalog(
         if (query.isBlank()) return@filter true
         val searchable = listOf(
             item.track.displayTitle,
+            item.track.title,
             item.track.fileName,
             item.track.metadataTitle,
             item.sourceName
