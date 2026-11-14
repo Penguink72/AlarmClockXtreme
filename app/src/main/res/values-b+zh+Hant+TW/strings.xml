@@ -74,6 +74,16 @@
     <string name="ringtone_folder_source">資料夾來源</string>
     <string name="music_library_title">音樂庫與播放歷史</string>
     <string name="music_library_button">音樂庫</string>
+    <string name="music_library_back">返回</string>
+    <string name="music_library_history_title">播放歷史</string>
+    <string name="music_library_history_button">歷史</string>
+    <string name="music_library_catalog_search">搜尋歌名、檔名或中繼資料</string>
+    <string name="music_library_catalog_permission">允許音訊存取權即可索引裝置中的音樂。既有索引與已選取的資料夾仍可使用。</string>
+    <string name="music_library_catalog_grant_permission">允許存取裝置音訊</string>
+    <string name="music_library_catalog_empty">尚無已索引曲目。請允許音訊存取權或掃描已授權的音樂資料夾。</string>
+    <string name="music_library_catalog_no_results">沒有符合搜尋內容或篩選條件的曲目。</string>
+    <string name="music_library_catalog_added">已將選取的 %1$d 首曲目加入音樂池。</string>
+    <string name="music_library_catalog_excluded">已將選取的 %1$d 首曲目從音樂池排除。</string>
     <string name="music_library_track_count">已索引曲目：%1$d 首</string>
     <string name="music_library_media_counts">音樂池：共 %1$d 首（音訊 %2$d 首、影片音軌 %3$d 首）</string>
     <string name="music_library_scan">掃描音樂</string>

@@ -118,4 +118,91 @@ class MusicPoolFilterLogicTest {
         assertFalse(urisToInclude.contains(poolItemMediaStore.track.uri))
         assertFalse(urisToInclude.contains(otherFolderCandidate.track.uri))
     }
+
+    @Test
+    fun catalogSearchMatchesMixedLanguageTitleFileMetadataAndSource() {
+        val chinese = poolItemSaf1.copy(
+            track = safTrack1.copy(
+                title = "周杰倫 - 晴天",
+                fileName = "周杰倫 - 晴天.mp3",
+                metadataTitle = "晴天"
+            ),
+            sourceName = "手機音樂"
+        )
+        val japanese = poolItemVideo.copy(
+            track = safVideoTrack.copy(
+                title = "夏の雨 - 回家 Home",
+                fileName = "夏の雨 - 回家 Home.mp4",
+                metadataTitle = "夏の雨"
+            )
+        )
+        val english = poolItemMediaStore.copy(
+            track = mediaStoreTrack.copy(
+                title = "Bohemian Rhapsody",
+                fileName = "Queen - Bohemian Rhapsody.mp3",
+                metadataTitle = "Bohemian Rhapsody"
+            )
+        )
+        val tracks = listOf(chinese, japanese, english)
+
+        assertEquals(
+            listOf(chinese),
+            filterLibraryCatalog(tracks, MusicPoolFilter.ALL_CANDIDATES, "晴天")
+        )
+        assertEquals(
+            listOf(japanese),
+            filterLibraryCatalog(tracks, MusicPoolFilter.ALL_CANDIDATES, "夏の雨")
+        )
+        assertEquals(
+            listOf(english),
+            filterLibraryCatalog(tracks, MusicPoolFilter.ALL_CANDIDATES, "Queen")
+        )
+        assertEquals(
+            listOf(chinese),
+            filterLibraryCatalog(tracks, MusicPoolFilter.ALL_CANDIDATES, "手機音樂")
+        )
+    }
+
+    @Test
+    fun catalogMembershipFiltersDoNotRestoreExcludedTracks() {
+        val excluded = poolItemSaf1.copy(membershipState = MusicPoolEntry.EXCLUDED)
+        val included = poolItemVideo.copy(membershipState = MusicPoolEntry.INCLUDED)
+
+        assertEquals(
+            listOf(excluded),
+            filterLibraryCatalog(listOf(excluded, included), MusicPoolFilter.EXCLUDED, "")
+        )
+        assertEquals(
+            listOf(included),
+            filterLibraryCatalog(listOf(excluded, included), MusicPoolFilter.INCLUDED, "")
+        )
+    }
+
+    @Test
+    fun selectAllThenAddLeavesExcludedTracksExcluded() {
+        val candidate = poolItemSaf1
+        val excluded = poolItemVideo.copy(membershipState = MusicPoolEntry.EXCLUDED)
+        val included = poolItemMediaStore.copy(membershipState = MusicPoolEntry.INCLUDED)
+        val visible = listOf(candidate, excluded, included)
+        val selected = visible.mapTo(linkedSetOf()) { it.track.uri }
+
+        assertEquals(
+            setOf(candidate.track.uri),
+            catalogUrisForMembershipUpdate(
+                visible,
+                selected,
+                MusicPoolFilter.ALL_CANDIDATES,
+                included = true
+            )
+        )
+        assertEquals(
+            setOf(excluded.track.uri),
+            catalogUrisForMembershipUpdate(
+                listOf(excluded),
+                setOf(excluded.track.uri),
+                MusicPoolFilter.EXCLUDED,
+                included = true
+            )
+        )
+    }
 }

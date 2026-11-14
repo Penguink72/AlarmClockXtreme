@@ -1512,6 +1512,16 @@
     <string name="ringtone_folder_source">Folder source</string>
     <string name="music_library_title">Music library and playback history</string>
     <string name="music_library_button">Music library</string>
+    <string name="music_library_back">Back</string>
+    <string name="music_library_history_title">Playback history</string>
+    <string name="music_library_history_button">History</string>
+    <string name="music_library_catalog_search">Search title, file name, or metadata</string>
+    <string name="music_library_catalog_permission">Allow audio access to index music on this device. Existing indexed tracks and selected folders remain available.</string>
+    <string name="music_library_catalog_grant_permission">Allow access to device audio</string>
+    <string name="music_library_catalog_empty">No indexed tracks yet. Allow audio access or scan an authorized music folder.</string>
+    <string name="music_library_catalog_no_results">No tracks match this search or filter.</string>
+    <string name="music_library_catalog_added">Added %1$d selected tracks to the music pool.</string>
+    <string name="music_library_catalog_excluded">Excluded %1$d selected tracks from the music pool.</string>
     <string name="music_library_track_count">Indexed tracks: %1$d</string>
     <string name="music_library_media_counts">Music pool: %1$d total (%2$d audio, %3$d video audio tracks)</string>
     <string name="music_library_scan">Scan music</string>

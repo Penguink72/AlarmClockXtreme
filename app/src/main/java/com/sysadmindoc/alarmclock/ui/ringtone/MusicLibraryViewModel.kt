@@ -43,6 +43,9 @@ data class MusicLibraryUiState(
     val poolFilter: MusicPoolFilter = MusicPoolFilter.ALL_CANDIDATES,
     val poolSearch: String = "",
     val selectedPoolUris: Set<String> = emptySet(),
+    val catalogFilter: MusicPoolFilter = MusicPoolFilter.ALL_CANDIDATES,
+    val catalogSearch: String = "",
+    val selectedCatalogUris: Set<String> = emptySet(),
     val loadingPool: Boolean = false,
     val poolSourceScope: MusicPoolSourceScope = MusicPoolSourceScope.Folders
 )
@@ -106,6 +109,51 @@ internal fun filterPoolTracks(
         query in searchable
     }
 }
+
+internal fun filterLibraryCatalog(
+    tracks: List<MusicPoolUiTrack>,
+    filter: MusicPoolFilter,
+    search: String
+): List<MusicPoolUiTrack> {
+    val query = search.trim().lowercase(Locale.ROOT)
+    return tracks.filter { item ->
+        val matchesFilter = when (filter) {
+            MusicPoolFilter.ALL_CANDIDATES -> true
+            MusicPoolFilter.INCLUDED -> item.membershipState == MusicPoolEntry.INCLUDED
+            MusicPoolFilter.EXCLUDED -> item.membershipState == MusicPoolEntry.EXCLUDED
+        }
+        if (!matchesFilter) return@filter false
+        if (query.isBlank()) return@filter true
+        val searchable = listOf(
+            item.track.displayTitle,
+            item.track.fileName,
+            item.track.metadataTitle,
+            item.sourceName
+        ).joinToString(" ").lowercase(Locale.ROOT)
+        query in searchable
+    }
+}
+
+internal fun catalogUrisForMembershipUpdate(
+    tracks: List<MusicPoolUiTrack>,
+    selectedUris: Set<String>,
+    filter: MusicPoolFilter,
+    included: Boolean
+): Set<String> = tracks.asSequence()
+    .filter { it.track.uri in selectedUris }
+    .filter { item ->
+        if (included) {
+            if (filter == MusicPoolFilter.EXCLUDED) {
+                item.membershipState == MusicPoolEntry.EXCLUDED
+            } else {
+                item.membershipState == null
+            }
+        } else {
+            item.membershipState != MusicPoolEntry.EXCLUDED
+        }
+    }
+    .map { it.track.uri }
+    .toSet()
 
 /**
  * URIs that "Add folder to pool" should include: indexed, not MediaStore,
@@ -329,7 +377,7 @@ class MusicLibraryViewModel @Inject constructor(
                 withContext(Dispatchers.IO) {
                     MusicLibrarySourceStore.updateAll(context, result.sources)
                 }
-                updatePoolCounts(repository.poolCandidates())
+                loadPoolCandidatesNow()
                 _uiState.value = _uiState.value.copy(
                     sources = result.sources,
                     status = buildString {
@@ -419,6 +467,73 @@ class MusicLibraryViewModel @Inject constructor(
                 reportStatus(
                     context.getString(
                         R.string.music_library_pool_read_failed,
+                        error.message.orEmpty()
+                    )
+                )
+            } finally {
+                _uiState.value = _uiState.value.copy(loadingPool = false)
+            }
+        }
+    }
+
+    fun setCatalogFilter(filter: MusicPoolFilter) {
+        _uiState.value = _uiState.value.copy(
+            catalogFilter = filter,
+            selectedCatalogUris = emptySet()
+        )
+    }
+
+    fun setCatalogSearch(query: String) {
+        _uiState.value = _uiState.value.copy(
+            catalogSearch = query,
+            selectedCatalogUris = emptySet()
+        )
+    }
+
+    fun toggleCatalogSelection(uri: String) {
+        val selected = _uiState.value.selectedCatalogUris.toMutableSet()
+        if (!selected.add(uri)) selected.remove(uri)
+        _uiState.value = _uiState.value.copy(selectedCatalogUris = selected)
+    }
+
+    fun selectVisibleCatalogTracks(uris: List<String>) {
+        _uiState.value = _uiState.value.copy(selectedCatalogUris = uris.toSet())
+    }
+
+    fun visibleCatalogTracks(): List<MusicPoolUiTrack> =
+        visibleCatalogTracks(_uiState.value)
+
+    fun visibleCatalogTracks(state: MusicLibraryUiState): List<MusicPoolUiTrack> =
+        filterLibraryCatalog(state.poolTracks, state.catalogFilter, state.catalogSearch)
+
+    fun updateSelectedCatalogMembership(included: Boolean) {
+        if (_uiState.value.loadingPool || _uiState.value.scanning) return
+        val selected = catalogUrisForMembershipUpdate(
+            tracks = visibleCatalogTracks(),
+            selectedUris = _uiState.value.selectedCatalogUris,
+            filter = _uiState.value.catalogFilter,
+            included = included
+        )
+        if (selected.isEmpty()) return
+
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(loadingPool = true)
+            try {
+                repository.setPoolMembership(selected, included)
+                loadPoolCandidatesNow()
+                reportStatus(
+                    context.getString(
+                        if (included) R.string.music_library_catalog_added
+                        else R.string.music_library_catalog_excluded,
+                        selected.size
+                    )
+                )
+            } catch (error: CancellationException) {
+                throw error
+            } catch (error: Exception) {
+                reportStatus(
+                    context.getString(
+                        R.string.music_library_pool_update_failed,
                         error.message.orEmpty()
                     )
                 )
@@ -549,7 +664,8 @@ class MusicLibraryViewModel @Inject constructor(
                     sourceIds = sourceIdsByUri[candidate.track.uri].orEmpty()
                 )
             },
-            selectedPoolUris = emptySet()
+            selectedPoolUris = emptySet(),
+            selectedCatalogUris = emptySet()
         )
     }
 
