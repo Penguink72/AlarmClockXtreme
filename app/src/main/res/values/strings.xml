@@ -1556,6 +1556,11 @@
     <string name="music_library_history_read_failed">Could not read playback history: %1$s</string>
     <string name="music_library_folder_access_failed">Could not keep access to that folder: %1$s</string>
     <string name="music_library_history_row">%1$d. %2$s — %3$s</string>
+    <string name="music_library_auto_pool_hint">Music is discovered and added automatically from permitted sources. Ringtones, notifications and short clips stay out of the pool unless you add them manually.</string>
+    <string name="music_library_auto_minimum">Ignore clips shorter than %1$d seconds</string>
+    <string name="music_library_auto_no_minimum">No minimum duration</string>
+    <string name="music_library_auto_scan_summary">Auto-added %1$d new songs; %2$d clips left as candidates.</string>
+    <string name="music_library_auto_filter_save_failed">Could not save the music filter: %1$s</string>
     <string name="music_library_pool_manage">Manage music pool</string>
     <string name="music_library_pool_title">Music pool members</string>
     <string name="music_library_pool_search">Search title, file, or source</string>
@@ -1570,6 +1575,8 @@
     <string name="music_library_pool_restore">Restore</string>
     <string name="music_library_pool_empty">No matching indexed media. Scan a folder to find candidates.</string>
     <string name="music_library_pool_status_candidate">Candidate · not in pool</string>
+    <string name="music_library_pool_status_auto_included">Auto-added to music pool</string>
+    <string name="music_library_pool_status_auto_skipped">Filtered automatically</string>
     <string name="music_library_pool_status_included">Added to music pool</string>
     <string name="music_library_pool_status_excluded">Excluded from music pool</string>
     <string name="music_library_pool_device_source">Device media</string>
@@ -1577,7 +1584,7 @@
     <string name="music_library_pool_read_failed">Could not read music pool candidates: %1$s</string>
     <string name="music_library_pool_update_failed">Could not update music pool: %1$s</string>
     <string name="music_library_pool_source_label">Source</string>
-    <string name="music_library_pool_scope_folders">Selected folders</string>
+    <string name="music_library_pool_scope_folders">Selected folders and detected music</string>
     <string name="music_library_pool_scope_summary">Scope: %1$s · %2$d shown. Select visible and batch actions apply only to this list.</string>
     <string name="music_library_pool_device_warning">Device media can include system ringtones and notification sounds. Review before adding.</string>
     <string name="music_library_pool_non_destructive_hint">Excluding only removes a track from alarm playback. Files on your device are never deleted.</string>

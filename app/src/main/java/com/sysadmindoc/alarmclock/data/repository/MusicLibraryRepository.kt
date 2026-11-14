@@ -32,6 +32,11 @@ class MusicLibraryRepository @Inject constructor(
     suspend fun includeUnselectedSourceTracks(sourceUris: Collection<String>): Int =
         musicLibraryDao.includeUnselectedSourceTracks(sourceUris)
 
+    suspend fun reconcileAutomaticallyEvaluated(
+        evaluatedUris: Collection<String>,
+        eligibleUris: Collection<String>
+    ): Int = musicLibraryDao.reconcileAutomaticallyEvaluated(evaluatedUris, eligibleUris)
+
     suspend fun setPoolMembership(uris: Collection<String>, included: Boolean) {
         if (uris.isEmpty()) return
         val state = if (included) MusicPoolEntry.INCLUDED else MusicPoolEntry.EXCLUDED

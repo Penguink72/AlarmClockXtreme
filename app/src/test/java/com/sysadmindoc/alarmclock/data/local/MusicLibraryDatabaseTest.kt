@@ -749,6 +749,60 @@ class MusicLibraryDatabaseTest {
     }
 
     @Test
+    fun automaticMusicClassificationPreservesManualDecisionsAndReclassifiesOnlyScannedTracks() = runBlocking {
+        val context: Context = ApplicationProvider.getApplicationContext<Application>()
+        val database = Room.inMemoryDatabaseBuilder(context, AlarmDatabase::class.java)
+            .allowMainThreadQueries()
+            .build()
+        try {
+            val repository = MusicLibraryRepository(
+                database.musicLibraryDao(),
+                database.playbackHistoryDao()
+            )
+            val songs = (0 until 3_001).map { index ->
+                MusicTrack(
+                    uri = "content://auto/$index",
+                    title = "Song $index",
+                    source = "SAF"
+                )
+            }
+            val byUri = songs.map { it.uri }
+            repository.replaceTracks(songs)
+            repository.setPoolMembership(listOf(byUri[0]), included = false)
+            repository.setPoolMembership(listOf(byUri[1]), included = true)
+
+            assertEquals(2_999, repository.reconcileAutomaticallyEvaluated(byUri, byUri))
+            assertEquals(3_000, repository.includedPoolCount())
+            assertEquals(MusicPoolEntry.EXCLUDED,
+                repository.poolCandidates().first { it.track.uri == byUri[0] }.membershipState)
+            assertEquals(MusicPoolEntry.INCLUDED,
+                repository.poolCandidates().first { it.track.uri == byUri[1] }.membershipState)
+
+            // A newly failed metadata probe must not demote tracks absent from
+            // this successful scan. A successfully re-evaluated short clip can
+            // become AUTO_SKIPPED, without undoing manual decisions.
+            assertEquals(0, repository.reconcileAutomaticallyEvaluated(listOf(byUri[2]), emptyList()))
+            val afterShortClip = repository.poolCandidates().associate { it.track.uri to it.membershipState }
+            assertEquals(MusicPoolEntry.AUTO_SKIPPED, afterShortClip[byUri[2]])
+            assertEquals(MusicPoolEntry.AUTO_INCLUDED, afterShortClip[byUri[3]])
+            assertEquals(MusicPoolEntry.EXCLUDED, afterShortClip[byUri[0]])
+            assertEquals(MusicPoolEntry.INCLUDED, afterShortClip[byUri[1]])
+            assertEquals(2_999, repository.includedPoolCount())
+
+            // Manual folder import is an explicit override of an automatic
+            // filter, never of EXCLUDED.
+            assertEquals(1, repository.includeUnselectedSourceTracks(listOf(byUri[2], byUri[0])))
+            assertEquals(MusicPoolEntry.INCLUDED,
+                repository.poolCandidates().first { it.track.uri == byUri[2] }.membershipState)
+            assertEquals(0, repository.reconcileAutomaticallyEvaluated(listOf(byUri[2]), emptyList()))
+            assertEquals(MusicPoolEntry.INCLUDED,
+                repository.poolCandidates().first { it.track.uri == byUri[2] }.membershipState)
+        } finally {
+            database.close()
+        }
+    }
+
+    @Test
     fun sourceBulkAddUsesLatestCatalogAndPreservesExplicitExclusions() = runBlocking {
         val context: Context = ApplicationProvider.getApplicationContext<Application>()
         val database = Room.inMemoryDatabaseBuilder(context, AlarmDatabase::class.java)

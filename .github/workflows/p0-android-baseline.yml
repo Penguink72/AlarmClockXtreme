@@ -11,6 +11,7 @@ on:
       - preview/music-alarm-1
       - preview/music-alarm-2
       - fix/preview2-pool-refresh-seams-20261113
+      - feature/preview2-2-auto-music-library-20261114
     paths:
       - ".github/workflows/p0-android-baseline.yml"
       - "app/**"
@@ -152,7 +153,7 @@ jobs:
             cp "${SCHEMA_DIR}/27.json" /tmp/committed-27.json
             rm -f "${SCHEMA_DIR}/27.json"
           fi
-          bash ./gradlew --no-daemon --stacktrace :app:assembleFdroidDebug -PciVersionCode=143
+          bash ./gradlew --no-daemon --stacktrace :app:assembleFdroidDebug -PciVersionCode=145
           git diff --exit-code -- "${SCHEMA_DIR}/25.json" "${SCHEMA_DIR}/26.json"
           if [[ ! -s "${SCHEMA_DIR}/27.json" ]]; then
             echo "ERROR: KSP did not generate ${SCHEMA_DIR}/27.json"
@@ -184,8 +185,8 @@ jobs:
             echo "ERROR: Unexpected package name: $PKG_NAME"
             exit 1
           fi
-          if [[ "$VERSION_CODE" != "143" ]]; then
-            echo "ERROR: Expected Preview 2.1 versionCode=143, got: $VERSION_CODE"
+          if [[ "$VERSION_CODE" != "145" ]]; then
+            echo "ERROR: Expected Preview 2.2 versionCode=145, got: $VERSION_CODE"
             exit 1
           fi
           APKSIGNER_OUT="$("${BUILD_TOOLS_DIR}/apksigner" verify --verbose --print-certs "$APK_PATH")"
@@ -281,7 +282,7 @@ jobs:
           retention-days: 14
 
   verify-persistent-signing-second-runner:
-    name: Verify persistent signing on 2nd runner (v142 upgrade APK)
+    name: Verify persistent signing on 2nd runner (v146 upgrade APK)
     needs: build-fdroid-debug-apk
     runs-on: ubuntu-24.04
     timeout-minutes: 40
@@ -382,8 +383,8 @@ jobs:
           chmod 600 "${DEST_KEYSTORE}"
           echo "CI_DEBUG_KEYSTORE_PATH=${DEST_KEYSTORE}" >> "$GITHUB_ENV"
 
-      - name: Build 2nd F-Droid debug APK (versionCode=144) on 2nd runner
-        run: bash ./gradlew --no-daemon --stacktrace :app:assembleFdroidDebug -PciVersionCode=144
+      - name: Build 2nd F-Droid debug APK (versionCode=146) on 2nd runner
+        run: bash ./gradlew --no-daemon --stacktrace :app:assembleFdroidDebug -PciVersionCode=146
 
       - name: Compare signing certificates and package metadata between Runner 1 and Runner 2
         run: |
@@ -408,8 +409,8 @@ jobs:
             echo "ERROR: Package mismatch ($PKG1 vs $PKG2)"
             exit 1
           fi
-          if [[ "$VC1" != "143" || "$VC2" != "144" ]]; then
-            echo "ERROR: Unexpected versionCodes ($VC1 -> $VC2), expected (143 -> 144)"
+          if [[ "$VC1" != "145" || "$VC2" != "146" ]]; then
+            echo "ERROR: Unexpected versionCodes ($VC1 -> $VC2), expected (145 -> 146)"
             exit 1
           fi
           if [[ -z "$CERT1_COLON" || "$CERT1_COLON" != "$CERT2_COLON" ]]; then
@@ -427,26 +428,26 @@ jobs:
             echo "runner1_signing_cert_sha256=${CERT1_COLON}"
             echo "runner2_signing_cert_sha256=${CERT2_COLON}"
             echo "signing_cert_match=true"
-          } | tee app/build/outputs/apk/fdroid/debug/apk-v142-metadata.txt
+          } | tee app/build/outputs/apk/fdroid/debug/apk-v146-metadata.txt
           {
             echo "## B7 Cross-Runner Signing Consistency Verification"
             echo "- Runner 1 APK (\`versionCode=${VC1}\`) Cert SHA-256: \`${CERT1_COLON}\`"
             echo "- Runner 2 APK (\`versionCode=${VC2}\`) Cert SHA-256: \`${CERT2_COLON}\`"
             echo "- Certificate Match: **EXACT MATCH (PASS)**"
-            echo "- Upgrade APK SHA-256 (\`v142\`): \`${APK2_SHA256}\`"
+            echo "- Upgrade APK SHA-256 (\`v146\`): \`${APK2_SHA256}\`"
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Clean up temporary keystore on 2nd runner
         if: always()
         run: rm -f "${RUNNER_TEMP}/ci-debug-raw.p12" "${RUNNER_TEMP}/ci-debug-signing.p12"
 
-      - name: Upload 2nd runner upgrade APK (versionCode=144)
+      - name: Upload 2nd runner upgrade APK (versionCode=146)
         uses: actions/upload-artifact@v4
         with:
-          name: p0-fdroid-debug-apk-v142-upgrade-test
+          name: p0-fdroid-debug-apk-v146-upgrade-test
           path: |
             app/build/outputs/apk/fdroid/debug/app-fdroid-debug.apk
-            app/build/outputs/apk/fdroid/debug/apk-v142-metadata.txt
+            app/build/outputs/apk/fdroid/debug/apk-v146-metadata.txt
           if-no-files-found: error
           retention-days: 14
 
@@ -515,6 +516,7 @@ jobs:
               "AppLanguageResourcesTest",
               "MusicSkipPolicyTest",
               "MusicPoolFilterLogicTest",
+              "MusicAutoPoolPolicyTest",
               "RingtoneFolderStoreTest",
           )
 

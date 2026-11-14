@@ -20,7 +20,7 @@ interface MusicLibraryDao {
         """
         SELECT music_tracks.* FROM music_tracks
         INNER JOIN music_pool_members ON music_tracks.uri = music_pool_members.uri
-        WHERE music_pool_members.state = '${MusicPoolEntry.INCLUDED}'
+        WHERE music_pool_members.state IN ('${MusicPoolEntry.INCLUDED}', '${MusicPoolEntry.AUTO_INCLUDED}')
         ORDER BY RANDOM() LIMIT 1
         """
     )
@@ -30,7 +30,7 @@ interface MusicLibraryDao {
         """
         SELECT music_tracks.* FROM music_tracks
         INNER JOIN music_pool_members ON music_tracks.uri = music_pool_members.uri
-        WHERE music_pool_members.state = '${MusicPoolEntry.INCLUDED}'
+        WHERE music_pool_members.state IN ('${MusicPoolEntry.INCLUDED}', '${MusicPoolEntry.AUTO_INCLUDED}')
           AND music_tracks.uri NOT IN (:excludedUris)
         ORDER BY RANDOM() LIMIT 1
         """
@@ -41,7 +41,7 @@ interface MusicLibraryDao {
         """
         SELECT music_tracks.* FROM music_tracks
         INNER JOIN music_pool_members ON music_tracks.uri = music_pool_members.uri
-        WHERE music_pool_members.state = '${MusicPoolEntry.INCLUDED}'
+        WHERE music_pool_members.state IN ('${MusicPoolEntry.INCLUDED}', '${MusicPoolEntry.AUTO_INCLUDED}')
         """
     )
     suspend fun getIncludedTracks(): List<MusicTrack>
@@ -60,7 +60,7 @@ interface MusicLibraryDao {
         """
         SELECT COUNT(*) FROM music_tracks
         INNER JOIN music_pool_members ON music_tracks.uri = music_pool_members.uri
-        WHERE music_pool_members.state = '${MusicPoolEntry.INCLUDED}'
+        WHERE music_pool_members.state IN ('${MusicPoolEntry.INCLUDED}', '${MusicPoolEntry.AUTO_INCLUDED}')
         """
     )
     suspend fun includedCount(): Int
@@ -80,7 +80,8 @@ interface MusicLibraryDao {
         if (sourceSet.isEmpty()) return 0
         val toInclude = getPoolCandidates()
             .asSequence()
-            .filter { it.track.uri in sourceSet && it.membershipState == null }
+            .filter { it.track.uri in sourceSet &&
+                (it.membershipState == null || it.membershipState == MusicPoolEntry.AUTO_SKIPPED) }
             .map { it.track.uri }
             .distinct()
             .toList()
@@ -93,6 +94,41 @@ interface MusicLibraryDao {
             )
         }
         return toInclude.size
+    }
+
+    /**
+     * Apply the latest successful scan to previously unchosen/automatically
+     * chosen items. Never overwrite the user's INCLUDED or EXCLUDED decision.
+     * Read current indexed rows in this transaction; no oversized SQL IN list.
+     * Returns the number of tracks newly made playable by automation.
+     */
+    @Transaction
+    suspend fun reconcileAutomaticallyEvaluated(
+        evaluatedUris: Collection<String>,
+        eligibleUris: Collection<String>
+    ): Int {
+        val evaluated = evaluatedUris.toHashSet()
+        if (evaluated.isEmpty()) return 0
+        val eligible = eligibleUris.toHashSet()
+        val now = System.currentTimeMillis()
+        val updates = ArrayList<MusicPoolEntry>()
+        var newlyAdded = 0
+        for (candidate in getPoolCandidates()) {
+            if (candidate.track.uri !in evaluated) continue
+            val previous = candidate.membershipState
+            if (previous == MusicPoolEntry.EXCLUDED || previous == MusicPoolEntry.INCLUDED) continue
+            val next = if (candidate.track.uri in eligible) {
+                MusicPoolEntry.AUTO_INCLUDED
+            } else {
+                MusicPoolEntry.AUTO_SKIPPED
+            }
+            if (previous != next) {
+                updates += MusicPoolEntry(candidate.track.uri, next, now)
+                if (next == MusicPoolEntry.AUTO_INCLUDED) newlyAdded++
+            }
+        }
+        if (updates.isNotEmpty()) setPoolEntries(updates)
+        return newlyAdded
     }
 
     @Query("DELETE FROM music_tracks")

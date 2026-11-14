@@ -118,6 +118,11 @@
     <string name="music_library_history_read_failed">再生履歴を読み取れませんでした：%1$s</string>
     <string name="music_library_folder_access_failed">フォルダーへのアクセスを保持できませんでした：%1$s</string>
     <string name="music_library_history_row">%1$d. %2$s — %3$s</string>
+    <string name="music_library_auto_pool_hint">許可済みの保存先から音楽を自動検出してプールへ追加します。着信音、通知音、短い音声は自動追加せず、手動で選べます。</string>
+    <string name="music_library_auto_minimum">%1$d 秒未満の音声を除外</string>
+    <string name="music_library_auto_no_minimum">最短再生時間なし</string>
+    <string name="music_library_auto_scan_summary">新規自動追加 %1$d 曲、候補のまま %2$d 件。</string>
+    <string name="music_library_auto_filter_save_failed">音楽フィルターを保存できません：%1$s</string>
     <string name="music_library_pool_manage">音楽プールを管理</string>
     <string name="music_library_pool_title">音楽プールの曲</string>
     <string name="music_library_pool_search">曲名、ファイル名、ソースを検索</string>
@@ -132,6 +137,8 @@
     <string name="music_library_pool_restore">再び追加</string>
     <string name="music_library_pool_empty">一致するメディアがありません。フォルダーをスキャンして候補を追加してください。</string>
     <string name="music_library_pool_status_candidate">候補 · プール未追加</string>
+    <string name="music_library_pool_status_auto_included">自動で音楽プールに追加</string>
+    <string name="music_library_pool_status_auto_skipped">自動フィルターで候補に保留</string>
     <string name="music_library_pool_status_included">音楽プールに追加済み</string>
     <string name="music_library_pool_status_excluded">音楽プールから除外済み</string>
     <string name="music_library_pool_device_source">端末のメディア</string>
@@ -139,7 +146,7 @@
     <string name="music_library_pool_read_failed">音楽プール候補を読み取れませんでした：%1$s</string>
     <string name="music_library_pool_update_failed">音楽プールを更新できませんでした：%1$s</string>
     <string name="music_library_pool_source_label">ソース</string>
-    <string name="music_library_pool_scope_folders">選択したフォルダー</string>
+    <string name="music_library_pool_scope_folders">選択済みフォルダーと検出した音楽</string>
     <string name="music_library_pool_scope_summary">範囲：%1$s · %2$d 件表示。「表示項目を選択」と一括操作はこの一覧にのみ適用されます。</string>
     <string name="music_library_pool_device_warning">端末のメディアにはシステムの着信音や通知音が含まれる場合があります。追加前に確認してください。</string>
     <string name="music_library_pool_non_destructive_hint">除外はアラームでの再生対象から外すだけで、端末上のファイルは削除されません。</string>

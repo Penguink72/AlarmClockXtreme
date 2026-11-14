@@ -16,5 +16,7 @@ data class MusicPoolEntry(
     companion object {
         const val INCLUDED = "INCLUDED"
         const val EXCLUDED = "EXCLUDED"
+        const val AUTO_INCLUDED = "AUTO_INCLUDED"
+        const val AUTO_SKIPPED = "AUTO_SKIPPED"
     }
 }

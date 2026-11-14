@@ -222,6 +222,10 @@ internal fun MusicPoolDialog(
                                             when (item.membershipState) {
                                                 MusicPoolEntry.INCLUDED ->
                                                     R.string.music_library_pool_status_included
+                                                MusicPoolEntry.AUTO_INCLUDED ->
+                                                    R.string.music_library_pool_status_auto_included
+                                                MusicPoolEntry.AUTO_SKIPPED ->
+                                                    R.string.music_library_pool_status_auto_skipped
                                                 MusicPoolEntry.EXCLUDED ->
                                                     R.string.music_library_pool_status_excluded
                                                 else -> R.string.music_library_pool_status_candidate
