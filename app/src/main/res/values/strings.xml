@@ -1556,6 +1556,11 @@
     <string name="music_library_history_read_failed">Could not read playback history: %1$s</string>
     <string name="music_library_folder_access_failed">Could not keep access to that folder: %1$s</string>
     <string name="music_library_history_row">%1$d. %2$s — %3$s</string>
+    <string name="music_library_auto_pool_hint">Music is discovered and added automatically from permitted sources. Ringtones, notifications and short clips stay out of the pool unless you add them manually.</string>
+    <string name="music_library_auto_minimum">Ignore clips shorter than %1$d seconds</string>
+    <string name="music_library_auto_no_minimum">No minimum duration</string>
+    <string name="music_library_auto_scan_summary">Auto-added %1$d new songs; %2$d clips left as candidates.</string>
+    <string name="music_library_auto_filter_save_failed">Could not save the music filter: %1$s</string>
     <string name="music_library_pool_manage">Manage music pool</string>
     <string name="music_library_pool_title">Music pool members</string>
     <string name="music_library_pool_search">Search title, file, or source</string>
