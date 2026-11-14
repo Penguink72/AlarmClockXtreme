@@ -49,15 +49,15 @@ class SupportedMediaFileTest {
             0x46, 0x4C, 0x56, 0x01, 0x05, 0x00, 0x00, 0x00, 0x09
         )
         val probeWithAudio = FlvAudioHeaderParser.parse(headerWithAudio)
-        assertEquals(true, probeWithAudio?.hasPlayableAudio)
-        assertEquals(false, probeWithAudio?.seekSupported)
+        assertEquals(true, probeWithAudio.hasPlayableAudio)
+        assertEquals(false, probeWithAudio.seekSupported)
 
         // 'F','L','V', version=1, flags=0x01 (video only), dataOffset=9
         val headerVideoOnly = byteArrayOf(
             0x46, 0x4C, 0x56, 0x01, 0x01, 0x00, 0x00, 0x00, 0x09
         )
         val probeVideoOnly = FlvAudioHeaderParser.parse(headerVideoOnly)
-        assertEquals(false, probeVideoOnly?.hasPlayableAudio)
+        assertEquals(false, probeVideoOnly.hasPlayableAudio)
     }
 
     @Test

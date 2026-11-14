@@ -19,6 +19,9 @@ internal data class AudioProbeResult(
 ) {
     val isPlayable: Boolean
         get() = availability == MediaAvailability.PLAYABLE
+
+    val hasPlayableAudio: Boolean
+        get() = isPlayable
 }
 
 internal fun interface PlayableAudioTrackProbe {
