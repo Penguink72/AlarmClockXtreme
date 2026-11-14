@@ -20,6 +20,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -31,13 +33,18 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.material3.ScrollableTabRow
+import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -53,17 +60,29 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sysadmindoc.alarmclock.R
 import com.sysadmindoc.alarmclock.data.local.entity.MusicPoolEntry
 import com.sysadmindoc.alarmclock.data.local.entity.displayTitle
+import kotlinx.coroutines.launch
+
+private enum class MusicLibraryTab(val labelRes: Int) {
+    SONGS(R.string.music_library_tab_songs),
+    VIDEOS(R.string.music_library_tab_videos),
+    FOLDERS(R.string.music_library_tab_folders),
+    ARTISTS(R.string.music_library_tab_artists),
+    POOL(R.string.music_library_tab_pool)
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MusicLibraryDialog(
     onDismiss: () -> Unit,
-    viewModel: MusicLibraryViewModel = hiltViewModel()
+    viewModel: MusicLibraryViewModel = hiltViewModel(),
+    previewController: MusicCatalogPreviewController? = null
 ) {
     val context = LocalContext.current
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     var showHistory by remember { mutableStateOf(false) }
     var showSources by remember { mutableStateOf(false) }
+    var selectedTabName by rememberSaveable { mutableStateOf(MusicLibraryTab.SONGS.name) }
+    val selectedTab = MusicLibraryTab.valueOf(selectedTabName)
     val permission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         Manifest.permission.READ_MEDIA_AUDIO
     } else {
@@ -86,6 +105,9 @@ fun MusicLibraryDialog(
         viewModel.loadPoolCandidates()
         viewModel.scan()
     }
+    DisposableEffect(previewController) {
+        onDispose { previewController?.stop() }
+    }
 
     Dialog(
         onDismissRequest = onDismiss,
@@ -93,43 +115,71 @@ fun MusicLibraryDialog(
     ) {
         Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
             Scaffold(topBar = {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 8.dp, vertical = 4.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        IconButton(
-                            onClick = {
-                                if (showHistory) showHistory = false else onDismiss()
-                            }
+                    Column {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 8.dp, vertical = 4.dp),
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Icon(
-                                Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = stringResource(R.string.music_library_back)
-                            )
-                        }
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(
-                                stringResource(
-                                    if (showHistory) R.string.music_library_history_title
-                                    else R.string.music_library_title
-                                ),
-                                style = MaterialTheme.typography.titleLarge
-                            )
-                            if (!showHistory) {
-                                Text(
-                                    stringResource(
-                                        R.string.music_library_track_count,
-                                        state.poolTracks.size
-                                    ),
-                                    style = MaterialTheme.typography.bodySmall
+                            IconButton(
+                                onClick = {
+                                    when {
+                                        showHistory -> showHistory = false
+                                        selectedTab != MusicLibraryTab.SONGS ->
+                                            selectedTabName = MusicLibraryTab.SONGS.name
+                                        else -> onDismiss()
+                                    }
+                                }
+                            ) {
+                                Icon(
+                                    Icons.AutoMirrored.Filled.ArrowBack,
+                                    contentDescription = stringResource(R.string.music_library_back)
                                 )
+                            }
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    stringResource(R.string.music_library_title),
+                                    style = MaterialTheme.typography.titleLarge,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                                if (!showHistory) {
+                                    Text(
+                                        stringResource(
+                                            R.string.music_library_track_count,
+                                            state.poolTracks.size
+                                        ),
+                                        style = MaterialTheme.typography.bodySmall
+                                    )
+                                } else {
+                                    Text(
+                                        stringResource(R.string.music_library_history_title),
+                                        style = MaterialTheme.typography.bodySmall
+                                    )
+                                }
+                            }
+                            if (!showHistory) {
+                                TextButton(onClick = { showHistory = true }) {
+                                    Text(stringResource(R.string.music_library_history_button))
+                                }
                             }
                         }
                         if (!showHistory) {
-                            TextButton(onClick = { showHistory = true }) {
-                                Text(stringResource(R.string.music_library_history_button))
+                            ScrollableTabRow(
+                                selectedTabIndex = selectedTab.ordinal,
+                                edgePadding = 12.dp
+                            ) {
+                                MusicLibraryTab.values().forEach { tab ->
+                                    Tab(
+                                        selected = tab == selectedTab,
+                                        onClick = {
+                                            selectedTabName = tab.name
+                                            viewModel.clearCatalogSelection()
+                                        },
+                                        text = { Text(stringResource(tab.labelRes)) }
+                                    )
+                                }
                             }
                         }
                     }
@@ -141,14 +191,36 @@ fun MusicLibraryDialog(
                         modifier = Modifier.padding(padding)
                     )
                 } else {
-                    MusicCatalogContent(
-                        viewModel = viewModel,
-                        state = state,
-                        hasAudioPermission = hasAudioPermission,
-                        onRequestPermission = { permissionLauncher.launch(permission) },
-                        onManageSources = { showSources = true },
-                        modifier = Modifier.padding(padding)
-                    )
+                    when (selectedTab) {
+                        MusicLibraryTab.SONGS,
+                        MusicLibraryTab.VIDEOS,
+                        MusicLibraryTab.POOL -> MusicCatalogContent(
+                            viewModel = viewModel,
+                            state = state,
+                            tab = selectedTab,
+                            hasAudioPermission = hasAudioPermission,
+                            onRequestPermission = { permissionLauncher.launch(permission) },
+                            onManageSources = { showSources = true },
+                            previewController = previewController,
+                            modifier = Modifier.padding(padding)
+                        )
+                        MusicLibraryTab.FOLDERS -> MusicFoldersContent(
+                            state = state,
+                            onManageSources = { showSources = true },
+                            onBrowseSource = { sourceId ->
+                                viewModel.setCatalogSourceScope(MusicPoolSourceScope.Folder(sourceId))
+                                selectedTabName = MusicLibraryTab.SONGS.name
+                            },
+                            onBrowseDeviceMedia = {
+                                viewModel.setCatalogSourceScope(MusicPoolSourceScope.DeviceMedia)
+                                selectedTabName = MusicLibraryTab.SONGS.name
+                            },
+                            modifier = Modifier.padding(padding)
+                        )
+                        MusicLibraryTab.ARTISTS -> ArtistCatalogUnavailable(
+                            modifier = Modifier.padding(padding)
+                        )
+                    }
                 }
             }
         }
@@ -165,12 +237,20 @@ fun MusicLibraryDialog(
 private fun MusicCatalogContent(
     viewModel: MusicLibraryViewModel,
     state: MusicLibraryUiState,
+    tab: MusicLibraryTab,
     hasAudioPermission: Boolean,
     onRequestPermission: () -> Unit,
     onManageSources: () -> Unit,
+    previewController: MusicCatalogPreviewController?,
     modifier: Modifier = Modifier
 ) {
-    val visible = viewModel.visibleCatalogTracks(state)
+    val coroutineScope = rememberCoroutineScope()
+    val previewState by previewController?.state?.collectAsStateWithLifecycle()
+        ?: remember { mutableStateOf(MusicCatalogPreviewState()) }
+    val visible = viewModel.visibleCatalogTracks(
+        state = state,
+        videoOnly = tab == MusicLibraryTab.VIDEOS
+    )
     val allVisibleSelected = visible.isNotEmpty() &&
         visible.all { it.track.uri in state.selectedCatalogUris }
     val selectedVisibleCount = visible.count { it.track.uri in state.selectedCatalogUris }
@@ -200,6 +280,64 @@ private fun MusicCatalogContent(
             label = { Text(stringResource(R.string.music_library_catalog_search)) },
             singleLine = true
         )
+        if (tab == MusicLibraryTab.SONGS && state.catalogSourceScope != null) {
+            val scopeLabel = when (val scope = state.catalogSourceScope) {
+                MusicPoolSourceScope.Folders ->
+                    stringResource(R.string.music_library_pool_scope_folders)
+                MusicPoolSourceScope.DeviceMedia ->
+                    stringResource(R.string.music_library_pool_device_source)
+                is MusicPoolSourceScope.Folder ->
+                    state.sources.firstOrNull { it.id == scope.sourceId }?.name
+                        ?: stringResource(R.string.music_library_pool_unknown_source)
+                null -> ""
+            }
+            TextButton(onClick = { viewModel.setCatalogSourceScope(null) }) {
+                Text(
+                    stringResource(
+                        R.string.music_library_source_scope_active,
+                        scopeLabel,
+                        stringResource(R.string.music_library_source_scope_all)
+                    )
+                )
+            }
+        }
+        when (tab) {
+            MusicLibraryTab.SONGS -> Text(
+                stringResource(R.string.music_library_songs_description),
+                style = MaterialTheme.typography.bodySmall
+            )
+            MusicLibraryTab.VIDEOS -> Text(
+                stringResource(R.string.music_library_video_catalog_note),
+                style = MaterialTheme.typography.bodySmall
+            )
+            MusicLibraryTab.POOL -> {
+                Text(
+                    stringResource(R.string.music_library_pool_non_destructive_hint),
+                    style = MaterialTheme.typography.bodySmall
+                )
+                CatalogSourceScopePicker(
+                    state = state,
+                    onSelect = viewModel::setCatalogSourceScope
+                )
+            }
+            else -> Unit
+        }
+        if (tab == MusicLibraryTab.SONGS && previewController == null) {
+            Text(
+                stringResource(R.string.music_library_preview_unavailable),
+                style = MaterialTheme.typography.bodySmall
+            )
+        }
+        if (previewState.blockedByAlarm) {
+            Text(
+                stringResource(R.string.music_library_preview_blocked_by_alarm),
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall
+            )
+        }
+        previewState.error?.let { error ->
+            Text(error, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
+        }
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -269,11 +407,18 @@ private fun MusicCatalogContent(
         ) {
             OutlinedButton(
                 enabled = selectedUrisToAdd.isNotEmpty() && !state.loadingPool && !state.scanning,
-                onClick = { viewModel.updateSelectedCatalogMembership(included = true) }
+                onClick = {
+                    viewModel.updateSelectedCatalogMembership(
+                        included = true,
+                        videoOnly = tab == MusicLibraryTab.VIDEOS
+                    )
+                }
             ) {
                 Text(
                     stringResource(
-                        if (state.catalogFilter == MusicPoolFilter.EXCLUDED) {
+                        if (tab == MusicLibraryTab.POOL &&
+                            state.catalogFilter == MusicPoolFilter.EXCLUDED
+                        ) {
                             R.string.music_library_pool_restore
                         } else {
                             R.string.music_library_pool_add
@@ -283,7 +428,12 @@ private fun MusicCatalogContent(
             }
             OutlinedButton(
                 enabled = selectedUrisToExclude.isNotEmpty() && !state.loadingPool && !state.scanning,
-                onClick = { viewModel.updateSelectedCatalogMembership(included = false) }
+                onClick = {
+                    viewModel.updateSelectedCatalogMembership(
+                        included = false,
+                        videoOnly = tab == MusicLibraryTab.VIDEOS
+                    )
+                }
             ) {
                 Text(stringResource(R.string.music_library_pool_exclude))
             }
@@ -379,10 +529,38 @@ private fun MusicCatalogContent(
                                 overflow = TextOverflow.Ellipsis
                             )
                             Text(
-                                "${item.sourceName.ifBlank { fallbackSource }} · $membershipLabel",
+                                stringResource(
+                                    if (item.track.isVideoAudio()) {
+                                        R.string.music_library_video_audio_track_detected
+                                    } else {
+                                        R.string.music_library_catalog_source_membership
+                                    },
+                                    item.sourceName.ifBlank { fallbackSource },
+                                    membershipLabel
+                                ),
                                 style = MaterialTheme.typography.labelSmall,
                                 maxLines = 2,
                                 overflow = TextOverflow.Ellipsis
+                            )
+                        }
+                    }
+                    if (tab == MusicLibraryTab.SONGS) {
+                        val previewing = previewState.playingUri == item.track.uri
+                        IconButton(
+                            enabled = previewController != null,
+                            onClick = {
+                                val controller = previewController ?: return@IconButton
+                                coroutineScope.launch {
+                                    controller.togglePreview(item.track.uri)
+                                }
+                            }
+                        ) {
+                            Icon(
+                                imageVector = if (previewing) Icons.Default.Stop else Icons.Default.PlayArrow,
+                                contentDescription = stringResource(
+                                    if (previewing) R.string.components_stop_preview
+                                    else R.string.music_library_preview
+                                )
                             )
                         }
                     }
@@ -399,6 +577,153 @@ private fun CatalogFilterChip(label: String, selected: Boolean, onClick: () -> U
         onClick = onClick,
         label = { Text(label) }
     )
+}
+
+@Composable
+private fun CatalogSourceScopePicker(
+    state: MusicLibraryUiState,
+    onSelect: (MusicPoolSourceScope?) -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .horizontalScroll(rememberScrollState()),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        CatalogFilterChip(
+            label = stringResource(R.string.music_library_source_scope_all),
+            selected = state.catalogSourceScope == null,
+            onClick = { onSelect(null) }
+        )
+        CatalogFilterChip(
+            label = stringResource(R.string.music_library_pool_scope_folders),
+            selected = state.catalogSourceScope == MusicPoolSourceScope.Folders,
+            onClick = { onSelect(MusicPoolSourceScope.Folders) }
+        )
+        CatalogFilterChip(
+            label = stringResource(R.string.music_library_pool_device_source),
+            selected = state.catalogSourceScope == MusicPoolSourceScope.DeviceMedia,
+            onClick = { onSelect(MusicPoolSourceScope.DeviceMedia) }
+        )
+        state.sources.forEach { source ->
+            CatalogFilterChip(
+                label = source.name,
+                selected = state.catalogSourceScope == MusicPoolSourceScope.Folder(source.id),
+                onClick = {
+                    onSelect(MusicPoolSourceScope.Folder(source.id))
+                }
+            )
+        }
+    }
+}
+
+@Composable
+private fun MusicFoldersContent(
+    state: MusicLibraryUiState,
+    onManageSources: () -> Unit,
+    onBrowseSource: (String) -> Unit,
+    onBrowseDeviceMedia: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val deviceTrackCount = state.poolTracks.count {
+        it.track.source == MusicLibraryIndexer.SOURCE_MEDIA_STORE
+    }
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(horizontal = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        Text(stringResource(R.string.music_library_folder_relative_paths_pending))
+        OutlinedButton(onClick = onManageSources, modifier = Modifier.fillMaxWidth()) {
+            Text(stringResource(R.string.music_library_sources_button))
+        }
+        if (state.sources.isEmpty() && deviceTrackCount == 0) {
+            Text(stringResource(R.string.music_library_no_sources))
+        }
+        LazyColumn(
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            if (deviceTrackCount > 0) {
+                item(key = "device-media") {
+                    Column(
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        Text(
+                            stringResource(R.string.music_library_folder_device_media),
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                        Text(
+                            stringResource(
+                                R.string.music_library_folder_track_count,
+                                deviceTrackCount
+                            ),
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                        OutlinedButton(onClick = onBrowseDeviceMedia) {
+                            Text(stringResource(R.string.music_library_folder_browse))
+                        }
+                    }
+                }
+            }
+            items(state.sources, key = MusicLibrarySource::id) { source ->
+                val sourceTracks = state.poolTracks.count { source.id in it.sourceIds }
+                val status = when (source.status) {
+                    MusicSourceStatus.NEEDS_SCAN ->
+                        stringResource(R.string.music_library_source_needs_scan)
+                    MusicSourceStatus.READY ->
+                        stringResource(R.string.music_library_source_ready)
+                    MusicSourceStatus.ERROR ->
+                        stringResource(R.string.music_library_source_error)
+                }
+                Column(
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    Text(source.name, style = MaterialTheme.typography.titleMedium)
+                    Text(status, style = MaterialTheme.typography.bodySmall)
+                    Text(
+                        stringResource(R.string.music_library_folder_track_count, sourceTracks),
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                    if (source.error.isNotBlank()) {
+                        Text(
+                            source.error,
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
+                    OutlinedButton(
+                        enabled = sourceTracks > 0,
+                        onClick = { onBrowseSource(source.id) }
+                    ) {
+                        Text(stringResource(R.string.music_library_folder_browse))
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ArtistCatalogUnavailable(modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(24.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        Text(
+            stringResource(R.string.music_library_artist_catalog_unavailable),
+            style = MaterialTheme.typography.titleMedium
+        )
+        Text(
+            stringResource(R.string.music_library_artist_catalog_contract),
+            style = MaterialTheme.typography.bodyMedium
+        )
+    }
 }
 
 @Composable

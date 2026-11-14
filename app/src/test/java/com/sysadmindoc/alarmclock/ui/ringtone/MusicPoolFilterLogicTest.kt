@@ -205,4 +205,54 @@ class MusicPoolFilterLogicTest {
             )
         )
     }
+
+    @Test
+    fun catalogCanFilterVideoCandidatesAndFolderScopeWithoutCrossingTabs() {
+        val tracks = listOf(poolItemSaf1, poolItemVideo, poolItemMediaStore)
+
+        assertEquals(
+            listOf(poolItemVideo),
+            filterLibraryCatalog(
+                tracks = tracks,
+                filter = MusicPoolFilter.ALL_CANDIDATES,
+                search = "",
+                sourceScope = MusicPoolSourceScope.Folder("source-folder-1"),
+                videoOnly = true
+            )
+        )
+        assertEquals(
+            listOf(poolItemMediaStore),
+            filterLibraryCatalog(
+                tracks = tracks,
+                filter = MusicPoolFilter.ALL_CANDIDATES,
+                search = "",
+                sourceScope = MusicPoolSourceScope.DeviceMedia
+            )
+        )
+    }
+
+    @Test
+    fun catalogSearchHandlesMoreThanThreeThousandTracks() {
+        val tracks = (0 until 3_001).map { index ->
+            MusicPoolUiTrack(
+                track = MusicTrack(
+                    uri = "content://media/audio/$index",
+                    title = if (index == 3_000) "夏の雨 - Home" else "Track $index",
+                    source = MusicLibraryIndexer.SOURCE_MEDIA_STORE,
+                    fileName = "track-$index.mp3"
+                ),
+                membershipState = null,
+                sourceName = "Device Media"
+            )
+        }
+
+        assertEquals(
+            listOf("content://media/audio/3000"),
+            filterLibraryCatalog(
+                tracks = tracks,
+                filter = MusicPoolFilter.ALL_CANDIDATES,
+                search = "夏の雨"
+            ).map { it.track.uri }
+        )
+    }
 }

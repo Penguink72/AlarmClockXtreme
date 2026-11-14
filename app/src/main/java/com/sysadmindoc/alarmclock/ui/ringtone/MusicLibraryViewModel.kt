@@ -46,6 +46,7 @@ data class MusicLibraryUiState(
     val catalogFilter: MusicPoolFilter = MusicPoolFilter.ALL_CANDIDATES,
     val catalogSearch: String = "",
     val selectedCatalogUris: Set<String> = emptySet(),
+    val catalogSourceScope: MusicPoolSourceScope? = null,
     val loadingPool: Boolean = false,
     val poolSourceScope: MusicPoolSourceScope = MusicPoolSourceScope.Folders
 )
@@ -113,7 +114,9 @@ internal fun filterPoolTracks(
 internal fun filterLibraryCatalog(
     tracks: List<MusicPoolUiTrack>,
     filter: MusicPoolFilter,
-    search: String
+    search: String,
+    sourceScope: MusicPoolSourceScope? = null,
+    videoOnly: Boolean = false
 ): List<MusicPoolUiTrack> {
     val query = search.trim().lowercase(Locale.ROOT)
     return tracks.filter { item ->
@@ -122,7 +125,10 @@ internal fun filterLibraryCatalog(
             MusicPoolFilter.INCLUDED -> item.membershipState == MusicPoolEntry.INCLUDED
             MusicPoolFilter.EXCLUDED -> item.membershipState == MusicPoolEntry.EXCLUDED
         }
-        if (!matchesFilter) return@filter false
+        if (!matchesFilter ||
+            (sourceScope != null && !item.matchesScope(sourceScope)) ||
+            (videoOnly && !item.track.isVideoAudio())
+        ) return@filter false
         if (query.isBlank()) return@filter true
         val searchable = listOf(
             item.track.displayTitle,
@@ -500,16 +506,35 @@ class MusicLibraryViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(selectedCatalogUris = uris.toSet())
     }
 
-    fun visibleCatalogTracks(): List<MusicPoolUiTrack> =
-        visibleCatalogTracks(_uiState.value)
+    fun clearCatalogSelection() {
+        _uiState.value = _uiState.value.copy(selectedCatalogUris = emptySet())
+    }
 
-    fun visibleCatalogTracks(state: MusicLibraryUiState): List<MusicPoolUiTrack> =
-        filterLibraryCatalog(state.poolTracks, state.catalogFilter, state.catalogSearch)
+    fun setCatalogSourceScope(scope: MusicPoolSourceScope?) {
+        _uiState.value = _uiState.value.copy(
+            catalogSourceScope = scope,
+            selectedCatalogUris = emptySet()
+        )
+    }
 
-    fun updateSelectedCatalogMembership(included: Boolean) {
+    fun visibleCatalogTracks(videoOnly: Boolean = false): List<MusicPoolUiTrack> =
+        visibleCatalogTracks(_uiState.value, videoOnly)
+
+    fun visibleCatalogTracks(
+        state: MusicLibraryUiState,
+        videoOnly: Boolean = false
+    ): List<MusicPoolUiTrack> = filterLibraryCatalog(
+        tracks = state.poolTracks,
+        filter = state.catalogFilter,
+        search = state.catalogSearch,
+        sourceScope = state.catalogSourceScope,
+        videoOnly = videoOnly
+    )
+
+    fun updateSelectedCatalogMembership(included: Boolean, videoOnly: Boolean = false) {
         if (_uiState.value.loadingPool || _uiState.value.scanning) return
         val selected = catalogUrisForMembershipUpdate(
-            tracks = visibleCatalogTracks(),
+            tracks = visibleCatalogTracks(videoOnly),
             selectedUris = _uiState.value.selectedCatalogUris,
             filter = _uiState.value.catalogFilter,
             included = included
