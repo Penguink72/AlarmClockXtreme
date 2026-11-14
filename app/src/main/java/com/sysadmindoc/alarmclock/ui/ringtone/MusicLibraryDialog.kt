@@ -6,6 +6,7 @@ import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -33,7 +34,6 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
-import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -49,6 +49,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -63,12 +64,21 @@ import com.sysadmindoc.alarmclock.data.local.entity.MusicPoolEntry
 import com.sysadmindoc.alarmclock.data.local.entity.displayTitle
 import kotlinx.coroutines.launch
 
-private enum class MusicLibraryTab(val labelRes: Int) {
-    SONGS(R.string.music_library_tab_songs),
-    VIDEOS(R.string.music_library_tab_videos),
-    FOLDERS(R.string.music_library_tab_folders),
-    ARTISTS(R.string.music_library_tab_artists),
-    POOL(R.string.music_library_tab_pool)
+private enum class MusicLibraryWorkspace {
+    MEDIA_LIBRARY,
+    PLAYLISTS
+}
+
+private enum class MusicLibraryCategory {
+    ALL,
+    MUSIC,
+    VIDEOS
+}
+
+private enum class MusicLibraryBrowseMode {
+    MEDIA,
+    FOLDERS,
+    ARTISTS
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -76,14 +86,22 @@ private enum class MusicLibraryTab(val labelRes: Int) {
 fun MusicLibraryDialog(
     onDismiss: () -> Unit,
     viewModel: MusicLibraryViewModel = hiltViewModel(),
-    previewController: MusicCatalogPreviewController? = null
+    previewController: MusicCatalogPreviewController? = null,
+    playlistRepository: MusicPlaylistRepository? = null
 ) {
     val context = LocalContext.current
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     var showHistory by remember { mutableStateOf(false) }
     var showSources by remember { mutableStateOf(false) }
-    var selectedTabName by rememberSaveable { mutableStateOf(MusicLibraryTab.SONGS.name) }
-    val selectedTab = MusicLibraryTab.valueOf(selectedTabName)
+    var workspaceName by rememberSaveable {
+        mutableStateOf(MusicLibraryWorkspace.MEDIA_LIBRARY.name)
+    }
+    var targetPlaylistForAdd by rememberSaveable { mutableStateOf<String?>(null) }
+    val workspace = MusicLibraryWorkspace.valueOf(workspaceName)
+    var categoryName by rememberSaveable { mutableStateOf(MusicLibraryCategory.ALL.name) }
+    val category = MusicLibraryCategory.valueOf(categoryName)
+    var browseModeName by rememberSaveable { mutableStateOf(MusicLibraryBrowseMode.MEDIA.name) }
+    val browseMode = MusicLibraryBrowseMode.valueOf(browseModeName)
     val permission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         Manifest.permission.READ_MEDIA_AUDIO
     } else {
@@ -109,127 +127,177 @@ fun MusicLibraryDialog(
     DisposableEffect(previewController) {
         onDispose { previewController?.stop() }
     }
+    LaunchedEffect(workspace, browseMode, showHistory, previewController) {
+        if (workspace != MusicLibraryWorkspace.MEDIA_LIBRARY ||
+            browseMode != MusicLibraryBrowseMode.MEDIA || showHistory
+        ) {
+            previewController?.stop()
+        }
+    }
 
-    Dialog(
-        onDismissRequest = onDismiss,
-        properties = DialogProperties(usePlatformDefaultWidth = false)
-    ) {
-        Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-            Scaffold(topBar = {
-                    Column {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 8.dp, vertical = 4.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            IconButton(
-                                onClick = {
-                                    when {
-                                        showHistory -> showHistory = false
-                                        selectedTab != MusicLibraryTab.SONGS ->
-                                            selectedTabName = MusicLibraryTab.SONGS.name
-                                        else -> onDismiss()
-                                    }
-                                }
+    if (showSources) {
+        MusicLibrarySourcesDialog(
+            viewModel = viewModel,
+            onDismiss = { showSources = false }
+        )
+    } else {
+        Dialog(
+            onDismissRequest = onDismiss,
+            properties = DialogProperties(usePlatformDefaultWidth = false)
+        ) {
+            Surface(
+                modifier = Modifier.fillMaxSize(),
+                color = MaterialTheme.colorScheme.background
+            ) {
+                Scaffold(
+                    topBar = {
+                        Column {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 8.dp, vertical = 4.dp),
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Icon(
-                                    Icons.AutoMirrored.Filled.ArrowBack,
-                                    contentDescription = stringResource(R.string.music_library_back)
-                                )
-                            }
-                            Column(modifier = Modifier.weight(1f)) {
-                                Text(
-                                    stringResource(R.string.music_library_title),
-                                    style = MaterialTheme.typography.titleLarge,
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis
-                                )
+                                IconButton(
+                                    onClick = {
+                                        when {
+                                            showHistory -> showHistory = false
+                                            browseMode != MusicLibraryBrowseMode.MEDIA ->
+                                                browseModeName = MusicLibraryBrowseMode.MEDIA.name
+                                            workspace != MusicLibraryWorkspace.MEDIA_LIBRARY -> {
+                                                workspaceName = MusicLibraryWorkspace.MEDIA_LIBRARY.name
+                                                viewModel.clearCatalogSelection()
+                                            }
+                                            else -> onDismiss()
+                                        }
+                                    }
+                                ) {
+                                    Icon(
+                                        Icons.AutoMirrored.Filled.ArrowBack,
+                                        contentDescription = stringResource(R.string.music_library_back)
+                                    )
+                                }
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text(
+                                        stringResource(R.string.music_library_title),
+                                        style = MaterialTheme.typography.titleLarge,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis
+                                    )
+                                    Text(
+                                        if (showHistory) {
+                                            stringResource(R.string.music_library_history_title)
+                                        } else {
+                                            stringResource(
+                                                R.string.music_library_track_count,
+                                                state.poolTracks.size
+                                            )
+                                        },
+                                        style = MaterialTheme.typography.bodySmall
+                                    )
+                                }
                                 if (!showHistory) {
-                                    Text(
-                                        stringResource(
-                                            R.string.music_library_track_count,
-                                            state.poolTracks.size
-                                        ),
-                                        style = MaterialTheme.typography.bodySmall
-                                    )
-                                } else {
-                                    Text(
-                                        stringResource(R.string.music_library_history_title),
-                                        style = MaterialTheme.typography.bodySmall
-                                    )
+                                    TextButton(onClick = { showHistory = true }) {
+                                        Text(stringResource(R.string.music_library_history_button))
+                                    }
                                 }
                             }
                             if (!showHistory) {
-                                TextButton(onClick = { showHistory = true }) {
-                                    Text(stringResource(R.string.music_library_history_button))
-                                }
-                            }
-                        }
-                        if (!showHistory) {
-                            ScrollableTabRow(
-                                selectedTabIndex = selectedTab.ordinal,
-                                edgePadding = 12.dp
-                            ) {
-                                MusicLibraryTab.values().forEach { tab ->
-                                    Tab(
-                                        selected = tab == selectedTab,
-                                        onClick = {
-                                            selectedTabName = tab.name
-                                            viewModel.clearCatalogSelection()
-                                        },
-                                        text = { Text(stringResource(tab.labelRes)) }
-                                    )
+                                androidx.compose.material3.TabRow(
+                                    selectedTabIndex = workspace.ordinal
+                                ) {
+                                    MusicLibraryWorkspace.values().forEach { page ->
+                                        Tab(
+                                            selected = page == workspace,
+                                            onClick = {
+                                                workspaceName = page.name
+                                                if (page != workspace) {
+                                                    viewModel.clearCatalogSelection()
+                                                }
+                                            },
+                                            text = {
+                                                Text(
+                                                    stringResource(
+                                                        if (page == MusicLibraryWorkspace.MEDIA_LIBRARY) {
+                                                            R.string.music_library_workspace_media
+                                                        } else {
+                                                            R.string.music_library_workspace_playlists
+                                                        }
+                                                    )
+                                                )
+                                            }
+                                        )
+                                    }
                                 }
                             }
                         }
                     }
-                }
-            ) { padding ->
-                if (showHistory) {
-                    PlaybackHistoryContent(
-                        viewModel = viewModel,
-                        modifier = Modifier.padding(padding)
-                    )
-                } else {
-                    when (selectedTab) {
-                        MusicLibraryTab.SONGS,
-                        MusicLibraryTab.VIDEOS,
-                        MusicLibraryTab.POOL -> MusicCatalogContent(
+                ) { padding ->
+                    when {
+                        showHistory -> PlaybackHistoryContent(
                             viewModel = viewModel,
-                            state = state,
-                            tab = selectedTab,
-                            hasAudioPermission = hasAudioPermission,
-                            onRequestPermission = { permissionLauncher.launch(permission) },
-                            onManageSources = { showSources = true },
-                            previewController = previewController,
                             modifier = Modifier.padding(padding)
                         )
-                        MusicLibraryTab.FOLDERS -> MusicFoldersContent(
+                        workspace == MusicLibraryWorkspace.PLAYLISTS -> MusicPlaylistsWorkspace(
+                            repository = playlistRepository,
+                            selectedTrackUris = state.selectedCatalogUris.toList(),
+                            initialTargetPlaylistId = targetPlaylistForAdd,
+                            onSelectionHandled = {
+                                viewModel.clearCatalogSelection()
+                                targetPlaylistForAdd = null
+                            },
+                            onAddTracksToPlaylist = { playlistId ->
+                                targetPlaylistForAdd = playlistId
+                                viewModel.clearCatalogSelection()
+                                workspaceName = MusicLibraryWorkspace.MEDIA_LIBRARY.name
+                            },
+                            modifier = Modifier.padding(padding)
+                        )
+                        browseMode == MusicLibraryBrowseMode.FOLDERS -> MusicFoldersContent(
                             state = state,
                             onManageSources = { showSources = true },
                             onBrowseSource = { sourceId ->
                                 viewModel.setCatalogSourceScope(MusicPoolSourceScope.Folder(sourceId))
-                                selectedTabName = MusicLibraryTab.SONGS.name
+                                browseModeName = MusicLibraryBrowseMode.MEDIA.name
                             },
                             onBrowseDeviceMedia = {
                                 viewModel.setCatalogSourceScope(MusicPoolSourceScope.DeviceMedia)
-                                selectedTabName = MusicLibraryTab.SONGS.name
+                                browseModeName = MusicLibraryBrowseMode.MEDIA.name
                             },
                             modifier = Modifier.padding(padding)
                         )
-                        MusicLibraryTab.ARTISTS -> ArtistCatalogUnavailable(
+                        browseMode == MusicLibraryBrowseMode.ARTISTS -> ArtistCatalogUnavailable(
+                            modifier = Modifier.padding(padding)
+                        )
+                        else -> MusicCatalogContent(
+                            viewModel = viewModel,
+                            state = state,
+                            category = category,
+                            hasAudioPermission = hasAudioPermission,
+                            onRequestPermission = { permissionLauncher.launch(permission) },
+                            onManageSources = { showSources = true },
+                            onOpenPlaylists = { selectedUris ->
+                                viewModel.selectVisibleCatalogTracks(selectedUris)
+                                workspaceName = MusicLibraryWorkspace.PLAYLISTS.name
+                            },
+                            onOpenFolders = {
+                                viewModel.clearCatalogSelection()
+                                browseModeName = MusicLibraryBrowseMode.FOLDERS.name
+                            },
+                            onOpenArtists = {
+                                viewModel.clearCatalogSelection()
+                                browseModeName = MusicLibraryBrowseMode.ARTISTS.name
+                            },
+                            onCategoryChange = { next ->
+                                viewModel.clearCatalogSelection()
+                                categoryName = next.name
+                            },
+                            previewController = previewController,
                             modifier = Modifier.padding(padding)
                         )
                     }
                 }
             }
-        }
-        if (showSources) {
-            MusicLibrarySourcesDialog(
-                viewModel = viewModel,
-                onDismiss = { showSources = false }
-            )
         }
     }
 }
@@ -238,23 +306,35 @@ fun MusicLibraryDialog(
 private fun MusicCatalogContent(
     viewModel: MusicLibraryViewModel,
     state: MusicLibraryUiState,
-    tab: MusicLibraryTab,
+    category: MusicLibraryCategory,
     hasAudioPermission: Boolean,
     onRequestPermission: () -> Unit,
     onManageSources: () -> Unit,
+    onOpenPlaylists: (List<String>) -> Unit,
+    onOpenFolders: () -> Unit,
+    onOpenArtists: () -> Unit,
+    onCategoryChange: (MusicLibraryCategory) -> Unit,
     previewController: MusicCatalogPreviewController?,
     modifier: Modifier = Modifier
 ) {
     val coroutineScope = rememberCoroutineScope()
     val previewState by previewController?.state?.collectAsStateWithLifecycle()
         ?: remember { mutableStateOf(MusicCatalogPreviewState()) }
-    val visible = viewModel.visibleCatalogTracks(
+    val categoryTracks = viewModel.visibleCatalogTracks(
         state = state,
-        videoOnly = tab == MusicLibraryTab.VIDEOS
+        videoOnly = category == MusicLibraryCategory.VIDEOS
     )
+    val visible = when (category) {
+        MusicLibraryCategory.ALL, MusicLibraryCategory.VIDEOS -> categoryTracks
+        MusicLibraryCategory.MUSIC -> categoryTracks.filterNot { it.track.isVideoAudio() }
+    }
     val allVisibleSelected = visible.isNotEmpty() &&
         visible.all { it.track.uri in state.selectedCatalogUris }
     val selectedVisibleCount = visible.count { it.track.uri in state.selectedCatalogUris }
+    val selectedForPlaylist = visible.asSequence()
+        .filter { it.track.uri in state.selectedCatalogUris }
+        .map { it.track.uri }
+        .toList()
     val selectedUrisToAdd = catalogUrisForMembershipUpdate(
         visible,
         state.selectedCatalogUris,
@@ -281,7 +361,42 @@ private fun MusicCatalogContent(
             label = { Text(stringResource(R.string.music_library_catalog_search)) },
             singleLine = true
         )
-        if (tab == MusicLibraryTab.SONGS && state.catalogSourceScope != null) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .horizontalScroll(rememberScrollState()),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            CatalogFilterChip(
+                label = stringResource(R.string.music_library_category_all),
+                selected = category == MusicLibraryCategory.ALL,
+                onClick = { onCategoryChange(MusicLibraryCategory.ALL) }
+            )
+            CatalogFilterChip(
+                label = stringResource(R.string.music_library_category_music),
+                selected = category == MusicLibraryCategory.MUSIC,
+                onClick = { onCategoryChange(MusicLibraryCategory.MUSIC) }
+            )
+            CatalogFilterChip(
+                label = stringResource(R.string.music_library_category_videos),
+                selected = category == MusicLibraryCategory.VIDEOS,
+                onClick = { onCategoryChange(MusicLibraryCategory.VIDEOS) }
+            )
+        }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .horizontalScroll(rememberScrollState()),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            OutlinedButton(onClick = onOpenFolders) {
+                Text(stringResource(R.string.music_library_browse_folders))
+            }
+            OutlinedButton(onClick = onOpenArtists) {
+                Text(stringResource(R.string.music_library_browse_artists_albums))
+            }
+        }
+        if (state.catalogSourceScope != null) {
             val scopeLabel = when (val scope = state.catalogSourceScope) {
                 MusicPoolSourceScope.Folders ->
                     stringResource(R.string.music_library_pool_scope_folders)
@@ -302,28 +417,17 @@ private fun MusicCatalogContent(
                 )
             }
         }
-        when (tab) {
-            MusicLibraryTab.SONGS -> Text(
-                stringResource(R.string.music_library_songs_description),
-                style = MaterialTheme.typography.bodySmall
-            )
-            MusicLibraryTab.VIDEOS -> Text(
-                stringResource(R.string.music_library_video_catalog_note),
-                style = MaterialTheme.typography.bodySmall
-            )
-            MusicLibraryTab.POOL -> {
-                Text(
-                    stringResource(R.string.music_library_pool_non_destructive_hint),
-                    style = MaterialTheme.typography.bodySmall
-                )
-                CatalogSourceScopePicker(
-                    state = state,
-                    onSelect = viewModel::setCatalogSourceScope
-                )
-            }
-            else -> Unit
-        }
-        if (tab == MusicLibraryTab.SONGS && previewController == null) {
+        Text(
+            stringResource(
+                if (category == MusicLibraryCategory.VIDEOS) {
+                    R.string.music_library_video_catalog_note
+                } else {
+                    R.string.music_library_songs_description
+                }
+            ),
+            style = MaterialTheme.typography.bodySmall
+        )
+        if (previewController == null) {
             Text(
                 stringResource(R.string.music_library_preview_unavailable),
                 style = MaterialTheme.typography.bodySmall
@@ -411,15 +515,13 @@ private fun MusicCatalogContent(
                 onClick = {
                     viewModel.updateSelectedCatalogMembership(
                         included = true,
-                        videoOnly = tab == MusicLibraryTab.VIDEOS
+                        videoOnly = category == MusicLibraryCategory.VIDEOS
                     )
                 }
             ) {
                 Text(
                     stringResource(
-                        if (tab == MusicLibraryTab.POOL &&
-                            state.catalogFilter == MusicPoolFilter.EXCLUDED
-                        ) {
+                        if (state.catalogFilter == MusicPoolFilter.EXCLUDED) {
                             R.string.music_library_pool_restore
                         } else {
                             R.string.music_library_pool_add
@@ -432,7 +534,7 @@ private fun MusicCatalogContent(
                 onClick = {
                     viewModel.updateSelectedCatalogMembership(
                         included = false,
-                        videoOnly = tab == MusicLibraryTab.VIDEOS
+                        videoOnly = category == MusicLibraryCategory.VIDEOS
                     )
                 }
             ) {
@@ -458,6 +560,19 @@ private fun MusicCatalogContent(
             OutlinedButton(onClick = onManageSources) {
                 Text(stringResource(R.string.music_library_sources_button))
             }
+        }
+        OutlinedButton(
+            modifier = Modifier.fillMaxWidth(),
+            enabled = selectedForPlaylist.isNotEmpty() &&
+                !state.loadingPool && !state.scanning,
+            onClick = { onOpenPlaylists(selectedForPlaylist) }
+        ) {
+            Text(
+                stringResource(
+                    R.string.music_library_add_to_playlist,
+                    selectedForPlaylist.size
+                )
+            )
         }
         if (state.poolTracks.any { it.track.source == MusicLibraryIndexer.SOURCE_MEDIA_STORE }) {
             Text(
@@ -507,7 +622,7 @@ private fun MusicCatalogContent(
                         selectionEnabled = !state.loadingPool && !state.scanning,
                         membershipLabel = membershipLabel,
                         sourceFallback = fallbackSource,
-                        showPreview = tab == MusicLibraryTab.SONGS,
+                        showPreview = true,
                         previewEnabled = previewController != null,
                         previewing = previewState.playingUri == item.track.uri,
                         onSelectionChange = {
@@ -544,6 +659,14 @@ internal fun MusicCatalogTrackRow(
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .pointerInput(item.track.uri, showPreview, previewEnabled) {
+                detectTapGestures(
+                    onLongPress = { onSelectionChange() },
+                    onTap = {
+                        if (showPreview && previewEnabled) onPreview()
+                    }
+                )
+            }
             .padding(vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {

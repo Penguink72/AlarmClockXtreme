@@ -1,6 +1,7 @@
 package com.sysadmindoc.alarmclock.ui.alarmedit
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,33 +10,33 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowDownward
-import androidx.compose.material.icons.filled.ArrowUpward
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import androidx.compose.ui.platform.testTag
 import com.sysadmindoc.alarmclock.R
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -45,6 +46,7 @@ fun AlarmMusicSettingsScreen(
     onAction: (AlarmMusicSettingsAction) -> Unit,
     onDismiss: () -> Unit
 ) {
+    var advancedFiltersExpanded by rememberSaveable { mutableStateOf(false) }
     Dialog(
         onDismissRequest = onDismiss,
         properties = DialogProperties(usePlatformDefaultWidth = false)
@@ -72,7 +74,7 @@ fun AlarmMusicSettingsScreen(
                             overflow = TextOverflow.Ellipsis
                         )
                         TextButton(
-                            enabled = !state.loading && !state.saving,
+                            enabled = state.integrationAvailable && !state.loading && !state.saving,
                             onClick = { onAction(AlarmMusicSettingsAction.Save) }
                         ) {
                             Text(
@@ -93,45 +95,119 @@ fun AlarmMusicSettingsScreen(
                         .testTag("alarm-music-settings-list"),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
+                    if (!state.integrationAvailable) {
+                        item {
+                            Text(
+                                stringResource(R.string.alarm_music_settings_pending),
+                                color = MaterialTheme.colorScheme.error,
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                        }
+                    }
                     item {
-                        SettingsGroupTitle(R.string.alarm_music_settings_source)
-                        SourceModeRow(state.draft.sourceMode, onAction)
+                        SettingsGroupTitle(R.string.alarm_music_settings_playlist_label)
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .horizontalScroll(rememberScrollState())
+                                .testTag("alarm-music-playlist-list"),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            FilterChip(
+                                selected = state.draft.playlistId == null,
+                                enabled = state.integrationAvailable &&
+                                    !state.loading && !state.saving,
+                                onClick = {
+                                    onAction(AlarmMusicSettingsAction.SelectPlaylist(null))
+                                },
+                                label = {
+                                    Text(stringResource(R.string.alarm_music_settings_playlist_smart_all))
+                                }
+                            )
+                            state.playlists.forEach { playlist ->
+                                FilterChip(
+                                    selected = state.draft.playlistId == playlist.playlistId,
+                                    enabled = state.integrationAvailable &&
+                                        !state.loading && !state.saving,
+                                    onClick = {
+                                        onAction(
+                                            AlarmMusicSettingsAction.SelectPlaylist(
+                                                playlist.playlistId
+                                            )
+                                        )
+                                    },
+                                    label = {
+                                        Text(
+                                            playlist.name,
+                                            maxLines = 1,
+                                            overflow = TextOverflow.Ellipsis
+                                        )
+                                    }
+                                )
+                            }
+                        }
                     }
                     item {
                         SettingsGroupTitle(R.string.alarm_music_settings_strategy)
                         PlaybackStrategyRow(state, onAction)
-                    }
-                    item {
-                        Text(
-                            stringResource(
-                                R.string.alarm_music_settings_match_count,
-                                state.matchingPlayableTrackCount
-                            ),
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                        if (state.matchingPlayableTrackCount == 0) {
-                            Text(
-                                stringResource(R.string.alarm_music_settings_empty_warning),
-                                color = MaterialTheme.colorScheme.error,
-                                style = MaterialTheme.typography.bodySmall
-                            )
-                        }
-                        if (state.unavailableTrackCount > 0) {
+                        if (state.draft.playlistId == null) {
                             Text(
                                 stringResource(
-                                    R.string.alarm_music_settings_unavailable_warning,
-                                    state.unavailableTrackCount
+                                    R.string.alarm_music_settings_order_requires_named
                                 ),
-                                color = MaterialTheme.colorScheme.error,
                                 style = MaterialTheme.typography.bodySmall
                             )
                         }
+                    }
+                    if (state.integrationAvailable) {
+                        item {
+                            Text(
+                                stringResource(
+                                    R.string.alarm_music_settings_match_count,
+                                    state.matchingPlayableTrackCount
+                                ),
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                            if (state.matchingPlayableTrackCount == 0) {
+                                Text(
+                                    stringResource(R.string.alarm_music_settings_empty_warning),
+                                    color = MaterialTheme.colorScheme.error,
+                                    style = MaterialTheme.typography.bodySmall
+                                )
+                            }
+                            if (state.unavailableTrackCount > 0) {
+                                Text(
+                                    stringResource(
+                                        R.string.alarm_music_settings_unavailable_warning,
+                                        state.unavailableTrackCount
+                                    ),
+                                    color = MaterialTheme.colorScheme.error,
+                                    style = MaterialTheme.typography.bodySmall
+                                )
+                            }
+                        }
+                    }
+                    item {
                         Text(
                             stringResource(R.string.alarm_music_settings_repeat_lifecycle),
                             style = MaterialTheme.typography.bodySmall
                         )
                     }
-                    if (state.draft.sourceMode == AlarmMusicSourceMode.FILTERED_POOL) {
+                    item {
+                        TextButton(
+                            enabled = !state.loading && !state.saving,
+                            onClick = { advancedFiltersExpanded = !advancedFiltersExpanded }
+                        ) {
+                            Text(
+                                stringResource(R.string.alarm_music_settings_advanced_filters)
+                            )
+                        }
+                        Text(
+                            stringResource(R.string.alarm_music_settings_filter_hint),
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
+                    if (advancedFiltersExpanded) {
                         item { SettingsGroupTitle(R.string.alarm_music_settings_artists) }
                         if (state.artists.isEmpty()) {
                             item { Text(stringResource(R.string.alarm_music_settings_no_artists)) }
@@ -140,7 +216,9 @@ fun AlarmMusicSettingsScreen(
                                 FacetRow(
                                     name = artist.name,
                                     count = artist.playableTrackCount,
-                                    selected = artist.id in state.draft.selectedArtistIds,
+                                    selected = artist.id in state.draft.artistFilters,
+                                    enabled = state.integrationAvailable &&
+                                        !state.loading && !state.saving,
                                     onClick = {
                                         onAction(AlarmMusicSettingsAction.ToggleArtist(artist.id))
                                     }
@@ -155,45 +233,14 @@ fun AlarmMusicSettingsScreen(
                                 FacetRow(
                                     name = folder.name,
                                     count = folder.playableTrackCount,
-                                    selected = folder.id in state.draft.selectedFolderIds,
+                                    selected = folder.id in state.draft.folderFilters,
+                                    enabled = state.integrationAvailable &&
+                                        !state.loading && !state.saving,
                                     onClick = {
                                         onAction(AlarmMusicSettingsAction.ToggleFolder(folder.id))
                                     }
                                 )
                             }
-                        }
-                    }
-                    if (state.draft.sourceMode == AlarmMusicSourceMode.INDEPENDENT_PLAYLIST) {
-                        item {
-                            SettingsGroupTitle(R.string.alarm_music_settings_playlist)
-                            OutlinedButton(
-                                enabled = !state.loading && !state.saving,
-                                onClick = {
-                                    onAction(AlarmMusicSettingsAction.RequestTrackPicker)
-                                }
-                            ) {
-                                Text(stringResource(R.string.alarm_music_settings_add_tracks))
-                            }
-                        }
-                        itemsIndexed(
-                            state.draft.playlist,
-                            key = { _, track -> track.uri }
-                        ) { index, track ->
-                            PlaylistTrackRow(
-                                index = index,
-                                track = track,
-                                canMoveUp = index > 0,
-                                canMoveDown = index < state.draft.playlist.lastIndex,
-                                enabled = !state.loading && !state.saving,
-                                onMove = { toIndex ->
-                                    onAction(
-                                        AlarmMusicSettingsAction.MovePlaylistTrack(track.uri, toIndex)
-                                    )
-                                },
-                                onRemove = {
-                                    onAction(AlarmMusicSettingsAction.RemovePlaylistTrack(track.uri))
-                                }
-                            )
                         }
                     }
                     if (state.loading) {
@@ -206,7 +253,7 @@ fun AlarmMusicSettingsScreen(
                     state.error?.let { error ->
                         item { Text(error, color = MaterialTheme.colorScheme.error) }
                     }
-                    if (state.saved) {
+                    if (state.saved && state.integrationAvailable) {
                         item {
                             Text(
                                 stringResource(R.string.alarm_music_settings_saved),
@@ -230,31 +277,28 @@ private fun SettingsGroupTitle(@StringRes resourceId: Int) {
 }
 
 @Composable
-private fun SourceModeRow(
-    selected: AlarmMusicSourceMode,
+private fun PlaybackStrategyRow(
+    state: AlarmMusicSettingsUiState,
     onAction: (AlarmMusicSettingsAction) -> Unit
 ) {
-    Column {
-        AlarmMusicSourceMode.values().forEach { mode ->
+    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        AlarmMusicPlaybackStrategy.entries.forEach { strategy ->
+            val enabled = state.integrationAvailable && !state.loading && !state.saving &&
+                (strategy != AlarmMusicPlaybackStrategy.PLAYLIST_ORDER ||
+                    state.draft.playlistId != null)
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 RadioButton(
-                    selected = selected == mode,
-                    onClick = { onAction(AlarmMusicSettingsAction.SetSourceMode(mode)) }
+                    selected = state.draft.playbackStrategy == strategy,
+                    enabled = enabled,
+                    onClick = {
+                        onAction(AlarmMusicSettingsAction.SetPlaybackStrategy(strategy))
+                    }
                 )
                 Text(
-                    stringResource(
-                        when (mode) {
-                            AlarmMusicSourceMode.SHARED_POOL ->
-                                R.string.alarm_music_settings_mode_shared
-                            AlarmMusicSourceMode.FILTERED_POOL ->
-                                R.string.alarm_music_settings_mode_filtered
-                            AlarmMusicSourceMode.INDEPENDENT_PLAYLIST ->
-                                R.string.alarm_music_settings_mode_playlist
-                        }
-                    ),
+                    stringResource(strategy.labelRes),
                     modifier = Modifier.padding(start = 4.dp),
                     style = MaterialTheme.typography.bodyMedium
                 )
@@ -263,47 +307,27 @@ private fun SourceModeRow(
     }
 }
 
-@Composable
-private fun PlaybackStrategyRow(
-    state: AlarmMusicSettingsUiState,
-    onAction: (AlarmMusicSettingsAction) -> Unit
-) {
-    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        AlarmMusicPlaybackStrategy.values().forEach { strategy ->
-            val enabled = strategy != AlarmMusicPlaybackStrategy.PLAYLIST_ORDER ||
-                state.draft.sourceMode == AlarmMusicSourceMode.INDEPENDENT_PLAYLIST
-            FilterChip(
-                selected = state.draft.playbackStrategy == strategy,
-                enabled = enabled,
-                onClick = { onAction(AlarmMusicSettingsAction.SetPlaybackStrategy(strategy)) },
-                label = {
-                    Text(
-                        stringResource(
-                            when (strategy) {
-                                AlarmMusicPlaybackStrategy.RANDOM_WITH_REPEATS ->
-                                    R.string.alarm_music_settings_strategy_random
-                                AlarmMusicPlaybackStrategy.SHUFFLE_WITHOUT_REPEATS ->
-                                    R.string.alarm_music_settings_strategy_shuffle
-                                AlarmMusicPlaybackStrategy.PLAYLIST_ORDER ->
-                                    R.string.alarm_music_settings_strategy_order
-                            }
-                        )
-                    )
-                }
-            )
-        }
+private val AlarmMusicPlaybackStrategy.labelRes: Int
+    get() = when (this) {
+        AlarmMusicPlaybackStrategy.RANDOM_WITH_REPEATS ->
+            R.string.alarm_music_settings_strategy_random
+        AlarmMusicPlaybackStrategy.SHUFFLE_WITHOUT_REPEATS ->
+            R.string.alarm_music_settings_strategy_shuffle
+        AlarmMusicPlaybackStrategy.PLAYLIST_ORDER ->
+            R.string.alarm_music_settings_strategy_order
     }
-}
 
 @Composable
 private fun FacetRow(
     name: String,
     count: Int,
     selected: Boolean,
+    enabled: Boolean,
     onClick: () -> Unit
 ) {
     FilterChip(
         selected = selected,
+        enabled = enabled,
         onClick = onClick,
         label = {
             Text(
@@ -313,50 +337,4 @@ private fun FacetRow(
             )
         }
     )
-}
-
-@Composable
-private fun PlaylistTrackRow(
-    index: Int,
-    track: AlarmMusicPlaylistTrack,
-    canMoveUp: Boolean,
-    canMoveDown: Boolean,
-    enabled: Boolean,
-    onMove: (Int) -> Unit,
-    onRemove: () -> Unit
-) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text("${index + 1}.", modifier = Modifier.padding(end = 8.dp))
-        Column(modifier = Modifier.weight(1f)) {
-            Text(track.title, maxLines = 2, overflow = TextOverflow.Ellipsis)
-            if (!track.accessible) {
-                Text(
-                    stringResource(R.string.alarm_music_settings_track_unavailable),
-                    color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.bodySmall
-                )
-            }
-        }
-        IconButton(enabled = enabled && canMoveUp, onClick = { onMove(index - 1) }) {
-            Icon(
-                Icons.Default.ArrowUpward,
-                contentDescription = stringResource(R.string.alarm_music_settings_move_up)
-            )
-        }
-        IconButton(enabled = enabled && canMoveDown, onClick = { onMove(index + 1) }) {
-            Icon(
-                Icons.Default.ArrowDownward,
-                contentDescription = stringResource(R.string.alarm_music_settings_move_down)
-            )
-        }
-        IconButton(enabled = enabled, onClick = onRemove) {
-            Icon(
-                Icons.Default.Delete,
-                contentDescription = stringResource(R.string.alarm_music_settings_remove_track)
-            )
-        }
-    }
 }
