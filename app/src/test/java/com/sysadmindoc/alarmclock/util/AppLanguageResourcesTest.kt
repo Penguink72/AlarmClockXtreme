@@ -80,6 +80,10 @@ class AppLanguageResourcesTest {
             "music_library_title", "music_library_button", "music_library_media_counts",
             "music_library_scan", "music_library_scanning", "music_library_sources_button",
             "music_library_pool_manage", "music_library_choose_date", "music_library_no_history",
+            "music_library_auto_pool_hint", "music_library_auto_minimum",
+            "music_library_auto_no_minimum", "music_library_auto_scan_summary",
+            "music_library_auto_filter_save_failed",
+            "music_library_pool_status_auto_included", "music_library_pool_status_auto_skipped",
             "music_library_close",
 
             // Surface 2: Manage folders & rescan
