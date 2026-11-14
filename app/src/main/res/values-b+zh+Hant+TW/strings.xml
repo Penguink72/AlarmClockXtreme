@@ -137,6 +137,8 @@
     <string name="music_library_pool_restore">恢復加入</string>
     <string name="music_library_pool_empty">沒有符合的媒體。請先掃描資料夾以尋找候選曲目。</string>
     <string name="music_library_pool_status_candidate">候選 · 尚未加入音樂池</string>
+    <string name="music_library_pool_status_auto_included">自動加入音樂池</string>
+    <string name="music_library_pool_status_auto_skipped">依規則保留為候選</string>
     <string name="music_library_pool_status_included">已加入音樂池</string>
     <string name="music_library_pool_status_excluded">已從音樂池排除</string>
     <string name="music_library_pool_device_source">裝置媒體</string>
@@ -144,7 +146,7 @@
     <string name="music_library_pool_read_failed">無法讀取音樂池候選項目：%1$s</string>
     <string name="music_library_pool_update_failed">無法更新音樂池：%1$s</string>
     <string name="music_library_pool_source_label">來源</string>
-    <string name="music_library_pool_scope_folders">已選資料夾</string>
+    <string name="music_library_pool_scope_folders">已選資料夾與自動辨識音樂</string>
     <string name="music_library_pool_scope_summary">範圍：%1$s · 顯示 %2$d 項。全選可見與批量操作只套用於此清單。</string>
     <string name="music_library_pool_device_warning">裝置媒體可能包含系統鈴聲與通知音效，加入前請確認。</string>
     <string name="music_library_pool_non_destructive_hint">排除只會讓曲目不在鬧鐘中播放，絕不會刪除裝置上的檔案。</string>
