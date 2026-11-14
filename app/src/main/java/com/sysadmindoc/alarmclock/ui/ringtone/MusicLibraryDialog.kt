@@ -17,10 +17,13 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,6 +47,7 @@ fun MusicLibraryDialog(
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     var showSources by remember { mutableStateOf(false) }
     var showPool by remember { mutableStateOf(false) }
+    var showDurationChoices by remember { mutableStateOf(false) }
     val permission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         Manifest.permission.READ_MEDIA_AUDIO
     } else {
@@ -51,7 +55,25 @@ fun MusicLibraryDialog(
     }
     val permissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
-    ) { viewModel.scan() }
+    ) { viewModel.autoScanIfNeeded() }
+
+    LaunchedEffect(viewModel) {
+        val granted = ContextCompat.checkSelfPermission(context, permission) ==
+            PackageManager.PERMISSION_GRANTED
+        if (granted) {
+            viewModel.autoScanIfNeeded()
+        } else {
+            // Ask once. Subsequent visits still scan previously granted SAF
+            // sources without repeatedly demanding device-media permission.
+            val prefs = context.getSharedPreferences("music_library_permission", 0)
+            if (!prefs.getBoolean("requested_audio_permission", false)) {
+                prefs.edit().putBoolean("requested_audio_permission", true).apply()
+                permissionLauncher.launch(permission)
+            } else {
+                viewModel.autoScanIfNeeded()
+            }
+        }
+    }
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(stringResource(R.string.music_library_title)) },
@@ -113,6 +135,49 @@ fun MusicLibraryDialog(
                         onClick = { showPool = true }
                     ) {
                         Text(stringResource(R.string.music_library_pool_manage))
+                    }
+                }
+                Text(
+                    stringResource(R.string.music_library_auto_pool_hint),
+                    style = MaterialTheme.typography.bodySmall
+                )
+                androidx.compose.foundation.layout.Box {
+                    OutlinedButton(
+                        enabled = !state.scanning && !state.loadingPool,
+                        onClick = { showDurationChoices = true }
+                    ) {
+                        Text(
+                            if (state.minimumAutoDurationSeconds == 0) {
+                                stringResource(R.string.music_library_auto_no_minimum)
+                            } else {
+                                stringResource(
+                                    R.string.music_library_auto_minimum,
+                                    state.minimumAutoDurationSeconds
+                                )
+                            }
+                        )
+                    }
+                    DropdownMenu(
+                        expanded = showDurationChoices,
+                        onDismissRequest = { showDurationChoices = false }
+                    ) {
+                        MusicAutoPoolPolicy.availableMinimumSeconds.forEach { seconds ->
+                            DropdownMenuItem(
+                                text = {
+                                    Text(
+                                        if (seconds == 0) {
+                                            stringResource(R.string.music_library_auto_no_minimum)
+                                        } else {
+                                            stringResource(R.string.music_library_auto_minimum, seconds)
+                                        }
+                                    )
+                                },
+                                onClick = {
+                                    showDurationChoices = false
+                                    viewModel.updateMinimumAutoDuration(seconds)
+                                }
+                            )
+                        }
                     }
                 }
                 if (state.status.isNotBlank()) {
