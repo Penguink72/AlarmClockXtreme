@@ -200,6 +200,7 @@ class MusicLibraryIndexer @Inject constructor(
             projection += MediaStore.Audio.Media.RELATIVE_PATH
         }
         val stagedTracks = LinkedHashMap<String, MusicTrack>()
+        val stagedEvaluated = LinkedHashSet<String>()
         val stagedEligible = LinkedHashSet<String>()
         context.contentResolver.query(contentUri, projection.toTypedArray(), null, null, null)?.use { cursor ->
             val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media._ID)
@@ -237,12 +238,20 @@ class MusicLibraryIndexer @Inject constructor(
                     metadataTitle = metadataTitle
                 )
                 stagedTracks[uri] = track
+                val duration = longOrNull(MediaStore.Audio.Media.DURATION)
+                val ringtone = flag(MediaStore.Audio.Media.IS_RINGTONE)
+                val notification = flag(MediaStore.Audio.Media.IS_NOTIFICATION)
+                val alarm = flag(MediaStore.Audio.Media.IS_ALARM)
+                if (MusicAutoPoolPolicy.hasDecisiveMetadata(
+                        duration, relativePath, ringtone, notification, alarm
+                    )
+                ) stagedEvaluated += uri
                 if (MusicAutoPoolPolicy.isEligible(
-                        durationMs = longOrNull(MediaStore.Audio.Media.DURATION),
+                        durationMs = duration,
                         relativePath = relativePath,
-                        isRingtone = flag(MediaStore.Audio.Media.IS_RINGTONE),
-                        isNotification = flag(MediaStore.Audio.Media.IS_NOTIFICATION),
-                        isAlarm = flag(MediaStore.Audio.Media.IS_ALARM),
+                        isRingtone = ringtone,
+                        isNotification = notification,
+                        isAlarm = alarm,
                         minimumSeconds = minimumSeconds
                     )
                 ) stagedEligible += uri
@@ -250,7 +259,7 @@ class MusicLibraryIndexer @Inject constructor(
         } ?: error("MediaStore returned no query cursor")
         // Do not publish a partially failed MediaStore scan into the pool.
         output.putAll(stagedTracks)
-        evaluated.addAll(stagedTracks.keys)
+        evaluated.addAll(stagedEvaluated)
         eligible.addAll(stagedEligible)
     }
 
