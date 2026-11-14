@@ -25,7 +25,9 @@ data class MusicScanResult(
     val sources: List<MusicLibrarySource>,
     val mediaStoreScanned: Boolean,
     val rejectedAudio: Int,
-    val rejectedVideos: Int
+    val rejectedVideos: Int,
+    val evaluatedUris: Set<String> = emptySet(),
+    val automaticallyEligibleUris: Set<String> = emptySet()
 )
 
 data class MusicFolderCandidate(
@@ -69,6 +71,9 @@ class MusicLibraryIndexer @Inject constructor(
         var mediaStoreScanned = false
         var rejectedAudio = 0
         var rejectedVideos = 0
+        val evaluatedUris = LinkedHashSet<String>()
+        val automaticallyEligibleUris = LinkedHashSet<String>()
+        val minimumSeconds = MusicAutoPoolPreferences.minimumDurationSeconds(context)
 
         if (sourceIds == null) {
             val mediaPermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -80,7 +85,7 @@ class MusicLibraryIndexer @Inject constructor(
                 PackageManager.PERMISSION_GRANTED
             ) {
                 try {
-                    scanMediaStore(tracks)
+                    scanMediaStore(tracks, evaluatedUris, automaticallyEligibleUris, minimumSeconds)
                     mediaStoreScanned = true
                 } catch (error: CancellationException) {
                     throw error
@@ -98,8 +103,10 @@ class MusicLibraryIndexer @Inject constructor(
         for (source in selectedSources) {
             currentCoroutineContext().ensureActive()
             try {
-                val result = scanTree(source)
+                val result = scanTree(source, minimumSeconds)
                 result.tracks.forEach { tracks.putIfAbsent(it.uri, it) }
+                evaluatedUris.addAll(result.evaluatedUris)
+                automaticallyEligibleUris.addAll(result.automaticallyEligibleUris)
                 rejectedAudio += result.rejectedAudio
                 rejectedVideos += result.rejectedVideos
                 val updated = source.copy(
@@ -132,7 +139,9 @@ class MusicLibraryIndexer @Inject constructor(
             sources = updatedSources,
             mediaStoreScanned = mediaStoreScanned,
             rejectedAudio = rejectedAudio,
-            rejectedVideos = rejectedVideos
+            rejectedVideos = rejectedVideos,
+            evaluatedUris = evaluatedUris,
+            automaticallyEligibleUris = automaticallyEligibleUris
         )
     }
 
@@ -167,45 +176,90 @@ class MusicLibraryIndexer @Inject constructor(
             }
         }
 
-    private suspend fun scanMediaStore(output: MutableMap<String, MusicTrack>) {
+    private suspend fun scanMediaStore(
+        output: MutableMap<String, MusicTrack>,
+        evaluated: MutableSet<String>,
+        eligible: MutableSet<String>,
+        minimumSeconds: Int
+    ) {
         val contentUri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             MediaStore.Audio.Media.getContentUri(MediaStore.VOLUME_EXTERNAL)
         } else {
             MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
         }
-        val projection = arrayOf(
+        val projection = mutableListOf(
             MediaStore.Audio.Media._ID,
             MediaStore.Audio.Media.DISPLAY_NAME,
-            MediaStore.Audio.Media.TITLE
+            MediaStore.Audio.Media.TITLE,
+            MediaStore.Audio.Media.DURATION,
+            MediaStore.Audio.Media.IS_RINGTONE,
+            MediaStore.Audio.Media.IS_NOTIFICATION,
+            MediaStore.Audio.Media.IS_ALARM
         )
-        context.contentResolver.query(contentUri, projection, null, null, null)?.use { cursor ->
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            projection += MediaStore.Audio.Media.RELATIVE_PATH
+        }
+        val stagedTracks = LinkedHashMap<String, MusicTrack>()
+        val stagedEligible = LinkedHashSet<String>()
+        context.contentResolver.query(contentUri, projection.toTypedArray(), null, null, null)?.use { cursor ->
             val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media._ID)
             val nameColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DISPLAY_NAME)
             val titleColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE)
+            fun flag(column: String): Boolean {
+                val index = cursor.getColumnIndex(column)
+                return index >= 0 && !cursor.isNull(index) && cursor.getInt(index) != 0
+            }
+            fun longOrNull(column: String): Long? {
+                val index = cursor.getColumnIndex(column)
+                return if (index < 0 || cursor.isNull(index)) null else cursor.getLong(index)
+            }
+            fun stringOrEmpty(column: String): String {
+                val index = cursor.getColumnIndex(column)
+                return if (index < 0 || cursor.isNull(index)) "" else cursor.getString(index).orEmpty()
+            }
             while (cursor.moveToNext()) {
                 currentCoroutineContext().ensureActive()
                 val uri = android.content.ContentUris.withAppendedId(
-                    contentUri,
-                    cursor.getLong(idColumn)
-                )
+                    contentUri, cursor.getLong(idColumn)
+                ).toString()
                 val fileName = cursor.getString(nameColumn).orEmpty().ifBlank {
-                    uri.lastPathSegment.orEmpty()
+                    android.net.Uri.parse(uri).lastPathSegment.orEmpty()
                 }
                 val metadataTitle = cursor.getString(titleColumn).orEmpty()
-                output[uri.toString()] = MusicTrack(
-                    uri = uri.toString(),
+                val relativePath = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    stringOrEmpty(MediaStore.Audio.Media.RELATIVE_PATH)
+                } else ""
+                val track = MusicTrack(
+                    uri = uri,
                     title = MusicTrackTitleResolver.resolve(fileName, metadataTitle),
                     source = SOURCE_MEDIA_STORE,
                     fileName = fileName,
                     metadataTitle = metadataTitle
                 )
+                stagedTracks[uri] = track
+                if (MusicAutoPoolPolicy.isEligible(
+                        durationMs = longOrNull(MediaStore.Audio.Media.DURATION),
+                        relativePath = relativePath,
+                        isRingtone = flag(MediaStore.Audio.Media.IS_RINGTONE),
+                        isNotification = flag(MediaStore.Audio.Media.IS_NOTIFICATION),
+                        isAlarm = flag(MediaStore.Audio.Media.IS_ALARM),
+                        minimumSeconds = minimumSeconds
+                    )
+                ) stagedEligible += uri
             }
         } ?: error("MediaStore returned no query cursor")
+        // Do not publish a partially failed MediaStore scan into the pool.
+        output.putAll(stagedTracks)
+        evaluated.addAll(stagedTracks.keys)
+        eligible.addAll(stagedEligible)
     }
 
-    private suspend fun scanTree(source: MusicLibrarySource): MusicFolderScanResult {
+    private suspend fun scanTree(
+        source: MusicLibrarySource,
+        minimumSeconds: Int
+    ): MusicFolderScanResult {
         verifyPersistedGrant(source)
-        return treeScanner.scan(source)
+        return treeScanner.scan(source, minimumSeconds)
     }
 
     private fun verifyPersistedGrant(source: MusicLibrarySource) {
