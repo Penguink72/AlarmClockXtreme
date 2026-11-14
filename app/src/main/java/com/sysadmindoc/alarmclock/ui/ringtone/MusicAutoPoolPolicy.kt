@@ -9,6 +9,13 @@ internal object MusicAutoPoolPolicy {
     const val DEFAULT_MIN_SECONDS = 60
     val availableMinimumSeconds: List<Int> = listOf(0, 30, 60, 120)
 
+    private const val AUTO_REFRESH_INTERVAL_MS = 5L * 60L * 1000L
+
+    fun shouldAutoRefresh(lastElapsedMs: Long, nowElapsedMs: Long): Boolean =
+        lastElapsedMs < 0L ||
+            nowElapsedMs < lastElapsedMs ||
+            nowElapsedMs - lastElapsedMs >= AUTO_REFRESH_INTERVAL_MS
+
     private val systemSoundDirectories = setOf(
         "ringtones", "notifications", "alarms"
     )
