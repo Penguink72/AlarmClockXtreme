@@ -151,6 +151,12 @@ class MusicLibraryViewModel @Inject constructor(
         scan()
     }
 
+    /** Permission response must always trigger a scan, even after a prior denial. */
+    fun scanAfterPermissionResponse() {
+        initialAutoScanRequested = true
+        scan()
+    }
+
     fun updateMinimumAutoDuration(seconds: Int) {
         if (seconds !in MusicAutoPoolPolicy.availableMinimumSeconds ||
             _uiState.value.scanning || _uiState.value.loadingPool
