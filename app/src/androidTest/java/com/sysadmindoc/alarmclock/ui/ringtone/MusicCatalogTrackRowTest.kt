@@ -11,6 +11,7 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performLongClick
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.test.core.app.ApplicationProvider
@@ -70,5 +71,47 @@ class MusicCatalogTrackRowTest {
         composeRule.onNodeWithContentDescription(
             context.getString(R.string.music_library_preview)
         ).assertIsNotEnabled()
+    }
+
+    @Test
+    fun longPressSelectsTrackForBatchActions() {
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        val track = MusicTrack(
+            uri = "content://media/audio/2",
+            title = "テスト_測試（Live）#01",
+            source = MusicLibraryIndexer.SOURCE_MEDIA_STORE,
+            fileName = "テスト_測試（Live）#01.mp3"
+        )
+        val item = MusicPoolUiTrack(
+            track = track,
+            membershipState = null,
+            sourceName = "Device Music"
+        )
+        var selected = false
+        composeRule.setContent {
+            MaterialTheme {
+                Box(Modifier.width(320.dp)) {
+                    MusicCatalogTrackRow(
+                        item = item,
+                        selected = false,
+                        selectionEnabled = true,
+                        membershipLabel = context.getString(
+                            R.string.music_library_pool_status_candidate
+                        ),
+                        sourceFallback = context.getString(
+                            R.string.music_library_pool_device_source
+                        ),
+                        showPreview = false,
+                        previewEnabled = false,
+                        previewing = false,
+                        onSelectionChange = { selected = true },
+                        onPreview = {}
+                    )
+                }
+            }
+        }
+
+        composeRule.onNodeWithText(track.displayTitle).performLongClick()
+        composeRule.runOnIdle { assertTrue(selected) }
     }
 }
