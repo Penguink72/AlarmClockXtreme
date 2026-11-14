@@ -55,7 +55,7 @@ fun MusicLibraryDialog(
     }
     val permissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
-    ) { viewModel.autoScanIfNeeded() }
+    ) { viewModel.scanAfterPermissionResponse() }
 
     LaunchedEffect(viewModel) {
         val granted = ContextCompat.checkSelfPermission(context, permission) ==
