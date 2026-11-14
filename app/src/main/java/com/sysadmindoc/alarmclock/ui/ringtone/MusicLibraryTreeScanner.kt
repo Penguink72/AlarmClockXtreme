@@ -78,7 +78,6 @@ internal class MusicLibraryTreeScanner(
                     metadataTitle = ""
                 )
                 if (tracks.putIfAbsent(uri, track) == null) {
-                    evaluatedUris += uri
                     // File duration is resolved after the existing playable-audio
                     // probe. A failure here must never discard an indexable song.
                     val duration = try {
@@ -90,6 +89,9 @@ internal class MusicLibraryTreeScanner(
                     }
                     val directoryPath = entry.documentId.substringAfter(':', "")
                         .substringBeforeLast('/', "")
+                    if (MusicAutoPoolPolicy.hasDecisiveMetadata(duration, directoryPath)) {
+                        evaluatedUris += uri
+                    }
                     if (MusicAutoPoolPolicy.isEligible(
                             durationMs = duration,
                             relativePath = directoryPath,
