@@ -42,6 +42,15 @@ class MusicAutoPoolPolicyTest {
     }
 
     @Test
+    fun autoRefreshRunsOnFirstOpenAndAfterFiveMinutesButNotEveryReopen() {
+        assertTrue(MusicAutoPoolPolicy.shouldAutoRefresh(-1L, 100L))
+        assertFalse(MusicAutoPoolPolicy.shouldAutoRefresh(100L, 101L))
+        assertFalse(MusicAutoPoolPolicy.shouldAutoRefresh(100L, 300_099L))
+        assertTrue(MusicAutoPoolPolicy.shouldAutoRefresh(100L, 300_100L))
+        assertTrue(MusicAutoPoolPolicy.shouldAutoRefresh(600_000L, 5L))
+    }
+
+    @Test
     fun nearNamedFolderIsNotMistakenForSystemSoundDirectory() {
         assertTrue(MusicAutoPoolPolicy.isEligible(90_000L, "Music/My Ringtones Collection/"))
         assertTrue(MusicAutoPoolPolicy.isEligible(90_000L, "Music/Alarms Album/"))
