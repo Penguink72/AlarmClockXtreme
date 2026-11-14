@@ -49,6 +49,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -500,71 +501,102 @@ private fun MusicCatalogContent(
                             R.string.music_library_pool_unknown_source
                         }
                     )
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 4.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Checkbox(
-                            checked = item.track.uri in state.selectedCatalogUris,
-                            enabled = !state.loadingPool && !state.scanning,
-                            onCheckedChange = { viewModel.toggleCatalogSelection(item.track.uri) }
-                        )
-                        Column(
-                            modifier = Modifier
-                                .weight(1f)
-                                .padding(start = 4.dp, end = 8.dp)
-                        ) {
-                            Text(
-                                item.track.displayTitle,
-                                style = MaterialTheme.typography.bodyMedium,
-                                maxLines = 2,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                            Text(
-                                item.track.fileName.ifBlank { item.track.metadataTitle },
-                                style = MaterialTheme.typography.bodySmall,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                            Text(
-                                stringResource(
-                                    if (item.track.isVideoAudio()) {
-                                        R.string.music_library_video_audio_track_detected
-                                    } else {
-                                        R.string.music_library_catalog_source_membership
-                                    },
-                                    item.sourceName.ifBlank { fallbackSource },
-                                    membershipLabel
-                                ),
-                                style = MaterialTheme.typography.labelSmall,
-                                maxLines = 2,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                        }
-                    }
-                    if (tab == MusicLibraryTab.SONGS) {
-                        val previewing = previewState.playingUri == item.track.uri
-                        IconButton(
-                            enabled = previewController != null,
-                            onClick = {
-                                val controller = previewController ?: return@IconButton
+                    MusicCatalogTrackRow(
+                        item = item,
+                        selected = item.track.uri in state.selectedCatalogUris,
+                        selectionEnabled = !state.loadingPool && !state.scanning,
+                        membershipLabel = membershipLabel,
+                        sourceFallback = fallbackSource,
+                        showPreview = tab == MusicLibraryTab.SONGS,
+                        previewEnabled = previewController != null,
+                        previewing = previewState.playingUri == item.track.uri,
+                        onSelectionChange = {
+                            viewModel.toggleCatalogSelection(item.track.uri)
+                        },
+                        onPreview = {
+                            val controller = previewController
+                            if (controller != null) {
                                 coroutineScope.launch {
                                     controller.togglePreview(item.track.uri)
                                 }
                             }
-                        ) {
-                            Icon(
-                                imageVector = if (previewing) Icons.Default.Stop else Icons.Default.PlayArrow,
-                                contentDescription = stringResource(
-                                    if (previewing) R.string.components_stop_preview
-                                    else R.string.music_library_preview
-                                )
-                            )
                         }
-                    }
+                    )
                 }
+            }
+        }
+    }
+}
+
+@Composable
+internal fun MusicCatalogTrackRow(
+    item: MusicPoolUiTrack,
+    selected: Boolean,
+    selectionEnabled: Boolean,
+    membershipLabel: String,
+    sourceFallback: String,
+    showPreview: Boolean,
+    previewEnabled: Boolean,
+    previewing: Boolean,
+    onSelectionChange: () -> Unit,
+    onPreview: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Checkbox(
+            checked = selected,
+            enabled = selectionEnabled,
+            modifier = Modifier.testTag("music-catalog-track-selection"),
+            onCheckedChange = { onSelectionChange() }
+        )
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .padding(start = 4.dp, end = 8.dp)
+        ) {
+            Text(
+                item.track.displayTitle,
+                style = MaterialTheme.typography.bodyMedium,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
+            )
+            Text(
+                item.track.fileName.ifBlank { item.track.metadataTitle },
+                style = MaterialTheme.typography.bodySmall,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+            Text(
+                stringResource(
+                    if (item.track.isVideoAudio()) {
+                        R.string.music_library_video_audio_track_detected
+                    } else {
+                        R.string.music_library_catalog_source_membership
+                    },
+                    item.sourceName.ifBlank { sourceFallback },
+                    membershipLabel
+                ),
+                style = MaterialTheme.typography.labelSmall,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+        if (showPreview) {
+            IconButton(
+                enabled = previewEnabled,
+                onClick = onPreview
+            ) {
+                Icon(
+                    imageVector = if (previewing) Icons.Default.Stop else Icons.Default.PlayArrow,
+                    contentDescription = stringResource(
+                        if (previewing) R.string.components_stop_preview
+                        else R.string.music_library_preview
+                    )
+                )
             }
         }
     }

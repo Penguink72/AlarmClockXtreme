@@ -1,5 +1,6 @@
 package com.sysadmindoc.alarmclock.ui.alarmedit
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -34,6 +35,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.compose.ui.platform.testTag
 import com.sysadmindoc.alarmclock.R
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -87,7 +89,8 @@ fun AlarmMusicSettingsScreen(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(padding)
-                        .padding(horizontal = 16.dp),
+                        .padding(horizontal = 16.dp)
+                        .testTag("alarm-music-settings-list"),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     item {
@@ -218,7 +221,7 @@ fun AlarmMusicSettingsScreen(
 }
 
 @Composable
-private fun SettingsGroupTitle(resourceId: Int) {
+private fun SettingsGroupTitle(@StringRes resourceId: Int) {
     Text(
         stringResource(resourceId),
         modifier = Modifier.padding(top = 8.dp),
@@ -302,7 +305,13 @@ private fun FacetRow(
     FilterChip(
         selected = selected,
         onClick = onClick,
-        label = { Text("$name · $count") }
+        label = {
+            Text(
+                stringResource(R.string.music_library_facet_track_count, name, count),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
     )
 }
 

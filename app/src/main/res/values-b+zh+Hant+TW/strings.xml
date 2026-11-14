@@ -99,6 +99,7 @@
     <string name="music_library_folder_browse">瀏覽曲目</string>
     <string name="music_library_source_scope_all">所有來源</string>
     <string name="music_library_source_scope_active">範圍：%1$s · 顯示%2$s</string>
+    <string name="music_library_facet_track_count">%1$s · %2$d 首</string>
     <string name="music_library_artist_catalog_unavailable">目前的音樂索引沒有歌手資料。</string>
     <string name="music_library_artist_catalog_contract">Room v27 索引保存歌名、檔名及來源 URI，但沒有歌手 metadata。待整合目錄 API 提供歌手與曲目的關聯後，再接上搜尋、多選及未知歌手分類。</string>
     <string name="music_library_preview">試聽曲目</string>

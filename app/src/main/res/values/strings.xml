@@ -1537,6 +1537,7 @@
     <string name="music_library_folder_browse">Browse tracks</string>
     <string name="music_library_source_scope_all">All sources</string>
     <string name="music_library_source_scope_active">Scope: %1$s · show %2$s</string>
+    <string name="music_library_facet_track_count">%1$s · %2$d tracks</string>
     <string name="music_library_artist_catalog_unavailable">Artist data is not available in the current music index.</string>
     <string name="music_library_artist_catalog_contract">The Room v27 index stores titles, file names, and source URIs, but not artist metadata. Search, selection, and unknown-artist grouping will connect when the integrated catalog API supplies artist-to-track membership.</string>
     <string name="music_library_preview">Preview track</string>
