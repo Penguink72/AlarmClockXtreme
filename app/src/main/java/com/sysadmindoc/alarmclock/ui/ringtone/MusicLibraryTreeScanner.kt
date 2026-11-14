@@ -18,6 +18,8 @@ internal interface MusicLibraryTreeAccess {
     suspend fun children(treeUri: String, documentId: String): List<MusicDocumentEntry>
     fun documentUri(treeUri: String, documentId: String): String
     suspend fun hasPlayableAudioTrack(uri: String): Boolean
+    /** Unknown duration returns null and cannot be automatically included. */
+    suspend fun durationMs(uri: String): Long? = null
 }
 
 internal data class MusicFolderScanResult(
@@ -25,13 +27,18 @@ internal data class MusicFolderScanResult(
     val audioCount: Int,
     val videoCount: Int,
     val rejectedAudio: Int,
-    val rejectedVideos: Int
+    val rejectedVideos: Int,
+    val evaluatedUris: Set<String> = emptySet(),
+    val automaticallyEligibleUris: Set<String> = emptySet()
 )
 
 internal class MusicLibraryTreeScanner(
     private val treeAccess: MusicLibraryTreeAccess
 ) {
-    suspend fun scan(source: MusicLibrarySource): MusicFolderScanResult {
+    suspend fun scan(
+        source: MusicLibrarySource,
+        minimumSeconds: Int = MusicAutoPoolPolicy.DEFAULT_MIN_SECONDS
+    ): MusicFolderScanResult {
         val pendingDirectories = ArrayDeque<String>().apply { add(source.documentId) }
         val visitedDirectories = HashSet<String>()
         val tracks = LinkedHashMap<String, MusicTrack>()
@@ -39,6 +46,8 @@ internal class MusicLibraryTreeScanner(
         var videoCount = 0
         var rejectedAudio = 0
         var rejectedVideos = 0
+        val evaluatedUris = LinkedHashSet<String>()
+        val automaticallyEligibleUris = LinkedHashSet<String>()
 
         while (pendingDirectories.isNotEmpty()) {
             currentCoroutineContext().ensureActive()
@@ -69,6 +78,18 @@ internal class MusicLibraryTreeScanner(
                     metadataTitle = ""
                 )
                 if (tracks.putIfAbsent(uri, track) == null) {
+                    evaluatedUris += uri
+                    // File duration is resolved after the existing playable-audio
+                    // probe. A failure here must never discard an indexable song.
+                    val duration = try { treeAccess.durationMs(uri) } catch (e: Exception) { null }
+                    val directoryPath = entry.documentId.substringAfter(':', "")
+                        .substringBeforeLast('/', "")
+                    if (MusicAutoPoolPolicy.isEligible(
+                            durationMs = duration,
+                            relativePath = directoryPath,
+                            minimumSeconds = minimumSeconds
+                        )
+                    ) automaticallyEligibleUris += uri
                     if (kind == MusicMediaKind.VIDEO) videoCount++ else audioCount++
                 }
             }
@@ -78,7 +99,9 @@ internal class MusicLibraryTreeScanner(
             audioCount = audioCount,
             videoCount = videoCount,
             rejectedAudio = rejectedAudio,
-            rejectedVideos = rejectedVideos
+            rejectedVideos = rejectedVideos,
+            evaluatedUris = evaluatedUris,
+            automaticallyEligibleUris = automaticallyEligibleUris
         )
     }
 
@@ -162,5 +185,17 @@ internal class SafMusicLibraryTreeAccess(
     override suspend fun hasPlayableAudioTrack(uri: String): Boolean {
         val contentUri = android.net.Uri.parse(uri)
         return audioTrackProbe.hasAudioTrack(contentUri)
+    }
+
+    override suspend fun durationMs(uri: String): Long? {
+        val retriever = android.media.MediaMetadataRetriever()
+        return try {
+            retriever.setDataSource(context, android.net.Uri.parse(uri))
+            retriever.extractMetadata(android.media.MediaMetadataRetriever.METADATA_KEY_DURATION)
+                ?.toLongOrNull()
+                ?.takeIf { it > 0 }
+        } finally {
+            retriever.release()
+        }
     }
 }
