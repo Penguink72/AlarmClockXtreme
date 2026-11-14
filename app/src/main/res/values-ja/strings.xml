@@ -137,6 +137,8 @@
     <string name="music_library_pool_restore">再び追加</string>
     <string name="music_library_pool_empty">一致するメディアがありません。フォルダーをスキャンして候補を追加してください。</string>
     <string name="music_library_pool_status_candidate">候補 · プール未追加</string>
+    <string name="music_library_pool_status_auto_included">自動で音楽プールに追加</string>
+    <string name="music_library_pool_status_auto_skipped">自動フィルターで候補に保留</string>
     <string name="music_library_pool_status_included">音楽プールに追加済み</string>
     <string name="music_library_pool_status_excluded">音楽プールから除外済み</string>
     <string name="music_library_pool_device_source">端末のメディア</string>
@@ -144,7 +146,7 @@
     <string name="music_library_pool_read_failed">音楽プール候補を読み取れませんでした：%1$s</string>
     <string name="music_library_pool_update_failed">音楽プールを更新できませんでした：%1$s</string>
     <string name="music_library_pool_source_label">ソース</string>
-    <string name="music_library_pool_scope_folders">選択したフォルダー</string>
+    <string name="music_library_pool_scope_folders">選択済みフォルダーと検出した音楽</string>
     <string name="music_library_pool_scope_summary">範囲：%1$s · %2$d 件表示。「表示項目を選択」と一括操作はこの一覧にのみ適用されます。</string>
     <string name="music_library_pool_device_warning">端末のメディアにはシステムの着信音や通知音が含まれる場合があります。追加前に確認してください。</string>
     <string name="music_library_pool_non_destructive_hint">除外はアラームでの再生対象から外すだけで、端末上のファイルは削除されません。</string>
