@@ -50,6 +50,40 @@ class MusicLibraryTreeScannerTest {
     }
 
     @Test
+    fun recursiveSafScanAutomaticallyQualifiesOnlyLongNonRingtoneAudio() = runBlocking {
+        val source = source(1, "content://provider/tree/root", "root")
+        val access = FakeTreeAccess().apply {
+            documents["root"] = listOf(
+                folder("music-folder", "Music"),
+                folder("tone-folder", "Ringtones")
+            )
+            documents["music-folder"] = listOf(
+                audio("long.mp3", "primary:Music/long.mp3"),
+                audio("short.mp3", "primary:Music/short.mp3"),
+                video("video.mp4", "primary:Music/video.mp4")
+            )
+            documents["tone-folder"] = listOf(
+                audio("factory.ogg", "primary:Ringtones/factory.ogg")
+            )
+            val uris = (documents["music-folder"].orEmpty() +
+                documents["tone-folder"].orEmpty()).map { documentUri(source.treeUri, it.documentId) }
+            playableAudioUris.addAll(uris)
+            durations[documentUri(source.treeUri, "primary:Music/long.mp3")] = 61_000L
+            durations[documentUri(source.treeUri, "primary:Music/short.mp3")] = 59_000L
+            durations[documentUri(source.treeUri, "primary:Music/video.mp4")] = 180_000L
+            durations[documentUri(source.treeUri, "primary:Ringtones/factory.ogg")] = 180_000L
+        }
+        val result = MusicLibraryTreeScanner(access).scan(source)
+
+        assertEquals(4, result.tracks.size)
+        assertEquals(4, result.evaluatedUris.size)
+        assertEquals(setOf(
+            access.documentUri(source.treeUri, "primary:Music/long.mp3"),
+            access.documentUri(source.treeUri, "primary:Music/video.mp4")
+        ), result.automaticallyEligibleUris)
+    }
+
+    @Test
     fun filtersMixedMediaAndSkipsVideoWithoutAPlayableAudioTrack() = runBlocking {
         val source = source(1, "content://provider/tree/root", "root")
         val access = FakeTreeAccess().apply {
@@ -154,6 +188,7 @@ class MusicLibraryTreeScannerTest {
     private class FakeTreeAccess : MusicLibraryTreeAccess {
         val documents = mutableMapOf<String, List<MusicDocumentEntry>>()
         val playableAudioUris = mutableSetOf<String>()
+        val durations = mutableMapOf<String, Long>()
         var probeFailure: Exception? = null
 
         override suspend fun children(
@@ -166,5 +201,7 @@ class MusicLibraryTreeScannerTest {
 
         override suspend fun hasPlayableAudioTrack(uri: String): Boolean =
             probeFailure?.let { throw it } ?: (uri in playableAudioUris)
+
+        override suspend fun durationMs(uri: String): Long? = durations[uri]
     }
 }
