@@ -81,7 +81,13 @@ internal class MusicLibraryTreeScanner(
                     evaluatedUris += uri
                     // File duration is resolved after the existing playable-audio
                     // probe. A failure here must never discard an indexable song.
-                    val duration = try { treeAccess.durationMs(uri) } catch (e: Exception) { null }
+                    val duration = try {
+                        treeAccess.durationMs(uri)
+                    } catch (cancelled: kotlinx.coroutines.CancellationException) {
+                        throw cancelled
+                    } catch (error: Exception) {
+                        null
+                    }
                     val directoryPath = entry.documentId.substringAfter(':', "")
                         .substringBeforeLast('/', "")
                     if (MusicAutoPoolPolicy.isEligible(
