@@ -1548,7 +1548,7 @@
     <string name="alarm_music_settings_source">Music source</string>
     <string name="alarm_music_settings_mode_shared">Use the shared music pool</string>
     <string name="alarm_music_settings_mode_filtered">Filter the pool by artists and folders</string>
-    <string name="alarm_music_settings_mode_playlist">Use this alarm's playlist</string>
+    <string name="alarm_music_settings_mode_playlist">Use this alarm\'s playlist</string>
     <string name="alarm_music_settings_strategy">Playback strategy</string>
     <string name="alarm_music_settings_strategy_random">Random; repeats allowed</string>
     <string name="alarm_music_settings_strategy_shuffle">Shuffle; no repeats</string>

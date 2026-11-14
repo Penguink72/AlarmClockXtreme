@@ -125,7 +125,10 @@ internal fun MusicPlaylistsWorkspace(
                                 status = when {
                                     result.addedItems > 0 &&
                                         result.unavailableItemsSkipped > 0 ->
-                                        "partial:${result.addedItems}:${result.unavailableItemsSkipped}"
+                                        partialAddStatusToken(
+                                            result.addedItems,
+                                            result.unavailableItemsSkipped
+                                        )
                                     result.addedItems > 0 -> "added:${result.addedItems}"
                                     result.unavailableItemsSkipped > 0 ->
                                         "unavailable:${result.unavailableItemsSkipped}"
@@ -137,7 +140,10 @@ internal fun MusicPlaylistsWorkspace(
                             status = when {
                                 result.addedItems > 0 &&
                                     result.unavailableItemsSkipped > 0 ->
-                                    "partial:${result.addedItems}:${result.unavailableItemsSkipped}"
+                                    partialAddStatusToken(
+                                        result.addedItems,
+                                        result.unavailableItemsSkipped
+                                    )
                                 result.addedItems > 0 -> "added:${result.addedItems}"
                                 result.unavailableItemsSkipped > 0 ->
                                     "unavailable:${result.unavailableItemsSkipped}"
@@ -521,7 +527,10 @@ internal fun MusicPlaylistsWorkspace(
                                                     result.excludedTrackUris.isNotEmpty()
                                                 ) {
                                                     status = if (result.unavailableItemsSkipped > 0) {
-                                                        "partial:${result.addedItems}:${result.unavailableItemsSkipped}"
+                                                        partialAddStatusToken(
+                                                            result.addedItems,
+                                                            result.unavailableItemsSkipped
+                                                        )
                                                     } else {
                                                         "added:${result.addedItems}"
                                                     }
@@ -531,7 +540,10 @@ internal fun MusicPlaylistsWorkspace(
                                                 status = when {
                                                     result.addedItems > 0 &&
                                                         result.unavailableItemsSkipped > 0 ->
-                                                        "partial:${result.addedItems}:${result.unavailableItemsSkipped}"
+                                                        partialAddStatusToken(
+                                                            result.addedItems,
+                                                            result.unavailableItemsSkipped
+                                                        )
                                                     result.addedItems > 0 ->
                                                         "added:${result.addedItems}"
                                                     result.unavailableItemsSkipped > 0 ->
@@ -828,6 +840,9 @@ private sealed interface PlaylistDialogMode {
     data object CREATE : PlaylistDialogMode
     data class RENAME(val playlistId: String) : PlaylistDialogMode
 }
+
+private fun partialAddStatusToken(added: Int, unavailable: Int): String =
+    listOf("partial", added, unavailable).joinToString(":")
 
 @Composable
 private fun playlistStatusText(status: String?): String? {
