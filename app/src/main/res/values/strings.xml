@@ -1575,6 +1575,8 @@
     <string name="music_library_pool_restore">Restore</string>
     <string name="music_library_pool_empty">No matching indexed media. Scan a folder to find candidates.</string>
     <string name="music_library_pool_status_candidate">Candidate · not in pool</string>
+    <string name="music_library_pool_status_auto_included">Auto-added to music pool</string>
+    <string name="music_library_pool_status_auto_skipped">Filtered automatically</string>
     <string name="music_library_pool_status_included">Added to music pool</string>
     <string name="music_library_pool_status_excluded">Excluded from music pool</string>
     <string name="music_library_pool_device_source">Device media</string>
@@ -1582,7 +1584,7 @@
     <string name="music_library_pool_read_failed">Could not read music pool candidates: %1$s</string>
     <string name="music_library_pool_update_failed">Could not update music pool: %1$s</string>
     <string name="music_library_pool_source_label">Source</string>
-    <string name="music_library_pool_scope_folders">Selected folders</string>
+    <string name="music_library_pool_scope_folders">Selected folders and detected music</string>
     <string name="music_library_pool_scope_summary">Scope: %1$s · %2$d shown. Select visible and batch actions apply only to this list.</string>
     <string name="music_library_pool_device_warning">Device media can include system ringtones and notification sounds. Review before adding.</string>
     <string name="music_library_pool_non_destructive_hint">Excluding only removes a track from alarm playback. Files on your device are never deleted.</string>
