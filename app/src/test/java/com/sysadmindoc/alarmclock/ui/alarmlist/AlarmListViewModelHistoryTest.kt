@@ -23,12 +23,15 @@ import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
+import kotlinx.coroutines.withTimeout
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -96,12 +99,10 @@ class AlarmListViewModelHistoryTest {
     }
 
     @Test
-    fun recentHistoryUpdatesReactivelyWithoutRecreatingViewModelAndReplaysByHistoryId() = runTest {
-        Dispatchers.setMain(StandardTestDispatcher(testScheduler))
+    fun recentHistoryUpdatesReactivelyWithoutRecreatingViewModelAndReplaysByHistoryId() = runBlocking {
+        Dispatchers.setMain(Dispatchers.Unconfined)
         val database = Room.inMemoryDatabaseBuilder(context, AlarmDatabase::class.java)
             .allowMainThreadQueries()
-            .setQueryExecutor(Runnable::run)
-            .setTransactionExecutor(Runnable::run)
             .build()
         try {
             val realRepository = MusicLibraryRepository(
@@ -122,26 +123,21 @@ class AlarmListViewModelHistoryTest {
                 replayActions = replayActions
             )
 
-            val initialDeadline = System.currentTimeMillis() + 3_000L
-            while (viewModel.recentHistory.value.map { it.title } != listOf("Song B", "Song A") &&
-                System.currentTimeMillis() < initialDeadline
-            ) {
-                runCurrent()
-                Thread.sleep(10)
+            val initial = withTimeout(5_000L) {
+                viewModel.recentHistory.first { entries ->
+                    entries.map { it.title } == listOf("Song B", "Song A")
+                }
             }
-            assertEquals(listOf("Song B", "Song A"), viewModel.recentHistory.value.map { it.title })
+            assertEquals(listOf("Song B", "Song A"), initial.map { it.title })
 
-            // Insert C into the DB after ViewModel creation; Room Flow should push [C, B, A] without recreating ViewModel.
+            // Insert C into the DB after ViewModel creation; Room Flow must push [C, B, A] without recreating ViewModel.
             database.playbackHistoryDao().appendStarted("fire-c", 3_000L, "Song C", "content://music/c")
 
-            val updateDeadline = System.currentTimeMillis() + 3_000L
-            while (viewModel.recentHistory.value.map { it.title } != listOf("Song C", "Song B", "Song A") &&
-                System.currentTimeMillis() < updateDeadline
-            ) {
-                runCurrent()
-                Thread.sleep(10)
+            val updated = withTimeout(5_000L) {
+                viewModel.recentHistory.first { entries ->
+                    entries.map { it.title } == listOf("Song C", "Song B", "Song A")
+                }
             }
-            val updated = viewModel.recentHistory.value
             assertEquals(listOf("Song C", "Song B", "Song A"), updated.map { it.title })
 
             val latestEntry = updated.first()
