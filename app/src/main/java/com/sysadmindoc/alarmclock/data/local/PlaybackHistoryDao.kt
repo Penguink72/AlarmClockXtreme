@@ -50,6 +50,15 @@ interface PlaybackHistoryDao {
     )
     suspend fun getRecent(limit: Int): List<PlaybackHistoryEntry>
 
+    @Query(
+        """
+        SELECT * FROM playback_history
+        ORDER BY startedAt DESC, id DESC
+        LIMIT :limit
+        """
+    )
+    fun observeRecent(limit: Int): kotlinx.coroutines.flow.Flow<List<PlaybackHistoryEntry>>
+
     @Query("SELECT * FROM playback_history WHERE id = :historyId LIMIT 1")
     suspend fun getById(historyId: Long): PlaybackHistoryEntry?
 }

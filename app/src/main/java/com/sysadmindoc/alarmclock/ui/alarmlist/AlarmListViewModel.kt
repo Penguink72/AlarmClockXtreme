@@ -117,7 +117,21 @@ class AlarmListViewModel @Inject constructor(
     val replayState: StateFlow<ReplayUiState> = replayActions.state
 
     init {
-        refreshRecentHistory()
+        observeRecentHistory()
+    }
+
+    private fun observeRecentHistory() {
+        viewModelScope.launch {
+            try {
+                musicLibraryRepository.observeRecentHistory(5).collect { entries ->
+                    _recentHistory.value = entries
+                }
+            } catch (error: CancellationException) {
+                throw error
+            } catch (error: Exception) {
+                // Keep existing history
+            }
+        }
     }
 
     fun refreshRecentHistory() {

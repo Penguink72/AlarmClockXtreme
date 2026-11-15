@@ -162,6 +162,9 @@ class MusicLibraryRepository @Inject constructor(
     suspend fun recentHistory(limit: Int = DEFAULT_RECENT_HISTORY_LIMIT) =
         playbackHistoryDao.getRecent(limit.coerceAtLeast(0))
 
+    fun observeRecentHistory(limit: Int = DEFAULT_RECENT_HISTORY_LIMIT): Flow<List<PlaybackHistoryEntry>> =
+        playbackHistoryDao.observeRecent(limit.coerceAtLeast(0))
+
     suspend fun historyEntry(historyId: Long) =
         playbackHistoryDao.getById(historyId)
 

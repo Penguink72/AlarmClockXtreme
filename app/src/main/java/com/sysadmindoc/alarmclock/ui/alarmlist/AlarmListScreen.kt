@@ -167,10 +167,6 @@ fun AlarmListScreen(
     var showBulkDeleteConfirmation by remember { mutableStateOf(false) }
     var showMusicHistoryDialog by rememberSaveable { mutableStateOf(false) }
 
-    LaunchedEffect(Unit) {
-        viewModel.refreshRecentHistory()
-    }
-
     // v1.7.1: Prominent (non-tucked) YouTube download entry. The user can
     // build up an alarm-sound library without first creating an alarm.
     // Saveable: a rotation used to close the dialog while the download it

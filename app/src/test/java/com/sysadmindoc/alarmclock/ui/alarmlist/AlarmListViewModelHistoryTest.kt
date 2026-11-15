@@ -1,7 +1,10 @@
 package com.sysadmindoc.alarmclock.ui.alarmlist
 
+import android.app.Application
 import android.content.Context
+import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
+import com.sysadmindoc.alarmclock.data.local.AlarmDatabase
 import com.sysadmindoc.alarmclock.data.local.entity.PlaybackHistoryEntry
 import com.sysadmindoc.alarmclock.data.preferences.AppSettings
 import com.sysadmindoc.alarmclock.data.preferences.PreferencesManager
@@ -36,7 +39,7 @@ import org.robolectric.annotation.Config
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(RobolectricTestRunner::class)
-@Config(sdk = [30])
+@Config(sdk = [30], application = Application::class)
 class AlarmListViewModelHistoryTest {
 
     private val context: Context
@@ -58,6 +61,7 @@ class AlarmListViewModelHistoryTest {
         coEvery { alarmRepository.getAll() } returns emptyList()
         every { preferencesManager.settings } returns flowOf(AppSettings())
         every { replayActions.state } returns replayStateFlow
+        every { musicLibraryRepository.observeRecentHistory(any()) } returns flowOf(emptyList())
         coEvery { musicLibraryRepository.recentHistory(any()) } returns emptyList()
     }
 
@@ -67,13 +71,13 @@ class AlarmListViewModelHistoryTest {
     }
 
     @Test
-    fun refreshRecentHistoryLoadsTopEntriesFromRepository() = runTest {
+    fun observeRecentHistoryLoadsTopEntriesFromRepository() = runTest {
         Dispatchers.setMain(StandardTestDispatcher(testScheduler))
         val sampleHistory = listOf(
-            PlaybackHistoryEntry(id = 1L, fireId = "f1", startedAt = 1000L, playOrder = 1, title = "Song 1", uri = "uri1"),
-            PlaybackHistoryEntry(id = 2L, fireId = "f1", startedAt = 2000L, playOrder = 2, title = "Song 2", uri = "uri2")
+            PlaybackHistoryEntry(id = 2L, fireId = "f1", startedAt = 2000L, playOrder = 2, title = "Song 2", uri = "uri2"),
+            PlaybackHistoryEntry(id = 1L, fireId = "f1", startedAt = 1000L, playOrder = 1, title = "Song 1", uri = "uri1")
         )
-        coEvery { musicLibraryRepository.recentHistory(5) } returns sampleHistory
+        every { musicLibraryRepository.observeRecentHistory(5) } returns flowOf(sampleHistory)
 
         val viewModel = AlarmListViewModel(
             context = context,
@@ -88,7 +92,64 @@ class AlarmListViewModelHistoryTest {
         runCurrent()
 
         assertEquals(sampleHistory, viewModel.recentHistory.value)
-        coVerify(atLeast = 1) { musicLibraryRepository.recentHistory(5) }
+        verify(atLeast = 1) { musicLibraryRepository.observeRecentHistory(5) }
+    }
+
+    @Test
+    fun recentHistoryUpdatesReactivelyWithoutRecreatingViewModelAndReplaysByHistoryId() = runTest {
+        Dispatchers.setMain(StandardTestDispatcher(testScheduler))
+        val database = Room.inMemoryDatabaseBuilder(context, AlarmDatabase::class.java)
+            .allowMainThreadQueries()
+            .setQueryExecutor(Runnable::run)
+            .setTransactionExecutor(Runnable::run)
+            .build()
+        try {
+            val realRepository = MusicLibraryRepository(
+                database.musicLibraryDao(),
+                database.playbackHistoryDao()
+            )
+            database.playbackHistoryDao().appendStarted("fire-a", 1_000L, "Song A", "content://music/a")
+            database.playbackHistoryDao().appendStarted("fire-b", 2_000L, "Song B", "content://music/b")
+
+            val viewModel = AlarmListViewModel(
+                context = context,
+                repository = alarmRepository,
+                scheduler = scheduler,
+                calculator = calculator,
+                preferencesManager = preferencesManager,
+                eventRepository = eventRepository,
+                musicLibraryRepository = realRepository,
+                replayActions = replayActions
+            )
+
+            val initialDeadline = System.currentTimeMillis() + 3_000L
+            while (viewModel.recentHistory.value.map { it.title } != listOf("Song B", "Song A") &&
+                System.currentTimeMillis() < initialDeadline
+            ) {
+                runCurrent()
+                Thread.sleep(10)
+            }
+            assertEquals(listOf("Song B", "Song A"), viewModel.recentHistory.value.map { it.title })
+
+            // Insert C into the DB after ViewModel creation; Room Flow should push [C, B, A] without recreating ViewModel.
+            database.playbackHistoryDao().appendStarted("fire-c", 3_000L, "Song C", "content://music/c")
+
+            val updateDeadline = System.currentTimeMillis() + 3_000L
+            while (viewModel.recentHistory.value.map { it.title } != listOf("Song C", "Song B", "Song A") &&
+                System.currentTimeMillis() < updateDeadline
+            ) {
+                runCurrent()
+                Thread.sleep(10)
+            }
+            val updated = viewModel.recentHistory.value
+            assertEquals(listOf("Song C", "Song B", "Song A"), updated.map { it.title })
+
+            val latestEntry = updated.first()
+            viewModel.playHistory(latestEntry.id)
+            verify(exactly = 1) { replayActions.playHistory(latestEntry.id) }
+        } finally {
+            database.close()
+        }
     }
 
     @Test
