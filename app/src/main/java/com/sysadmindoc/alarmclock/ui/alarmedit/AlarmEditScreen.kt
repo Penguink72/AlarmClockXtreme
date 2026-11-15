@@ -587,7 +587,10 @@ fun AlarmEditScreen(
                     state = state,
                     viewModel = viewModel,
                     musicSettings = alarmMusicSettingsState,
-                    onOpenRingtonePicker = { showRingtonePicker = true },
+                    onOpenRingtonePicker = {
+                        soundPreviewController.stop()
+                        showRingtonePicker = true
+                    },
                     onOpenMusicLibrary = {
                         openPlaylistsOnLibraryLaunch = false
                         showMusicLibraryDialog = true
