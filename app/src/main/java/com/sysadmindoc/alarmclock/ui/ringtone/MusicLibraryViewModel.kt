@@ -126,7 +126,8 @@ internal fun filterLibraryCatalog(
     filter: MusicPoolFilter,
     search: String,
     sourceScope: MusicPoolSourceScope? = null,
-    videoOnly: Boolean = false
+    videoOnly: Boolean = false,
+    metadataByUri: Map<String, MusicCatalogTrackMetadata> = emptyMap()
 ): List<MusicPoolUiTrack> {
     val query = search.trim().lowercase(Locale.ROOT)
     return tracks.filter { item ->
@@ -140,12 +141,20 @@ internal fun filterLibraryCatalog(
             (videoOnly && !item.track.isVideoAudio())
         ) return@filter false
         if (query.isBlank()) return@filter true
+        // MusicTrack intentionally only stores the five legacy fields. Artist,
+        // album, and folder path live in the separate v28 metadata catalog.
+        // Include them without a Room schema migration, so typing an artist
+        // such as "Jia Peng Fang" finds indexed tracks by artist tags.
+        val metadata = metadataByUri[item.track.uri]
         val searchable = listOf(
             item.track.displayTitle,
             item.track.title,
             item.track.fileName,
             item.track.metadataTitle,
-            item.sourceName
+            item.sourceName,
+            metadata?.artist.orEmpty(),
+            metadata?.album.orEmpty(),
+            metadata?.folderPath.orEmpty()
         ).joinToString(" ").lowercase(Locale.ROOT)
         query in searchable
     }
@@ -485,12 +494,20 @@ class MusicLibraryViewModel @Inject constructor(
         )
     }
 
-    fun loadPoolCandidates() {
+    fun loadPoolCandidates(autoScanIfEmpty: Boolean = false) {
         if (_uiState.value.loadingPool) return
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(loadingPool = true)
             try {
+                // Show the persisted index first. A full MediaStore/SAF scan
+                // can take minutes for several thousand files and must not
+                // block ordinary searches every time this dialog opens.
                 loadPoolCandidatesNow()
+                if (autoScanIfEmpty && _uiState.value.poolTracks.isEmpty() &&
+                    (indexer.hasAudioPermission() || _uiState.value.sources.isNotEmpty())
+                ) {
+                    scan()
+                }
             } catch (error: CancellationException) {
                 throw error
             } catch (error: Exception) {
@@ -551,6 +568,7 @@ class MusicLibraryViewModel @Inject constructor(
         tracks = state.poolTracks,
         filter = state.catalogFilter,
         search = state.catalogSearch,
+        metadataByUri = state.supplementalCatalog.trackMetadataByUri,
         sourceScope = state.catalogSourceScope,
         videoOnly = videoOnly
     )
