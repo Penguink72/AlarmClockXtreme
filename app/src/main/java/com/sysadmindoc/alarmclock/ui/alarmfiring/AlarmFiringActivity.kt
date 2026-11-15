@@ -776,7 +776,7 @@ class AlarmFiringActivity : ComponentActivity() {
                 // task only after the service confirms that this alarm ended.
                 val mainIntent = Intent(this@AlarmFiringActivity, MainActivity::class.java).apply {
                     action = Intent.ACTION_VIEW
-                    data = android.net.Uri.parse("acx://navigate/alarms")
+                    data = android.net.Uri.parse("acx://navigate/alarm_list")
                     addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
                 }
                 try {
