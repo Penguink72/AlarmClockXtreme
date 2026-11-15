@@ -563,4 +563,8 @@
     <string name="replay_more_options">更多選項</string>
     <string name="music_library_history_filter_recent">最近播放</string>
     <string name="music_library_history_filter_date">依日期</string>
+    <string name="settings_return_to_app_after_dismiss">解除鬧鐘後返回鬧鐘列表</string>
+    <string name="settings_return_to_app_after_dismiss_description">確認鬧鐘停止後返回鬧鐘 App；關閉則返回原本的手機畫面。鎖定畫面仍保持保護。</string>
+    <string name="firing_dismiss_dispatch_failed">無法送出解除鬧鐘指令，請重試。</string>
+    <string name="firing_dismiss_confirmation_timeout">尚無法確認鬧鐘已停止。如果仍在響鈴，請再次解除。</string>
 </resources>
