@@ -88,7 +88,8 @@ internal fun LazyListScope.alarmEditSoundSections(
     onManagePlaylists: () -> Unit = {},
     onPreviewCurrentSound: () -> Unit = {},
     onStopSoundPreview: () -> Unit = {},
-    previewActive: Boolean = false
+    previewActive: Boolean = false,
+    previewBusy: Boolean = false
 ) {
     // Sound settings
     SettingsSection(editorPage, AlarmEditorSection.SOUND) {
@@ -201,7 +202,7 @@ internal fun LazyListScope.alarmEditSoundSections(
         }
         SettingsRow(label = stringResource(R.string.alarm_edit_preview_current_sound)) {
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedButton(onClick = onPreviewCurrentSound) {
+                OutlinedButton(onClick = onPreviewCurrentSound, enabled = !previewBusy) {
                     Text(stringResource(R.string.alarm_edit_preview_current_sound))
                 }
                 OutlinedButton(onClick = onStopSoundPreview, enabled = previewActive) {
