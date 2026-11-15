@@ -507,6 +507,17 @@ jobs:
           java -version
           bash ./gradlew --version
 
+      - name: Run isolated P3.1-U1 and Robolectric isolation targeted unit tests
+        run: |
+          bash ./gradlew --no-daemon --stacktrace :app:testFdroidDebugUnitTest \
+            --tests "com.sysadmindoc.alarmclock.ui.timer.TimerAlarmServiceTest" \
+            --tests "com.sysadmindoc.alarmclock.receiver.BedtimeReminderBaselineTest" \
+            --tests "com.sysadmindoc.alarmclock.ui.alarmlist.AlarmListViewModelHistoryTest" \
+            --tests "com.sysadmindoc.alarmclock.service.ManualPlaybackArbiterAndExclusionTest" \
+            --tests "com.sysadmindoc.alarmclock.service.HistoryReplayControllerTest" \
+            --tests "com.sysadmindoc.alarmclock.ui.ringtone.MusicLibraryViewModelHistoryTest" \
+            --tests "com.sysadmindoc.alarmclock.ui.components.HistoryReplayUiTest"
+
       - name: Run original F-Droid unit tests under strict dependency verification
         id: unit
         run: bash ./gradlew --no-daemon --stacktrace :app:testFdroidDebugUnitTest
@@ -541,6 +552,13 @@ jobs:
               "PlaybackSelectionPolicyTest",
               "SnoozeCapPolicyTest",
               "RingtoneFolderStoreTest",
+              "TimerAlarmServiceTest",
+              "BedtimeReminderBaselineTest",
+              "AlarmListViewModelHistoryTest",
+              "ManualPlaybackArbiterAndExclusionTest",
+              "HistoryReplayControllerTest",
+              "MusicLibraryViewModelHistoryTest",
+              "HistoryReplayUiTest",
           )
 
           for path in xml_files:

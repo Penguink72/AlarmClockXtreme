@@ -30,7 +30,7 @@ import org.robolectric.annotation.Config
  * chooser, which is visible.
  */
 @RunWith(RobolectricTestRunner::class)
-@Config(sdk = [30])
+@Config(sdk = [30], application = Application::class)
 class BedtimeReminderBaselineTest {
 
     private lateinit var context: Context
