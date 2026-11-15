@@ -192,6 +192,10 @@ fun AlarmEditScreen(
     val libraryViewModel: MusicLibraryViewModel = hiltViewModel()
     val soundPreviewController = libraryViewModel.previewController
     val soundPreviewState by soundPreviewController.state.collectAsStateWithLifecycle()
+    // A preview started in the editor must not keep playing after navigation.
+    DisposableEffect(soundPreviewController) {
+        onDispose { soundPreviewController.stop() }
+    }
     val soundPreviewScope = rememberCoroutineScope()
     var soundPreviewBusy by remember { mutableStateOf(false) }
     var showTimePicker by remember { mutableStateOf(false) }
@@ -234,6 +238,14 @@ fun AlarmEditScreen(
         }
     }
     val snackbarHostState = remember { SnackbarHostState() }
+    LaunchedEffect(soundPreviewState.error, soundPreviewState.blockedByAlarm) {
+        when {
+            soundPreviewState.blockedByAlarm ->
+                snackbarHostState.showSnackbar(context.getString(R.string.replay_error_alarm_active))
+            soundPreviewState.error != null ->
+                snackbarHostState.showSnackbar(context.getString(R.string.alarm_edit_preview_failed))
+        }
+    }
     val noReferencePhotoMessage = stringResource(R.string.alarm_edit_photo_none_captured)
     val referencePhotoSavedMessage = stringResource(R.string.alarm_edit_photo_saved)
     val referencePhotoSaveFailedMessage = stringResource(R.string.alarm_edit_photo_save_failed)
