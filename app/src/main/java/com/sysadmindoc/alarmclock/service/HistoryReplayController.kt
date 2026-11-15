@@ -297,9 +297,9 @@ class HistoryReplayController @Inject constructor(
                 }
             )
             player = replayPlayer
-            replayPlayer.play(entry.uri)
             mainHandler.removeCallbacks(alarmMonitor)
             mainHandler.postDelayed(alarmMonitor, ALARM_CHECK_INTERVAL_MS)
+            replayPlayer.play(entry.uri)
         } catch (error: Exception) {
             val cleanupError = releasePlayer()
             _state.value = ReplayUiState.Error(
