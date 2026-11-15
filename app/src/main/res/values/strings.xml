@@ -2579,4 +2579,10 @@
     <string name="settings_return_to_app_after_dismiss_description">Show the Alarms screen after the alarm is confirmed stopped. When off, return to your previous screen. Keep the lock screen protected.</string>
     <string name="firing_dismiss_dispatch_failed">Could not send the dismiss request. Please try again.</string>
     <string name="firing_dismiss_confirmation_timeout">Could not confirm the alarm stopped. If it is still ringing, try dismissing again.</string>
+    <string name="alarm_edit_music_source_summary">%1$d playable tracks · %2$s</string>
+    <string name="alarm_edit_manage_playlists">Create / manage playlists</string>
+    <string name="alarm_edit_preview_current_sound">Preview selected sound</string>
+    <string name="alarm_edit_preview_current_sound_description">Plays one sample from the current unsaved source. This is not a full alarm test.</string>
+    <string name="alarm_edit_preview_no_track">No playable track is available in this source.</string>
+    <string name="alarm_edit_preview_failed">Unable to preview the selected sound.</string>
 </resources>
