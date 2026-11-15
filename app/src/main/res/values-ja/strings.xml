@@ -567,4 +567,10 @@
     <string name="settings_return_to_app_after_dismiss_description">停止を確認した後、アラーム一覧に戻ります。オフの場合は元の画面に戻ります。ロック画面は保護されます。</string>
     <string name="firing_dismiss_dispatch_failed">アラーム停止の指示を送信できませんでした。もう一度お試しください。</string>
     <string name="firing_dismiss_confirmation_timeout">アラームが停止したことを確認できません。鳴り続ける場合は、もう一度停止してください。</string>
+    <string name="alarm_edit_music_source_summary">再生可能 %1$d 曲 · %2$s</string>
+    <string name="alarm_edit_manage_playlists">プレイリストの作成・管理</string>
+    <string name="alarm_edit_preview_current_sound">選択中の音を試聴</string>
+    <string name="alarm_edit_preview_current_sound_description">未保存の設定から1曲だけ試聴します。アラーム全体の動作テストではありません。</string>
+    <string name="alarm_edit_preview_no_track">この音源には再生できる曲がありません。</string>
+    <string name="alarm_edit_preview_failed">選択中の音を試聴できません。</string>
 </resources>
