@@ -48,6 +48,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.sysadmindoc.alarmclock.service.ReplayUiState
+import com.sysadmindoc.alarmclock.ui.components.HistoryTrackRow
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.testTag
@@ -87,11 +89,12 @@ fun MusicLibraryDialog(
     onDismiss: () -> Unit,
     viewModel: MusicLibraryViewModel = hiltViewModel(),
     previewController: MusicCatalogPreviewController? = viewModel.previewController,
-    playlistRepository: MusicPlaylistRepository? = viewModel.playlistRepository
+    playlistRepository: MusicPlaylistRepository? = viewModel.playlistRepository,
+    initialShowHistory: Boolean = false
 ) {
     val context = LocalContext.current
     val state by viewModel.uiState.collectAsStateWithLifecycle()
-    var showHistory by remember { mutableStateOf(false) }
+    var showHistory by rememberSaveable { mutableStateOf(initialShowHistory) }
     var showSources by remember { mutableStateOf(false) }
     var workspaceName by rememberSaveable {
         mutableStateOf(MusicLibraryWorkspace.MEDIA_LIBRARY.name)
@@ -168,7 +171,9 @@ fun MusicLibraryDialog(
                                 IconButton(
                                     onClick = {
                                         when {
-                                            showHistory -> showHistory = false
+                                            showHistory -> {
+                                                if (initialShowHistory) onDismiss() else showHistory = false
+                                            }
                                             browseMode != MusicLibraryBrowseMode.MEDIA ->
                                                 browseModeName = MusicLibraryBrowseMode.MEDIA.name
                                             workspace != MusicLibraryWorkspace.MEDIA_LIBRARY -> {
@@ -941,6 +946,8 @@ private fun PlaybackHistoryContent(
 ) {
     val context = LocalContext.current
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val replayState by viewModel.replayState.collectAsStateWithLifecycle()
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -949,48 +956,74 @@ private fun PlaybackHistoryContent(
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                java.time.format.DateTimeFormatter
-                    .ofLocalizedDate(java.time.format.FormatStyle.MEDIUM)
-                    .withLocale(context.resources.configuration.locales[0])
-                    .format(state.selectedDate),
-                style = MaterialTheme.typography.titleSmall
+            FilterChip(
+                selected = state.historyFilterMode == HistoryFilterMode.RECENT,
+                onClick = { viewModel.loadRecentHistory() },
+                label = { Text(stringResource(R.string.music_library_history_filter_recent)) }
             )
-            TextButton(
-                onClick = {
-                    val date = state.selectedDate
-                    android.app.DatePickerDialog(
-                        context,
-                        { _, year, month, day ->
-                            viewModel.loadHistory(java.time.LocalDate.of(year, month + 1, day))
-                        },
-                        date.year,
-                        date.monthValue - 1,
-                        date.dayOfMonth
-                    ).show()
-                }
+            FilterChip(
+                selected = state.historyFilterMode == HistoryFilterMode.BY_DATE,
+                onClick = { viewModel.loadHistory(state.selectedDate) },
+                label = { Text(stringResource(R.string.music_library_history_filter_date)) }
+            )
+        }
+
+        if (state.historyFilterMode == HistoryFilterMode.BY_DATE) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(stringResource(R.string.music_library_choose_date))
+                Text(
+                    java.time.format.DateTimeFormatter
+                        .ofLocalizedDate(java.time.format.FormatStyle.MEDIUM)
+                        .withLocale(context.resources.configuration.locales[0])
+                        .format(state.selectedDate),
+                    style = MaterialTheme.typography.titleSmall
+                )
+                TextButton(
+                    onClick = {
+                        val date = state.selectedDate
+                        android.app.DatePickerDialog(
+                            context,
+                            { _, year, month, day ->
+                                viewModel.loadHistory(java.time.LocalDate.of(year, month + 1, day))
+                            },
+                            date.year,
+                            date.monthValue - 1,
+                            date.dayOfMonth
+                        ).show()
+                    }
+                ) {
+                    Text(stringResource(R.string.music_library_choose_date))
+                }
             }
         }
+
         if (state.history.isEmpty()) {
             Text(stringResource(R.string.music_library_no_history))
         } else {
+            val currentReplayState = replayState
             LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 items(state.history, key = { it.id }) { entry ->
-                    val time = android.text.format.DateFormat.getTimeFormat(context).format(
-                        java.util.Date(entry.startedAt)
-                    )
-                    Text(
-                        stringResource(
-                            R.string.music_library_history_row,
-                            entry.playOrder,
-                            time,
-                            entry.title
-                        )
+                    val isCurrent = when (currentReplayState) {
+                        is ReplayUiState.Resolving -> currentReplayState.historyId == entry.id
+                        is ReplayUiState.Preparing -> currentReplayState.historyId == entry.id
+                        is ReplayUiState.Playing -> currentReplayState.historyId == entry.id
+                        is ReplayUiState.Paused -> currentReplayState.historyId == entry.id
+                        is ReplayUiState.Error -> currentReplayState.historyId == entry.id
+                        ReplayUiState.Idle -> false
+                    }
+                    HistoryTrackRow(
+                        entry = entry,
+                        isActive = isCurrent,
+                        replayState = currentReplayState,
+                        onPlay = { viewModel.playHistory(entry.id) },
+                        onPause = { viewModel.pauseReplay() },
+                        onResume = { viewModel.resumeReplay() }
                     )
                 }
             }

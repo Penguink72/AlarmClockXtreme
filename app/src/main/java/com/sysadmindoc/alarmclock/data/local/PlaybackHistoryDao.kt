@@ -40,4 +40,16 @@ interface PlaybackHistoryDao {
         """
     )
     suspend fun getForDate(fromMillis: Long, toMillis: Long): List<PlaybackHistoryEntry>
+
+    @Query(
+        """
+        SELECT * FROM playback_history
+        ORDER BY startedAt DESC, id DESC
+        LIMIT :limit
+        """
+    )
+    suspend fun getRecent(limit: Int): List<PlaybackHistoryEntry>
+
+    @Query("SELECT * FROM playback_history WHERE id = :historyId LIMIT 1")
+    suspend fun getById(historyId: Long): PlaybackHistoryEntry?
 }

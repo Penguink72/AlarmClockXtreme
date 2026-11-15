@@ -127,6 +127,8 @@ import com.sysadmindoc.alarmclock.ui.components.AppInlineNotice
 import com.sysadmindoc.alarmclock.ui.components.AppSectionTitle
 import com.sysadmindoc.alarmclock.ui.components.AppStatusChip
 import com.sysadmindoc.alarmclock.ui.components.AppSurfaceCard
+import com.sysadmindoc.alarmclock.ui.components.RecentPlaybackCard
+import com.sysadmindoc.alarmclock.ui.ringtone.MusicLibraryDialog
 import com.sysadmindoc.alarmclock.ui.components.AppInputShape
 import com.sysadmindoc.alarmclock.ui.components.appOutlinedTextFieldColors
 import com.sysadmindoc.alarmclock.ui.components.appSwitchColors
@@ -158,9 +160,16 @@ fun AlarmListScreen(
 ) {
     val context = LocalContext.current
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val recentHistory by viewModel.recentHistory.collectAsStateWithLifecycle()
+    val replayState by viewModel.replayState.collectAsStateWithLifecycle()
     var showTemplates by remember { mutableStateOf(false) }
     var searchQuery by remember { mutableStateOf("") }
     var showBulkDeleteConfirmation by remember { mutableStateOf(false) }
+    var showMusicHistoryDialog by rememberSaveable { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        viewModel.refreshRecentHistory()
+    }
 
     // v1.7.1: Prominent (non-tucked) YouTube download entry. The user can
     // build up an alarm-sound library without first creating an alarm.
@@ -225,6 +234,16 @@ fun AlarmListScreen(
                 showTemplates = false
             },
             onDismiss = { showTemplates = false }
+        )
+    }
+
+    if (showMusicHistoryDialog) {
+        MusicLibraryDialog(
+            onDismiss = {
+                showMusicHistoryDialog = false
+                viewModel.refreshRecentHistory()
+            },
+            initialShowHistory = true
         )
     }
 
@@ -421,6 +440,18 @@ fun AlarmListScreen(
                             AlarmSortOrder.ENABLED_FIRST -> stringResource(R.string.alarmlist_active_first)
                         },
                         onCycleSort = viewModel::cycleSortOrder,
+                    )
+                }
+
+                item {
+                    RecentPlaybackCard(
+                        recentHistory = recentHistory,
+                        replayState = replayState,
+                        onPlayHistory = { historyId -> viewModel.playHistory(historyId) },
+                        onPauseReplay = { viewModel.pauseReplay() },
+                        onResumeReplay = { viewModel.resumeReplay() },
+                        onViewAll = { showMusicHistoryDialog = true },
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp)
                     )
                 }
 

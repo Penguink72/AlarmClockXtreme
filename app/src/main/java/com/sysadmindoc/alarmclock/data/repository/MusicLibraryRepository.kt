@@ -58,6 +58,7 @@ class MusicLibraryRepository @Inject constructor(
 
     private companion object {
         const val MAX_EXCLUDED_URIS_PER_QUERY = 900
+        const val DEFAULT_RECENT_HISTORY_LIMIT = 100
         const val SMART_ALL_DEFAULT_NAME = "All available music"
         const val FAVORITES_DEFAULT_NAME = "Favorites"
     }
@@ -157,6 +158,12 @@ class MusicLibraryRepository @Inject constructor(
 
     suspend fun historyForDate(fromMillis: Long, toMillis: Long) =
         playbackHistoryDao.getForDate(fromMillis, toMillis)
+
+    suspend fun recentHistory(limit: Int = DEFAULT_RECENT_HISTORY_LIMIT) =
+        playbackHistoryDao.getRecent(limit.coerceAtLeast(0))
+
+    suspend fun historyEntry(historyId: Long) =
+        playbackHistoryDao.getById(historyId)
 
     // =========================================================================
     // Supplemental Catalog & Facets

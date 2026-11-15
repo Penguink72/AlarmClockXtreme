@@ -9,6 +9,7 @@ import androidx.sqlite.db.SupportSQLiteOpenHelper
 import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory
 import androidx.test.core.app.ApplicationProvider
 import com.sysadmindoc.alarmclock.data.local.entity.MusicPoolEntry
+import com.sysadmindoc.alarmclock.data.local.entity.PlaybackHistoryEntry
 import com.sysadmindoc.alarmclock.data.local.entity.MusicTrack
 import com.sysadmindoc.alarmclock.data.repository.MusicLibraryRepository
 import com.sysadmindoc.alarmclock.ui.alarmedit.AlarmMusicPlaybackStrategy
@@ -840,6 +841,68 @@ class MusicLibraryDatabaseTest {
             assertEquals(1, history.size)
             assertEquals("晴天", history.single().title)
             assertEquals("content://music/1", history.single().uri)
+        } finally {
+            database.close()
+        }
+    }
+
+    @Test
+    fun historyRepositoryReadsRecentInDescendingOrderAndKeepsDateOrderAscending() = runBlocking {
+        val context = ApplicationProvider.getApplicationContext<Application>()
+        val database = Room.inMemoryDatabaseBuilder(context, AlarmDatabase::class.java)
+            .allowMainThreadQueries()
+            .build()
+        try {
+            val repository = MusicLibraryRepository(
+                database.musicLibraryDao(),
+                database.playbackHistoryDao()
+            )
+            database.playbackHistoryDao().insert(
+                PlaybackHistoryEntry(
+                    fireId = "fire-a",
+                    startedAt = 1_000L,
+                    playOrder = 1,
+                    title = "Older",
+                    uri = "content://music/older"
+                )
+            )
+            database.playbackHistoryDao().insert(
+                PlaybackHistoryEntry(
+                    fireId = "fire-b",
+                    startedAt = 3_000L,
+                    playOrder = 1,
+                    title = "Newest",
+                    uri = "content://music/newest"
+                )
+            )
+            database.playbackHistoryDao().insert(
+                PlaybackHistoryEntry(
+                    fireId = "fire-c",
+                    startedAt = 2_000L,
+                    playOrder = 1,
+                    title = "Middle",
+                    uri = "content://music/middle"
+                )
+            )
+            database.playbackHistoryDao().insert(
+                PlaybackHistoryEntry(
+                    fireId = "fire-d",
+                    startedAt = 3_000L,
+                    playOrder = 1,
+                    title = "Latest tie",
+                    uri = "content://music/latest-tie"
+                )
+            )
+
+            val recent = repository.recentHistory(limit = 2)
+            assertEquals(listOf("Latest tie", "Newest"), recent.map { it.title })
+            assertEquals(
+                listOf("Older", "Middle", "Newest", "Latest tie"),
+                repository.historyForDate(0L, 4_000L).map { it.title }
+            )
+            assertEquals(recent.first(), repository.historyEntry(recent.first().id))
+            assertTrue(repository.recentHistory(limit = 0).isEmpty())
+            assertEquals(null, repository.historyEntry(-1L))
         } finally {
             database.close()
         }

@@ -11,6 +11,8 @@ import com.sysadmindoc.alarmclock.data.local.entity.MusicTrack
 import com.sysadmindoc.alarmclock.data.local.entity.PlaybackHistoryEntry
 import com.sysadmindoc.alarmclock.data.local.entity.displayTitle
 import com.sysadmindoc.alarmclock.data.repository.MusicLibraryRepository
+import com.sysadmindoc.alarmclock.service.HistoryReplayActions
+import com.sysadmindoc.alarmclock.service.ReplayUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,6 +27,11 @@ import java.time.ZoneId
 import java.util.Locale
 import javax.inject.Inject
 
+enum class HistoryFilterMode {
+    RECENT,
+    BY_DATE
+}
+
 data class MusicLibraryUiState(
     val count: Int = 0,
     val audioCount: Int = 0,
@@ -33,6 +40,7 @@ data class MusicLibraryUiState(
     val scanning: Boolean = false,
     val scanningSourceIds: Set<String> = emptySet(),
     val status: String = "",
+    val historyFilterMode: HistoryFilterMode = HistoryFilterMode.RECENT,
     val selectedDate: LocalDate = LocalDate.now(),
     val history: List<PlaybackHistoryEntry> = emptyList(),
     val folderPickerSourceId: String? = null,
@@ -181,17 +189,19 @@ class MusicLibraryViewModel @Inject constructor(
     private val indexer: MusicLibraryIndexer,
     private val repository: MusicLibraryRepository,
     val previewController: MusicCatalogPreviewController,
+    val replayActions: HistoryReplayActions,
     @ApplicationContext private val context: Context
 ) : ViewModel() {
     val playlistRepository: MusicPlaylistRepository
         get() = repository
     private val _uiState = MutableStateFlow(MusicLibraryUiState())
     val uiState: StateFlow<MusicLibraryUiState> = _uiState.asStateFlow()
+    val replayState: StateFlow<ReplayUiState> = replayActions.state
 
     init {
         refreshCount()
         refreshSources()
-        loadHistory(LocalDate.now())
+        loadRecentHistory()
     }
 
     fun refreshCount() {
@@ -710,8 +720,31 @@ class MusicLibraryViewModel @Inject constructor(
         )
     }
 
+    fun loadRecentHistory(limit: Int = 100) {
+        _uiState.value = _uiState.value.copy(historyFilterMode = HistoryFilterMode.RECENT)
+        viewModelScope.launch {
+            try {
+                _uiState.value = _uiState.value.copy(
+                    history = repository.recentHistory(limit)
+                )
+            } catch (error: CancellationException) {
+                throw error
+            } catch (error: Exception) {
+                _uiState.value = _uiState.value.copy(
+                    status = context.getString(
+                        R.string.music_library_history_read_failed,
+                        error.message.orEmpty()
+                    )
+                )
+            }
+        }
+    }
+
     fun loadHistory(date: LocalDate) {
-        _uiState.value = _uiState.value.copy(selectedDate = date)
+        _uiState.value = _uiState.value.copy(
+            historyFilterMode = HistoryFilterMode.BY_DATE,
+            selectedDate = date
+        )
         viewModelScope.launch {
             val zone = ZoneId.systemDefault()
             val from = date.atStartOfDay(zone).toInstant().toEpochMilli()
@@ -731,5 +764,22 @@ class MusicLibraryViewModel @Inject constructor(
                 )
             }
         }
+    }
+
+    fun playHistory(historyId: Long) {
+        previewController.stop()
+        replayActions.playHistory(historyId)
+    }
+
+    fun pauseReplay() {
+        replayActions.pause()
+    }
+
+    fun resumeReplay() {
+        replayActions.resume()
+    }
+
+    fun stopReplay() {
+        replayActions.stop()
     }
 }

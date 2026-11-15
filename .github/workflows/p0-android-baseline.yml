@@ -12,6 +12,9 @@ on:
       - preview/music-alarm-2
       - fix/preview2-pool-refresh-seams-20261113
       - integration/p3-xplayer-media-playlists
+      - feature/p31-u1-replay-core
+      - feature/p31-u1-replay-ui
+      - integration/p31-u1-history-replay
     paths:
       - ".github/workflows/p0-android-baseline.yml"
       - "app/**"

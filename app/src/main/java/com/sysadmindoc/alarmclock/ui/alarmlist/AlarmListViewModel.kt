@@ -4,17 +4,22 @@ import com.sysadmindoc.alarmclock.R
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sysadmindoc.alarmclock.data.local.entity.AlarmEvent
+import com.sysadmindoc.alarmclock.data.local.entity.PlaybackHistoryEntry
 import com.sysadmindoc.alarmclock.data.model.Alarm
 import com.sysadmindoc.alarmclock.data.preferences.PreferencesManager
 import com.sysadmindoc.alarmclock.data.preferences.isPaused
 import com.sysadmindoc.alarmclock.data.repository.AlarmEventRepository
 import com.sysadmindoc.alarmclock.data.repository.AlarmRepository
+import com.sysadmindoc.alarmclock.data.repository.MusicLibraryRepository
 import com.sysadmindoc.alarmclock.domain.AlarmScheduler
 import com.sysadmindoc.alarmclock.domain.NextAlarmCalculator
 import com.sysadmindoc.alarmclock.domain.VacationAlarmPolicy
+import com.sysadmindoc.alarmclock.service.HistoryReplayActions
+import com.sysadmindoc.alarmclock.service.ReplayUiState
 import com.sysadmindoc.alarmclock.ui.templates.AlarmTemplate
 import com.sysadmindoc.alarmclock.util.AlarmTimeFormatter
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.time.Instant
@@ -102,8 +107,46 @@ class AlarmListViewModel @Inject constructor(
     private val scheduler: AlarmScheduler,
     private val calculator: NextAlarmCalculator,
     private val preferencesManager: PreferencesManager,
-    private val eventRepository: AlarmEventRepository
+    private val eventRepository: AlarmEventRepository,
+    private val musicLibraryRepository: MusicLibraryRepository,
+    val replayActions: HistoryReplayActions
 ) : ViewModel() {
+
+    private val _recentHistory = MutableStateFlow<List<PlaybackHistoryEntry>>(emptyList())
+    val recentHistory: StateFlow<List<PlaybackHistoryEntry>> = _recentHistory.asStateFlow()
+    val replayState: StateFlow<ReplayUiState> = replayActions.state
+
+    init {
+        refreshRecentHistory()
+    }
+
+    fun refreshRecentHistory() {
+        viewModelScope.launch {
+            try {
+                _recentHistory.value = musicLibraryRepository.recentHistory(5)
+            } catch (error: CancellationException) {
+                throw error
+            } catch (error: Exception) {
+                // Keep existing history
+            }
+        }
+    }
+
+    fun playHistory(historyId: Long) {
+        replayActions.playHistory(historyId)
+    }
+
+    fun pauseReplay() {
+        replayActions.pause()
+    }
+
+    fun resumeReplay() {
+        replayActions.resume()
+    }
+
+    fun stopReplay() {
+        replayActions.stop()
+    }
 
     /** One-shot events for polished list action feedback. */
     private val _feedback = MutableSharedFlow<String>(extraBufferCapacity = 1)
