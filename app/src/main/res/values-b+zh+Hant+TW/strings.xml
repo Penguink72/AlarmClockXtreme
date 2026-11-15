@@ -567,4 +567,10 @@
     <string name="settings_return_to_app_after_dismiss_description">確認鬧鐘停止後返回鬧鐘 App；關閉則返回原本的手機畫面。鎖定畫面仍保持保護。</string>
     <string name="firing_dismiss_dispatch_failed">無法送出解除鬧鐘指令，請重試。</string>
     <string name="firing_dismiss_confirmation_timeout">尚無法確認鬧鐘已停止。如果仍在響鈴，請再次解除。</string>
+    <string name="alarm_edit_music_source_summary">可播放 %1$d 首 · %2$s</string>
+    <string name="alarm_edit_manage_playlists">建立／管理播放清單</string>
+    <string name="alarm_edit_preview_current_sound">試聽目前聲音</string>
+    <string name="alarm_edit_preview_current_sound_description">從目前尚未儲存的來源試聽一首，不等於完整響鈴測試。</string>
+    <string name="alarm_edit_preview_no_track">目前來源沒有可播放的音樂。</string>
+    <string name="alarm_edit_preview_failed">無法試聽目前選取的聲音。</string>
 </resources>
