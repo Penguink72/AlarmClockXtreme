@@ -15,6 +15,7 @@ on:
       - feature/p31-u1-replay-core
       - feature/p31-u1-replay-ui
       - integration/p31-u1-history-replay
+      - feature/p31-u11-dismiss-navigation-and-music-save-20261115
     paths:
       - ".github/workflows/p0-android-baseline.yml"
       - "app/**"
@@ -156,7 +157,7 @@ jobs:
             cp "${SCHEMA_DIR}/28.json" /tmp/committed-28.json
             rm -f "${SCHEMA_DIR}/28.json"
           fi
-          bash ./gradlew --no-daemon --stacktrace :app:verifyLocalizedPrimaryScreens :app:assembleFdroidDebug -PciVersionCode=149
+          bash ./gradlew --no-daemon --stacktrace :app:verifyLocalizedPrimaryScreens :app:assembleFdroidDebug -PciVersionCode=151
           git diff --exit-code -- "${SCHEMA_DIR}/25.json" "${SCHEMA_DIR}/26.json" "${SCHEMA_DIR}/27.json"
           if [[ ! -s "${SCHEMA_DIR}/28.json" ]]; then
             echo "ERROR: KSP did not generate ${SCHEMA_DIR}/28.json"
@@ -188,8 +189,8 @@ jobs:
             echo "ERROR: Unexpected package name: $PKG_NAME"
             exit 1
           fi
-          if [[ "$VERSION_CODE" != "149" ]]; then
-            echo "ERROR: Expected P3.1-U1 versionCode=149 (must exceed installed Preview 3 v148), got: $VERSION_CODE"
+          if [[ "$VERSION_CODE" != "151" ]]; then
+            echo "ERROR: Expected P3.1-U1.1 versionCode=151 (must exceed installed U1 v150), got: $VERSION_CODE"
             exit 1
           fi
           APKSIGNER_OUT="$("${BUILD_TOOLS_DIR}/apksigner" verify --verbose --print-certs "$APK_PATH")"
@@ -303,7 +304,7 @@ jobs:
           retention-days: 14
 
   verify-persistent-signing-second-runner:
-    name: Verify persistent signing on 2nd runner (v150 upgrade APK)
+    name: Verify persistent signing on 2nd runner (v152 upgrade APK)
     needs: build-fdroid-debug-apk
     runs-on: ubuntu-24.04
     timeout-minutes: 40
@@ -404,8 +405,8 @@ jobs:
           chmod 600 "${DEST_KEYSTORE}"
           echo "CI_DEBUG_KEYSTORE_PATH=${DEST_KEYSTORE}" >> "$GITHUB_ENV"
 
-      - name: Build 2nd F-Droid debug APK (versionCode=150) on 2nd runner
-        run: bash ./gradlew --no-daemon --stacktrace :app:assembleFdroidDebug -PciVersionCode=150
+      - name: Build 2nd F-Droid debug APK (versionCode=152) on 2nd runner
+        run: bash ./gradlew --no-daemon --stacktrace :app:assembleFdroidDebug -PciVersionCode=152
 
       - name: Compare signing certificates and package metadata between Runner 1 and Runner 2
         run: |
@@ -430,8 +431,8 @@ jobs:
             echo "ERROR: Package mismatch ($PKG1 vs $PKG2)"
             exit 1
           fi
-          if [[ "$VC1" != "149" || "$VC2" != "150" ]]; then
-            echo "ERROR: Unexpected versionCodes ($VC1 -> $VC2), expected (149 -> 150)"
+          if [[ "$VC1" != "151" || "$VC2" != "152" ]]; then
+            echo "ERROR: Unexpected versionCodes ($VC1 -> $VC2), expected (151 -> 152)"
             exit 1
           fi
           if [[ -z "$CERT1_COLON" || "$CERT1_COLON" != "$CERT2_COLON" ]]; then
@@ -449,26 +450,26 @@ jobs:
             echo "runner1_signing_cert_sha256=${CERT1_COLON}"
             echo "runner2_signing_cert_sha256=${CERT2_COLON}"
             echo "signing_cert_match=true"
-          } | tee app/build/outputs/apk/fdroid/debug/apk-v150-metadata.txt
+          } | tee app/build/outputs/apk/fdroid/debug/apk-v152-metadata.txt
           {
             echo "## B7 Cross-Runner Signing Consistency Verification"
             echo "- Runner 1 APK (\`versionCode=${VC1}\`) Cert SHA-256: \`${CERT1_COLON}\`"
             echo "- Runner 2 APK (\`versionCode=${VC2}\`) Cert SHA-256: \`${CERT2_COLON}\`"
             echo "- Certificate Match: **EXACT MATCH (PASS)**"
-            echo "- Upgrade APK SHA-256 (\`v150\`): \`${APK2_SHA256}\`"
+            echo "- Upgrade APK SHA-256 (\`v152\`): \`${APK2_SHA256}\`"
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Clean up temporary keystore on 2nd runner
         if: always()
         run: rm -f "${RUNNER_TEMP}/ci-debug-raw.p12" "${RUNNER_TEMP}/ci-debug-signing.p12"
 
-      - name: Upload 2nd runner upgrade APK (versionCode=150)
+      - name: Upload 2nd runner upgrade APK (versionCode=152)
         uses: actions/upload-artifact@v4
         with:
-          name: p0-fdroid-debug-apk-v150-upgrade-test
+          name: p0-fdroid-debug-apk-v152-upgrade-test
           path: |
             app/build/outputs/apk/fdroid/debug/app-fdroid-debug.apk
-            app/build/outputs/apk/fdroid/debug/apk-v150-metadata.txt
+            app/build/outputs/apk/fdroid/debug/apk-v152-metadata.txt
           if-no-files-found: error
           retention-days: 14
 
