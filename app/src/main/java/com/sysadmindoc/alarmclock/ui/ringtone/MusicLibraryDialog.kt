@@ -90,14 +90,18 @@ fun MusicLibraryDialog(
     viewModel: MusicLibraryViewModel = hiltViewModel(),
     previewController: MusicCatalogPreviewController? = viewModel.previewController,
     playlistRepository: MusicPlaylistRepository? = viewModel.playlistRepository,
-    initialShowHistory: Boolean = false
+    initialShowHistory: Boolean = false,
+    initialShowPlaylists: Boolean = false
 ) {
     val context = LocalContext.current
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     var showHistory by rememberSaveable { mutableStateOf(initialShowHistory) }
     var showSources by remember { mutableStateOf(false) }
     var workspaceName by rememberSaveable {
-        mutableStateOf(MusicLibraryWorkspace.MEDIA_LIBRARY.name)
+        mutableStateOf(
+            if (initialShowPlaylists) MusicLibraryWorkspace.PLAYLISTS.name
+            else MusicLibraryWorkspace.MEDIA_LIBRARY.name
+        )
     }
     var targetPlaylistForAdd by rememberSaveable { mutableStateOf<String?>(null) }
     val workspace = MusicLibraryWorkspace.valueOf(workspaceName)
