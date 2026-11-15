@@ -148,7 +148,7 @@ data class AlarmMusicSettingsBackup(
 
 @JsonClass(generateAdapter = true)
 data class BackupData(
-    val version: Int = 20,
+    val version: Int = 21,
     val appVersion: String = BuildConfig.VERSION_NAME,
     val exportedAt: Long = System.currentTimeMillis(),
     val alarms: List<AlarmBackup>,
@@ -174,6 +174,8 @@ data class SettingsBackup(
     val showWeatherOnDashboard: Boolean,
     val showCalendarOnDashboard: Boolean,
     val postDismissSummaryEnabled: Boolean = false,
+    // Defaulted for backups created before format v21.
+    val returnToAppAfterDismiss: Boolean = true,
     // Previously missing settings
     val temperatureUnit: String = "fahrenheit",
     val bedtimeEnabled: Boolean = false,
@@ -329,7 +331,7 @@ class BackupManager @Inject constructor(
 
     companion object {
         /** Highest backup format version we know how to read end-to-end. */
-        const val MAX_SUPPORTED_BACKUP_VERSION = 20
+        const val MAX_SUPPORTED_BACKUP_VERSION = 21
 
         /**
          * Ceiling on an imported file. A full export of the maximum alarm count
@@ -594,6 +596,7 @@ class BackupManager @Inject constructor(
                 showWeatherOnDashboard = settings.showWeatherOnDashboard,
                 showCalendarOnDashboard = settings.showCalendarOnDashboard,
                 postDismissSummaryEnabled = settings.postDismissSummaryEnabled,
+                returnToAppAfterDismiss = settings.returnToAppAfterDismiss,
                 temperatureUnit = settings.temperatureUnit,
                 bedtimeEnabled = settings.bedtimeEnabled,
                 bedtimeHour = settings.bedtimeHour,
@@ -835,6 +838,7 @@ class BackupManager @Inject constructor(
         showWeatherOnDashboard = s.showWeatherOnDashboard,
         showCalendarOnDashboard = s.showCalendarOnDashboard,
         postDismissSummaryEnabled = s.postDismissSummaryEnabled,
+        returnToAppAfterDismiss = s.returnToAppAfterDismiss,
         temperatureUnit = s.temperatureUnit,
         bedtimeEnabled = s.bedtimeEnabled,
         bedtimeHour = s.bedtimeHour,
