@@ -160,6 +160,17 @@ internal fun filterLibraryCatalog(
     }
 }
 
+/** An existing index is browseable immediately; permission/source changes are
+ * scanned on explicit Refresh. Only the empty first-install catalog auto-scans.
+ */
+internal fun shouldAutoScanMusicCatalog(
+    autoScanIfEmpty: Boolean,
+    indexedTrackCount: Int,
+    hasAudioPermission: Boolean,
+    hasFolderSources: Boolean
+): Boolean = autoScanIfEmpty && indexedTrackCount == 0 &&
+    (hasAudioPermission || hasFolderSources)
+
 internal fun catalogUrisForMembershipUpdate(
     tracks: List<MusicPoolUiTrack>,
     selectedUris: Set<String>,
@@ -503,8 +514,12 @@ class MusicLibraryViewModel @Inject constructor(
                 // can take minutes for several thousand files and must not
                 // block ordinary searches every time this dialog opens.
                 loadPoolCandidatesNow()
-                if (autoScanIfEmpty && _uiState.value.poolTracks.isEmpty() &&
-                    (indexer.hasAudioPermission() || _uiState.value.sources.isNotEmpty())
+                if (shouldAutoScanMusicCatalog(
+                        autoScanIfEmpty = autoScanIfEmpty,
+                        indexedTrackCount = _uiState.value.poolTracks.size,
+                        hasAudioPermission = indexer.hasAudioPermission(),
+                        hasFolderSources = _uiState.value.sources.isNotEmpty()
+                    )
                 ) {
                     scan()
                 }
