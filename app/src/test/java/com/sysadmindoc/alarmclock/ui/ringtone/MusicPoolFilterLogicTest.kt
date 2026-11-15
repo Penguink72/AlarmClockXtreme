@@ -164,6 +164,80 @@ class MusicPoolFilterLogicTest {
     }
 
     @Test
+    fun catalogSearchMatchesArtistAlbumAndFolderMetadataWithoutRescan() {
+        val tracks = listOf(poolItemSaf1, poolItemVideo, poolItemMediaStore)
+        val meta = mapOf(
+            safTrack1.uri to MusicCatalogTrackMetadata(
+                uri = safTrack1.uri,
+                artist = "Jia Peng Fang",
+                album = "River Sounds",
+                folderPath = "Erhu/Instrumental"
+            )
+        )
+        assertEquals(
+            listOf(poolItemSaf1),
+            filterLibraryCatalog(
+                tracks, MusicPoolFilter.ALL_CANDIDATES, "Jia Peng Fang",
+                metadataByUri = meta
+            )
+        )
+        assertEquals(
+            listOf(poolItemSaf1),
+            filterLibraryCatalog(
+                tracks, MusicPoolFilter.ALL_CANDIDATES, "river sounds",
+                metadataByUri = meta
+            )
+        )
+        assertEquals(
+            listOf(poolItemSaf1),
+            filterLibraryCatalog(
+                tracks, MusicPoolFilter.ALL_CANDIDATES, "instrumental",
+                metadataByUri = meta
+            )
+        )
+        assertTrue(
+            filterLibraryCatalog(
+                tracks, MusicPoolFilter.EXCLUDED, "Jia Peng Fang",
+                metadataByUri = meta
+            ).isEmpty()
+        )
+    }
+
+    @Test
+    fun savedCatalogIsSearchableWithoutForcingLargeSourceScan() {
+        assertFalse(
+            shouldAutoScanMusicCatalog(
+                autoScanIfEmpty = true, indexedTrackCount = 4935,
+                hasAudioPermission = true, hasFolderSources = true
+            )
+        )
+        assertTrue(
+            shouldAutoScanMusicCatalog(
+                autoScanIfEmpty = true, indexedTrackCount = 0,
+                hasAudioPermission = false, hasFolderSources = true
+            )
+        )
+        assertTrue(
+            shouldAutoScanMusicCatalog(
+                autoScanIfEmpty = true, indexedTrackCount = 0,
+                hasAudioPermission = true, hasFolderSources = false
+            )
+        )
+        assertFalse(
+            shouldAutoScanMusicCatalog(
+                autoScanIfEmpty = false, indexedTrackCount = 0,
+                hasAudioPermission = true, hasFolderSources = true
+            )
+        )
+        assertFalse(
+            shouldAutoScanMusicCatalog(
+                autoScanIfEmpty = true, indexedTrackCount = 0,
+                hasAudioPermission = false, hasFolderSources = false
+            )
+        )
+    }
+
+    @Test
     fun catalogMembershipFiltersDoNotRestoreExcludedTracks() {
         val excluded = poolItemSaf1.copy(membershipState = MusicPoolEntry.EXCLUDED)
         val included = poolItemVideo.copy(membershipState = MusicPoolEntry.INCLUDED)
