@@ -50,3 +50,24 @@
 ## 5. 後續工包
 
 U2-B2：獨立測試響鈴事件（含隔離及完整 Service 驗證）；U3：5 秒建立新鬧鐘；U4：兩種 Snooze 音樂續播／切曲；U5：可撤銷的系統音批量排除。
+
+## 6. v151 真機驗收回饋（2026-11-16）
+
+使用者畫面：音樂庫已索引 4,935 首；搜尋 `Jia Peng Fang`，顯示「掃描中...」「正在掃描音訊來源...」「0 個結果」，且無法完成播放清單選曲流程。
+
+使用者陳述：
+- 設定「解除鬧鐘後返回鬧鐘列表」的開關找不到。
+- 單曲「試聽目前聲音」正常運作，標記 **真機通過**。
+- 播放清單的搜尋太久，無法完成後續設定。
+- 先前測試項目 4（重新開啟檢查播放清單與連播）**尚未進行**，不能記為失敗。
+
+已核對根因／修補（此次提交後待新 CI）：
+1. `SettingsScreen.kt` 原把返回偏好放在 Defaults > Dashboard，現在移到 Defaults > Alarm Defaults 第一列，避免使用者找不到；不是新增第二份設定。
+2. `MusicLibraryDialog.kt` 原進入畫面後必做 `viewModel.scan()`，每次重新枚舉 MediaStore/SAF 來源；現在先讀既有 Room 索引，只有索引完全空白且已有權限／資料夾來源時才自動掃描。仍保留使用者手動掃描。
+3. `MusicLibraryViewModel.kt` 原搜尋只比對 `MusicTrack` 的歌名／檔名／來源名稱，漏掉 `MusicCatalogTrackMetadata` 的 artist/album/folderPath；現在加入同索引 metadata 比對，不需要 Room schema 更動。
+4. `MusicLibraryDialog.kt` 將 4,000+ 首的篩選列表記憶化；不因播放狀態、掃描狀態等無關重組重做全部字串過濾。
+5. `MusicPoolFilterLogicTest.kt` 增加 `Jia Peng Fang` 演出者及專輯／資料夾搜尋測試，以及 4,935 首索引存在時「不要再次自動掃描」的純函式測試。
+
+本次產物版號進位：Runner1 `versionCode=153`、Runner2 `versionCode=154`，需保有 Preview3 v148 至 U1.1 v152 相同 debug 簽章。不得卸載清除使用者音樂庫。
+
+真機後續驗收：從設定 > 預設 > 鬧鐘預設 找到返回開關；音樂庫再次開啟後在沒有按重新掃描時可直接搜尋 4,935 首已有索引曲目；在有 artist 標籤的音軌用人名搜尋可找到；選歌→加入播放清單→回編輯畫面套用→保存→重新開啟讀回。若檔案沒有該演出者 metadata 且檔名不含關鍵字，搜尋為零仍屬正確結果，應以已知存在的檔名交叉驗證。
