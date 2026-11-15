@@ -42,12 +42,12 @@ class AlarmListViewModelHistoryTest {
     private val context: Context
         get() = ApplicationProvider.getApplicationContext()
 
-    private val alarmRepository = mockk<AlarmRepository>()
+    private val alarmRepository = mockk<AlarmRepository>(relaxed = true)
     private val scheduler = mockk<AlarmScheduler>(relaxed = true)
     private val calculator = mockk<NextAlarmCalculator>(relaxed = true)
-    private val preferencesManager = mockk<PreferencesManager>()
+    private val preferencesManager = mockk<PreferencesManager>(relaxed = true)
     private val eventRepository = mockk<AlarmEventRepository>(relaxed = true)
-    private val musicLibraryRepository = mockk<MusicLibraryRepository>()
+    private val musicLibraryRepository = mockk<MusicLibraryRepository>(relaxed = true)
     private val replayActions = mockk<HistoryReplayActions>(relaxed = true)
     private val replayStateFlow = MutableStateFlow<ReplayUiState>(ReplayUiState.Idle)
 
@@ -55,8 +55,10 @@ class AlarmListViewModelHistoryTest {
     fun setUp() {
         every { alarmRepository.observeAll() } returns flowOf(emptyList())
         every { alarmRepository.observeNextAlarm() } returns flowOf(null)
+        coEvery { alarmRepository.getAll() } returns emptyList()
         every { preferencesManager.settings } returns flowOf(AppSettings())
         every { replayActions.state } returns replayStateFlow
+        coEvery { musicLibraryRepository.recentHistory(any()) } returns emptyList()
     }
 
     @After

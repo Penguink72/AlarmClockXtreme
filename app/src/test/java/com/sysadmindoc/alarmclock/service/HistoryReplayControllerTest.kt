@@ -139,7 +139,7 @@ class HistoryReplayControllerTest {
         runCurrent()
 
         assertEquals(
-            listOf(oldest.uri, selected.uri),
+            listOf(selected.uri, oldest.uri, selected.uri),
             factory.players.flatMap { it.playedUris }
         )
         coVerify(exactly = 0) { repository.recordStarted(any(), any(), any()) }
