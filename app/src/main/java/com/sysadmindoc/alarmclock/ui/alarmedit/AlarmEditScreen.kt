@@ -66,7 +66,7 @@ import com.sysadmindoc.alarmclock.ui.components.AppInputShape
 import com.sysadmindoc.alarmclock.ui.components.appOutlinedTextFieldColors
 import com.sysadmindoc.alarmclock.ui.components.appSwitchColors
 import com.sysadmindoc.alarmclock.ui.ringtone.MusicLibraryDialog
-import com.sysadmindoc.alarmclock.ui.ringtone.MusicLibraryViewModel
+import com.sysadmindoc.alarmclock.ui.ringtone.MusicCatalogPreviewController
 import com.sysadmindoc.alarmclock.ui.ringtone.RingtonePickerSheet
 import com.sysadmindoc.alarmclock.ui.theme.*
 import com.sysadmindoc.alarmclock.util.LocationHelper
@@ -178,6 +178,14 @@ internal fun alarmEditorExitDecision(
     else -> AlarmEditorExitDecision.NAVIGATE
 }
 
+// Fetch only the shared preview singleton; creating MusicLibraryViewModel
+// here would unnecessarily start music-library queries on every alarm edit.
+@dagger.hilt.EntryPoint
+@dagger.hilt.InstallIn(dagger.hilt.components.SingletonComponent::class)
+internal interface AlarmEditorSoundPreviewEntryPoint {
+    fun previewController(): MusicCatalogPreviewController
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AlarmEditScreen(
@@ -187,10 +195,14 @@ fun AlarmEditScreen(
     val context = LocalContext.current
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val alarmMusicSettingsState by viewModel.alarmMusicSettingsState.collectAsStateWithLifecycle()
-    // Same singleton preview controller as the music library, avoiding overlap
-    // or an extra ExoPlayer during sound setup.
-    val libraryViewModel: MusicLibraryViewModel = hiltViewModel()
-    val soundPreviewController = libraryViewModel.previewController
+    // Resolve the singleton that MusicLibraryDialog already uses. No extra
+    // MusicLibraryViewModel queries run just because the editor was opened.
+    val soundPreviewController = remember(context) {
+        dagger.hilt.android.EntryPointAccessors.fromApplication(
+            context.applicationContext,
+            AlarmEditorSoundPreviewEntryPoint::class.java
+        ).previewController()
+    }
     val soundPreviewState by soundPreviewController.state.collectAsStateWithLifecycle()
     // A preview started in the editor must not keep playing after navigation.
     DisposableEffect(soundPreviewController) {
