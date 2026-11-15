@@ -106,7 +106,7 @@ class HistoryReplayControllerTest {
         player.listener.onPlaying()
         assertEquals(ReplayUiState.Playing(entry.id, entry.title), controller.state.value)
 
-        AlarmService.activeAlarm.set(AlarmService.ActiveAlarmSnapshot(10, 10_000L, "fire-10"))
+        AlarmService.activeAlarm.set(AlarmService.Companion.ActiveAlarmSnapshot(10, 10_000L, "fire-10"))
         player.listener.onPlaying()
         assertEquals(1, player.releaseCount)
         assertEquals(ReplayUiState.Error(entry.id, "ALARM_ACTIVE"), controller.state.value)

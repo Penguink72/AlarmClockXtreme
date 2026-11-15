@@ -3,8 +3,6 @@ package com.sysadmindoc.alarmclock.ui.ringtone
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import com.sysadmindoc.alarmclock.data.local.entity.PlaybackHistoryEntry
-import com.sysadmindoc.alarmclock.data.music.MusicCatalogPreviewController
-import com.sysadmindoc.alarmclock.data.music.MusicLibraryIndexer
 import com.sysadmindoc.alarmclock.data.repository.MusicLibraryRepository
 import com.sysadmindoc.alarmclock.service.HistoryReplayActions
 import com.sysadmindoc.alarmclock.service.ReplayUiState
@@ -48,7 +46,6 @@ class MusicLibraryViewModelHistoryTest {
     fun setUp() {
         every { replayActions.state } returns replayStateFlow
         coEvery { repository.poolCandidates() } returns emptyList()
-        coEvery { repository.sources() } returns emptyList()
         coEvery { repository.recentHistory(any()) } returns emptyList()
     }
 
