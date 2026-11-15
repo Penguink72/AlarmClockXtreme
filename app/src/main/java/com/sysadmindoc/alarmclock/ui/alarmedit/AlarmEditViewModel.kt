@@ -453,6 +453,31 @@ class AlarmEditViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Resolve one sample from the unsaved sound draft, without creating an
+     * alarm, rescheduling AlarmManager or writing playback history.
+     * This is a sample preview, not a full AlarmService test.
+     */
+    suspend fun resolveCurrentSoundPreviewUri(): String? {
+        val current = _uiState.value
+        if (current.randomMusicEnabled) {
+            val draft = _alarmMusicSettingsState.value.draft
+            val eligible = musicLibraryRepository
+                .buildPlaylistSnapshotForDraft(draft)
+                .eligibleEntries()
+            val choice = when (draft.playbackStrategy) {
+                AlarmMusicPlaybackStrategy.PLAYLIST_ORDER -> eligible.firstOrNull()
+                AlarmMusicPlaybackStrategy.RANDOM_WITH_REPEATS,
+                AlarmMusicPlaybackStrategy.SHUFFLE_WITHOUT_REPEATS -> eligible.randomOrNull()
+            }
+            return choice?.track?.uri
+        }
+        if (current.ringtoneUri == "silent") return null
+        return current.ringtoneUri.takeIf { it.isNotBlank() }
+            ?: android.media.RingtoneManager
+                .getDefaultUri(android.media.RingtoneManager.TYPE_ALARM)?.toString()
+    }
+
     fun updateTime(hour: Int, minute: Int) {
         _uiState.value = _uiState.value.copy(hour = hour, minute = minute)
     }
