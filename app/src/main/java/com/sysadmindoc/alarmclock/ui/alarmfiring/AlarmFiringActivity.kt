@@ -11,6 +11,7 @@ import android.nfc.NfcAdapter
 import android.nfc.Tag
 import android.os.Build
 import android.os.Bundle
+import android.widget.Toast
 import android.view.KeyEvent
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
@@ -23,6 +24,10 @@ import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
+import com.sysadmindoc.alarmclock.MainActivity
+import com.sysadmindoc.alarmclock.R
+import com.sysadmindoc.alarmclock.data.preferences.PreferencesManager
+import com.sysadmindoc.alarmclock.service.AlarmService
 import com.sysadmindoc.alarmclock.data.local.entity.AlarmIncidentEvent
 import com.sysadmindoc.alarmclock.data.repository.AlarmIncidentRepository
 import com.sysadmindoc.alarmclock.domain.AlarmScheduler
@@ -47,6 +52,7 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -58,6 +64,9 @@ import javax.inject.Inject
 class AlarmFiringActivity : ComponentActivity() {
 
     @Inject lateinit var alarmIncidentRepository: AlarmIncidentRepository
+    @Inject lateinit var preferencesManager: PreferencesManager
+
+    private var dismissRequestInFlight = false
 
     private val viewModel: AlarmFiringViewModel by viewModels()
     private var shakeDetector: ShakeDetector? = null
@@ -697,11 +706,15 @@ class AlarmFiringActivity : ComponentActivity() {
                 status = AlarmIncidentEvent.STATUS_FAILED,
                 reasonCode = "UI_SNOOZE_START_FAILED_${e.javaClass.simpleName}"
             )
+            Toast.makeText(this, R.string.firing_dismiss_dispatch_failed, Toast.LENGTH_LONG).show()
+            return
         }
         finish()
     }
 
     private fun dismiss() {
+        if (dismissRequestInFlight) return
+        dismissRequestInFlight = true
         val state = viewModel.uiState.value
         val challengeSolveTimeMs = state.challengeStartedAtMillis
             .takeIf { it > 0L && state.requiresChallenge }
@@ -729,8 +742,51 @@ class AlarmFiringActivity : ComponentActivity() {
                 status = AlarmIncidentEvent.STATUS_FAILED,
                 reasonCode = "UI_DISMISS_START_FAILED_${e.javaClass.simpleName}"
             )
+            dismissRequestInFlight = false
+            Toast.makeText(this, R.string.firing_dismiss_dispatch_failed, Toast.LENGTH_LONG).show()
+            return
         }
-        finish()
+
+        lifecycleScope.launch {
+            // Dispatch is asynchronous: wait until the service leaves this alarm
+            // before showing MainActivity, which otherwise reopens active alarms.
+            val confirmed = withTimeoutOrNull(8_000L) {
+                while (AlarmService.activeAlarm.get()?.alarmId == alarmId) {
+                    delay(50L)
+                }
+                true
+            } == true
+            if (!confirmed) {
+                dismissRequestInFlight = false
+                Toast.makeText(
+                    this@AlarmFiringActivity,
+                    R.string.firing_dismiss_confirmation_timeout,
+                    Toast.LENGTH_LONG
+                ).show()
+                return@launch
+            }
+
+            val returnToApp = runCatching {
+                preferencesManager.getCurrentSettings().returnToAppAfterDismiss
+            }.getOrDefault(true)
+            val deviceLocked =
+                getSystemService(KeyguardManager::class.java)?.isDeviceLocked == true
+            if (returnToApp && !deviceLocked) {
+                // singleInstance has its own task. Open the normal alarm-list
+                // task only after the service confirms that this alarm ended.
+                val mainIntent = Intent(this@AlarmFiringActivity, MainActivity::class.java).apply {
+                    action = Intent.ACTION_VIEW
+                    data = android.net.Uri.parse("acx://navigate/alarms")
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                }
+                try {
+                    startActivity(mainIntent)
+                } catch (error: Exception) {
+                    android.util.Log.e("AlarmFiringActivity", "return to alarms failed", error)
+                }
+            }
+            finish()
+        }
     }
 
     private var sunriseJob: kotlinx.coroutines.Job? = null
