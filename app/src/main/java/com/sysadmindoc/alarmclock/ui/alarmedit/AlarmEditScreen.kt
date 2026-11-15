@@ -66,6 +66,7 @@ import com.sysadmindoc.alarmclock.ui.components.AppInputShape
 import com.sysadmindoc.alarmclock.ui.components.appOutlinedTextFieldColors
 import com.sysadmindoc.alarmclock.ui.components.appSwitchColors
 import com.sysadmindoc.alarmclock.ui.ringtone.MusicLibraryDialog
+import com.sysadmindoc.alarmclock.ui.ringtone.MusicLibraryViewModel
 import com.sysadmindoc.alarmclock.ui.ringtone.RingtonePickerSheet
 import com.sysadmindoc.alarmclock.ui.theme.*
 import com.sysadmindoc.alarmclock.util.LocationHelper
@@ -76,6 +77,7 @@ import com.sysadmindoc.alarmclock.worker.GuardianSmsPath
 import java.time.DayOfWeek
 import java.util.Locale
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.launch
 
 internal enum class AlarmEditorPage(
     @StringRes val titleRes: Int,
@@ -184,12 +186,21 @@ fun AlarmEditScreen(
 ) {
     val context = LocalContext.current
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val alarmMusicSettingsState by viewModel.alarmMusicSettingsState.collectAsStateWithLifecycle()
+    // Same singleton preview controller as the music library, avoiding overlap
+    // or an extra ExoPlayer during sound setup.
+    val libraryViewModel: MusicLibraryViewModel = hiltViewModel()
+    val soundPreviewController = libraryViewModel.previewController
+    val soundPreviewState by soundPreviewController.state.collectAsStateWithLifecycle()
+    val soundPreviewScope = rememberCoroutineScope()
+    var soundPreviewBusy by remember { mutableStateOf(false) }
     var showTimePicker by remember { mutableStateOf(false) }
     var useTimeNumpad by rememberSaveable { mutableStateOf(false) }
     var timeNumpadDigits by rememberSaveable { mutableStateOf("") }
     var timeNumpadIsPm by rememberSaveable { mutableStateOf(false) }
     var showRingtonePicker by remember { mutableStateOf(false) }
     var showMusicLibraryDialog by rememberSaveable { mutableStateOf(false) }
+    var openPlaylistsOnLibraryLaunch by rememberSaveable { mutableStateOf(false) }
     var showAlarmMusicSettings by rememberSaveable { mutableStateOf(false) }
     var showChainPicker by remember { mutableStateOf(false) }
     var photoReferenceStatus by remember { mutableStateOf("") }
@@ -369,16 +380,16 @@ fun AlarmEditScreen(
             onDismiss = {
                 showMusicLibraryDialog = false
                 viewModel.refreshMusicSettingsEvaluation()
-            }
+            },
+            initialShowPlaylists = openPlaylistsOnLibraryLaunch
         )
     }
     if (showAlarmMusicSettings) {
-        val musicSettingsState by viewModel.alarmMusicSettingsState.collectAsStateWithLifecycle()
         LaunchedEffect(Unit) {
             viewModel.refreshMusicSettingsEvaluation()
         }
         AlarmMusicSettingsScreen(
-            state = musicSettingsState,
+            state = alarmMusicSettingsState,
             onAction = viewModel::onAlarmMusicSettingsAction,
             onDismiss = { showAlarmMusicSettings = false }
         )
@@ -563,9 +574,45 @@ fun AlarmEditScreen(
                     editorPage = editorPage,
                     state = state,
                     viewModel = viewModel,
+                    musicSettings = alarmMusicSettingsState,
                     onOpenRingtonePicker = { showRingtonePicker = true },
-                    onOpenMusicLibrary = { showMusicLibraryDialog = true },
-                    onOpenAlarmMusicSettings = { showAlarmMusicSettings = true }
+                    onOpenMusicLibrary = {
+                        openPlaylistsOnLibraryLaunch = false
+                        showMusicLibraryDialog = true
+                    },
+                    onOpenAlarmMusicSettings = { showAlarmMusicSettings = true },
+                    onManagePlaylists = {
+                        openPlaylistsOnLibraryLaunch = true
+                        showMusicLibraryDialog = true
+                    },
+                    onPreviewCurrentSound = {
+                        if (!soundPreviewBusy) {
+                            soundPreviewBusy = true
+                            soundPreviewScope.launch {
+                                try {
+                                    val uri = viewModel.resolveCurrentSoundPreviewUri()
+                                    if (uri == null) {
+                                        snackbarHostState.showSnackbar(
+                                            context.getString(R.string.alarm_edit_preview_no_track)
+                                        )
+                                    } else {
+                                        soundPreviewController.togglePreview(uri)
+                                    }
+                                } catch (error: CancellationException) {
+                                    throw error
+                                } catch (error: Exception) {
+                                    snackbarHostState.showSnackbar(
+                                        context.getString(R.string.alarm_edit_preview_failed)
+                                    )
+                                } finally {
+                                    soundPreviewBusy = false
+                                }
+                            }
+                        }
+                    },
+                    onStopSoundPreview = { soundPreviewController.stop() },
+                    previewActive = soundPreviewState.playingUri != null,
+                    previewBusy = soundPreviewBusy
                 )
                 AlarmEditorPage.DISMISS -> alarmEditDismissSections(
                     editorPage = editorPage,
