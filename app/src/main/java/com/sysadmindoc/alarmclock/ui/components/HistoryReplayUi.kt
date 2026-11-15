@@ -1,5 +1,6 @@
 package com.sysadmindoc.alarmclock.ui.components
 
+import android.content.ClipData
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -94,6 +95,7 @@ fun openInExternalApp(context: Context, uriString: String, title: String? = null
         val mimeType = resolveMimeType(context, uri, title)
         val viewIntent = Intent(Intent.ACTION_VIEW).apply {
             setDataAndType(uri, mimeType)
+            clipData = ClipData.newRawUri("", uri)
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
@@ -101,6 +103,7 @@ fun openInExternalApp(context: Context, uriString: String, title: String? = null
             viewIntent,
             title ?: context.getString(R.string.replay_open_in_external)
         ).apply {
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
         context.startActivity(chooser)

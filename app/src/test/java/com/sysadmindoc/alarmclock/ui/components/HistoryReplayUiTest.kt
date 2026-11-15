@@ -1,6 +1,8 @@
 package com.sysadmindoc.alarmclock.ui.components
 
+import android.app.Application
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import androidx.test.core.app.ApplicationProvider
 import com.sysadmindoc.alarmclock.R
@@ -11,10 +13,11 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)
-@Config(sdk = [30])
+@Config(sdk = [30], application = Application::class)
 class HistoryReplayUiTest {
 
     private val context: Context
@@ -73,5 +76,26 @@ class HistoryReplayUiTest {
     fun formatPlaybackTimeHandlesZeroOrNegative() {
         assertEquals("", formatPlaybackTime(context, 0L))
         assertEquals("", formatPlaybackTime(context, -1L))
+    }
+
+    @Test
+    fun openInExternalAppGrantsReadPermissionViaClipDataAndChooser() {
+        val uriString = "content://media/external/audio/media/77"
+        val result = openInExternalApp(context, uriString, "Track 77.mp3")
+        assertTrue(result.isSuccess)
+
+        val startedChooser = shadowOf(ApplicationProvider.getApplicationContext<Application>())
+            .nextStartedActivity
+        assertNotNull(startedChooser)
+        assertEquals(Intent.ACTION_CHOOSER, startedChooser.action)
+        assertTrue((startedChooser.flags and Intent.FLAG_GRANT_READ_URI_PERMISSION) != 0)
+
+        @Suppress("DEPRECATION")
+        val targetIntent = startedChooser.getParcelableExtra<Intent>(Intent.EXTRA_INTENT)
+        assertNotNull(targetIntent)
+        assertEquals(Intent.ACTION_VIEW, targetIntent!!.action)
+        assertEquals(Uri.parse(uriString), targetIntent.data)
+        assertTrue((targetIntent.flags and Intent.FLAG_GRANT_READ_URI_PERMISSION) != 0)
+        assertEquals(Uri.parse(uriString), targetIntent.clipData?.getItemAt(0)?.uri)
     }
 }

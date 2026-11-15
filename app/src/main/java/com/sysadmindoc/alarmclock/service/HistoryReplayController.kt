@@ -74,8 +74,14 @@ fun interface HistoryReplayPlayerFactory {
 @Singleton
 class HistoryReplayController @Inject constructor(
     private val repository: MusicLibraryRepository,
-    private val playerFactory: HistoryReplayPlayerFactory
+    private val playerFactory: HistoryReplayPlayerFactory,
+    private val arbiter: ManualPlaybackArbiter
 ) : HistoryReplayActions {
+
+    constructor(
+        repository: MusicLibraryRepository,
+        playerFactory: HistoryReplayPlayerFactory
+    ) : this(repository, playerFactory, ManualPlaybackArbiter())
 
     private companion object {
         const val RECENT_QUEUE_LIMIT = 500
@@ -95,11 +101,18 @@ class HistoryReplayController @Inject constructor(
     private var queueIndex = -1
     private var currentHistoryId: Long? = null
 
+    init {
+        arbiter.registerStopHandler(ManualAudioOwner.HISTORY_REPLAY) {
+            preemptFromArbiter()
+        }
+    }
+
     private val alarmMonitor = object : Runnable {
         override fun run() {
             if (player == null) return
             if (AlarmService.activeAlarm.get() != null) {
                 requestGeneration.incrementAndGet()
+                arbiter.release(ManualAudioOwner.HISTORY_REPLAY)
                 val historyId = currentHistoryId
                 val cleanupError = releasePlayer()
                 _state.value = ReplayUiState.Error(
@@ -114,39 +127,58 @@ class HistoryReplayController @Inject constructor(
 
     override fun playHistory(historyId: Long) {
         val generation = requestGeneration.incrementAndGet()
+        val token = arbiter.claim(ManualAudioOwner.HISTORY_REPLAY)
         scope.launch {
-            if (generation != requestGeneration.get()) return@launch
+            if (generation != requestGeneration.get() ||
+                !arbiter.isCurrent(ManualAudioOwner.HISTORY_REPLAY, token)
+            ) {
+                return@launch
+            }
             val cleanupError = releasePlayer()
             if (cleanupError != null) {
+                arbiter.release(ManualAudioOwner.HISTORY_REPLAY, token)
                 _state.value = ReplayUiState.Error(historyId, cleanupError)
                 return@launch
             }
             currentHistoryId = historyId
             _state.value = ReplayUiState.Resolving(historyId)
             if (AlarmService.activeAlarm.get() != null) {
+                arbiter.release(ManualAudioOwner.HISTORY_REPLAY, token)
                 _state.value = ReplayUiState.Error(historyId, ERROR_ALARM_ACTIVE)
                 return@launch
             }
 
             try {
                 val entry = repository.historyEntry(historyId)
-                if (generation != requestGeneration.get()) return@launch
+                if (generation != requestGeneration.get() ||
+                    !arbiter.isCurrent(ManualAudioOwner.HISTORY_REPLAY, token)
+                ) {
+                    return@launch
+                }
                 if (entry == null) {
                     currentHistoryId = null
+                    arbiter.release(ManualAudioOwner.HISTORY_REPLAY, token)
                     _state.value = ReplayUiState.Error(historyId, ERROR_HISTORY_NOT_FOUND)
                     return@launch
                 }
 
                 val recent = repository.recentHistory(RECENT_QUEUE_LIMIT)
-                if (generation != requestGeneration.get()) return@launch
+                if (generation != requestGeneration.get() ||
+                    !arbiter.isCurrent(ManualAudioOwner.HISTORY_REPLAY, token)
+                ) {
+                    return@launch
+                }
                 queue = if (recent.any { it.id == entry.id }) recent else listOf(entry) + recent
                 queueIndex = queue.indexOfFirst { it.id == entry.id }
-                startPlayback(entry, generation)
+                startPlayback(entry, generation, token)
             } catch (error: CancellationException) {
                 throw error
             } catch (error: Exception) {
-                if (generation == requestGeneration.get()) {
+                if (generation == requestGeneration.get() &&
+                    arbiter.isCurrent(ManualAudioOwner.HISTORY_REPLAY, token)
+                ) {
                     currentHistoryId = null
+                    arbiter.release(ManualAudioOwner.HISTORY_REPLAY, token)
                     _state.value = ReplayUiState.Error(
                         historyId,
                         error.message ?: error.javaClass.simpleName
@@ -172,8 +204,15 @@ class HistoryReplayController @Inject constructor(
             val nextIndex = queueIndex + offset
             val entry = queue.getOrNull(nextIndex) ?: return@launch
             val generation = requestGeneration.incrementAndGet()
+            val token = arbiter.claim(ManualAudioOwner.HISTORY_REPLAY)
+            if (generation != requestGeneration.get() ||
+                !arbiter.isCurrent(ManualAudioOwner.HISTORY_REPLAY, token)
+            ) {
+                return@launch
+            }
             val cleanupError = releasePlayer()
             if (cleanupError != null) {
+                arbiter.release(ManualAudioOwner.HISTORY_REPLAY, token)
                 _state.value = ReplayUiState.Error(entry.id, cleanupError)
                 return@launch
             }
@@ -181,10 +220,11 @@ class HistoryReplayController @Inject constructor(
             queueIndex = nextIndex
             _state.value = ReplayUiState.Resolving(entry.id)
             if (AlarmService.activeAlarm.get() != null) {
+                arbiter.release(ManualAudioOwner.HISTORY_REPLAY, token)
                 _state.value = ReplayUiState.Error(entry.id, ERROR_ALARM_ACTIVE)
                 return@launch
             }
-            startPlayback(entry, generation)
+            startPlayback(entry, generation, token)
         }
     }
 
@@ -202,12 +242,21 @@ class HistoryReplayController @Inject constructor(
 
     override fun resume() {
         val generation = requestGeneration.get()
+        val token = arbiter.claim(ManualAudioOwner.HISTORY_REPLAY)
         scope.launch {
-            if (generation != requestGeneration.get()) return@launch
-            val active = player ?: return@launch
+            if (generation != requestGeneration.get() ||
+                !arbiter.isCurrent(ManualAudioOwner.HISTORY_REPLAY, token)
+            ) {
+                return@launch
+            }
+            val active = player ?: run {
+                arbiter.release(ManualAudioOwner.HISTORY_REPLAY, token)
+                return@launch
+            }
             if (AlarmService.activeAlarm.get() != null) {
                 val historyId = currentHistoryId
                 requestGeneration.incrementAndGet()
+                arbiter.release(ManualAudioOwner.HISTORY_REPLAY, token)
                 val cleanupError = releasePlayer()
                 _state.value = ReplayUiState.Error(
                     historyId,
@@ -215,14 +264,19 @@ class HistoryReplayController @Inject constructor(
                 )
                 return@launch
             }
-            val historyId = currentHistoryId ?: return@launch
-            active.resume()
+            val historyId = currentHistoryId ?: run {
+                arbiter.release(ManualAudioOwner.HISTORY_REPLAY, token)
+                return@launch
+            }
+            // Transition before active.resume() so synchronous onPlaying() callbacks are not overwritten.
             _state.value = ReplayUiState.Preparing(historyId)
+            active.resume()
         }
     }
 
     override fun stop() {
         val generation = requestGeneration.incrementAndGet()
+        arbiter.release(ManualAudioOwner.HISTORY_REPLAY)
         scope.launch {
             if (generation != requestGeneration.get()) return@launch
             val cleanupError = releasePlayer()
@@ -237,9 +291,36 @@ class HistoryReplayController @Inject constructor(
         }
     }
 
-    private fun startPlayback(entry: PlaybackHistoryEntry, generation: Long) {
-        if (generation != requestGeneration.get()) return
+    private fun preemptFromArbiter() {
+        val generation = requestGeneration.incrementAndGet()
+        val resetBlock = {
+            if (generation == requestGeneration.get()) {
+                val cleanupError = releasePlayer()
+                queue = emptyList()
+                queueIndex = -1
+                currentHistoryId = null
+                _state.value = if (cleanupError == null) {
+                    ReplayUiState.Idle
+                } else {
+                    ReplayUiState.Error(null, cleanupError)
+                }
+            }
+        }
+        if (Looper.myLooper() != null && Looper.myLooper() == Looper.getMainLooper()) {
+            resetBlock()
+        } else {
+            scope.launch { resetBlock() }
+        }
+    }
+
+    private fun startPlayback(entry: PlaybackHistoryEntry, generation: Long, token: Long) {
+        if (generation != requestGeneration.get() ||
+            !arbiter.isCurrent(ManualAudioOwner.HISTORY_REPLAY, token)
+        ) {
+            return
+        }
         if (AlarmService.activeAlarm.get() != null) {
+            arbiter.release(ManualAudioOwner.HISTORY_REPLAY, token)
             _state.value = ReplayUiState.Error(entry.id, ERROR_ALARM_ACTIVE)
             return
         }
@@ -249,15 +330,22 @@ class HistoryReplayController @Inject constructor(
             val replayPlayer = playerFactory.create(
                 object : HistoryReplayPlayer.Listener {
                     override fun onPreparing() {
-                        if (generation == requestGeneration.get()) {
+                        if (generation == requestGeneration.get() &&
+                            arbiter.isCurrent(ManualAudioOwner.HISTORY_REPLAY, token)
+                        ) {
                             _state.value = ReplayUiState.Preparing(entry.id)
                         }
                     }
 
                     override fun onPlaying() {
-                        if (generation != requestGeneration.get()) return
+                        if (generation != requestGeneration.get() ||
+                            !arbiter.isCurrent(ManualAudioOwner.HISTORY_REPLAY, token)
+                        ) {
+                            return
+                        }
                         if (AlarmService.activeAlarm.get() != null) {
                             requestGeneration.incrementAndGet()
+                            arbiter.release(ManualAudioOwner.HISTORY_REPLAY, token)
                             val cleanupError = releasePlayer()
                             _state.value = ReplayUiState.Error(
                                 entry.id,
@@ -269,13 +357,18 @@ class HistoryReplayController @Inject constructor(
                     }
 
                     override fun onPaused() {
-                        if (generation == requestGeneration.get()) {
+                        if (generation == requestGeneration.get() &&
+                            arbiter.isCurrent(ManualAudioOwner.HISTORY_REPLAY, token)
+                        ) {
                             _state.value = ReplayUiState.Paused(entry.id, entry.title)
                         }
                     }
 
                     override fun onEnded() {
-                        if (generation == requestGeneration.get()) {
+                        if (generation == requestGeneration.get() &&
+                            arbiter.isCurrent(ManualAudioOwner.HISTORY_REPLAY, token)
+                        ) {
+                            arbiter.release(ManualAudioOwner.HISTORY_REPLAY, token)
                             val cleanupError = releasePlayer()
                             _state.value = if (cleanupError == null) {
                                 ReplayUiState.Idle
@@ -286,7 +379,10 @@ class HistoryReplayController @Inject constructor(
                     }
 
                     override fun onError(reason: String) {
-                        if (generation == requestGeneration.get()) {
+                        if (generation == requestGeneration.get() &&
+                            arbiter.isCurrent(ManualAudioOwner.HISTORY_REPLAY, token)
+                        ) {
+                            arbiter.release(ManualAudioOwner.HISTORY_REPLAY, token)
                             val cleanupError = releasePlayer()
                             _state.value = ReplayUiState.Error(
                                 entry.id,
@@ -301,6 +397,7 @@ class HistoryReplayController @Inject constructor(
             mainHandler.postDelayed(alarmMonitor, ALARM_CHECK_INTERVAL_MS)
             replayPlayer.play(entry.uri)
         } catch (error: Exception) {
+            arbiter.release(ManualAudioOwner.HISTORY_REPLAY, token)
             val cleanupError = releasePlayer()
             _state.value = ReplayUiState.Error(
                 entry.id,
