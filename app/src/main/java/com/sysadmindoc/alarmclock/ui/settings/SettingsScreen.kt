@@ -586,6 +586,12 @@ fun SettingsScreen(
                     onToggle = viewModel::togglePostDismissSummary
                 )
                 SettingsToggle(
+                    label = stringResource(R.string.settings_return_to_app_after_dismiss),
+                    checked = state.settings.returnToAppAfterDismiss,
+                    supportingText = stringResource(R.string.settings_return_to_app_after_dismiss_description),
+                    onToggle = viewModel::toggleReturnToAppAfterDismiss
+                )
+                SettingsToggle(
                     label = stringResource(R.string.settings_first_meeting_alarm),
                     checked = state.settings.calendarAutoAlarmEnabled,
                     supportingText = if (state.settings.calendarAutoAlarmEnabled) {
