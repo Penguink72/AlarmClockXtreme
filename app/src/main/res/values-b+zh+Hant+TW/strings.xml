@@ -545,4 +545,22 @@
     <string name="music_playlist_delete_confirm">要刪除播放清單嗎？</string>
     <string name="music_playlist_delete_confirm_message">要刪除「%1$s」嗎？這只會移除清單項目，不會變更來源媒體。</string>
     <string name="music_playlist_partial_add">已加入 %1$d 首曲目；略過 %2$d 首無法存取的曲目。</string>
+    <string name="recent_playback_title">最近播放</string>
+    <string name="recent_playback_view_all">查看全部</string>
+    <string name="recent_playback_empty">尚無音樂鬧鐘播放紀錄</string>
+    <string name="replay_action_play">播放</string>
+    <string name="replay_action_pause">暫停</string>
+    <string name="replay_action_resume">繼續播放</string>
+    <string name="replay_action_stop">停止</string>
+    <string name="replay_status_preparing">載入中…</string>
+    <string name="replay_status_playing">播放中</string>
+    <string name="replay_status_paused">已暫停</string>
+    <string name="replay_open_in_external">以其他 App 開啟</string>
+    <string name="replay_open_external_failed">找不到可開啟此媒體檔案的應用程式</string>
+    <string name="replay_error_alarm_active">鬧鐘響鈴中，為確保鬧鐘優先已停止回播</string>
+    <string name="replay_error_history_not_found">找不到該筆播放紀錄</string>
+    <string name="replay_error_playback_failed">無法播放此音訊（檔案可能已移除或權限已失效）</string>
+    <string name="replay_more_options">更多選項</string>
+    <string name="music_library_history_filter_recent">最近播放</string>
+    <string name="music_library_history_filter_date">依日期</string>
 </resources>

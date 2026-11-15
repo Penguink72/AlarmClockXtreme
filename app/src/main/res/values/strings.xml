@@ -2557,4 +2557,22 @@
     <string name="music_playlist_delete_confirm">Delete playlist?</string>
     <string name="music_playlist_delete_confirm_message">Delete “%1$s”? Items are removed from the playlist only; source media is not changed.</string>
     <string name="music_playlist_partial_add">Added %1$d tracks; %2$d unavailable tracks were skipped.</string>
+    <string name="recent_playback_title">Recently played</string>
+    <string name="recent_playback_view_all">View all</string>
+    <string name="recent_playback_empty">No alarm playback history yet</string>
+    <string name="replay_action_play">Play</string>
+    <string name="replay_action_pause">Pause</string>
+    <string name="replay_action_resume">Resume</string>
+    <string name="replay_action_stop">Stop</string>
+    <string name="replay_status_preparing">Loading…</string>
+    <string name="replay_status_playing">Playing</string>
+    <string name="replay_status_paused">Paused</string>
+    <string name="replay_open_in_external">Open with other app</string>
+    <string name="replay_open_external_failed">No compatible app found to open this media file</string>
+    <string name="replay_error_alarm_active">Alarm is ringing. Replay stopped to prioritize alarm.</string>
+    <string name="replay_error_history_not_found">Playback history record not found</string>
+    <string name="replay_error_playback_failed">Cannot play this audio. File may be missing or permission revoked.</string>
+    <string name="replay_more_options">More options</string>
+    <string name="music_library_history_filter_recent">Recent</string>
+    <string name="music_library_history_filter_date">By date</string>
 </resources>
