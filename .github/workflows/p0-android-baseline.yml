@@ -156,7 +156,7 @@ jobs:
             cp "${SCHEMA_DIR}/28.json" /tmp/committed-28.json
             rm -f "${SCHEMA_DIR}/28.json"
           fi
-          bash ./gradlew --no-daemon --stacktrace :app:verifyLocalizedPrimaryScreens :app:assembleFdroidDebug -PciVersionCode=147
+          bash ./gradlew --no-daemon --stacktrace :app:verifyLocalizedPrimaryScreens :app:assembleFdroidDebug -PciVersionCode=149
           git diff --exit-code -- "${SCHEMA_DIR}/25.json" "${SCHEMA_DIR}/26.json" "${SCHEMA_DIR}/27.json"
           if [[ ! -s "${SCHEMA_DIR}/28.json" ]]; then
             echo "ERROR: KSP did not generate ${SCHEMA_DIR}/28.json"
@@ -188,13 +188,22 @@ jobs:
             echo "ERROR: Unexpected package name: $PKG_NAME"
             exit 1
           fi
-          if [[ "$VERSION_CODE" != "147" ]]; then
-            echo "ERROR: Expected Preview 3 versionCode=147, got: $VERSION_CODE"
+          if [[ "$VERSION_CODE" != "149" ]]; then
+            echo "ERROR: Expected P3.1-U1 versionCode=149 (must exceed installed Preview 3 v148), got: $VERSION_CODE"
             exit 1
           fi
           APKSIGNER_OUT="$("${BUILD_TOOLS_DIR}/apksigner" verify --verbose --print-certs "$APK_PATH")"
           echo "$APKSIGNER_OUT"
           CERT_SHA256_HEX="$(echo "$APKSIGNER_OUT" | awk '/Signer #1 certificate SHA-256 digest:/ {print $NF; exit}')"
+          # Certificate of the already-distributed Preview 3 v147/v148 APKs
+          # (run 43683771079). An in-place upgrade only works if it is identical.
+          EXPECTED_UPGRADE_CERT="4F:15:3F:91:16:0F:A5:89:C6:CF:D5:5C:DE:1B:4A:CA:B3:81:A7:0B:0D:CF:31:D7:55:FF:39:40:4C:56:A2:1E"
+          ACTUAL_UPGRADE_CERT="$(echo "$CERT_SHA256_HEX" | sed 's/../&:/g; s/:$//' | tr '[:lower:]' '[:upper:]')"
+          if [[ "$ACTUAL_UPGRADE_CERT" != "$EXPECTED_UPGRADE_CERT" ]]; then
+            echo "ERROR: Signing cert ${ACTUAL_UPGRADE_CERT} differs from installed Preview 3 v148 cert ${EXPECTED_UPGRADE_CERT}; upgrade would require uninstall."
+            exit 1
+          fi
+          echo "UPGRADE_CERT_MATCHES_V148=true"
           CERT_SHA1_HEX="$(echo "$APKSIGNER_OUT" | awk '/Signer #1 certificate SHA-1 digest:/ {print $NF; exit}')"
           CERT_DN="$(echo "$APKSIGNER_OUT" | sed -n 's/^Signer #1 certificate DN: //p' | head -n 1)"
           CERT_SHA256_COLON="$(echo "$CERT_SHA256_HEX" | sed 's/../&:/g; s/:$//' | tr '[:lower:]' '[:upper:]')"
@@ -294,7 +303,7 @@ jobs:
           retention-days: 14
 
   verify-persistent-signing-second-runner:
-    name: Verify persistent signing on 2nd runner (v148 upgrade APK)
+    name: Verify persistent signing on 2nd runner (v150 upgrade APK)
     needs: build-fdroid-debug-apk
     runs-on: ubuntu-24.04
     timeout-minutes: 40
@@ -395,8 +404,8 @@ jobs:
           chmod 600 "${DEST_KEYSTORE}"
           echo "CI_DEBUG_KEYSTORE_PATH=${DEST_KEYSTORE}" >> "$GITHUB_ENV"
 
-      - name: Build 2nd F-Droid debug APK (versionCode=148) on 2nd runner
-        run: bash ./gradlew --no-daemon --stacktrace :app:assembleFdroidDebug -PciVersionCode=148
+      - name: Build 2nd F-Droid debug APK (versionCode=150) on 2nd runner
+        run: bash ./gradlew --no-daemon --stacktrace :app:assembleFdroidDebug -PciVersionCode=150
 
       - name: Compare signing certificates and package metadata between Runner 1 and Runner 2
         run: |
@@ -421,8 +430,8 @@ jobs:
             echo "ERROR: Package mismatch ($PKG1 vs $PKG2)"
             exit 1
           fi
-          if [[ "$VC1" != "147" || "$VC2" != "148" ]]; then
-            echo "ERROR: Unexpected versionCodes ($VC1 -> $VC2), expected (147 -> 148)"
+          if [[ "$VC1" != "149" || "$VC2" != "150" ]]; then
+            echo "ERROR: Unexpected versionCodes ($VC1 -> $VC2), expected (149 -> 150)"
             exit 1
           fi
           if [[ -z "$CERT1_COLON" || "$CERT1_COLON" != "$CERT2_COLON" ]]; then
@@ -440,26 +449,26 @@ jobs:
             echo "runner1_signing_cert_sha256=${CERT1_COLON}"
             echo "runner2_signing_cert_sha256=${CERT2_COLON}"
             echo "signing_cert_match=true"
-          } | tee app/build/outputs/apk/fdroid/debug/apk-v148-metadata.txt
+          } | tee app/build/outputs/apk/fdroid/debug/apk-v150-metadata.txt
           {
             echo "## B7 Cross-Runner Signing Consistency Verification"
             echo "- Runner 1 APK (\`versionCode=${VC1}\`) Cert SHA-256: \`${CERT1_COLON}\`"
             echo "- Runner 2 APK (\`versionCode=${VC2}\`) Cert SHA-256: \`${CERT2_COLON}\`"
             echo "- Certificate Match: **EXACT MATCH (PASS)**"
-            echo "- Upgrade APK SHA-256 (\`v148\`): \`${APK2_SHA256}\`"
+            echo "- Upgrade APK SHA-256 (\`v150\`): \`${APK2_SHA256}\`"
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Clean up temporary keystore on 2nd runner
         if: always()
         run: rm -f "${RUNNER_TEMP}/ci-debug-raw.p12" "${RUNNER_TEMP}/ci-debug-signing.p12"
 
-      - name: Upload 2nd runner upgrade APK (versionCode=148)
+      - name: Upload 2nd runner upgrade APK (versionCode=150)
         uses: actions/upload-artifact@v4
         with:
-          name: p0-fdroid-debug-apk-v148-upgrade-test
+          name: p0-fdroid-debug-apk-v150-upgrade-test
           path: |
             app/build/outputs/apk/fdroid/debug/app-fdroid-debug.apk
-            app/build/outputs/apk/fdroid/debug/apk-v148-metadata.txt
+            app/build/outputs/apk/fdroid/debug/apk-v150-metadata.txt
           if-no-files-found: error
           retention-days: 14
 

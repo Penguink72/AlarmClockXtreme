@@ -21,7 +21,9 @@ android {
         targetSdk = 36
         versionCode = 137
         versionName = "1.15.35"
-        val minAllowedCiVersionCode = 147
+        // P3.1-U1: users may already have Preview 3 v148 installed, so CI builds
+        // must never produce a lower code than 149 (no uninstall / data wipe).
+        val minAllowedCiVersionCode = 149
         providers.gradleProperty("ciVersionCode").orNull?.toIntOrNull()?.let { overrideVersionCode ->
             val baseVersionCode = maxOf(requireNotNull(versionCode), minAllowedCiVersionCode)
             check(overrideVersionCode >= baseVersionCode) {
