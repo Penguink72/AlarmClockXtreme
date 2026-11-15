@@ -82,6 +82,7 @@ class BackupManagerExportImportTest {
 
         val settings = backup.settings!!
         assertTrue(settings.is24HourFormat)
+        assertEquals(false, settings.returnToAppAfterDismiss)
         assertEquals(25, settings.defaultSnoozeDuration)
         assertEquals(15, settings.autoSilenceMinutes)
         assertEquals("Portland, Oregon", settings.locationName)
@@ -123,6 +124,7 @@ class BackupManagerExportImportTest {
                     vacationEndMillis = 0,
                     showWeatherOnDashboard = false,
                     showCalendarOnDashboard = true,
+                    returnToAppAfterDismiss = false,
                     autoSilenceMinutes = 15,
                     locationName = "Portland, Oregon",
                     useManualLocation = true,
@@ -161,6 +163,7 @@ class BackupManagerExportImportTest {
         assertEquals(1, result.getOrThrow())
         assertEquals("Portland, Oregon", restoredSettings!!.locationName)
         assertEquals(false, restoredSettings!!.showTimerTab)
+        assertEquals(false, restoredSettings!!.returnToAppAfterDismiss)
         assertEquals("https://feeds.example/private.xml", restoredSettings!!.newsFeedUrl)
         assertEquals(true, restoredSettings!!.hideAlarmLabelsOnPublicSurfaces)
         assertEquals(true, restoredSettings!!.calendarCommuteAwareEnabled)
@@ -392,6 +395,7 @@ class BackupManagerExportImportTest {
         hideAlarmLabelsOnPublicSurfaces = true,
         showWeatherOnDashboard = false,
         showCalendarOnDashboard = true,
+        returnToAppAfterDismiss = false,
         autoSilenceMinutes = 15,
         locationName = "Portland, Oregon",
         useManualLocation = true,

@@ -336,6 +336,8 @@ class SettingsViewModel @Inject constructor(
     fun toggleShowCalendar(enabled: Boolean) = updateSettings { it.copy(showCalendarOnDashboard = enabled) }
     fun togglePostDismissSummary(enabled: Boolean) =
         updateSettings { it.copy(postDismissSummaryEnabled = enabled) }
+    fun toggleReturnToAppAfterDismiss(enabled: Boolean) =
+        updateSettings { it.copy(returnToAppAfterDismiss = enabled) }
     fun toggleCalendarAutoAlarm(enabled: Boolean) = updateCalendarAutoAlarmSettings {
         it.copy(calendarAutoAlarmEnabled = enabled)
     }

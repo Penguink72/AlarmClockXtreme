@@ -456,6 +456,12 @@ fun SettingsScreen(
                 description = stringResource(R.string.settings_alarm_defaults_description)
             ) {
                 SettingsToggle(
+                    label = stringResource(R.string.settings_return_to_app_after_dismiss),
+                    checked = state.settings.returnToAppAfterDismiss,
+                    supportingText = stringResource(R.string.settings_return_to_app_after_dismiss_description),
+                    onToggle = viewModel::toggleReturnToAppAfterDismiss
+                )
+                SettingsToggle(
                     label = stringResource(R.string.format_24h),
                     checked = state.settings.is24HourFormat,
                     supportingText = stringResource(R.string.settings_24h_description),

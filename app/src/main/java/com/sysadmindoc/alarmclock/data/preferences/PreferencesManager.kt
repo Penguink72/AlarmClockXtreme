@@ -49,6 +49,8 @@ data class AppSettings(
     val showWeatherOnDashboard: Boolean = true,
     val showCalendarOnDashboard: Boolean = true,
     val postDismissSummaryEnabled: Boolean = false,
+    // When unlocked, show the alarm list after a confirmed dismiss instead of returning to the launcher.
+    val returnToAppAfterDismiss: Boolean = true,
     val lastKnownLatitude: Double = 0.0,
     val lastKnownLongitude: Double = 0.0,
     // Auto-silence
@@ -307,6 +309,7 @@ class PreferencesManager @Inject constructor(
         val SHOW_WEATHER = booleanPreferencesKey("show_weather")
         val SHOW_CALENDAR = booleanPreferencesKey("show_calendar")
         val POST_DISMISS_SUMMARY = booleanPreferencesKey("post_dismiss_summary")
+        val RETURN_TO_APP_AFTER_DISMISS = booleanPreferencesKey("return_to_app_after_dismiss")
         val LAST_LATITUDE = doublePreferencesKey("last_latitude")
         val LAST_LONGITUDE = doublePreferencesKey("last_longitude")
         val AUTO_SILENCE = intPreferencesKey("auto_silence_minutes")
@@ -449,6 +452,7 @@ class PreferencesManager @Inject constructor(
         showWeatherOnDashboard = this[Keys.SHOW_WEATHER] ?: true,
         showCalendarOnDashboard = this[Keys.SHOW_CALENDAR] ?: true,
         postDismissSummaryEnabled = this[Keys.POST_DISMISS_SUMMARY] ?: false,
+        returnToAppAfterDismiss = this[Keys.RETURN_TO_APP_AFTER_DISMISS] ?: true,
         lastKnownLatitude = this[Keys.LAST_LATITUDE] ?: 0.0,
         lastKnownLongitude = this[Keys.LAST_LONGITUDE] ?: 0.0,
         autoSilenceMinutes = this[Keys.AUTO_SILENCE] ?: 10,
@@ -537,6 +541,7 @@ class PreferencesManager @Inject constructor(
         this[Keys.SHOW_WEATHER] = s.showWeatherOnDashboard
         this[Keys.SHOW_CALENDAR] = s.showCalendarOnDashboard
         this[Keys.POST_DISMISS_SUMMARY] = s.postDismissSummaryEnabled
+        this[Keys.RETURN_TO_APP_AFTER_DISMISS] = s.returnToAppAfterDismiss
         this[Keys.LAST_LATITUDE] = s.lastKnownLatitude
         this[Keys.LAST_LONGITUDE] = s.lastKnownLongitude
         this[Keys.AUTO_SILENCE] = s.autoSilenceMinutes

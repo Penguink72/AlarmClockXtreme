@@ -90,14 +90,18 @@ fun MusicLibraryDialog(
     viewModel: MusicLibraryViewModel = hiltViewModel(),
     previewController: MusicCatalogPreviewController? = viewModel.previewController,
     playlistRepository: MusicPlaylistRepository? = viewModel.playlistRepository,
-    initialShowHistory: Boolean = false
+    initialShowHistory: Boolean = false,
+    initialShowPlaylists: Boolean = false
 ) {
     val context = LocalContext.current
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     var showHistory by rememberSaveable { mutableStateOf(initialShowHistory) }
     var showSources by remember { mutableStateOf(false) }
     var workspaceName by rememberSaveable {
-        mutableStateOf(MusicLibraryWorkspace.MEDIA_LIBRARY.name)
+        mutableStateOf(
+            if (initialShowPlaylists) MusicLibraryWorkspace.PLAYLISTS.name
+            else MusicLibraryWorkspace.MEDIA_LIBRARY.name
+        )
     }
     var targetPlaylistForAdd by rememberSaveable { mutableStateOf<String?>(null) }
     val workspace = MusicLibraryWorkspace.valueOf(workspaceName)
@@ -131,8 +135,10 @@ fun MusicLibraryDialog(
     }
 
     LaunchedEffect(viewModel) {
-        viewModel.loadPoolCandidates()
-        viewModel.scan()
+        // Read saved index immediately. Rescan only if no indexed tracks exist.
+        // Previously every opening forced a multi-thousand-file SAF scan,
+        // disabling selection and hiding fast searches until it completed.
+        viewModel.loadPoolCandidates(autoScanIfEmpty = true)
     }
     DisposableEffect(previewController) {
         onDispose { previewController?.stop() }
@@ -337,13 +343,21 @@ private fun MusicCatalogContent(
     val coroutineScope = rememberCoroutineScope()
     val previewState by previewController?.state?.collectAsStateWithLifecycle()
         ?: remember { mutableStateOf(MusicCatalogPreviewState()) }
-    val categoryTracks = viewModel.visibleCatalogTracks(
-        state = state,
-        videoOnly = category == MusicLibraryCategory.VIDEOS
-    )
-    val visible = when (category) {
-        MusicLibraryCategory.ALL, MusicLibraryCategory.VIDEOS -> categoryTracks
-        MusicLibraryCategory.MUSIC -> categoryTracks.filterNot { it.track.isVideoAudio() }
+    // Cache the 4,000+ track filter across unrelated scan/status/audio-state
+    // recompositions. Only recalculate when search, scope or catalog changes.
+    val visible = remember(
+        state.poolTracks, state.catalogFilter, state.catalogSearch,
+        state.catalogSourceScope, state.supplementalCatalog.trackMetadataByUri,
+        category
+    ) {
+        val categoryTracks = viewModel.visibleCatalogTracks(
+            state = state,
+            videoOnly = category == MusicLibraryCategory.VIDEOS
+        )
+        when (category) {
+            MusicLibraryCategory.ALL, MusicLibraryCategory.VIDEOS -> categoryTracks
+            MusicLibraryCategory.MUSIC -> categoryTracks.filterNot { it.track.isVideoAudio() }
+        }
     }
     val allVisibleSelected = visible.isNotEmpty() &&
         visible.all { it.track.uri in state.selectedCatalogUris }

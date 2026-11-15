@@ -453,6 +453,31 @@ class AlarmEditViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Resolve one sample from the unsaved sound draft, without creating an
+     * alarm, rescheduling AlarmManager or writing playback history.
+     * This is a sample preview, not a full AlarmService test.
+     */
+    suspend fun resolveCurrentSoundPreviewUri(): String? {
+        val current = _uiState.value
+        if (current.randomMusicEnabled) {
+            val draft = _alarmMusicSettingsState.value.draft
+            val eligible = musicLibraryRepository
+                .buildPlaylistSnapshotForDraft(draft)
+                .eligibleEntries()
+            val choice = when (draft.playbackStrategy) {
+                AlarmMusicPlaybackStrategy.PLAYLIST_ORDER -> eligible.firstOrNull()
+                AlarmMusicPlaybackStrategy.RANDOM_WITH_REPEATS,
+                AlarmMusicPlaybackStrategy.SHUFFLE_WITHOUT_REPEATS -> eligible.randomOrNull()
+            }
+            return choice?.track?.uri
+        }
+        if (current.ringtoneUri == "silent") return null
+        return current.ringtoneUri.takeIf { it.isNotBlank() }
+            ?: android.media.RingtoneManager
+                .getDefaultUri(android.media.RingtoneManager.TYPE_ALARM)?.toString()
+    }
+
     fun updateTime(hour: Int, minute: Int) {
         _uiState.value = _uiState.value.copy(hour = hour, minute = minute)
     }
@@ -898,15 +923,33 @@ class AlarmEditViewModel @Inject constructor(
             ).sanitized()
 
             try {
+                // A settings failure must not report success. Undo the unscheduled
+                // alarm-row write so a retry cannot silently create duplicates.
+                val previousAlarm = if (s.isEditing) repository.getById(alarmId) else null
                 val savedId = repository.save(alarm)
                 val savedAlarm = alarm.copy(
                     id = if (s.isEditing) alarmId else savedId
                 )
-                runCatching {
+                try {
                     musicLibraryRepository.saveSettings(
                         savedAlarm.id,
                         _alarmMusicSettingsState.value.draft
                     )
+                } catch (musicSaveError: Exception) {
+                    runCatching {
+                        if (s.isEditing && previousAlarm != null) {
+                            repository.save(previousAlarm)
+                        } else if (!s.isEditing) {
+                            repository.deleteById(savedId)
+                        }
+                    }.onFailure { rollbackError ->
+                        android.util.Log.e(
+                            "AlarmEditViewModel",
+                            "Failed to roll back alarm after music-settings save error",
+                            rollbackError
+                        )
+                    }
+                    throw musicSaveError
                 }
                 if (savedAlarm.isEnabled) {
                     scheduler.schedule(savedAlarm)
