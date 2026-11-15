@@ -245,7 +245,8 @@ val verifyRoomSchemaExports by tasks.registering {
  */
 val unlocalizedComposeFiles = setOf(
     "data/support/SupportExportManager.kt",
-    "service/WebhookService.kt"
+    "service/WebhookService.kt",
+    "service/HistoryReplayController.kt"
 )
 
 val primaryComposeScreenFiles: List<File> = fileTree("src/main/java/com/sysadmindoc/alarmclock") {

@@ -1006,20 +1006,21 @@ private fun PlaybackHistoryContent(
         if (state.history.isEmpty()) {
             Text(stringResource(R.string.music_library_no_history))
         } else {
+            val currentReplayState = replayState
             LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 items(state.history, key = { it.id }) { entry ->
-                    val isCurrent = when (replayState) {
-                        is ReplayUiState.Resolving -> replayState.historyId == entry.id
-                        is ReplayUiState.Preparing -> replayState.historyId == entry.id
-                        is ReplayUiState.Playing -> replayState.historyId == entry.id
-                        is ReplayUiState.Paused -> replayState.historyId == entry.id
-                        is ReplayUiState.Error -> replayState.historyId == entry.id
+                    val isCurrent = when (currentReplayState) {
+                        is ReplayUiState.Resolving -> currentReplayState.historyId == entry.id
+                        is ReplayUiState.Preparing -> currentReplayState.historyId == entry.id
+                        is ReplayUiState.Playing -> currentReplayState.historyId == entry.id
+                        is ReplayUiState.Paused -> currentReplayState.historyId == entry.id
+                        is ReplayUiState.Error -> currentReplayState.historyId == entry.id
                         ReplayUiState.Idle -> false
                     }
                     HistoryTrackRow(
                         entry = entry,
                         isActive = isCurrent,
-                        replayState = replayState,
+                        replayState = currentReplayState,
                         onPlay = { viewModel.playHistory(entry.id) },
                         onPause = { viewModel.pauseReplay() },
                         onResume = { viewModel.resumeReplay() }

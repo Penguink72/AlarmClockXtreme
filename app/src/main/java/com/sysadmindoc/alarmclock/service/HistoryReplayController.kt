@@ -337,7 +337,7 @@ class HistoryReplayController @Inject constructor(
     }
 
     private fun appendCleanupError(reason: String, cleanupError: String?): String =
-        if (cleanupError == null) reason else "$reason; cleanup: $cleanupError"
+        if (cleanupError == null) reason else (reason + "; cleanup: " + cleanupError)
 }
 
 @Singleton

@@ -130,9 +130,9 @@ fun RecentPlaybackCard(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
+    val currentReplayState = replayState
     AppSurfaceCard(
         modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp),
         contentPadding = PaddingValues(16.dp)
     ) {
         Column(
@@ -182,19 +182,19 @@ fun RecentPlaybackCard(
                 )
             } else {
                 val latest = recentHistory.first()
-                val isLatestActive = when (replayState) {
-                    is ReplayUiState.Resolving -> replayState.historyId == latest.id
-                    is ReplayUiState.Preparing -> replayState.historyId == latest.id
-                    is ReplayUiState.Playing -> replayState.historyId == latest.id
-                    is ReplayUiState.Paused -> replayState.historyId == latest.id
-                    is ReplayUiState.Error -> replayState.historyId == latest.id
+                val isLatestActive = when (currentReplayState) {
+                    is ReplayUiState.Resolving -> currentReplayState.historyId == latest.id
+                    is ReplayUiState.Preparing -> currentReplayState.historyId == latest.id
+                    is ReplayUiState.Playing -> currentReplayState.historyId == latest.id
+                    is ReplayUiState.Paused -> currentReplayState.historyId == latest.id
+                    is ReplayUiState.Error -> currentReplayState.historyId == latest.id
                     ReplayUiState.Idle -> false
                 }
 
                 RecentTrackPrimaryItem(
                     entry = latest,
                     isActive = isLatestActive,
-                    replayState = replayState,
+                    replayState = currentReplayState,
                     onPlay = { onPlayHistory(latest.id) },
                     onPause = onPauseReplay,
                     onResume = onResumeReplay
@@ -207,18 +207,18 @@ fun RecentPlaybackCard(
                         color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
                     )
                     additional.forEach { entry ->
-                        val isEntryActive = when (replayState) {
-                            is ReplayUiState.Resolving -> replayState.historyId == entry.id
-                            is ReplayUiState.Preparing -> replayState.historyId == entry.id
-                            is ReplayUiState.Playing -> replayState.historyId == entry.id
-                            is ReplayUiState.Paused -> replayState.historyId == entry.id
-                            is ReplayUiState.Error -> replayState.historyId == entry.id
+                        val isEntryActive = when (currentReplayState) {
+                            is ReplayUiState.Resolving -> currentReplayState.historyId == entry.id
+                            is ReplayUiState.Preparing -> currentReplayState.historyId == entry.id
+                            is ReplayUiState.Playing -> currentReplayState.historyId == entry.id
+                            is ReplayUiState.Paused -> currentReplayState.historyId == entry.id
+                            is ReplayUiState.Error -> currentReplayState.historyId == entry.id
                             ReplayUiState.Idle -> false
                         }
                         RecentTrackSubItem(
                             entry = entry,
                             isActive = isEntryActive,
-                            replayState = replayState,
+                            replayState = currentReplayState,
                             onPlay = { onPlayHistory(entry.id) },
                             onPause = onPauseReplay,
                             onResume = onResumeReplay
@@ -227,8 +227,8 @@ fun RecentPlaybackCard(
                 }
             }
 
-            if (replayState is ReplayUiState.Error) {
-                val errorMsg = humanReadableReplayError(context, replayState)
+            if (currentReplayState is ReplayUiState.Error) {
+                val errorMsg = humanReadableReplayError(context, currentReplayState)
                 Surface(
                     shape = RoundedCornerShape(8.dp),
                     color = AccentRed.copy(alpha = 0.12f),
@@ -271,6 +271,7 @@ private fun RecentTrackPrimaryItem(
     onResume: () -> Unit
 ) {
     val context = LocalContext.current
+    val currentReplayState = replayState
     val timeLabel = formatPlaybackTime(context, entry.startedAt)
 
     Row(
@@ -302,7 +303,7 @@ private fun RecentTrackPrimaryItem(
                     color = TextSecondary
                 )
                 if (isActive) {
-                    when (replayState) {
+                    when (currentReplayState) {
                         is ReplayUiState.Resolving, is ReplayUiState.Preparing -> {
                             Text(
                                 text = stringResource(R.string.replay_status_preparing),
@@ -333,9 +334,9 @@ private fun RecentTrackPrimaryItem(
         Row(verticalAlignment = Alignment.CenterVertically) {
             IconButton(
                 onClick = {
-                    if (isActive && replayState is ReplayUiState.Playing) {
+                    if (isActive && currentReplayState is ReplayUiState.Playing) {
                         onPause()
-                    } else if (isActive && replayState is ReplayUiState.Paused) {
+                    } else if (isActive && currentReplayState is ReplayUiState.Paused) {
                         onResume()
                     } else {
                         onPlay()
@@ -343,13 +344,13 @@ private fun RecentTrackPrimaryItem(
                 },
                 modifier = Modifier.size(48.dp)
             ) {
-                if (isActive && (replayState is ReplayUiState.Resolving || replayState is ReplayUiState.Preparing)) {
+                if (isActive && (currentReplayState is ReplayUiState.Resolving || currentReplayState is ReplayUiState.Preparing)) {
                     CircularProgressIndicator(
                         modifier = Modifier.size(24.dp),
                         strokeWidth = 2.dp,
                         color = MaterialTheme.colorScheme.primary
                     )
-                } else if (isActive && replayState is ReplayUiState.Playing) {
+                } else if (isActive && currentReplayState is ReplayUiState.Playing) {
                     Icon(
                         imageVector = Icons.Default.Pause,
                         contentDescription = stringResource(R.string.replay_action_pause),
@@ -358,7 +359,7 @@ private fun RecentTrackPrimaryItem(
                 } else {
                     Icon(
                         imageVector = Icons.Default.PlayArrow,
-                        contentDescription = if (isActive && replayState is ReplayUiState.Paused) {
+                        contentDescription = if (isActive && currentReplayState is ReplayUiState.Paused) {
                             stringResource(R.string.replay_action_resume)
                         } else {
                             stringResource(R.string.replay_action_play)
@@ -417,6 +418,7 @@ private fun RecentTrackSubItem(
     onResume: () -> Unit
 ) {
     val context = LocalContext.current
+    val currentReplayState = replayState
     val timeLabel = formatPlaybackTime(context, entry.startedAt)
 
     Row(
@@ -448,7 +450,7 @@ private fun RecentTrackSubItem(
                     color = TextSecondary
                 )
                 if (isActive) {
-                    when (replayState) {
+                    when (currentReplayState) {
                         is ReplayUiState.Resolving, is ReplayUiState.Preparing -> {
                             Text(
                                 text = stringResource(R.string.replay_status_preparing),
@@ -479,9 +481,9 @@ private fun RecentTrackSubItem(
         Row(verticalAlignment = Alignment.CenterVertically) {
             IconButton(
                 onClick = {
-                    if (isActive && replayState is ReplayUiState.Playing) {
+                    if (isActive && currentReplayState is ReplayUiState.Playing) {
                         onPause()
-                    } else if (isActive && replayState is ReplayUiState.Paused) {
+                    } else if (isActive && currentReplayState is ReplayUiState.Paused) {
                         onResume()
                     } else {
                         onPlay()
@@ -489,13 +491,13 @@ private fun RecentTrackSubItem(
                 },
                 modifier = Modifier.size(48.dp)
             ) {
-                if (isActive && (replayState is ReplayUiState.Resolving || replayState is ReplayUiState.Preparing)) {
+                if (isActive && (currentReplayState is ReplayUiState.Resolving || currentReplayState is ReplayUiState.Preparing)) {
                     CircularProgressIndicator(
                         modifier = Modifier.size(20.dp),
                         strokeWidth = 2.dp,
                         color = MaterialTheme.colorScheme.primary
                     )
-                } else if (isActive && replayState is ReplayUiState.Playing) {
+                } else if (isActive && currentReplayState is ReplayUiState.Playing) {
                     Icon(
                         imageVector = Icons.Default.Pause,
                         contentDescription = stringResource(R.string.replay_action_pause),
@@ -504,7 +506,7 @@ private fun RecentTrackSubItem(
                 } else {
                     Icon(
                         imageVector = Icons.Default.PlayArrow,
-                        contentDescription = if (isActive && replayState is ReplayUiState.Paused) {
+                        contentDescription = if (isActive && currentReplayState is ReplayUiState.Paused) {
                             stringResource(R.string.replay_action_resume)
                         } else {
                             stringResource(R.string.replay_action_play)
@@ -564,6 +566,7 @@ fun HistoryTrackRow(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
+    val currentReplayState = replayState
     val timeStr = DateFormat.getTimeFormat(context).format(java.util.Date(entry.startedAt))
 
     Surface(
@@ -610,7 +613,7 @@ fun HistoryTrackRow(
                         color = TextSecondary
                     )
                     if (isActive) {
-                        when (replayState) {
+                        when (currentReplayState) {
                             is ReplayUiState.Resolving, is ReplayUiState.Preparing -> {
                                 Text(
                                     text = stringResource(R.string.replay_status_preparing),
@@ -634,7 +637,7 @@ fun HistoryTrackRow(
                             }
                             is ReplayUiState.Error -> {
                                 Text(
-                                    text = humanReadableReplayError(context, replayState),
+                                    text = humanReadableReplayError(context, currentReplayState),
                                     style = MaterialTheme.typography.labelSmall,
                                     color = AccentRed
                                 )
@@ -648,9 +651,9 @@ fun HistoryTrackRow(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 IconButton(
                     onClick = {
-                        if (isActive && replayState is ReplayUiState.Playing) {
+                        if (isActive && currentReplayState is ReplayUiState.Playing) {
                             onPause()
-                        } else if (isActive && replayState is ReplayUiState.Paused) {
+                        } else if (isActive && currentReplayState is ReplayUiState.Paused) {
                             onResume()
                         } else {
                             onPlay()
@@ -658,13 +661,13 @@ fun HistoryTrackRow(
                     },
                     modifier = Modifier.size(48.dp)
                 ) {
-                    if (isActive && (replayState is ReplayUiState.Resolving || replayState is ReplayUiState.Preparing)) {
+                    if (isActive && (currentReplayState is ReplayUiState.Resolving || currentReplayState is ReplayUiState.Preparing)) {
                         CircularProgressIndicator(
                             modifier = Modifier.size(24.dp),
                             strokeWidth = 2.dp,
                             color = MaterialTheme.colorScheme.primary
                         )
-                    } else if (isActive && replayState is ReplayUiState.Playing) {
+                    } else if (isActive && currentReplayState is ReplayUiState.Playing) {
                         Icon(
                             imageVector = Icons.Default.Pause,
                             contentDescription = stringResource(R.string.replay_action_pause),
@@ -673,7 +676,7 @@ fun HistoryTrackRow(
                     } else {
                         Icon(
                             imageVector = Icons.Default.PlayArrow,
-                            contentDescription = if (isActive && replayState is ReplayUiState.Paused) {
+                            contentDescription = if (isActive && currentReplayState is ReplayUiState.Paused) {
                                 stringResource(R.string.replay_action_resume)
                             } else {
                                 stringResource(R.string.replay_action_play)
