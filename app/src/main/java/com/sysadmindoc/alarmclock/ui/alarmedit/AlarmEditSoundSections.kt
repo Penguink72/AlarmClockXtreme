@@ -81,9 +81,14 @@ internal fun LazyListScope.alarmEditSoundSections(
     editorPage: AlarmEditorPage,
     state: AlarmEditUiState,
     viewModel: AlarmEditViewModel,
+    musicSettings: AlarmMusicSettingsUiState,
     onOpenRingtonePicker: () -> Unit,
     onOpenMusicLibrary: () -> Unit = {},
-    onOpenAlarmMusicSettings: () -> Unit = {}
+    onOpenAlarmMusicSettings: () -> Unit = {},
+    onManagePlaylists: () -> Unit = {},
+    onPreviewCurrentSound: () -> Unit = {},
+    onStopSoundPreview: () -> Unit = {},
+    previewActive: Boolean = false
 ) {
     // Sound settings
     SettingsSection(editorPage, AlarmEditorSection.SOUND) {
@@ -159,14 +164,54 @@ internal fun LazyListScope.alarmEditSoundSections(
             stringResource(R.string.alarm_music_settings_repeat_lifecycle),
             tone = HintTone.Neutral
         )
+        val selectedPlaylistName = musicSettings.playlists
+            .firstOrNull { it.playlistId == musicSettings.draft.playlistId }?.name
+            ?: stringResource(R.string.alarm_music_settings_playlist_smart_all)
         SettingsRow(
             label = stringResource(R.string.alarm_music_settings_playlist_label),
             trailing = {
                 SettingsValueButton(
-                    label = stringResource(R.string.alarm_music_settings_open),
+                    label = selectedPlaylistName,
                     onClick = onOpenAlarmMusicSettings
                 )
             }
+        )
+        val strategyName = stringResource(
+            when (musicSettings.draft.playbackStrategy) {
+                AlarmMusicPlaybackStrategy.RANDOM_WITH_REPEATS ->
+                    R.string.alarm_music_settings_strategy_random
+                AlarmMusicPlaybackStrategy.SHUFFLE_WITHOUT_REPEATS ->
+                    R.string.alarm_music_settings_strategy_shuffle
+                AlarmMusicPlaybackStrategy.PLAYLIST_ORDER ->
+                    R.string.alarm_music_settings_strategy_order
+            }
+        )
+        SettingsHint(
+            stringResource(
+                R.string.alarm_edit_music_source_summary,
+                musicSettings.matchingPlayableTrackCount,
+                strategyName
+            ),
+            tone = HintTone.Neutral
+        )
+        SettingsRow(label = stringResource(R.string.alarm_edit_manage_playlists)) {
+            OutlinedButton(onClick = onManagePlaylists) {
+                Text(stringResource(R.string.alarm_edit_manage_playlists))
+            }
+        }
+        SettingsRow(label = stringResource(R.string.alarm_edit_preview_current_sound)) {
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                OutlinedButton(onClick = onPreviewCurrentSound) {
+                    Text(stringResource(R.string.alarm_edit_preview_current_sound))
+                }
+                OutlinedButton(onClick = onStopSoundPreview, enabled = previewActive) {
+                    Text(stringResource(R.string.replay_action_stop))
+                }
+            }
+        }
+        SettingsHint(
+            stringResource(R.string.alarm_edit_preview_current_sound_description),
+            tone = HintTone.Neutral
         )
 
         SettingsRow(
