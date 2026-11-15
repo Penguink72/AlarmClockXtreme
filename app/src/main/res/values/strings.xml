@@ -2575,4 +2575,8 @@
     <string name="replay_more_options">More options</string>
     <string name="music_library_history_filter_recent">Recent</string>
     <string name="music_library_history_filter_date">By date</string>
+    <string name="settings_return_to_app_after_dismiss">Return to Alarms after dismissal</string>
+    <string name="settings_return_to_app_after_dismiss_description">Show the Alarms screen after the alarm is confirmed stopped. When off, return to your previous screen. Keep the lock screen protected.</string>
+    <string name="firing_dismiss_dispatch_failed">Could not send the dismiss request. Please try again.</string>
+    <string name="firing_dismiss_confirmation_timeout">Could not confirm the alarm stopped. If it is still ringing, try dismissing again.</string>
 </resources>
