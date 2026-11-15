@@ -13,6 +13,7 @@ import com.sysadmindoc.alarmclock.data.local.entity.MusicPlaylistEntity
 import com.sysadmindoc.alarmclock.data.local.entity.MusicPlaylistItemEntity
 import com.sysadmindoc.alarmclock.data.local.entity.MusicPoolEntry
 import com.sysadmindoc.alarmclock.data.local.entity.MusicTrack
+import com.sysadmindoc.alarmclock.data.local.entity.PlaybackHistoryEntry
 import com.sysadmindoc.alarmclock.data.local.entity.displayTitle
 import com.sysadmindoc.alarmclock.domain.PlaybackTrackCandidate
 import com.sysadmindoc.alarmclock.domain.PlaylistSnapshot
