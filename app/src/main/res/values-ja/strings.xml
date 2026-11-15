@@ -563,4 +563,8 @@
     <string name="replay_more_options">その他のオプション</string>
     <string name="music_library_history_filter_recent">最近の再生</string>
     <string name="music_library_history_filter_date">日付順</string>
+    <string name="settings_return_to_app_after_dismiss">アラーム停止後に一覧へ戻る</string>
+    <string name="settings_return_to_app_after_dismiss_description">停止を確認した後、アラーム一覧に戻ります。オフの場合は元の画面に戻ります。ロック画面は保護されます。</string>
+    <string name="firing_dismiss_dispatch_failed">アラーム停止の指示を送信できませんでした。もう一度お試しください。</string>
+    <string name="firing_dismiss_confirmation_timeout">アラームが停止したことを確認できません。鳴り続ける場合は、もう一度停止してください。</string>
 </resources>
