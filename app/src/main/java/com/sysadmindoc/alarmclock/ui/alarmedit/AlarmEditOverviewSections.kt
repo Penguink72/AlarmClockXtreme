@@ -187,7 +187,10 @@ internal fun LazyListScope.alarmEditOverviewSections(
                 else -> stringResource(R.string.alarm_edit_remaining_minutes_only, remaining.minutes)
             }
             Text(
-                text = stringResource(R.string.alarm_edit_rings_in, remainingLabel),
+                // "Rings in now" is ungrammatical. Due uses the complete
+                // localized status instead of being inserted into a duration.
+                text = if (remaining.due) remainingLabel
+                else stringResource(R.string.alarm_edit_rings_in, remainingLabel),
                 color = MaterialTheme.colorScheme.primary,
                 style = MaterialTheme.typography.titleSmall,
                 modifier = Modifier
