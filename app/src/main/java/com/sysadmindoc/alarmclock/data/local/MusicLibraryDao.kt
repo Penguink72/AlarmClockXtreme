@@ -91,6 +91,43 @@ interface MusicLibraryDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun setPoolEntries(entries: List<MusicPoolEntry>)
 
+    @Query("DELETE FROM music_pool_members WHERE uri IN (:uris)")
+    suspend fun deletePoolEntries(uris: Collection<String>)
+
+    /**
+     * Commit only currently indexed, not-already-excluded candidates, and
+     * return their exact previous membership for one-tap Undo. The caller
+     * chooses candidates from the *existing* metadata catalog, never rescan.
+     */
+    @Transaction
+    suspend fun excludeSystemToneCandidates(candidateUris: Collection<String>): Map<String, String?> {
+        if (candidateUris.isEmpty()) return emptyMap()
+        val validUris = candidateUris.toHashSet()
+        val changes = getPoolCandidates()
+            .asSequence()
+            .filter { it.track.uri in validUris && it.membershipState != MusicPoolEntry.EXCLUDED }
+            .associate { it.track.uri to it.membershipState }
+        if (changes.isNotEmpty()) {
+            val now = System.currentTimeMillis()
+            setPoolEntries(changes.keys.map { uri ->
+                MusicPoolEntry(uri, MusicPoolEntry.EXCLUDED, now)
+            })
+        }
+        return changes
+    }
+
+    @Transaction
+    suspend fun restoreSystemToneExclusion(previous: Map<String, String?>) {
+        if (previous.isEmpty()) return
+        val previouslyUnselected = previous.filterValues { it == null }.keys
+        if (previouslyUnselected.isNotEmpty()) deletePoolEntries(previouslyUnselected)
+        val now = System.currentTimeMillis()
+        val original = previous.filterValues { it != null }.map { (uri, state) ->
+            MusicPoolEntry(uri, requireNotNull(state), now)
+        }
+        if (original.isNotEmpty()) setPoolEntries(original)
+    }
+
     @Query("SELECT * FROM music_pool_members")
     suspend fun getAllPoolEntries(): List<MusicPoolEntry>
 
