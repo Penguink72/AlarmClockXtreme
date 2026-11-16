@@ -63,7 +63,7 @@ internal object SnoozeMusicRestoreStore {
                     json.getLong("positionMs")
                 } else null,
                 playlistId = if (json.isNull("playlistId")) null
-                    else json.optString("playlistId").ifBlank { null },
+                    else json.optString("playlistId").takeIf { it.isNotBlank() },
                 mode = SnoozeMusicResumeMode.valueOf(json.getString("mode")),
                 recordedAtMs = json.getLong("recordedAtMs"),
                 expiresAtMs = json.getLong("expiresAtMs")
