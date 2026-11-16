@@ -68,8 +68,9 @@ internal object ProductionTestSessionStore {
         val atomic = target(context)
         var stream: java.io.FileOutputStream? = null
         return try {
-            stream = atomic.startWrite()
-            DataOutputStream(stream).apply {
+            val output = atomic.startWrite()
+            stream = output
+            DataOutputStream(output).apply {
                 writeInt(FORMAT_VERSION)
                 writeUTF(proof.session.sessionId)
                 writeLong(proof.session.sourceAlarmId)
@@ -81,7 +82,7 @@ internal object ProductionTestSessionStore {
                 writeLong(proof.observedAtMs)
                 flush()
             }
-            atomic.finishWrite(stream)
+            atomic.finishWrite(output)
             true
         } catch (_: IOException) {
             stream?.let { atomic.failWrite(it) }
