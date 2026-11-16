@@ -38,3 +38,4 @@
 - **證據裁定：以上 U4 底座為 T1；新提交的 T2 需讀回最新對應 GitHub Actions，T3 未開始。** 雖有位置 API 與快照型別，尚未接入正式 `AlarmService` 貪睡轉移，未保存 Room、未提供前端選項，也不表示可以續播或換曲。
 - 本切片沒有修改既有 Room v28、正式播放器選曲或貪睡排程。S1 原故障仍為 P0，B2-0 不得當作正式音樂鬧鐘全流程驗證。
 - 下一個可執行切片：優先 G1 的實機故障再現及事件證據；G2-A 獨立 test namespace／正式流程隔離；G3 的持久化與備份先做設計／遷移驗收，不可在無 T3 前重寫播放路徑。
+- U4-BASE-C：補 `AlarmPlaybackPositionTest` 2 個 JUnit cases，MockK 驗證原生播放器位置以及無效／已釋放時回 null。程式提交 `213f444f4895ca6d459166c81ddf049bbae108d3`。對應 [Actions Run 43886583035](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/43886583035) 已觸發但本次讀取時未完成；因此 T2 未裁定。
