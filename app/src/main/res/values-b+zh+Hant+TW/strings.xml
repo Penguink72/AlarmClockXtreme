@@ -735,4 +735,9 @@
     <string name="alarm_edit_delivery_test_scheduled">已排定約 10 秒後進行送達測試。</string>
     <string name="alarm_edit_delivery_test_failed">無法安排送達測試，請確認精確鬧鐘權限。</string>
     <string name="alarm_edit_delivery_test_cancelled">已取消送達測試。</string>
+    <string name="settings_show_incident_events">查看近期事件時間線</string>
+    <string name="settings_hide_incident_events">收合事件時間線</string>
+    <string name="settings_export_incident_diagnostics">分享診斷資料</string>
+    <string name="settings_incident_row_summary">%1$s · %2$s</string>
+    <string name="settings_incident_row_reason">來源：%1$s · 代碼：%2$s</string>
 </resources>
