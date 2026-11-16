@@ -159,6 +159,10 @@ class AlarmEditViewModel @Inject constructor(
 
     private val alarmId: Long = savedStateHandle.get<Long>("alarmId") ?: -1
 
+    /** B2 diagnostics must use an existing persisted alarm, never unsaved edits. */
+    fun savedAlarmIdForProductionTest(): Long =
+        alarmId.takeIf { it > 0L && _uiState.value.isEditing } ?: -1L
+
     private var loadedDraft: AlarmEditUiState? = null
     private val _uiState = MutableStateFlow(AlarmEditUiState())
     val uiState: StateFlow<AlarmEditUiState> = _uiState
