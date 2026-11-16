@@ -37,6 +37,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.sysadmindoc.alarmclock.domain.SnoozeMusicResumeMode
 import com.sysadmindoc.alarmclock.R
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -159,6 +160,10 @@ fun AlarmMusicSettingsScreen(
                             )
                         }
                     }
+                    item {
+                        SettingsGroupTitle(R.string.u4_snooze_mode_label)
+                        SnoozeMusicModeRow(state, onAction)
+                    }
                     if (state.integrationAvailable) {
                         item {
                             Text(
@@ -270,6 +275,36 @@ fun AlarmMusicSettingsScreen(
             }
         }
     }
+}
+
+@Composable
+private fun SnoozeMusicModeRow(
+    state: AlarmMusicSettingsUiState,
+    onAction: (AlarmMusicSettingsAction) -> Unit
+) {
+    val enabled = state.integrationAvailable && !state.loading && !state.saving
+    SnoozeMusicResumeMode.entries.forEach { mode ->
+        Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            RadioButton(
+                selected = state.draft.snoozeMusicMode == mode,
+                enabled = enabled,
+                onClick = { onAction(AlarmMusicSettingsAction.SetSnoozeMusicMode(mode)) }
+            )
+            Text(
+                stringResource(
+                    if (mode == SnoozeMusicResumeMode.RESUME_INTERRUPTED)
+                        R.string.u4_snooze_resume_position
+                    else R.string.u4_snooze_next_different
+                ),
+                modifier = Modifier.padding(start = 4.dp),
+                style = MaterialTheme.typography.bodyMedium
+            )
+        }
+    }
+    Text(
+        stringResource(R.string.u4_snooze_mode_note),
+        style = MaterialTheme.typography.bodySmall
+    )
 }
 
 @Composable
