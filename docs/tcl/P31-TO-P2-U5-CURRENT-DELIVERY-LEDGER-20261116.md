@@ -85,3 +85,6 @@
 1. 以包含最後一個 App 修改 SHA 的 CI build／unit tests／second-runner signing 確認 G2+G3，修正實際編譯、測試或簽章錯誤。
 2. 守護跨程序重入、外部取消、來源權限撤銷、普通鬧鐘優先與無候選系統備援。未有 T3 者維持欄位未驗；但**不再因此停止開發**。
 3. 若所有 CI 成功，維持 PR Draft 等後續使用者合併決定，不自行改 main。
+
+- U4 一致性補強：`a1558ba` 修復「新建立鬧鐘首次儲存」同步保存 snooze mode 的缺口；`a51e905` 避免極短曲目 `onIsPlaying` 先於播放器 adapter 指派，使下一次貪睡找不到上一首歌曲實際播放者。
+- 修補後完整 App SHA `a51e90513e7a0261fc45949d7cb9282bdfc18370`；[CI Run 43963741288](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/43963741288) 已觸發，最後一次讀取仍待執行。GitHub workflow 使用單 branch 並行保護，中間提交的 run 大部分取消，**不能以取消或舊版綠燈為最新程式 T2 結論**。
