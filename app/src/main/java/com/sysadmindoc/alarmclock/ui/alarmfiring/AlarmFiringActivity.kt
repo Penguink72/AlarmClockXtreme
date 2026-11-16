@@ -67,6 +67,7 @@ class AlarmFiringActivity : ComponentActivity() {
     @Inject lateinit var preferencesManager: PreferencesManager
 
     private var dismissRequestInFlight = false
+    private var snoozeRequestInFlight = false
 
     private val viewModel: AlarmFiringViewModel by viewModels()
     private var shakeDetector: ShakeDetector? = null
@@ -669,6 +670,7 @@ class AlarmFiringActivity : ComponentActivity() {
     }
 
     private fun snooze(customMinutes: Int? = null, snoozeAtMillis: Long? = null) {
+        if (snoozeRequestInFlight || dismissRequestInFlight) return
         // The service refuses a snooze once a challenge alarm has spent its cap.
         // Closing the screen anyway would leave the alarm ringing with no
         // challenge on display and no way back to it.
@@ -680,6 +682,8 @@ class AlarmFiringActivity : ComponentActivity() {
             )
             return
         }
+        snoozeRequestInFlight = true
+        AlarmService.lastSnoozeResponse.set(null)
         val intent = AlarmFireDismissContract.snoozeServiceIntent(
             context = this,
             alarmId = alarmId,
@@ -706,10 +710,37 @@ class AlarmFiringActivity : ComponentActivity() {
                 status = AlarmIncidentEvent.STATUS_FAILED,
                 reasonCode = "UI_SNOOZE_START_FAILED_${e.javaClass.simpleName}"
             )
+            snoozeRequestInFlight = false
             Toast.makeText(this, R.string.firing_dismiss_dispatch_failed, Toast.LENGTH_LONG).show()
             return
         }
-        finish()
+        lifecycleScope.launch {
+            var response: AlarmService.SnoozeResponse? = null
+            // The Service accepts the next trigger only AFTER AlarmManager
+            // registers it. Starting a Service is never proof of snooze.
+            withTimeoutOrNull(12_000L) {
+                while (response == null) {
+                    val received = AlarmService.lastSnoozeResponse.get()
+                    if (received?.alarmId == alarmId && received.fireId == fireId) {
+                        response = received
+                    } else {
+                        delay(60L)
+                    }
+                }
+            }
+            snoozeRequestInFlight = false
+            if (response?.accepted == true) {
+                finish()
+            } else {
+                Toast.makeText(
+                    this@AlarmFiringActivity,
+                    if (response == null) R.string.firing_snooze_confirmation_timeout
+                    else R.string.firing_snooze_schedule_failed,
+                    Toast.LENGTH_LONG
+                ).show()
+                // Keep the ringing UI visible for retry or explicit dismiss.
+            }
+        }
     }
 
     private fun dismiss() {
