@@ -1,5 +1,6 @@
 package com.sysadmindoc.alarmclock.directboot
 
+import android.app.Application
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import com.sysadmindoc.alarmclock.data.model.Alarm
@@ -19,7 +20,7 @@ import org.robolectric.annotation.Config
  * upcoming alarm" and one-shot fired-marker logic must hold.
  */
 @RunWith(RobolectricTestRunner::class)
-@Config(sdk = [30])
+@Config(sdk = [30], application = Application::class)
 class DirectBootAlarmCacheTest {
 
     private lateinit var context: Context
