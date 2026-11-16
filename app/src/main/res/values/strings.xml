@@ -2585,4 +2585,6 @@
     <string name="alarm_edit_preview_current_sound_description">Plays one sample from the current unsaved source. This is not a full alarm test.</string>
     <string name="alarm_edit_preview_no_track">No playable track is available in this source.</string>
     <string name="alarm_edit_preview_failed">Unable to preview the selected sound.</string>
+    <string name="firing_snooze_schedule_failed">Snooze could not be scheduled. Alarm is still ringing. Try again or dismiss it.</string>
+    <string name="firing_snooze_confirmation_timeout">Could not confirm snooze scheduling. Check that the alarm is still ringing and try again.</string>
 </resources>
