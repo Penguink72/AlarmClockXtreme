@@ -92,6 +92,15 @@ class AlarmService : Service() {
     @Inject lateinit var calendarRepository: CalendarRepository
     @Inject lateinit var musicLibraryRepository: MusicLibraryRepository
 
+    /** Immutable result of one user-requested snooze occurrence. */
+    data class SnoozeResponse(
+        val alarmId: Long,
+        val fireId: String,
+        val accepted: Boolean,
+        val scheduledForMs: Long = 0L,
+        val reasonCode: String = ""
+    )
+
     companion object {
         const val ACTION_START_ALARM = "com.sysadmindoc.alarmclock.START_ALARM"
         const val ACTION_SNOOZE = "com.sysadmindoc.alarmclock.SNOOZE"
@@ -145,14 +154,6 @@ class AlarmService : Service() {
          * requested snooze. Service start dispatch is NOT snooze success.
          * The UI only closes when accepted=true for the matching fireId.
          */
-        data class SnoozeResponse(
-            val alarmId: Long,
-            val fireId: String,
-            val accepted: Boolean,
-            val scheduledForMs: Long = 0L,
-            val reasonCode: String = ""
-        )
-
         internal val lastSnoozeResponse = AtomicReference<SnoozeResponse?>(null)
 
         fun createNotificationChannels(context: Context) {
