@@ -356,6 +356,19 @@ class AlarmService : Service() {
                         reasonCode = "START_COMMAND_RECEIVED",
                         source = "AlarmService"
                     )
+                    // Paired with AlarmReceiver's DELIVERY_SCREEN_* incident.
+                    // If the receiver ran on time but audio did not start until
+                    // screen-off, these timestamps distinguish service delay
+                    // from actual AlarmManager delivery delay.
+                    val screenInteractive = (getSystemService(POWER_SERVICE)
+                        as? PowerManager)?.isInteractive == true
+                    recordIncidentAsync(
+                        type = AlarmIncidentEvent.TYPE_SCHEDULE,
+                        status = AlarmIncidentEvent.STATUS_RECEIVED,
+                        reasonCode = if (screenInteractive) "SERVICE_START_SCREEN_ON"
+                        else "SERVICE_START_SCREEN_OFF",
+                        source = "AlarmService"
+                    )
                     activateAlarmMediaSession("START_COMMAND")
                     // v1.5.4: Android 14+ requires startForeground() within ~5 s of
                     // startForegroundService() or the app crashes with
@@ -1057,6 +1070,12 @@ class AlarmService : Service() {
                         playbackStarted.set(true)
                         cancelPlaybackWatchdog()
                         consecutiveMusicFailures.set(0)
+                        recordIncidentAsync(
+                            type = AlarmIncidentEvent.TYPE_AUDIO,
+                            status = AlarmIncidentEvent.STATUS_SUCCEEDED,
+                            reasonCode = "MEDIA3_MUSIC_ON_IS_PLAYING_TRUE",
+                            source = "AlarmService"
+                        )
                         session.onTrackStarted(candidate)
                         MusicPlaybackState.updateTitle(candidate.track.displayTitle)
                         val startedAt = System.currentTimeMillis()
