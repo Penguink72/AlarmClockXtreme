@@ -725,4 +725,6 @@
     <string name="music_library_system_tones_excluded">已排除 %1$d 首疑似系統鈴聲。</string>
     <string name="music_library_system_tones_restored">已復原 %1$d 首曲目的原始加入狀態。</string>
     <string name="music_library_system_tones_error">無法更新系統鈴聲排除狀態，音樂庫仍可使用。</string>
+    <string name="alarmlist_quick_alarm_created">快速鬧鐘已排定於 %1$s</string>
+    <string name="alarmlist_quick_alarm_schedule_failed">快速鬧鐘排程失敗。已停用該筆鬧鐘，請檢查精確鬧鐘權限。</string>
 </resources>
