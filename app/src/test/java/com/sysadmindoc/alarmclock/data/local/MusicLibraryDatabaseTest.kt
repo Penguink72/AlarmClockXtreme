@@ -812,6 +812,57 @@ class MusicLibraryDatabaseTest {
     }
 
     @Test
+    fun systemToneExclusionUndoRestoresPriorMembershipWithoutTouchingUserExclusions() = runBlocking {
+        val context = ApplicationProvider.getApplicationContext<Application>()
+        val database = Room.inMemoryDatabaseBuilder(context, AlarmDatabase::class.java)
+            .allowMainThreadQueries()
+            .build()
+        try {
+            val repository = MusicLibraryRepository(
+                database.musicLibraryDao(), database.playbackHistoryDao()
+            )
+            val tracks = (1..4).map { i ->
+                MusicTrack(
+                    uri = "content://media/tones/$i",
+                    title = "Tone $i",
+                    source = "MEDIA_STORE"
+                )
+            }
+            repository.replaceTracks(tracks)
+            repository.setPoolMembership(listOf(tracks[1].uri), included = true)
+            repository.setPoolMembership(listOf(tracks[2].uri), included = false)
+
+            val original = repository.excludeSystemToneCandidates(
+                tracks.map(MusicTrack::uri) + "content://media/not-indexed"
+            )
+            assertEquals(
+                mapOf(
+                    tracks[0].uri to null,
+                    tracks[1].uri to MusicPoolEntry.INCLUDED,
+                    tracks[3].uri to null
+                ),
+                original
+            )
+            val afterExclude = database.musicLibraryDao().getAllPoolEntries()
+                .associate { it.uri to it.state }
+            assertEquals(MusicPoolEntry.EXCLUDED, afterExclude[tracks[0].uri])
+            assertEquals(MusicPoolEntry.EXCLUDED, afterExclude[tracks[1].uri])
+            assertEquals(MusicPoolEntry.EXCLUDED, afterExclude[tracks[2].uri])
+            assertEquals(MusicPoolEntry.EXCLUDED, afterExclude[tracks[3].uri])
+
+            repository.undoSystemToneCandidateExclusion(original)
+            val restored = database.musicLibraryDao().getAllPoolEntries()
+                .associate { it.uri to it.state }
+            assertFalse(restored.containsKey(tracks[0].uri))
+            assertEquals(MusicPoolEntry.INCLUDED, restored[tracks[1].uri])
+            assertEquals(MusicPoolEntry.EXCLUDED, restored[tracks[2].uri])
+            assertFalse(restored.containsKey(tracks[3].uri))
+        } finally {
+            database.close()
+        }
+    }
+
+    @Test
     fun playlistSelectionSaveAndReadbackSurviveRepositoryRecreation() = runBlocking {
         val context = ApplicationProvider.getApplicationContext<Application>()
         val database = Room.inMemoryDatabaseBuilder(context, AlarmDatabase::class.java)
