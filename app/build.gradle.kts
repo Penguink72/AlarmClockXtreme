@@ -273,7 +273,8 @@ val verifyCoreLocaleCoverage by tasks.registering {
 
     val guardedSources = listOf(
         "src/main/java/com/sysadmindoc/alarmclock/ui/alarmedit/AlarmEditOverviewSections.kt",
-        "src/main/java/com/sysadmindoc/alarmclock/ui/alarmedit/AlarmEditDismissSections.kt"
+        "src/main/java/com/sysadmindoc/alarmclock/ui/alarmedit/AlarmEditDismissSections.kt",
+        "src/main/java/com/sysadmindoc/alarmclock/ui/alarmfiring/AlarmFiringScreen.kt"
     )
     val baseResources = "src/main/res/values/strings.xml"
     val translated = listOf(
