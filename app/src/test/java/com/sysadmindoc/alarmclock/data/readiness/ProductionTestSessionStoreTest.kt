@@ -83,6 +83,18 @@ class ProductionTestSessionStoreTest {
             ProductionTestStage.REGISTERED, session.expiresAtMs))
     }
 
+    @Test fun secondTestCannotReplaceActiveTestWithoutExplicitTerminalOutcome() {
+        val first = ProductionTestSession.new(42, now)
+        val second = ProductionTestSession.new(43, now + 5_000L)
+        assertTrue(ProductionTestSessionStore.writeNew(context, first))
+        assertFalse(ProductionTestSessionStore.writeNew(context, second))
+        assertEquals(first.sessionId, ProductionTestSessionStore.read(context, now + 5_000L)?.session?.sessionId)
+        assertTrue(ProductionTestSessionStore.advance(context, first.sessionId, first.fireId(),
+            ProductionTestStage.CANCELLED, now + 6_000L))
+        assertTrue(ProductionTestSessionStore.writeNew(context, second))
+        assertEquals(second.sessionId, ProductionTestSessionStore.read(context, now + 6_000L)?.session?.sessionId)
+    }
+
     @Test fun cancellationIsTerminalAndExplicitClearDropsProof() {
         val session = ProductionTestSession.new(42, now)
         assertTrue(ProductionTestSessionStore.writeNew(context, session))
