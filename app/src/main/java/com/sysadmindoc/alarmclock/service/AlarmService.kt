@@ -2124,95 +2124,115 @@ class AlarmService : Service() {
             }
         }
 
-        // A different alarm may have preempted this one while the Room/OS
-        // scheduling calls suspended. Never stop its player or service.
-        val stillCurrent = currentAlarmId == alarmId && currentFireId == requestedFireId
-        if (stillCurrent) {
-            SnoozeCountdownReceiver.cancel(this)
-            autoSilenceJob?.cancel()
-            backupSoundJob?.cancel()
-            flashlightJob?.cancel()
-            volumeJob?.cancel()
-            stopAlarmPlayback()
-        }
+        // The OS has accepted the next occurrence at this point. Any
+        // remaining bookkeeping failure is nonfatal to the scheduled alarm.
+        // Always clear the old firing state and acknowledge the registered
+        // target, even if a webhook, history write, or notification throws.
+        try {
+            val stillCurrent = currentAlarmId == alarmId && currentFireId == requestedFireId
+            if (stillCurrent) {
+                SnoozeCountdownReceiver.cancel(this)
+                autoSilenceJob?.cancel()
+                backupSoundJob?.cancel()
+                flashlightJob?.cancel()
+                volumeJob?.cancel()
+                stopAlarmPlayback()
+            }
 
-        if (alarm.guardianEnabled) {
-            WorkManager.getInstance(applicationContext)
-                .cancelUniqueWork("guardian_${alarm.id}")
-        }
+            if (alarm.guardianEnabled) {
+                WorkManager.getInstance(applicationContext)
+                    .cancelUniqueWork("guardian_${alarm.id}")
+            }
 
-        val webhookEvent: WebhookEvent
-        if (capOutcome == SnoozeCapOutcome.AUTO_DISMISS) {
-            recordEvent(alarm, AlarmEvent.ACTION_DISMISSED)
-            recordIncident(
-                type = AlarmIncidentEvent.TYPE_USER_ACTION,
-                status = AlarmIncidentEvent.STATUS_SUCCEEDED,
-                reasonCode = "MAX_SNOOZE_DISMISSED",
-                source = "AlarmService",
-                alarmId = alarm.id
-            )
-            if (AlarmPostDismissController.shouldScheduleWakeConfirmation(alarm)) {
-                scheduleWakeConfirmation(
-                    alarm = alarm, fireId = previousFireId,
-                    scheduledAt = previousScheduledAt
+            val webhookEvent: WebhookEvent
+            if (capOutcome == SnoozeCapOutcome.AUTO_DISMISS) {
+                recordEvent(alarm, AlarmEvent.ACTION_DISMISSED)
+                recordIncident(
+                    type = AlarmIncidentEvent.TYPE_USER_ACTION,
+                    status = AlarmIncidentEvent.STATUS_SUCCEEDED,
+                    reasonCode = "MAX_SNOOZE_DISMISSED",
+                    source = "AlarmService",
+                    alarmId = alarm.id
                 )
-            }
-            clearAlarmRuntimeState(alarmId)
-            alarmScheduler.handleAlarmFired(alarmId, previousScheduledAt)
-            webhookEvent = WebhookEvent.AlarmDismissed
-        } else {
-            persistSnoozeCount(alarmId, nextCount)
-            // A notification refresh failure does NOT undo an already accepted
-            // AlarmManager registration. Log it, do not report a phantom failure.
-            runCatching {
-                SnoozeCountdownReceiver.schedule(
-                    context = this@AlarmService,
-                    startAtMillis = snoozeStartedAt,
-                    endAtMillis = targetAt
+                if (AlarmPostDismissController.shouldScheduleWakeConfirmation(alarm)) {
+                    scheduleWakeConfirmation(
+                        alarm = alarm, fireId = previousFireId,
+                        scheduledAt = previousScheduledAt
+                    )
+                }
+                clearAlarmRuntimeState(alarmId)
+                alarmScheduler.handleAlarmFired(alarmId, previousScheduledAt)
+                webhookEvent = WebhookEvent.AlarmDismissed
+            } else {
+                persistSnoozeCount(alarmId, nextCount)
+                runCatching {
+                    SnoozeCountdownReceiver.schedule(
+                        context = this@AlarmService,
+                        startAtMillis = snoozeStartedAt,
+                        endAtMillis = targetAt
+                    )
+                }.onFailure { error ->
+                    android.util.Log.e(TAG, "Could not show snooze countdown", error)
+                }
+                recordEvent(alarm, AlarmEvent.ACTION_SNOOZED)
+                recordIncident(
+                    type = AlarmIncidentEvent.TYPE_USER_ACTION,
+                    status = AlarmIncidentEvent.STATUS_SUCCEEDED,
+                    reasonCode = "SNOOZED_ARMED",
+                    source = "AlarmService",
+                    alarmId = alarm.id
                 )
-            }.onFailure { error ->
-                android.util.Log.e(TAG, "Could not show snooze countdown", error)
+                webhookEvent = WebhookEvent.AlarmSnoozed
             }
-            recordEvent(alarm, AlarmEvent.ACTION_SNOOZED)
-            recordIncident(
-                type = AlarmIncidentEvent.TYPE_USER_ACTION,
-                status = AlarmIncidentEvent.STATUS_SUCCEEDED,
-                reasonCode = "SNOOZED_ARMED",
-                source = "AlarmService",
-                alarmId = alarm.id
-            )
-            webhookEvent = WebhookEvent.AlarmSnoozed
-        }
 
-        webhookService.fireAsync(
-            event = webhookEvent,
-            alarmId = alarm.id,
-            label = alarm.label,
-            timeFormatted = wireAlarmTime(alarm),
-            scheduledForMillis = previousScheduledAt.takeIf { it > 0L },
-            fireId = previousFireId
-        )
-        AlarmBroadcastContract.send(
-            this, AlarmBroadcastContract.ACTION_ALARM_SNOOZED,
-            alarmId = alarm.id, label = alarm.label,
-            displayTime = wireAlarmTime(alarm), fireId = previousFireId
-        )
-        wearNextAlarmBridge.publishAlarmIdle(alarm.id)
-        if (stillCurrent) {
-            currentSnoozeCount = if (capOutcome == SnoozeCapOutcome.AUTO_DISMISS) 0 else nextCount
-            currentAlarmId = -1
-            currentFireId = ""
-            activeAlarm.updateAndGet { snapshot ->
-                if (snapshot?.alarmId == alarmId && snapshot.fireId == requestedFireId) null
-                else snapshot
+            webhookService.fireAsync(
+                event = webhookEvent,
+                alarmId = alarm.id,
+                label = alarm.label,
+                timeFormatted = wireAlarmTime(alarm),
+                scheduledForMillis = previousScheduledAt.takeIf { it > 0L },
+                fireId = previousFireId
+            )
+            AlarmBroadcastContract.send(
+                this, AlarmBroadcastContract.ACTION_ALARM_SNOOZED,
+                alarmId = alarm.id, label = alarm.label,
+                displayTime = wireAlarmTime(alarm), fireId = previousFireId
+            )
+            wearNextAlarmBridge.publishAlarmIdle(alarm.id)
+        } catch (error: Exception) {
+            android.util.Log.e(TAG, "Snooze was armed; an ancillary action failed", error)
+            recordIncidentAsync(
+                type = AlarmIncidentEvent.TYPE_USER_ACTION,
+                status = AlarmIncidentEvent.STATUS_FAILED,
+                reasonCode = "SNOOZE_ARMED_POSTWORK_${error.javaClass.simpleName}",
+                source = "AlarmService",
+                alarmId = alarmId
+            )
+        } finally {
+            // A second alarm could have preempted us during the suspending
+            // history/event writes. Never stop, clear, or close its Service.
+            val belongsToThisFire =
+                currentAlarmId == alarmId && currentFireId == requestedFireId
+            if (belongsToThisFire) {
+                currentSnoozeCount = if (capOutcome == SnoozeCapOutcome.AUTO_DISMISS) 0 else nextCount
+                currentAlarmId = -1
+                currentFireId = ""
+                activeAlarm.updateAndGet { snapshot ->
+                    if (snapshot?.alarmId == alarmId && snapshot.fireId == requestedFireId) null
+                    else snapshot
+                }
             }
-        }
-        acknowledge(true, if (targetAt > 0L) "SNOOZE_ARMED" else "SNOOZE_CAP_AUTO_DISMISS", targetAt)
-        if (stillCurrent) {
-            if (isForeground.compareAndSet(true, false)) {
-                stopForeground(STOP_FOREGROUND_REMOVE)
+            acknowledge(
+                true,
+                if (targetAt > 0L) "SNOOZE_ARMED" else "SNOOZE_CAP_AUTO_DISMISS",
+                targetAt
+            )
+            if (belongsToThisFire) {
+                if (isForeground.compareAndSet(true, false)) {
+                    stopForeground(STOP_FOREGROUND_REMOVE)
+                }
+                stopSelf()
             }
-            stopSelf()
         }
     }
 
