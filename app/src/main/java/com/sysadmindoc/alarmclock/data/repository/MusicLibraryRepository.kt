@@ -136,6 +136,13 @@ class MusicLibraryRepository @Inject constructor(
         )
     }
 
+    /** User-confirmed candidate exclusion, never an implicit scan side effect. */
+    suspend fun excludeSystemToneCandidates(uris: Collection<String>): Map<String, String?> =
+        musicLibraryDao.excludeSystemToneCandidates(uris)
+
+    suspend fun undoSystemToneCandidateExclusion(previous: Map<String, String?>) =
+        musicLibraryDao.restoreSystemToneExclusion(previous)
+
     suspend fun pickRandomTrack(): MusicTrack? = musicLibraryDao.pickRandom()
 
     suspend fun pickRandomTrack(excludedUris: List<String>): MusicTrack? =
