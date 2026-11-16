@@ -2623,4 +2623,15 @@
     <string name="settings_export_incident_diagnostics">Share diagnostic bundle</string>
     <string name="settings_incident_row_summary">%1$s · %2$s</string>
     <string name="settings_incident_row_reason">Source: %1$s · Code: %2$s</string>
+    <string name="b2_test_title">Music alarm production-path test</string>
+    <string name="b2_test_description">This diagnostic uses the saved music source and real alarm player, without changing alarm schedules or playback history.</string>
+    <string name="b2_test_run">Run real music test (1 min)</string>
+    <string name="b2_test_cancel">Cancel music test</string>
+    <string name="b2_test_snooze">Test snooze: ring again in 1 min</string>
+    <string name="b2_test_dismiss">End music test</string>
+    <string name="b2_test_scheduled">Real music test scheduled for about one minute from now.</string>
+    <string name="b2_test_failed">Unable to schedule the real music test. Check alarm permissions and other active tests.</string>
+    <string name="b2_test_requires_saved">Save this alarm before running the real music test.</string>
+    <string name="b2_test_cancelled">Real music test cancelled.</string>
+    <string name="b2_test_saved_only">The test uses the last saved alarm and music settings. Unsaved edits are not included.</string>
 </resources>
