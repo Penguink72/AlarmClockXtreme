@@ -2597,4 +2597,15 @@
     <string name="alarm_edit_remaining_hours_minutes">%1$d h %2$d min</string>
     <string name="alarm_edit_remaining_hours_only">%1$d h</string>
     <string name="alarm_edit_remaining_minutes_only">%1$d min</string>
+    <!-- P2-U5: user-reviewed reversible exclusion of likely MediaStore system sounds. -->
+    <string name="music_library_system_tones_preview_title">Suspected system sounds</string>
+    <string name="music_library_system_tones_preview_detail">Review %1$d indexed tracks flagged as system sounds before excluding them.</string>
+    <string name="music_library_system_tones_false_positive_warning">Device ringtone flags and folder names cannot prove a track was factory-installed. This action excludes only recognized MediaStore sounds, never your SAF folders. You can undo it.</string>
+    <string name="music_library_system_tones_confirm">Exclude selected candidates</string>
+    <string name="music_library_system_tones_cancel">Cancel</string>
+    <string name="music_library_system_tones_preview_button">Review system tones (%1$d)</string>
+    <string name="music_library_system_tones_undo">Undo exclusion</string>
+    <string name="music_library_system_tones_excluded">Excluded %1$d suspected system sounds.</string>
+    <string name="music_library_system_tones_restored">Restored prior membership for %1$d tracks.</string>
+    <string name="music_library_system_tones_error">System sound update failed. Your catalog remains available.</string>
 </resources>
