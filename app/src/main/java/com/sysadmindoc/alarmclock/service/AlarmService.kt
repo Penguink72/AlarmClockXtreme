@@ -92,6 +92,15 @@ class AlarmService : Service() {
     @Inject lateinit var calendarRepository: CalendarRepository
     @Inject lateinit var musicLibraryRepository: MusicLibraryRepository
 
+    /** Immutable result of one user-requested snooze occurrence. */
+    data class SnoozeResponse(
+        val alarmId: Long,
+        val fireId: String,
+        val accepted: Boolean,
+        val scheduledForMs: Long = 0L,
+        val reasonCode: String = ""
+    )
+
     companion object {
         const val ACTION_START_ALARM = "com.sysadmindoc.alarmclock.START_ALARM"
         const val ACTION_SNOOZE = "com.sysadmindoc.alarmclock.SNOOZE"
@@ -140,6 +149,12 @@ class AlarmService : Service() {
         internal val activeAlarm = AtomicReference<ActiveAlarmSnapshot?>(null)
 
         internal val activeAlarmId: Long get() = activeAlarm.get()?.alarmId ?: -1L
+
+        /** Process-local acknowledgement for the exact firing occurrence that
+         * requested snooze. Service start dispatch is NOT snooze success.
+         * The UI only closes when accepted=true for the matching fireId.
+         */
+        internal val lastSnoozeResponse = AtomicReference<SnoozeResponse?>(null)
 
         fun createNotificationChannels(context: Context) {
             val nm = context.getSystemService(NotificationManager::class.java)
@@ -218,6 +233,7 @@ class AlarmService : Service() {
     private var currentWakeConfirmRefireCount: Int = 0
     private val serviceScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
     private var wakeLock: PowerManager.WakeLock? = null
+    private val snoozeRequestActive = AtomicBoolean(false)
     // v1.9.1: AtomicBoolean (was @Volatile Boolean). Multiple coroutines on
     // serviceScope's IO dispatcher can race the foreground stop path — e.g.
     // the auto-silence job firing at the same moment the user taps Dismiss.
@@ -342,6 +358,19 @@ class AlarmService : Service() {
                         reasonCode = "START_COMMAND_RECEIVED",
                         source = "AlarmService"
                     )
+                    // Paired with AlarmReceiver's DELIVERY_SCREEN_* incident.
+                    // If the receiver ran on time but audio did not start until
+                    // screen-off, these timestamps distinguish service delay
+                    // from actual AlarmManager delivery delay.
+                    val screenInteractive = (getSystemService(POWER_SERVICE)
+                        as? PowerManager)?.isInteractive == true
+                    recordIncidentAsync(
+                        type = AlarmIncidentEvent.TYPE_SCHEDULE,
+                        status = AlarmIncidentEvent.STATUS_RECEIVED,
+                        reasonCode = if (screenInteractive) "SERVICE_START_SCREEN_ON"
+                        else "SERVICE_START_SCREEN_OFF",
+                        source = "AlarmService"
+                    )
                     activateAlarmMediaSession("START_COMMAND")
                     // v1.5.4: Android 14+ requires startForeground() within ~5 s of
                     // startForegroundService() or the app crashes with
@@ -365,16 +394,58 @@ class AlarmService : Service() {
                     ?.coerceIn(MIN_CUSTOM_SNOOZE_MINUTES, MAX_CUSTOM_SNOOZE_MINUTES)
                 val snoozeAtMillis = intent.getLongExtra(EXTRA_SNOOZE_UNTIL_MILLIS, -1L)
                     .takeIf { it > System.currentTimeMillis() }
-                // v1.5.1: If the service was killed+restarted between fire and
-                // snooze, currentSnoozeCount is 0 (fresh instance). Re-read the
-                // persisted count so the progressive-snooze ladder doesn't reset.
+                // Stale/duplicate button or notification actions must not
+                // extend an already-armed snooze for the same fireId.
+                val completed = lastSnoozeResponse.get()
+                if (completed?.alarmId == alarmId && completed.fireId == fireId &&
+                    completed.accepted
+                ) {
+                    recordIncidentAsync(
+                        type = AlarmIncidentEvent.TYPE_USER_ACTION,
+                        status = AlarmIncidentEvent.STATUS_SKIPPED,
+                        reasonCode = "DUPLICATE_SNOOZE_ALREADY_ARMED",
+                        source = "AlarmService", alarmId = alarmId
+                    )
+                    return START_NOT_STICKY
+                }
+                if (!snoozeRequestActive.compareAndSet(false, true)) {
+                    recordIncidentAsync(
+                        type = AlarmIncidentEvent.TYPE_USER_ACTION,
+                        status = AlarmIncidentEvent.STATUS_SKIPPED,
+                        reasonCode = "DUPLICATE_SNOOZE_IN_PROGRESS",
+                        source = "AlarmService", alarmId = alarmId
+                    )
+                    return START_NOT_STICKY
+                }
+                // v1.5.1: Restore count only for a genuinely new service.
                 if (currentAlarmId == -1L && alarmId > 0L) {
                     currentAlarmId = alarmId
                     currentScheduledAt = scheduledAt
                     currentFireId = fireId
                     currentSnoozeCount = readPersistedSnoozeCount(alarmId)
                 }
-                serviceScope.launch { snoozeAlarm(alarmId, customMinutes, snoozeAtMillis) }
+                serviceScope.launch {
+                    try {
+                        snoozeAlarm(alarmId, fireId, customMinutes, snoozeAtMillis)
+                    } catch (error: Exception) {
+                        android.util.Log.e(TAG, "Snooze failed without confirmation", error)
+                        lastSnoozeResponse.set(
+                            SnoozeResponse(
+                                alarmId, fireId, accepted = false,
+                                reasonCode = "SNOOZE_UNEXPECTED_${error.javaClass.simpleName}"
+                            )
+                        )
+                        recordIncidentAsync(
+                            type = AlarmIncidentEvent.TYPE_USER_ACTION,
+                            status = AlarmIncidentEvent.STATUS_FAILED,
+                            reasonCode = "SNOOZE_UNEXPECTED_${error.javaClass.simpleName}",
+                            source = "AlarmService",
+                            alarmId = alarmId
+                        )
+                    } finally {
+                        snoozeRequestActive.set(false)
+                    }
+                }
             }
             ACTION_SET_CHALLENGE_DUCKING -> {
                 val alarmId = intent.getLongExtra(AlarmScheduler.EXTRA_ALARM_ID, -1L)
@@ -1024,6 +1095,12 @@ class AlarmService : Service() {
                         playbackStarted.set(true)
                         cancelPlaybackWatchdog()
                         consecutiveMusicFailures.set(0)
+                        recordIncidentAsync(
+                            type = AlarmIncidentEvent.TYPE_AUDIO,
+                            status = AlarmIncidentEvent.STATUS_SUCCEEDED,
+                            reasonCode = "MEDIA3_MUSIC_ON_IS_PLAYING_TRUE",
+                            source = "AlarmService"
+                        )
                         session.onTrackStarted(candidate)
                         MusicPlaybackState.updateTitle(candidate.track.displayTitle)
                         val startedAt = System.currentTimeMillis()
@@ -1969,54 +2046,106 @@ class AlarmService : Service() {
 
     private suspend fun snoozeAlarm(
         alarmId: Long,
+        requestedFireId: String,
         customMinutes: Int? = null,
         snoozeAtMillis: Long? = null
     ) {
-        // A challenge-protected alarm must not be talked out of its challenge
-        // by tapping Snooze past the cap, so check before anything is torn
-        // down: the alarm has to keep ringing exactly as it was.
-        val capped = repository.getById(alarmId)?.sanitized()
-        if (capped != null &&
-            SnoozeCapPolicy.outcomeFor(capped, currentSnoozeCount) == SnoozeCapOutcome.REFUSE
-        ) {
+        fun acknowledge(accepted: Boolean, reason: String, target: Long = 0L) {
+            lastSnoozeResponse.set(
+                SnoozeResponse(alarmId, requestedFireId, accepted, target, reason)
+            )
+        }
+
+        // Reject stale actions. An overlapping alarm must not be torn down by
+        // a late snooze from the full-screen UI for the previous occurrence.
+        if (currentAlarmId != alarmId || currentFireId != requestedFireId) {
+            acknowledge(false, "SNOOZE_STALE_FIRE")
+            return
+        }
+        val alarm = repository.getById(alarmId)?.sanitized()
+        if (alarm == null) {
+            recordIncident(
+                type = AlarmIncidentEvent.TYPE_USER_ACTION,
+                status = AlarmIncidentEvent.STATUS_FAILED,
+                reasonCode = "SNOOZE_ALARM_ROW_MISSING",
+                source = "AlarmService",
+                alarmId = alarmId
+            )
+            acknowledge(false, "SNOOZE_ALARM_ROW_MISSING")
+            return
+        }
+
+        val capOutcome = SnoozeCapPolicy.outcomeFor(alarm, currentSnoozeCount)
+        if (capOutcome == SnoozeCapOutcome.REFUSE) {
             recordIncident(
                 type = AlarmIncidentEvent.TYPE_USER_ACTION,
                 status = AlarmIncidentEvent.STATUS_SKIPPED,
                 reasonCode = "SNOOZE_CAP_REACHED",
                 source = "AlarmService",
-                alarmId = capped.id
+                alarmId = alarmId
             )
-            refreshFiringNotification(capped)
+            refreshFiringNotification(alarm)
+            acknowledge(false, "SNOOZE_CAP_REACHED")
             return
         }
-        SnoozeCountdownReceiver.cancel(this)
-        autoSilenceJob?.cancel()
-        backupSoundJob?.cancel()
-        flashlightJob?.cancel()
-        volumeJob?.cancel()
-        stopAlarmPlayback()
-        val alarm = repository.getById(alarmId)?.sanitized()
-        if (alarm != null) {
-            val webhookScheduledAt = currentScheduledAt
-            val webhookFireId = currentFireId
-            // Snoozing means the user interacted with the alarm, so cancel any pending
-            // Guardian Angel call/SMS — they're plainly awake enough to hit snooze.
-            // The next fire after snooze will re-arm Guardian if still configured.
+
+        val previousScheduledAt = currentScheduledAt
+        val previousFireId = currentFireId
+        val nextCount = currentSnoozeCount + 1
+        val snoozeStartedAt = System.currentTimeMillis()
+        val targetAt = if (capOutcome == SnoozeCapOutcome.AUTO_DISMISS) {
+            0L
+        } else {
+            val effectiveMinutes =
+                if (alarm.progressiveSnooze && customMinutes == null && snoozeAtMillis == null) {
+                    (alarm.snoozeDurationMinutes - nextCount).coerceAtLeast(1)
+                } else {
+                    (customMinutes ?: alarm.snoozeDurationMinutes).coerceAtLeast(1)
+                }
+            (snoozeAtMillis ?: snoozeStartedAt + effectiveMinutes * 60_000L)
+                .coerceAtLeast(snoozeStartedAt + 1_000L)
+        }
+
+        // Arm the next occurrence BEFORE touching current audio, vibration,
+        // snooze count, or the activity. A failed registration must leave the
+        // current alarm ringing and the user able to retry or dismiss it.
+        if (capOutcome != SnoozeCapOutcome.AUTO_DISMISS) {
+            val registered = alarmScheduler.scheduleSnoozeAt(alarm, targetAt)
+            if (!registered) {
+                recordIncident(
+                    type = AlarmIncidentEvent.TYPE_USER_ACTION,
+                    status = AlarmIncidentEvent.STATUS_FAILED,
+                    reasonCode = "SNOOZE_SCHEDULE_NOT_ARMED",
+                    source = "AlarmService",
+                    alarmId = alarm.id
+                )
+                acknowledge(false, "SNOOZE_SCHEDULE_NOT_ARMED", targetAt)
+                return
+            }
+        }
+
+        // The OS has accepted the next occurrence at this point. Any
+        // remaining bookkeeping failure is nonfatal to the scheduled alarm.
+        // Always clear the old firing state and acknowledge the registered
+        // target, even if a webhook, history write, or notification throws.
+        try {
+            val stillCurrent = currentAlarmId == alarmId && currentFireId == requestedFireId
+            if (stillCurrent) {
+                SnoozeCountdownReceiver.cancel(this)
+                autoSilenceJob?.cancel()
+                backupSoundJob?.cancel()
+                flashlightJob?.cancel()
+                volumeJob?.cancel()
+                stopAlarmPlayback()
+            }
+
             if (alarm.guardianEnabled) {
                 WorkManager.getInstance(applicationContext)
                     .cancelUniqueWork("guardian_${alarm.id}")
             }
-            val nextSnoozeCount = currentSnoozeCount + 1
-            // v1.6.3: Track which event was actually persisted so the webhook
-            // emits the matching event name. The previous code recorded
-            // ACTION_DISMISSED when the snooze cap was hit but still fired the
-            // "snoozed" webhook — Tasker integrations got the wrong event.
+
             val webhookEvent: WebhookEvent
-            if (SnoozeCapPolicy.outcomeFor(alarm, currentSnoozeCount) ==
-                SnoozeCapOutcome.AUTO_DISMISS
-            ) {
-                // Max snoozes reached - treat as dismiss
-                currentSnoozeCount = alarm.maxSnoozeCount
+            if (capOutcome == SnoozeCapOutcome.AUTO_DISMISS) {
                 recordEvent(alarm, AlarmEvent.ACTION_DISMISSED)
                 recordIncident(
                     type = AlarmIncidentEvent.TYPE_USER_ACTION,
@@ -2025,82 +2154,86 @@ class AlarmService : Service() {
                     source = "AlarmService",
                     alarmId = alarm.id
                 )
-                // A user who snoozed to the cap is the strongest still-asleep
-                // signal there is — the cap-exhaustion auto-dismiss must not
-                // skip the wake-confirmation follow-up a real dismiss gets.
                 if (AlarmPostDismissController.shouldScheduleWakeConfirmation(alarm)) {
                     scheduleWakeConfirmation(
-                        alarm = alarm,
-                        fireId = currentFireId,
-                        scheduledAt = currentScheduledAt
+                        alarm = alarm, fireId = previousFireId,
+                        scheduledAt = previousScheduledAt
                     )
                 }
                 clearAlarmRuntimeState(alarmId)
-                currentSnoozeCount = 0
-                currentAlarmId = -1
-                activeAlarm.set(null)
-                alarmScheduler.handleAlarmFired(alarmId, currentScheduledAt)
+                alarmScheduler.handleAlarmFired(alarmId, previousScheduledAt)
                 webhookEvent = WebhookEvent.AlarmDismissed
             } else {
-                currentSnoozeCount = nextSnoozeCount
-                persistSnoozeCount(alarmId, currentSnoozeCount)
-                val effectiveSnooze = if (alarm.progressiveSnooze && customMinutes == null && snoozeAtMillis == null) {
-                    (alarm.snoozeDurationMinutes - currentSnoozeCount).coerceAtLeast(1)
-                } else customMinutes
-                val snoozeStartedAt = System.currentTimeMillis()
-                val defaultSnoozeEndAt = snoozeStartedAt +
-                    (effectiveSnooze ?: alarm.snoozeDurationMinutes)
-                        .coerceAtLeast(1) * 60_000L
-                val snoozeEndAt = (snoozeAtMillis ?: defaultSnoozeEndAt)
-                    .coerceAtLeast(snoozeStartedAt + 1_000L)
-                if (alarmScheduler.scheduleSnoozeAt(alarm, snoozeEndAt)) {
+                persistSnoozeCount(alarmId, nextCount)
+                runCatching {
                     SnoozeCountdownReceiver.schedule(
                         context = this@AlarmService,
                         startAtMillis = snoozeStartedAt,
-                        endAtMillis = snoozeEndAt
+                        endAtMillis = targetAt
                     )
+                }.onFailure { error ->
+                    android.util.Log.e(TAG, "Could not show snooze countdown", error)
                 }
                 recordEvent(alarm, AlarmEvent.ACTION_SNOOZED)
                 recordIncident(
                     type = AlarmIncidentEvent.TYPE_USER_ACTION,
                     status = AlarmIncidentEvent.STATUS_SUCCEEDED,
-                    reasonCode = "SNOOZED",
+                    reasonCode = "SNOOZED_ARMED",
                     source = "AlarmService",
                     alarmId = alarm.id
                 )
                 webhookEvent = WebhookEvent.AlarmSnoozed
             }
+
             webhookService.fireAsync(
                 event = webhookEvent,
                 alarmId = alarm.id,
                 label = alarm.label,
                 timeFormatted = wireAlarmTime(alarm),
-                scheduledForMillis = webhookScheduledAt.takeIf { it > 0L },
-                fireId = webhookFireId
+                scheduledForMillis = previousScheduledAt.takeIf { it > 0L },
+                fireId = previousFireId
             )
             AlarmBroadcastContract.send(
                 this, AlarmBroadcastContract.ACTION_ALARM_SNOOZED,
                 alarmId = alarm.id, label = alarm.label,
-                displayTime = wireAlarmTime(alarm), fireId = webhookFireId
+                displayTime = wireAlarmTime(alarm), fireId = previousFireId
             )
             wearNextAlarmBridge.publishAlarmIdle(alarm.id)
-        } else {
-            recordIncident(
+        } catch (error: Exception) {
+            android.util.Log.e(TAG, "Snooze was armed; an ancillary action failed", error)
+            recordIncidentAsync(
                 type = AlarmIncidentEvent.TYPE_USER_ACTION,
                 status = AlarmIncidentEvent.STATUS_FAILED,
-                reasonCode = "SNOOZE_ALARM_ROW_MISSING",
+                reasonCode = "SNOOZE_ARMED_POSTWORK_${error.javaClass.simpleName}",
                 source = "AlarmService",
                 alarmId = alarmId
             )
-            clearAlarmRuntimeState(alarmId)
-            currentSnoozeCount = 0
-            currentAlarmId = -1
-            activeAlarm.set(null)
+        } finally {
+            // A second alarm could have preempted us during the suspending
+            // history/event writes. Never stop, clear, or close its Service.
+            val belongsToThisFire =
+                currentAlarmId == alarmId && currentFireId == requestedFireId
+            if (belongsToThisFire) {
+                currentSnoozeCount = if (capOutcome == SnoozeCapOutcome.AUTO_DISMISS) 0 else nextCount
+                currentAlarmId = -1
+                currentFireId = ""
+                activeAlarm.updateAndGet { snapshot ->
+                    if (snapshot?.alarmId == alarmId && snapshot.fireId == requestedFireId) null
+                    else snapshot
+                }
+            }
+            acknowledge(
+                true,
+                if (targetAt > 0L) "SNOOZE_ARMED" else "SNOOZE_CAP_AUTO_DISMISS",
+                targetAt
+            )
+            if (belongsToThisFire) {
+                if (isForeground.compareAndSet(true, false)) {
+                    stopForeground(STOP_FOREGROUND_REMOVE)
+                }
+                stopSelf()
+            }
         }
-        if (isForeground.compareAndSet(true, false)) {
-            stopForeground(STOP_FOREGROUND_REMOVE)
-        }
-        stopSelf()
     }
 
     private suspend fun dismissAlarm(

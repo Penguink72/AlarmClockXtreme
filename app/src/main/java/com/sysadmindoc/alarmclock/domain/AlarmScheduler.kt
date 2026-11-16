@@ -33,6 +33,13 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
 
+/** The registration result describes API acceptance, not eventual delivery. */
+internal enum class AlarmRegistrationResult {
+    EXACT, INEXACT, FAILED;
+
+    val registered: Boolean get() = this != FAILED
+}
+
 @Singleton
 class AlarmScheduler @Inject constructor(
     @ApplicationContext private val context: Context,
@@ -211,10 +218,14 @@ class AlarmScheduler @Inject constructor(
             }
         }
 
-        repository.updateNextTrigger(sanitizedAlarm.id, triggerTime)
-        scheduleAlarmClock(sanitizedAlarm.id, triggerTime)
-        DirectBootAlarmCache.saveIfEarlier(context, sanitizedAlarm, triggerTime)
-        scheduleSupportingWork(sanitizedAlarm, triggerTime)
+        // A failed API call must not leave a persistent phantom next trigger.
+        if (scheduleAlarmClock(sanitizedAlarm.id, triggerTime).registered) {
+            repository.updateNextTrigger(sanitizedAlarm.id, triggerTime)
+            DirectBootAlarmCache.saveIfEarlier(context, sanitizedAlarm, triggerTime)
+            scheduleSupportingWork(sanitizedAlarm, triggerTime)
+        } else {
+            repository.updateNextTrigger(sanitizedAlarm.id, 0)
+        }
         requestWidgetUpdateIfNeeded(requestWidgetUpdate)
         syncBedtimeDndRule()
     }
@@ -245,13 +256,13 @@ class AlarmScheduler @Inject constructor(
             // maintenance window) and leave an incident record.
             val sanitizedAlarm = alarm.sanitized()
             val fireId = AlarmIncidentEvent.fireIdFor(sanitizedAlarm.id, snoozeTime)
-            repository.updateNextTrigger(sanitizedAlarm.id, snoozeTime)
             return try {
                 alarmManager.setAndAllowWhileIdle(
                     AlarmManager.RTC_WAKEUP,
                     snoozeTime,
                     createPendingIntent(sanitizedAlarm.id, snoozeTime, fireId)
                 )
+                repository.updateNextTrigger(sanitizedAlarm.id, snoozeTime)
                 recordScheduleIncident(
                     alarmId = sanitizedAlarm.id,
                     fireId = fireId,
@@ -285,13 +296,13 @@ class AlarmScheduler @Inject constructor(
         if (!canScheduleExactAlarms()) {
             val sanitizedAlarm = alarm.sanitized()
             val fireId = AlarmIncidentEvent.fireIdFor(sanitizedAlarm.id, snoozeTime)
-            repository.updateNextTrigger(sanitizedAlarm.id, snoozeTime)
             return try {
                 alarmManager.setAndAllowWhileIdle(
                     AlarmManager.RTC_WAKEUP,
                     snoozeTime,
                     createPendingIntent(sanitizedAlarm.id, snoozeTime, fireId)
                 )
+                repository.updateNextTrigger(sanitizedAlarm.id, snoozeTime)
                 recordScheduleIncident(
                     alarmId = sanitizedAlarm.id,
                     fireId = fireId,
@@ -339,12 +350,53 @@ class AlarmScheduler @Inject constructor(
             return false
         }
 
-        repository.updateNextTrigger(sanitizedAlarm.id, triggerTime)
-        scheduleAlarmClock(sanitizedAlarm.id, triggerTime)
-        DirectBootAlarmCache.saveIfEarlier(context, sanitizedAlarm, triggerTime)
-        scheduleSupportingWork(sanitizedAlarm, triggerTime)
-        requestWidgetUpdateIfNeeded(requestWidgetUpdate)
-        syncBedtimeDndRule()
+        val registration = scheduleAlarmClock(sanitizedAlarm.id, triggerTime)
+        if (!registration.registered) {
+            // Keep previous persisted target if registration was rejected: the
+            // live ringing alarm must remain dismissable and retries visible.
+            recordScheduleIncident(
+                sanitizedAlarm.id,
+                AlarmIncidentEvent.fireIdFor(sanitizedAlarm.id, triggerTime),
+                triggerTime,
+                AlarmIncidentEvent.STATUS_FAILED,
+                "SCHEDULE_AT_NOT_REGISTERED"
+            )
+            return false
+        }
+        try {
+            repository.updateNextTrigger(sanitizedAlarm.id, triggerTime)
+        } catch (error: Exception) {
+            // OS registration succeeded but persistence failed: undo the new
+            // pending intent, keep the current ringing Service alive, and
+            // report failure so snooze cannot silently disappear on reboot.
+            runCatching { cancelMainScheduledAlarm(sanitizedAlarm.id) }
+            recordScheduleIncident(
+                sanitizedAlarm.id,
+                AlarmIncidentEvent.fireIdFor(sanitizedAlarm.id, triggerTime),
+                triggerTime,
+                AlarmIncidentEvent.STATUS_FAILED,
+                "SCHEDULE_AT_PERSIST_FAILED_${error.javaClass.simpleName}"
+            )
+            return false
+        }
+        // Once the OS accepted registration and the target is persisted,
+        // supporting work, widget or DND sync failures must not make the
+        // caller think the snooze itself was rejected.
+        try {
+            DirectBootAlarmCache.saveIfEarlier(context, sanitizedAlarm, triggerTime)
+            scheduleSupportingWork(sanitizedAlarm, triggerTime)
+            requestWidgetUpdateIfNeeded(requestWidgetUpdate)
+            syncBedtimeDndRule()
+        } catch (error: Exception) {
+            android.util.Log.e("AlarmScheduler", "Nonfatal auxiliary scheduling error", error)
+            recordScheduleIncident(
+                sanitizedAlarm.id,
+                AlarmIncidentEvent.fireIdFor(sanitizedAlarm.id, triggerTime),
+                triggerTime,
+                AlarmIncidentEvent.STATUS_FAILED,
+                "SCHEDULE_AT_AUXILIARY_FAILED_${error.javaClass.simpleName}"
+            )
+        }
         return true
     }
 
@@ -539,7 +591,7 @@ class AlarmScheduler @Inject constructor(
         }
     }
 
-    private fun scheduleAlarmClock(alarmId: Long, triggerTime: Long) {
+    private fun scheduleAlarmClock(alarmId: Long, triggerTime: Long): AlarmRegistrationResult {
         DirectBootAlarmCache.cancelScheduledFallback(context, alarmId)
         val fireId = AlarmIncidentEvent.fireIdFor(alarmId, triggerTime)
         val showAlarmClockIcon = preferencesManager.getCachedSettings().showAlarmClockIcon
@@ -579,6 +631,7 @@ class AlarmScheduler @Inject constructor(
                 status = AlarmIncidentEvent.STATUS_SUCCEEDED,
                 reasonCode = if (showAlarmClockIcon) "SET_ALARM_CLOCK" else "SET_EXACT_ALLOW_WHILE_IDLE"
             )
+            return AlarmRegistrationResult.EXACT
         } catch (e: SecurityException) {
             android.util.Log.w(
                 "AlarmScheduler",
@@ -598,6 +651,7 @@ class AlarmScheduler @Inject constructor(
                     status = AlarmIncidentEvent.STATUS_SUCCEEDED,
                     reasonCode = "SET_AND_ALLOW_WHILE_IDLE_AFTER_SECURITY_EXCEPTION"
                 )
+                return AlarmRegistrationResult.INEXACT
             } catch (e2: Exception) {
                 android.util.Log.e(
                     "AlarmScheduler",
@@ -611,6 +665,7 @@ class AlarmScheduler @Inject constructor(
                     status = AlarmIncidentEvent.STATUS_FAILED,
                     reasonCode = "SET_AND_ALLOW_WHILE_IDLE_FAILED_${e2.javaClass.simpleName}"
                 )
+                return AlarmRegistrationResult.FAILED
             }
         } catch (e: Exception) {
             // Defensive: AlarmManager has been seen to throw RuntimeException on
@@ -628,6 +683,7 @@ class AlarmScheduler @Inject constructor(
                 status = AlarmIncidentEvent.STATUS_FAILED,
                 reasonCode = "SET_ALARM_CLOCK_FAILED_${e.javaClass.simpleName}"
             )
+            return AlarmRegistrationResult.FAILED
         }
     }
 

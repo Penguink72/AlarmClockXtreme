@@ -3,6 +3,7 @@ package com.sysadmindoc.alarmclock.receiver
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.os.PowerManager
 import android.util.Log
 import com.sysadmindoc.alarmclock.data.local.entity.AlarmIncidentEvent
 import com.sysadmindoc.alarmclock.domain.AlarmScheduler
@@ -31,6 +32,21 @@ class AlarmReceiver : BroadcastReceiver() {
                 reasonCode = "ALARM_MANAGER_DELIVERED",
                 source = "AlarmReceiver"
             )
+        )
+        // Capture the actual screen state at broadcast delivery. The user
+        // reported a snooze that did not ring until screen-off; this separates
+        // late AlarmManager delivery from service/audio startup problems.
+        // Use SCHEDULE type so occurrenceDeliveryCount remains unchanged.
+        val interactive = (context.getSystemService(Context.POWER_SERVICE)
+            as? PowerManager)?.isInteractive == true
+        incidents += ReceiverAlarmIncident(
+            alarmId = alarmId,
+            fireId = fireId,
+            scheduledAt = scheduledAt,
+            type = AlarmIncidentEvent.TYPE_SCHEDULE,
+            status = AlarmIncidentEvent.STATUS_RECEIVED,
+            reasonCode = if (interactive) "DELIVERY_SCREEN_ON" else "DELIVERY_SCREEN_OFF",
+            source = "AlarmReceiver"
         )
 
         val serviceIntent = AlarmFireDismissContract.startServiceIntent(context, alarmId, scheduledAt, fireId)

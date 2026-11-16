@@ -573,4 +573,6 @@
     <string name="alarm_edit_preview_current_sound_description">從目前尚未儲存的來源試聽一首，不等於完整響鈴測試。</string>
     <string name="alarm_edit_preview_no_track">目前來源沒有可播放的音樂。</string>
     <string name="alarm_edit_preview_failed">無法試聽目前選取的聲音。</string>
+    <string name="firing_snooze_schedule_failed">貪睡排程失敗，鬧鐘應仍在響鈴。請重新貪睡或直接解除。</string>
+    <string name="firing_snooze_confirmation_timeout">尚未確認貪睡已排程成功，請確認鬧鐘是否仍在響鈴並重試。</string>
 </resources>
