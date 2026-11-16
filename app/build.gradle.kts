@@ -22,8 +22,8 @@ android {
         versionCode = 137
         versionName = "1.15.35"
         // P3.1-U1: users may already have Preview 3 v148 installed, so CI builds
-        // U1.1 catalog-search fix must upgrade previously produced v151/v152 APKs without a data wipe.
-        val minAllowedCiVersionCode = 153
+        // S1 snooze reliability hotfix must upgrade previously produced v153/v154 APKs without a data wipe.
+        val minAllowedCiVersionCode = 155
         providers.gradleProperty("ciVersionCode").orNull?.toIntOrNull()?.let { overrideVersionCode ->
             val baseVersionCode = maxOf(requireNotNull(versionCode), minAllowedCiVersionCode)
             check(overrideVersionCode >= baseVersionCode) {
