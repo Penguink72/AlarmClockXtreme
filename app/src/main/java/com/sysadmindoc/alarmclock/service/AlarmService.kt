@@ -417,12 +417,25 @@ class AlarmService : Service() {
                     )
                     return START_NOT_STICKY
                 }
-                // v1.5.1: Restore count only for a genuinely new service.
-                if (currentAlarmId == -1L && alarmId > 0L) {
+                // A notification snooze may cold-start AlarmService after the
+                // ringing process was reclaimed. startForegroundService() MUST
+                // be acknowledged synchronously, not after the IO-dispatched
+                // scheduler completes; otherwise Android 14+ can kill the
+                // process before the next snooze PendingIntent is registered.
+                val restoredFromColdStart = currentAlarmId == -1L && alarmId > 0L
+                if (restoredFromColdStart) {
                     currentAlarmId = alarmId
                     currentScheduledAt = scheduledAt
                     currentFireId = fireId
                     currentSnoozeCount = readPersistedSnoozeCount(alarmId)
+                    startForegroundWithPlaceholder()
+                    recordIncidentAsync(
+                        type = AlarmIncidentEvent.TYPE_FOREGROUND_SERVICE,
+                        status = AlarmIncidentEvent.STATUS_RECEIVED,
+                        reasonCode = "COLD_SNOOZE_COMMAND_RECEIVED",
+                        source = "AlarmService",
+                        alarmId = alarmId
+                    )
                 }
                 serviceScope.launch {
                     try {
@@ -444,6 +457,39 @@ class AlarmService : Service() {
                         )
                     } finally {
                         snoozeRequestActive.set(false)
+                        // If the restored cold service rejected snooze, there
+                        // is no ringing activity to keep a placeholder FGS alive.
+                        // A new alarm might have preempted the action while we
+                        // suspended on Room; never tear that new alarm down.
+                        val reply = lastSnoozeResponse.get()
+                        if (shouldStopRejectedColdSnooze(
+                                restoredFromColdStart,
+                                alarmId,
+                                fireId,
+                                currentAlarmId,
+                                currentFireId,
+                                reply?.alarmId == alarmId &&
+                                    reply.fireId == fireId && reply.accepted
+                            )
+                        ) {
+                            recordIncidentAsync(
+                                type = AlarmIncidentEvent.TYPE_FOREGROUND_SERVICE,
+                                status = AlarmIncidentEvent.STATUS_FAILED,
+                                reasonCode = "COLD_SNOOZE_REJECTED_SERVICE_STOPPED",
+                                source = "AlarmService",
+                                alarmId = alarmId
+                            )
+                            currentAlarmId = -1L
+                            currentFireId = ""
+                            activeAlarm.updateAndGet { snapshot ->
+                                if (snapshot?.alarmId == alarmId && snapshot.fireId == fireId) null
+                                else snapshot
+                            }
+                            if (isForeground.compareAndSet(true, false)) {
+                                stopForeground(STOP_FOREGROUND_REMOVE)
+                            }
+                            stopSelf()
+                        }
                     }
                 }
             }
