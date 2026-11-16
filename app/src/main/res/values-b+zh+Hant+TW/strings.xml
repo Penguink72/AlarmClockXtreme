@@ -892,4 +892,15 @@
     <string name="firing_default">預設</string>
     <plurals name="firing_retry_count"><item quantity="other">已重試 %1$d 次</item></plurals>
     <plurals name="firing_snoozes_left"><item quantity="other">還可貪睡 %1$d 次</item></plurals>
+    <string name="b2_test_title">正式音樂鬧鐘路徑測試</string>
+    <string name="b2_test_description">使用已儲存的音樂來源及正式響鈴播放器進行診斷，不改動原鬧鐘排程或播放歷史。</string>
+    <string name="b2_test_run">正式音樂測試（1 分鐘）</string>
+    <string name="b2_test_cancel">取消音樂測試</string>
+    <string name="b2_test_snooze">測試貪睡：1 分鐘後再響</string>
+    <string name="b2_test_dismiss">結束音樂測試</string>
+    <string name="b2_test_scheduled">已安排約一分鐘後進行正式音樂測試。</string>
+    <string name="b2_test_failed">無法安排正式音樂測試。請檢查鬧鐘權限及其他進行中的測試。</string>
+    <string name="b2_test_requires_saved">請先儲存此鬧鐘，再執行正式音樂測試。</string>
+    <string name="b2_test_cancelled">已取消正式音樂測試。</string>
+    <string name="b2_test_saved_only">測試採用上次儲存的鬧鐘與音樂設定，不含尚未儲存的修改。</string>
 </resources>
