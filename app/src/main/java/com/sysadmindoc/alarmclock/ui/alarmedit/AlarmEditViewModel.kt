@@ -949,10 +949,11 @@ class AlarmEditViewModel @Inject constructor(
                     id = if (s.isEditing) alarmId else savedId
                 )
                 try {
-                    musicLibraryRepository.saveSettings(
-                        savedAlarm.id,
-                        _alarmMusicSettingsState.value.draft
-                    )
+                    val musicDraft = _alarmMusicSettingsState.value.draft
+                    musicLibraryRepository.saveSettings(savedAlarm.id, musicDraft)
+                    check(AlarmSnoozeMusicModeStore.save(
+                        context, savedAlarm.id, musicDraft.snoozeMusicMode
+                    )) { "Could not save snooze playback mode" }
                 } catch (musicSaveError: Exception) {
                     runCatching {
                         if (s.isEditing && previousAlarm != null) {
