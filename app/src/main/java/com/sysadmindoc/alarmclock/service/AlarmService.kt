@@ -1366,6 +1366,10 @@ class AlarmService : Service() {
                     // be suppressed without sound, so the start watchdog stays
                     // armed until onIsPlayingChanged(true) (onStarted) arrives.
                     if (!isMusicSessionActive(alarm, generation)) return@onReady
+                    if (restorePositionMs != null) {
+                        runCatching { playbackRef?.seekTo(restorePositionMs.coerceAtLeast(0L)) }
+                            .onFailure { error -> Log.w(TAG, "U4 resume seek failed", error) }
+                    }
                     if (alarm.overrideSystemVolume) setConfiguredAlarmStreamVolume(alarm)
                     updateAlarmMediaSessionState(PlaybackState.STATE_PLAYING)
                 },
@@ -1384,11 +1388,28 @@ class AlarmService : Service() {
                             source = "AlarmService"
                         )
                         session.onTrackStarted(candidate)
+                        playbackRef?.let { player ->
+                            activeMusicPlayback.set(
+                                ActiveMusicPlayback(
+                                    alarmId = alarm.id,
+                                    fireId = fireId,
+                                    uri = candidate.uri,
+                                    playlistId = session.snapshot.playlistId,
+                                    playback = player
+                                )
+                            )
+                        }
                         MusicPlaybackState.updateTitle(candidate.track.displayTitle)
                         val testId = activeProductionTestSessionId
                         if (testId != null) {
                             onProductionTestTrackStarted(fireId, testId)
                         } else {
+                            if (SnoozeMusicRestoreStore.readEligible(
+                                    this@AlarmService, alarm.id, fireId,
+                                    System.currentTimeMillis()
+                                ) != null) {
+                                SnoozeMusicRestoreStore.clear(this@AlarmService, alarm.id)
+                            }
                             val startedAt = System.currentTimeMillis()
                             serviceScope.launch {
                                 runCatching {
@@ -2976,6 +2997,7 @@ class AlarmService : Service() {
     private fun stopAlarmPlayback() {
         musicSessionGeneration.incrementAndGet()
         activeMusicSession.set(null)
+        activeMusicPlayback.set(null)
         failedMusicUris.clear()
         consecutiveMusicFailures.set(0)
         MusicPlaybackState.updateTitle(null)
