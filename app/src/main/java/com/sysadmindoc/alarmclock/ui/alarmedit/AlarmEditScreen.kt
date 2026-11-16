@@ -69,6 +69,7 @@ import com.sysadmindoc.alarmclock.ui.ringtone.MusicLibraryDialog
 import com.sysadmindoc.alarmclock.ui.ringtone.MusicCatalogPreviewController
 import com.sysadmindoc.alarmclock.ui.ringtone.RingtonePickerSheet
 import com.sysadmindoc.alarmclock.data.readiness.ProductionTestAlarmScheduler
+import com.sysadmindoc.alarmclock.data.readiness.ProductionTestSessionStore
 import com.sysadmindoc.alarmclock.ui.onboarding.OnboardingTestAlarm
 import com.sysadmindoc.alarmclock.service.AlarmService
 import com.sysadmindoc.alarmclock.ui.theme.*
@@ -699,7 +700,23 @@ fun AlarmEditScreen(
                         }
                     },
                     onCancelProductionAlarmTest = {
+                        val activeProof = ProductionTestSessionStore.read(
+                            context, System.currentTimeMillis()
+                        )
                         ProductionTestAlarmScheduler.cancel(context)
+                        if (activeProof != null) {
+                            context.startService(Intent(context, AlarmService::class.java).apply {
+                                action = AlarmService.ACTION_PRODUCTION_TEST_DISMISS
+                                putExtra(
+                                    AlarmService.EXTRA_PRODUCTION_TEST_SESSION_ID,
+                                    activeProof.session.sessionId
+                                )
+                                putExtra(
+                                    ProductionTestAlarmScheduler.EXTRA_TEST_FIRE_ID,
+                                    activeProof.session.fireId()
+                                )
+                            })
+                        }
                         soundPreviewScope.launch {
                             snackbarHostState.showSnackbar(
                                 context.getString(R.string.b2_test_cancelled)
