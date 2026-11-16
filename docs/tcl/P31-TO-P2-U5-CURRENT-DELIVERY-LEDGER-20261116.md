@@ -58,3 +58,30 @@
 
 - G2-A 互斥補強：`63d9790` 禁止新測試覆蓋未結束／未過期的舊 Session；`815d21f` 增加取消後才允許下一 Session 的測試。此層只記錄隔離測試憑證，不排程／不發聲，G2-B/C 必須另行證明。
 - 最新含 G1 + G2-A 程式提交 `815d21fa937158e433f12c4e759708de31bd15e5`；[CI Run 43901925376](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/43901925376) 本次核對為待執行。舊的單獨 `ce4053a` Run 43900172550 因引用尚未提交的 helper 而編譯失敗，後續 `5f4f2b3` 已補 helper；必須等待完整 HEAD CI，不得轉述為已通過。
+
+
+## 2026-11-17｜使用者授權跳過 G1 T3 阻斷，繼續 G2→G3
+
+裁定更新：作者明示不再以實機檢驗阻擋後續寫程式；因此 **Code-Go 允許推進 G2/G3**，但保留 T3 欄位「未驗」而不是「通過」。Android OS 的背景／排程／音訊廠牌限制仍可能使已編譯程式在某手機失敗；對正式作息仍需可靠備援。既有 Room v28、debug 簽章、`main` 保持不變。
+
+### G2 正式音樂鬧鐘端到端診斷：T1 程式接線完成
+- `ProductionTestAlarmScheduler`：獨立 UUID/fireId、資料 URI 區隔的 `PendingIntent`、1 分鐘後精準觸發、一分鐘貪睡再響、取消與 TTL；不調整正常 alarm row／nextTriggerTime。
+- `AlarmReceiver` 測試路由：同一正式 Receiver 元件，收到測試專用 action 才驗證 Session/階段/時戳並進入正式 `AlarmService`；正常廣播流程不變。
+- `AlarmService` 測試執行：專用 Session 模式、復用正式 Media3 隨機連播與系統警示音備援；只有 `onIsPlaying` 實際觀察到才前進測試 `AUDIO_STARTED/AUDIO_RESTARTED`。不寫正式鬧鐘事件／播放歷史，不執行 Guardian／Webhook／正常貪睡 count；真實鬧鐘可搶占測試。
+- `ProductionTestAlarmActivity`：專用響鈴操作畫面；編輯頁保留舊版 B2-0 十秒送達測試，同時新增 **一分鐘正式音樂測試**與取消；中英日三語資源完整。
+- G2-A 既有隔離狀態機與 noBackup proof 仍沿用。相關提交範圍 `3fd10f8`～`39b936d`；該段 CI 判準需以後續最終 HEAD 驗證，不可引用被取消的中間 CI。
+
+### G3 每鬧鐘貪睡音樂模式：T1 正式路徑已接線
+- 編輯音樂設定可選 `RESUME_INTERRUPTED`（同一首歌曲的實際中斷毫秒位置）或 `NEXT_DIFFERENT`（下一次響鈴避免上一首 URI；只有一首可播時保留該首），與原 RANDOM_WITH_REPEATS／SHUFFLE_WITHOUT_REPEATS／PLAYLIST_ORDER 策略並存。
+- `AlarmSnoozeMusicModeStore` 以每鬧鐘 ID 的同步 preference 保存，未修改 Room v28。新建鬧鐘首次儲存與既有鬧鐘編輯皆保存；`AlarmMusicSettingsBackup.snoozeMusicMode` 可供手動匯出／重新匯入時還原新 alarmId 對應偏好。
+- `SnoozeMusicRestoreStore` 使用 noBackup/AtomicFile 寫入，跨程序重啟保留下次 fireId、來源 fireId、URI、positionMs、playlistId、mode、TTL；無效／過期／跨火次拒絕還原，不保留到手動備份。
+- 正式 `AlarmService` 在系統確認下一次貪睡已登記後、釋放 Media3 之前，擷取真正在 `onIsPlaying` 播放的候選與 positionMs。下一次火次驗證清單、Uri 與期限後，同曲從指定位置播放，或使用既有選曲策略排除上一首；無法定位（如 FLV）時回原播放策略及系統鬧鈴備援，避免靜音。
+- 針對 READY 事件早於播放器參照建立的競態，`16df548` 將初始 Media3 seek 移到 `setMediaItem` 後、`prepare` 前。
+- 新增 `SnoozeMusicRuntimeStoreTest`、`SnoozeNextDifferentPolicyTest` 與原有 `SnoozeMusicRestoreCheckpointTest`，驗證過期／跨鬧鐘／單曲／三種策略／原生持久化。
+- G3 程式到 `16df548a4c7bcf07195a68971333c49f88246136`。對應 [CI Run 43963256748](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/43963256748) 目前待完成；**T2 不宣稱通過，T3 依作者選擇暫緩**。
+- 範圍註記：G2 test 模式自有 one-minute snooze，不寫入日常 U4 checkpoint，避免試響覆蓋使用者正在等待的真實貪睡曲目。G2 驗的是正式 Receiver/Service/Media3 起聲及再響；U4 專門測試由本段新測試提供，不冒充 G2 已實機驗證。
+
+### 待收斂
+1. 以包含最後一個 App 修改 SHA 的 CI build／unit tests／second-runner signing 確認 G2+G3，修正實際編譯、測試或簽章錯誤。
+2. 守護跨程序重入、外部取消、來源權限撤銷、普通鬧鐘優先與無候選系統備援。未有 T3 者維持欄位未驗；但**不再因此停止開發**。
+3. 若所有 CI 成功，維持 PR Draft 等後續使用者合併決定，不自行改 main。
