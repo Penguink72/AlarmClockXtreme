@@ -1,5 +1,6 @@
 package com.sysadmindoc.alarmclock.ui.alarmedit
 
+import com.sysadmindoc.alarmclock.domain.SnoozeMusicResumeMode
 import com.sysadmindoc.alarmclock.ui.ringtone.MusicPlaylistKind
 import kotlinx.coroutines.flow.Flow
 
@@ -16,7 +17,8 @@ data class AlarmMusicSettingsDraft(
     val folderFilters: Set<String> = emptySet(),
     val playbackStrategy: AlarmMusicPlaybackStrategy =
         AlarmMusicPlaybackStrategy.RANDOM_WITH_REPEATS,
-    val continuousUntilDismiss: Boolean = true
+    val continuousUntilDismiss: Boolean = true,
+    val snoozeMusicMode: SnoozeMusicResumeMode = SnoozeMusicResumeMode.NEXT_DIFFERENT
 )
 
 data class AlarmMusicPlaylistOption(
@@ -51,6 +53,9 @@ sealed interface AlarmMusicSettingsAction {
     data class SelectPlaylist(val playlistId: String?) : AlarmMusicSettingsAction
     data class SetPlaybackStrategy(
         val strategy: AlarmMusicPlaybackStrategy
+    ) : AlarmMusicSettingsAction
+    data class SetSnoozeMusicMode(
+        val mode: SnoozeMusicResumeMode
     ) : AlarmMusicSettingsAction
 
     data class ToggleArtist(val artistId: String) : AlarmMusicSettingsAction
