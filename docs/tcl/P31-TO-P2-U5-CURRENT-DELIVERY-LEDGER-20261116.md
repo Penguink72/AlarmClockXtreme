@@ -29,3 +29,12 @@
 - 每次新 APK versionCode 必須大於已驗證的 v158，簽章與 `com.sysadmindoc.alarmclock.debug` 不變。
 - 只憑 CI 通過不能宣稱亮屏 10 分鐘貪睡缺陷已修復。
 - 各工程切片可先入庫與 CI；只有「有完整新功能且 CI 合格」才要求使用者實機測試。
+
+
+## 2026-11-16 遠端接續切片（在 PR #13 上）
+- 延伸契約：[G1/G2/G3 施工與驗收閘門](P31-G1-G2-G3-REMOTE-CONTINUATION-20261116.md)，文件提交 `fbabaeb3cc330b2d7b2d51e051d70fb351af6d05`。
+- U4-BASE-A：`AlarmPlaybackPlayer.positionMs(): Long?` 已加入 `MediaPlayerAlarmPlaybackPlayer` 與 `Media3AlarmPlaybackPlayer`，非有效播放位置回傳 null；提交 `53b1cca281afabd05d9ab96ac32a634147451e11`。
+- U4-BASE-B：新增 `SnoozeMusicRestoreCheckpoint` 純資料契約（alarmId、原 fireId、下一次 fireId、URI、播放毫秒、playlistId、模式、時間有效期限），驗證跨鬧鐘／舊 fireId／失效位置／過期快照不可恢復。程式 `76c8862853d451abafda59cfdeadce1f52291756`；5 個 JUnit 個別測試 `f1b013e9f9fd31cb3ec959b1d81a3aaef7597292`。
+- **證據裁定：以上 U4 底座為 T1；新提交的 T2 需讀回最新對應 GitHub Actions，T3 未開始。** 雖有位置 API 與快照型別，尚未接入正式 `AlarmService` 貪睡轉移，未保存 Room、未提供前端選項，也不表示可以續播或換曲。
+- 本切片沒有修改既有 Room v28、正式播放器選曲或貪睡排程。S1 原故障仍為 P0，B2-0 不得當作正式音樂鬧鐘全流程驗證。
+- 下一個可執行切片：優先 G1 的實機故障再現及事件證據；G2-A 獨立 test namespace／正式流程隔離；G3 的持久化與備份先做設計／遷移驗收，不可在無 T3 前重寫播放路徑。
