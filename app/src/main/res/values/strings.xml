@@ -2610,4 +2610,12 @@
     <string name="music_library_system_tones_error">System sound update failed. Your catalog remains available.</string>
     <string name="alarmlist_quick_alarm_created">Quick alarm scheduled for %1$s</string>
     <string name="alarmlist_quick_alarm_schedule_failed">Could not schedule the quick alarm. The saved alarm was disabled; check exact alarm permissions.</string>
+    <string name="alarm_edit_delivery_test_label">OS alarm delivery check</string>
+    <string name="alarm_edit_delivery_test_run">Test in 10 sec</string>
+    <string name="alarm_edit_delivery_test_cancel">Cancel test</string>
+    <string name="alarm_edit_delivery_test_limitation">Uses an isolated default-tone test to check Android scheduling, notifications and wake screen. It does not test this alarm’s music playlist, production playback, or snooze chain.</string>
+    <string name="alarm_edit_delivery_test_active_alarm">Stop the current ringing alarm before running the diagnostic.</string>
+    <string name="alarm_edit_delivery_test_scheduled">Delivery test scheduled for approximately 10 seconds from now.</string>
+    <string name="alarm_edit_delivery_test_failed">Could not schedule delivery test. Check exact alarm access.</string>
+    <string name="alarm_edit_delivery_test_cancelled">Delivery test cancelled.</string>
 </resources>
