@@ -88,3 +88,7 @@
 
 - U4 一致性補強：`a1558ba` 修復「新建立鬧鐘首次儲存」同步保存 snooze mode 的缺口；`a51e905` 避免極短曲目 `onIsPlaying` 先於播放器 adapter 指派，使下一次貪睡找不到上一首歌曲實際播放者。
 - 修補後完整 App SHA `a51e90513e7a0261fc45949d7cb9282bdfc18370`；[CI Run 43963741288](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/43963741288) 已觸發，最後一次讀取仍待執行。GitHub workflow 使用單 branch 並行保護，中間提交的 run 大部分取消，**不能以取消或舊版綠燈為最新程式 T2 結論**。
+
+- 最終 CI 證據補充（本輪）：`34052056df28b1254e684d363e95ed71b12d0647` 的 [Run 43964110045](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/43964110045) 已確認 **Build F-Droid debug APK 成功**、**F-Droid unit tests 816/816（failures=0, errors=0, skipped=0）**；跨 Runner v160 簽章 Job 最後讀取仍 in_progress，故完整 3/3 尚未裁定。
+- `994134ad414336de0965ee769e519334291462fb` 修復 U4 持久化快照讀回時可空 playlistId 的解析，屬前一個成功測試 SHA 之後的新程式變動；[最新 CI Run 43964849123](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/43964849123) 最後查核為 pending。**不得使用 `34052056` 的 816/816 代表 `994134a` 已機械驗證。**
+- 與作者授權一致：原 G1 亮屏十分鐘 T3 未完成，不再阻擋 G2/G3 開發，亦不自動填為 PASS。仍保留真實生活鬧鐘應有的系統備援。
