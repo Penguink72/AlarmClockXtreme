@@ -2634,4 +2634,8 @@
     <string name="b2_test_requires_saved">Save this alarm before running the real music test.</string>
     <string name="b2_test_cancelled">Real music test cancelled.</string>
     <string name="b2_test_saved_only">The test uses the last saved alarm and music settings. Unsaved edits are not included.</string>
+    <string name="u4_snooze_mode_label">Snooze music playback</string>
+    <string name="u4_snooze_resume_position">Continue the interrupted song at its last position</string>
+    <string name="u4_snooze_next_different">Switch to another song</string>
+    <string name="u4_snooze_mode_note">Applies to alarm music. If a track cannot be accessed or seeked, the alarm uses a playable fallback.</string>
 </resources>
