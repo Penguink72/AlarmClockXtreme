@@ -1361,15 +1361,12 @@ class AlarmService : Service() {
                 audioAttributes = AlarmAudioRouting.media3AlarmSonificationAttributes(),
                 repeatMode = Player.REPEAT_MODE_OFF,
                 initialVolume = initialVolume,
+                initialSeekPositionMs = restorePositionMs,
                 onReady = onReady@{
                     // READY only means the media is buffered. Playback can still
                     // be suppressed without sound, so the start watchdog stays
                     // armed until onIsPlayingChanged(true) (onStarted) arrives.
                     if (!isMusicSessionActive(alarm, generation)) return@onReady
-                    if (restorePositionMs != null) {
-                        runCatching { playbackRef?.seekTo(restorePositionMs.coerceAtLeast(0L)) }
-                            .onFailure { error -> Log.w(TAG, "U4 resume seek failed", error) }
-                    }
                     if (alarm.overrideSystemVolume) setConfiguredAlarmStreamVolume(alarm)
                     updateAlarmMediaSessionState(PlaybackState.STATE_PLAYING)
                 },
@@ -1936,6 +1933,7 @@ class AlarmService : Service() {
         audioAttributes: androidx.media3.common.AudioAttributes,
         repeatMode: Int,
         initialVolume: Float,
+        initialSeekPositionMs: Long? = null,
         onReady: () -> Unit,
         onStarted: () -> Unit = {},
         onEnded: () -> Unit,
@@ -1958,6 +1956,9 @@ class AlarmService : Service() {
             val player = playerBuilder.build().apply {
                 setAudioAttributes(audioAttributes, false)
                 setMediaItem(mediaItem)
+                // Apply saved position before prepare/playWhenReady so READY
+                // cannot race the assignment of the player adapter.
+                initialSeekPositionMs?.let { seekTo(it.coerceAtLeast(0L)) }
                 this.repeatMode = repeatMode
                 volume = initialVolume.coerceIn(0f, 1f)
                 addListener(object : Player.Listener {
