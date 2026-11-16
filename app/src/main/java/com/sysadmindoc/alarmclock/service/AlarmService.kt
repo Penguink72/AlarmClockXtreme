@@ -696,7 +696,15 @@ class AlarmService : Service() {
             ProductionTestAlarmScheduler.EXTRA_TEST_FIRE_ID
         ).orEmpty()
         if (activeProductionTestSessionId != sessionId || currentFireId != fireId ||
-            sessionId.isBlank()) return
+            sessionId.isBlank()) {
+            // A late editor cancellation may start an otherwise idle Service.
+            // Do not leave a background Service alive, and never stop a real
+            // alarm or another live diagnostic in this stale-action branch.
+            if (currentAlarmId == -1L && activeProductionTestSessionId == null) {
+                stopSelf()
+            }
+            return
+        }
         serviceScope.launch {
             val now = System.currentTimeMillis()
             val proof = ProductionTestSessionStore.read(this@AlarmService, now)
