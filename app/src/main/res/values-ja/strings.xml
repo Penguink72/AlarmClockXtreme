@@ -573,4 +573,6 @@
     <string name="alarm_edit_preview_current_sound_description">未保存の設定から1曲だけ試聴します。アラーム全体の動作テストではありません。</string>
     <string name="alarm_edit_preview_no_track">この音源には再生できる曲がありません。</string>
     <string name="alarm_edit_preview_failed">選択中の音を試聴できません。</string>
+    <string name="firing_snooze_schedule_failed">スヌーズを予約できませんでした。アラームは鳴り続けます。再試行するか停止してください。</string>
+    <string name="firing_snooze_confirmation_timeout">スヌーズ予約を確認できません。アラームが鳴っていることを確認してから再試行してください。</string>
 </resources>
