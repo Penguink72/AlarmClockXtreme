@@ -261,8 +261,114 @@ val primaryComposeScreenFiles: List<File> = fileTree("src/main/java/com/sysadmin
         }
     }
 
+/**
+ * The existing Kotlin literal guard only verifies that UI copy references a
+ * resource. A missing zh-TW/ja resource silently falls back to English.
+ * Gate the first fully-translated editor surfaces and extend this scope by
+ * file in later L1 slices, rather than copying English into 1,800+ entries.
+ */
+val verifyCoreLocaleCoverage by tasks.registering {
+    group = "verification"
+    description = "Verify trilingual resources and printf placeholders for core alarm preview/snooze UI."
+
+    val guardedSources = listOf(
+        "src/main/java/com/sysadmindoc/alarmclock/ui/alarmedit/AlarmEditOverviewSections.kt",
+        "src/main/java/com/sysadmindoc/alarmclock/ui/alarmedit/AlarmEditDismissSections.kt"
+    )
+    val baseResources = "src/main/res/values/strings.xml"
+    val translated = listOf(
+        "src/main/res/values-b+zh+Hant+TW/strings.xml",
+        "src/main/res/values-ja/strings.xml"
+    )
+    inputs.files((guardedSources + baseResources + translated).map(::file))
+
+    doLast {
+        val resourceId = Regex("""R\.(?:string|plurals|array)\.([A-Za-z0-9_]+)""")
+        val required = guardedSources
+            .flatMap { path -> resourceId.findAll(file(path).readText()).map { it.groupValues[1] }.toList() }
+            .toMutableSet()
+        // These are called by helpers and cannot be located by walking only
+        // the two composable entry files. Keep their namespace explicit.
+        required += listOf(
+            "alarm_edit_day_monday_short", "alarm_edit_day_tuesday_short",
+            "alarm_edit_day_wednesday_short", "alarm_edit_day_thursday_short",
+            "alarm_edit_day_friday_short", "alarm_edit_day_saturday_short",
+            "alarm_edit_day_sunday_short",
+            "alarm_edit_repeat_once", "alarm_edit_repeat_daily",
+            "alarm_edit_repeat_weekdays", "alarm_edit_repeat_weekends",
+            "alarm_edit_challenge_none"
+        )
+
+        // XML is parsed structurally; a lexical grep cannot see malformed
+        // plurals or properly resolve nested resource elements.
+        fun resources(path: String): Map<String, Triple<Boolean, String, List<String>>> {
+            val factory = javax.xml.parsers.DocumentBuilderFactory.newInstance()
+            factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true)
+            val doc = factory.newDocumentBuilder().parse(file(path))
+            val nodes = doc.documentElement.childNodes
+            val parsed = mutableMapOf<String, Triple<Boolean, String, List<String>>>()
+            for (i in 0 until nodes.length) {
+                val element = nodes.item(i) as? org.w3c.dom.Element ?: continue
+                if (element.tagName !in setOf("string", "plurals", "string-array")) continue
+                val name = element.getAttribute("name")
+                if (name.isBlank()) continue
+                val strings = if (element.tagName == "plurals") {
+                    val items = element.getElementsByTagName("item")
+                    val other = (0 until items.length)
+                        .mapNotNull { items.item(it) as? org.w3c.dom.Element }
+                        .firstOrNull { it.getAttribute("quantity") == "other" }
+                    listOf(other?.textContent.orEmpty())
+                } else {
+                    listOf(element.textContent.orEmpty())
+                }
+                check(parsed.put(
+                    name,
+                    Triple(element.getAttribute("translatable") != "false", element.tagName, strings)
+                ) == null) { "Duplicate locale resource: $path: $name" }
+            }
+            return parsed
+        }
+
+        // Reject incompatible format argument types, e.g. English %1$d but
+        // a translated %1$s. Percent escapes (%%) are not format arguments.
+        val formatArgs = Regex("""%(?:\d+\$)?[-+# 0,(]*\d*(?:\.\d+)?[a-zA-Z]""")
+        fun args(value: String) = formatArgs.findAll(value).map { it.value }.sorted().toList()
+        val base = resources(baseResources)
+        val errors = mutableListOf<String>()
+        for (locale in translated) {
+            val values = resources(locale)
+            for (key in required.sorted()) {
+                val en = base[key]
+                if (en == null) {
+                    errors += "Missing English source: $key"
+                    continue
+                }
+                if (!en.first) continue // translatable=false wire/config value
+                val localized = values[key]
+                if (localized == null) {
+                    errors += "$locale is missing $key"
+                    continue
+                }
+                if (localized.second != en.second) {
+                    errors += "$locale resource type differs for $key"
+                } else if (localized.third.any { it.isBlank() }) {
+                    errors += "$locale has empty value or missing plurals.other for $key"
+                } else if (args(en.third.first()) != args(localized.third.first())) {
+                    errors += "$locale format arguments differ for $key: " +
+                        "${args(en.third.first())} vs ${args(localized.third.first())}"
+                }
+            }
+        }
+        if (errors.isNotEmpty()) {
+            throw GradleException("Core locale coverage failed:\n" + errors.joinToString("\n"))
+        }
+        println("CORE_LOCALE_COVERAGE key_count=${required.count { base[it]?.first == true }} locales=zh-TW,ja missing=0 format_errors=0")
+    }
+}
+
 val verifyLocalizedPrimaryScreens by tasks.registering {
     group = "verification"
+    dependsOn(verifyCoreLocaleCoverage)
     // Deliberately narrow: this rejects literals in the shapes listed below, not
     // "all hardcoded text". It cannot tell a `when` arm feeding a Text from one
     // feeding an API query parameter, and it does not follow a string through a
