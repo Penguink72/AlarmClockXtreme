@@ -8,6 +8,8 @@ import com.sysadmindoc.alarmclock.data.preferences.AppSettings
 import com.sysadmindoc.alarmclock.data.preferences.DEFAULT_NEWS_FEED_URL
 import com.sysadmindoc.alarmclock.data.preferences.PreferencesManager
 import com.sysadmindoc.alarmclock.data.repository.AlarmRepository
+import com.sysadmindoc.alarmclock.domain.AlarmSnoozeMusicModeStore
+import com.sysadmindoc.alarmclock.domain.SnoozeMusicResumeMode
 import com.sysadmindoc.alarmclock.domain.AlarmScheduler
 import com.sysadmindoc.alarmclock.domain.LongPressThreshold
 import com.squareup.moshi.JsonClass
@@ -143,7 +145,8 @@ data class AlarmMusicSettingsBackup(
     val playbackStrategy: String = "RANDOM_WITH_REPEATS",
     val artistFilters: List<String> = emptyList(),
     val folderFilters: List<String> = emptyList(),
-    val continuousUntilDismiss: Boolean = true
+    val continuousUntilDismiss: Boolean = true,
+    val snoozeMusicMode: String = "NEXT_DIFFERENT"
 )
 
 @JsonClass(generateAdapter = true)
@@ -577,7 +580,13 @@ class BackupManager @Inject constructor(
         }.getOrDefault(emptyList())
         val alarmMusicSettingsBackup = runCatching {
             musicLibraryRepository?.exportAlarmMusicSettingsForBackup(alarms.map { it.id }).orEmpty()
-        }.getOrDefault(emptyList())
+        }.getOrDefault(emptyList()).map { setting ->
+            setting.copy(
+                snoozeMusicMode = AlarmSnoozeMusicModeStore.get(
+                    context, setting.alarmId
+                ).name
+            )
+        }
 
         val backup = BackupData(
             alarms = alarms.map { alarm -> alarm.toAlarmBackup() },
@@ -988,6 +997,12 @@ class BackupManager @Inject constructor(
                                 savedAlarm.id,
                                 musicSettings
                             )
+                            val mode = runCatching {
+                                SnoozeMusicResumeMode.valueOf(musicSettings.snoozeMusicMode)
+                            }.getOrDefault(SnoozeMusicResumeMode.NEXT_DIFFERENT)
+                            check(AlarmSnoozeMusicModeStore.save(context, savedAlarm.id, mode)) {
+                                "Could not restore snooze playback preference"
+                            }
                         }
                     }
                     if (savedAlarm.isEnabled) {
