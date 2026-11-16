@@ -2608,4 +2608,6 @@
     <string name="music_library_system_tones_excluded">Excluded %1$d suspected system sounds.</string>
     <string name="music_library_system_tones_restored">Restored prior membership for %1$d tracks.</string>
     <string name="music_library_system_tones_error">System sound update failed. Your catalog remains available.</string>
+    <string name="alarmlist_quick_alarm_created">Quick alarm scheduled for %1$s</string>
+    <string name="alarmlist_quick_alarm_schedule_failed">Could not schedule the quick alarm. The saved alarm was disabled; check exact alarm permissions.</string>
 </resources>
