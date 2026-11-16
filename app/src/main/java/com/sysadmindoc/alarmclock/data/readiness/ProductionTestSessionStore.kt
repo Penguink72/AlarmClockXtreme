@@ -32,6 +32,19 @@ internal object ProductionTestSessionStore {
     fun writeNew(context: Context, session: ProductionTestSession): Boolean =
         synchronized(lock) {
             if (!session.valid()) return@synchronized false
+            // A test cannot silently replace an unfinished test from a
+            // previous Activity or service process. Require explicit cancel
+            // or let the bounded TTL expire.
+            val previous = readRaw(context)
+            if (previous != null && previous.session.isActiveAt(session.createdAtMs) &&
+                previous.stage !in setOf(
+                    ProductionTestStage.DISMISSED,
+                    ProductionTestStage.CANCELLED,
+                    ProductionTestStage.FAILED
+                )
+            ) {
+                return@synchronized false
+            }
             write(context, ProductionTestProof(session, ProductionTestStage.PREPARED, session.createdAtMs))
         }
 
