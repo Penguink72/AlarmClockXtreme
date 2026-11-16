@@ -90,6 +90,8 @@ internal fun LazyListScope.alarmEditSoundSections(
     onStopSoundPreview: () -> Unit = {},
     onRunSystemAlarmDeliveryTest: () -> Unit = {},
     onCancelSystemAlarmDeliveryTest: () -> Unit = {},
+    onRunProductionAlarmTest: () -> Unit = {},
+    onCancelProductionAlarmTest: () -> Unit = {},
     previewActive: Boolean = false,
     previewBusy: Boolean = false
 ) {
@@ -233,6 +235,20 @@ internal fun LazyListScope.alarmEditSoundSections(
             stringResource(R.string.alarm_edit_delivery_test_limitation),
             tone = HintTone.Neutral
         )
+
+        // Separate production-path diagnostic. The onboarding delivery-only
+        // test above is retained and explicitly named for its narrower scope.
+        SettingsRow(label = stringResource(R.string.b2_test_title)) {
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                OutlinedButton(onClick = onRunProductionAlarmTest) {
+                    Text(stringResource(R.string.b2_test_run))
+                }
+                OutlinedButton(onClick = onCancelProductionAlarmTest) {
+                    Text(stringResource(R.string.b2_test_cancel))
+                }
+            }
+        }
+        SettingsHint(stringResource(R.string.b2_test_saved_only), tone = HintTone.Neutral)
 
         SettingsRow(
             label = stringResource(R.string.alarm_edit_override_volume),
