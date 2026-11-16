@@ -10,7 +10,7 @@ import java.io.File
  * manual user backup. Atomic write completes BEFORE the ringing player stops.
  * A source/target fire mismatch, expiry or corrupt URI fails closed.
  */
-object SnoozeMusicRestoreStore {
+internal object SnoozeMusicRestoreStore {
     private val lock = Any()
 
     private fun file(context: Context, alarmId: Long): AtomicFile =
