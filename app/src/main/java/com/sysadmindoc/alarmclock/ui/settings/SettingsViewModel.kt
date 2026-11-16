@@ -116,7 +116,8 @@ data class SettingsIncidentTimelineState(
     val latestReason: String? = null,
     val latestEventAt: Long? = null,
     val latestElapsedMs: Long? = null,
-    val latestIsDegraded: Boolean = false
+    val latestIsDegraded: Boolean = false,
+    val recentEvents: List<AlarmIncidentEvent> = emptyList()
 ) {
     val hasIncidents: Boolean
         get() = recentCount > 0
@@ -133,7 +134,8 @@ data class SettingsIncidentTimelineState(
                 latestReason = latest?.reasonCode,
                 latestEventAt = latest?.eventAt,
                 latestElapsedMs = latest?.elapsedMs,
-                latestIsDegraded = notable != null
+                latestIsDegraded = notable != null,
+                recentEvents = sanitized.take(16)
             )
         }
 
@@ -182,7 +184,7 @@ class SettingsViewModel @Inject constructor(
     private val _wakeReadinessState = MutableStateFlow(WakeReadinessState.from(application))
     private val _healthConnectSleepState = MutableStateFlow(HealthConnectSleepSummary())
 
-    private val incidentTimelineState = alarmIncidentRepository.observeRecent(limit = 10)
+    private val incidentTimelineState = alarmIncidentRepository.observeRecent(limit = 50)
         .map { SettingsIncidentTimelineState.from(it) }
         .catch { emit(SettingsIncidentTimelineState()) }
 
