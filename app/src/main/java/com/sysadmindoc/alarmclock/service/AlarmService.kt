@@ -567,7 +567,11 @@ class AlarmService : Service() {
      */
     private fun startProductionTest(intent: Intent, sessionId: String) {
         val now = System.currentTimeMillis()
-        val proof = ProductionTestSessionStore.read(this, now) ?: return
+        val proof = ProductionTestSessionStore.read(this, now)
+        if (proof == null) {
+            rejectUnmatchedProductionTestStart()
+            return
+        }
         val session = proof.session
         val alarmId = intent.getLongExtra(AlarmScheduler.EXTRA_ALARM_ID, -1L)
         val fireId = intent.getStringExtra(AlarmScheduler.EXTRA_ALARM_FIRE_ID).orEmpty()
@@ -577,7 +581,10 @@ class AlarmService : Service() {
             ProductionTestStage.SNOOZE_DELIVERED
         }
         if (session.sourceAlarmId != alarmId || proof.stage != expected ||
-            !session.canAccept(sessionId, fireId, now)) return
+            !session.canAccept(sessionId, fireId, now)) {
+            rejectUnmatchedProductionTestStart()
+            return
+        }
         if (currentAlarmId != -1L || activeProductionTestSessionId != null) {
             ProductionTestSessionStore.advance(
                 this, sessionId, fireId, ProductionTestStage.FAILED, now
@@ -646,6 +653,18 @@ class AlarmService : Service() {
                 }
             }
         }
+    }
+
+    private fun rejectUnmatchedProductionTestStart() {
+        // The receiver may have handed off a test before its cancellation
+        // committed. Android still requires a foreground-service response.
+        // Never touch an unrelated live alarm while rejecting an old test.
+        if (currentAlarmId != -1L) return
+        startForegroundWithPlaceholder()
+        if (isForeground.compareAndSet(true, false)) {
+            stopForeground(STOP_FOREGROUND_REMOVE)
+        }
+        stopSelf()
     }
 
     private fun onProductionTestTrackStarted(fireId: String, sessionId: String) {
