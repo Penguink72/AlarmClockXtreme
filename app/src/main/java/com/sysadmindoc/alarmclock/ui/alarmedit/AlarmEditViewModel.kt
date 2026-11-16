@@ -11,6 +11,7 @@ import com.sysadmindoc.alarmclock.data.repository.AlarmRepository
 import com.sysadmindoc.alarmclock.data.repository.MusicLibraryRepository
 import com.sysadmindoc.alarmclock.domain.AlarmScheduler
 import com.sysadmindoc.alarmclock.domain.LocationDismissPolicy
+import com.sysadmindoc.alarmclock.domain.AlarmSnoozeMusicModeStore
 import com.sysadmindoc.alarmclock.domain.NextAlarmCalculator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -285,6 +286,7 @@ class AlarmEditViewModel @Inject constructor(
             val initialMusicDraft = if (alarmId > 0) {
                 runCatching { musicLibraryRepository.getSettings(alarmId) }
                     .getOrElse { AlarmMusicSettingsDraft() }
+                    .copy(snoozeMusicMode = AlarmSnoozeMusicModeStore.get(context, alarmId))
             } else {
                 AlarmMusicSettingsDraft()
             }
@@ -347,6 +349,15 @@ class AlarmEditViewModel @Inject constructor(
                     )
                 }
                 refreshMusicSettingsEvaluation()
+            }
+            is AlarmMusicSettingsAction.SetSnoozeMusicMode -> {
+                _alarmMusicSettingsState.update { current ->
+                    current.copy(
+                        draft = current.draft.copy(snoozeMusicMode = action.mode),
+                        saved = false,
+                        error = null
+                    )
+                }
             }
             is AlarmMusicSettingsAction.SetPlaybackStrategy -> {
                 _alarmMusicSettingsState.update { state ->
@@ -435,6 +446,9 @@ class AlarmEditViewModel @Inject constructor(
                         _alarmMusicSettingsState.update { it.copy(saving = true, error = null) }
                         runCatching {
                             musicLibraryRepository.saveSettings(alarmId, draft)
+                            check(AlarmSnoozeMusicModeStore.save(
+                                context, alarmId, draft.snoozeMusicMode
+                            )) { "Failed to persist per-alarm snooze mode" }
                         }.onSuccess {
                             _alarmMusicSettingsState.update {
                                 it.copy(saving = false, saved = true, error = null)
