@@ -850,4 +850,46 @@
     <string name="firing_challenge_difference_support">比較兩個方格，點選唯一不同的格子。</string>
     <string name="firing_challenge_chess_support">在小棋盤上選出一步將死的棋步。</string>
     <string name="firing_challenge_rsvp_support">閱讀快速顯示的文字，再選出出現過的單字。</string>
+    <!-- L1-B: wake-up challenge status messages and count formats -->
+    <string name="firing_challenge_math_status">完成下方算術題才能解除。</string>
+    <string name="firing_challenge_shake_status">持續搖晃手機，直到達到目標。</string>
+    <string name="firing_challenge_sequence_status">依數字由小到大的順序點選。</string>
+    <string name="firing_challenge_memory_status">先記住圖案，再重現順序。</string>
+    <string name="firing_challenge_typing_status">完全依照顯示內容輸入短句。</string>
+    <string name="firing_challenge_voice_status">說出下方短句，或使用文字輸入備援。</string>
+    <string name="firing_challenge_handwriting_status">手寫顯示的文字，或使用文字輸入備援。</string>
+    <string name="firing_challenge_walk_status">走完指定步數，確認已經起床。</string>
+    <string name="firing_challenge_nfc_status">感應已儲存的 NFC 標籤以繼續。</string>
+    <string name="firing_challenge_barcode_status">掃描已儲存的條碼或 QR Code。</string>
+    <string name="firing_challenge_photo_status">拍攝相符的照片以完成起床任務。</string>
+    <string name="firing_challenge_squat_status">完成指定的深蹲次數。</string>
+    <string name="firing_challenge_pushup_status">將手機放在地板上並完成指定次數的伏地挺身。</string>
+    <string name="firing_challenge_plank_status">維持手機水平，直到指定時間結束。</string>
+    <string name="firing_challenge_maze_status">避開牆壁並找到出口。</string>
+    <string name="firing_challenge_wifi_status">重新連線至指定的 Wi-Fi 網路。</string>
+    <string name="firing_challenge_sheep_status">點選每隻羊，避開山羊。</string>
+    <string name="firing_challenge_simon_status">等候播放完畢，再依序點選色塊。</string>
+    <string name="firing_challenge_date_status">將今天的日期完整倒序輸入。</string>
+    <string name="firing_challenge_stroop_status">點選文字顯示的顏色。</string>
+    <string name="firing_challenge_rps_status">贏得三局即可解除鬧鐘。</string>
+    <string name="firing_challenge_emoji_status">翻開表情符號並完成所有配對。</string>
+    <string name="firing_challenge_speed_status">快速且準確地輸入短句以繼續。</string>
+    <string name="firing_challenge_wordle_status">輸入五個字母的猜測，利用顏色提示解題。</string>
+    <string name="firing_challenge_pvt_status">看到綠色方塊時立即點選。</string>
+    <string name="firing_challenge_difference_status">點選右側方格中發生變化的格子。</string>
+    <string name="firing_challenge_chess_status">選出一步將死的棋步。</string>
+    <string name="firing_challenge_rsvp_status">觀看快速出現的文字，再選出曾看過的單字。</string>
+    <string name="firing_challenge_none_status">準備好時，滑動或點選即可解除。</string>
+    <string name="firing_hold_accessibility">按住「解除」%1$.1f 秒</string>
+    <string name="firing_challenge_before_dismiss">解除前請先完成喚醒挑戰</string>
+    <string name="firing_keep_holding">請繼續按住</string>
+    <string name="firing_hold_to_dismiss_short">長按 %1$.1f 秒解除</string>
+    <string name="firing_snooze_for_minutes">貪睡 %1$d 分鐘</string>
+    <string name="firing_minutes_short">%1$d 分鐘</string>
+    <string name="firing_decrease_snooze">縮短貪睡分鐘數</string>
+    <string name="firing_snooze_minutes">貪睡 %1$d 分鐘</string>
+    <string name="firing_increase_snooze">增加貪睡分鐘數</string>
+    <string name="firing_default">預設</string>
+    <plurals name="firing_retry_count"><item quantity="other">已重試 %1$d 次</item></plurals>
+    <plurals name="firing_snoozes_left"><item quantity="other">還可貪睡 %1$d 次</item></plurals>
 </resources>
