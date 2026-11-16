@@ -892,4 +892,15 @@
     <string name="firing_default">既定</string>
     <plurals name="firing_retry_count"><item quantity="other">再試行%1$d回</item></plurals>
     <plurals name="firing_snoozes_left"><item quantity="other">あと%1$d回スヌーズできます</item></plurals>
+    <string name="b2_test_title">実際の音楽アラーム経路テスト</string>
+    <string name="b2_test_description">保存済みの音源とアラーム再生経路を使用します。通常の予定と再生履歴は変更しません。</string>
+    <string name="b2_test_run">音楽アラームをテスト（1 分後）</string>
+    <string name="b2_test_cancel">音楽テストを中止</string>
+    <string name="b2_test_snooze">スヌーズテスト：1 分後に再通知</string>
+    <string name="b2_test_dismiss">音楽テストを終了</string>
+    <string name="b2_test_scheduled">約 1 分後に音楽アラームのテストを設定しました。</string>
+    <string name="b2_test_failed">テストを設定できません。アラーム権限と他のテストを確認してください。</string>
+    <string name="b2_test_requires_saved">このアラームを保存してから音楽テストを実行してください。</string>
+    <string name="b2_test_cancelled">音楽テストを中止しました。</string>
+    <string name="b2_test_saved_only">テストには保存済みのアラームと音楽設定を使用します。未保存の変更は含まれません。</string>
 </resources>
