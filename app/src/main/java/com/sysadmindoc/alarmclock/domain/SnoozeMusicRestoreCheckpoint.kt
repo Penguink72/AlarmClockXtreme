@@ -5,7 +5,7 @@ package com.sysadmindoc.alarmclock.domain
  * The caller must capture a position only after a real onIsPlaying=true callback,
  * before the player is released for snooze.
  */
-internal enum class SnoozeMusicResumeMode {
+enum class SnoozeMusicResumeMode {
     RESUME_INTERRUPTED,
     NEXT_DIFFERENT
 }
