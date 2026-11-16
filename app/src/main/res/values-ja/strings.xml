@@ -725,4 +725,6 @@
     <string name="music_library_system_tones_excluded">システム音の候補%1$d件を除外しました。</string>
     <string name="music_library_system_tones_restored">%1$d件の元の登録状態を復元しました。</string>
     <string name="music_library_system_tones_error">システム音の除外更新に失敗しました。ライブラリは引き続き利用できます。</string>
+    <string name="alarmlist_quick_alarm_created">クイックアラームを%1$sに設定しました</string>
+    <string name="alarmlist_quick_alarm_schedule_failed">クイックアラームを設定できませんでした。保存済みのアラームを無効にしました。正確なアラームの権限を確認してください。</string>
 </resources>
