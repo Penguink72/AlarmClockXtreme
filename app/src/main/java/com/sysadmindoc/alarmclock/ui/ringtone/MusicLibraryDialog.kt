@@ -24,6 +24,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
@@ -341,6 +342,52 @@ private fun MusicCatalogContent(
     modifier: Modifier = Modifier
 ) {
     val coroutineScope = rememberCoroutineScope()
+    var confirmSystemToneExclusion by rememberSaveable { mutableStateOf(false) }
+    val systemToneCandidates = remember(
+        state.poolTracks, state.supplementalCatalog.trackMetadataByUri
+    ) {
+        recognizedSystemToneCandidates(
+            state.poolTracks, state.supplementalCatalog.trackMetadataByUri
+        )
+    }
+    if (confirmSystemToneExclusion) {
+        AlertDialog(
+            onDismissRequest = { confirmSystemToneExclusion = false },
+            title = { Text(stringResource(R.string.music_library_system_tones_preview_title)) },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(stringResource(
+                        R.string.music_library_system_tones_preview_detail,
+                        systemToneCandidates.size
+                    ))
+                    systemToneCandidates.take(5).forEach { candidate ->
+                        Text("• " + candidate.track.displayTitle, maxLines = 1,
+                            overflow = TextOverflow.Ellipsis)
+                    }
+                    Text(
+                        stringResource(R.string.music_library_system_tones_false_positive_warning),
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    enabled = systemToneCandidates.isNotEmpty() && !state.loadingPool,
+                    onClick = {
+                        confirmSystemToneExclusion = false
+                        viewModel.excludeRecognizedSystemTones()
+                    }
+                ) {
+                    Text(stringResource(R.string.music_library_system_tones_confirm))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { confirmSystemToneExclusion = false }) {
+                    Text(stringResource(R.string.music_library_system_tones_cancel))
+                }
+            }
+        )
+    }
     val previewState by previewController?.state?.collectAsStateWithLifecycle()
         ?: remember { mutableStateOf(MusicCatalogPreviewState()) }
     // Cache the 4,000+ track filter across unrelated scan/status/audio-state
@@ -590,6 +637,28 @@ private fun MusicCatalogContent(
             }
             OutlinedButton(onClick = onManageSources) {
                 Text(stringResource(R.string.music_library_sources_button))
+            }
+        }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            OutlinedButton(
+                enabled = systemToneCandidates.isNotEmpty() &&
+                    !state.loadingPool && !state.scanning,
+                onClick = { confirmSystemToneExclusion = true }
+            ) {
+                Text(stringResource(
+                    R.string.music_library_system_tones_preview_button,
+                    systemToneCandidates.size
+                ))
+            }
+            if (state.systemToneUndoCount > 0) {
+                TextButton(
+                    enabled = !state.loadingPool && !state.scanning,
+                    onClick = viewModel::undoRecognizedSystemToneExclusion
+                ) { Text(stringResource(R.string.music_library_system_tones_undo)) }
             }
         }
         OutlinedButton(
