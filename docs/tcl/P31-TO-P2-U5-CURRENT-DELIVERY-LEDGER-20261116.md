@@ -39,3 +39,19 @@
 - 本切片沒有修改既有 Room v28、正式播放器選曲或貪睡排程。S1 原故障仍為 P0，B2-0 不得當作正式音樂鬧鐘全流程驗證。
 - 下一個可執行切片：優先 G1 的實機故障再現及事件證據；G2-A 獨立 test namespace／正式流程隔離；G3 的持久化與備份先做設計／遷移驗收，不可在無 T3 前重寫播放路徑。
 - U4-BASE-C：補 `AlarmPlaybackPositionTest` 2 個 JUnit cases，MockK 驗證原生播放器位置以及無效／已釋放時回 null。程式提交 `213f444f4895ca6d459166c81ddf049bbae108d3`。對應 [Actions Run 43886583035](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/43886583035) 已觸發但本次讀取時未完成；因此 T2 未裁定。
+
+
+## 2026-11-16 夜間接續｜G1 與 G2-A（T1 已推送，T2 依最新 HEAD CI 另驗）
+
+### G1 冷啟動貪睡前景服務修補（P0）
+- 檢查發現 `SnoozeReceiver` 使用 `startForegroundService()`，而 `AlarmService.ACTION_SNOOZE` 從 `currentAlarmId=-1` 的冷啟動路徑僅恢復計數、非同步呼叫 `snoozeAlarm()`，沒有在 Service 回呼內即時 `startForeground()`。此接縫可能於 Android 14+ 在排程前被服務啟動時限中止；**尚未證實是原始亮屏十分鐘不再響的主因**。
+- `ce4053a`：在冷啟動通知貪睡同步建立前景 placeholder，記錄 `COLD_SNOOZE_COMMAND_RECEIVED`；拒絕／例外時關閉僅屬於該火次的恢復服務，不影響後來搶占的鬧鐘。
+- `5f4f2b3`、`c15eab2`：將失敗回收條件抽為 `shouldStopRejectedColdSnooze`，測試拒絕、已接受、跨鬧鐘、無效 fireId 等。 `1052743` 補明確可空 ACK 判定。
+- **T2 必須看包含上述所有提交的最新完整 CI**；早期 `ce4053a` 單獨跑出的編譯失敗，是後續才新增的 helper 尚不存在，不可把中間 SHA 的結果冒充最終 SHA。T3 原樣保留「手機保持亮屏、右滑貪睡 10 分鐘必須再次起聲」。
+
+### G2-A 隔離式正式測試底座（B2-production 仍未完成）
+- `3ac4be2`、`814ed51`：`ProductionTestSession` 以 UUID + `b2-test:` 專用 fireId + 最多兩次起聲／15 分鐘 TTL 隔離，不可將一般 fireId 當作測試；完整證據必須依序 `REGISTERED→RECEIVER_DELIVERED→SERVICE_ACKNOWLEDGED→AUDIO_STARTED→SNOOZE_REGISTERED→SNOOZE_DELIVERED→AUDIO_RESTARTED→DISMISSED`，禁止跳步偽造成功。
+- `9661650`、`2c95dff`、`6c263d9`：原子檔案 `ProductionTestSessionStore` 寫入 `noBackupFilesDir`，不使用使用者鬧鐘的 Room、播放歷史或既有 Onboarding proof；配備跨讀回、時鐘過期、其他 Session、拒絕跳步、取消等 Robolectric 測試。
+- **本次 G2-A 只有隔離的資料模型與持久化憑證；尚未有 AlarmManager→正式 Receiver→AlarmService→Media3 的測試派送、未有 1 分鐘再響及 UI**。不能把 G2-A 當成 G2 完工；不能以舊 B2-0 系統送達測試取代。
+- 不在 G2 正式隔離入口就緒之前開啟測試播放或轉發外部整合。避免測試錯改真實鬧鐘、寫入歷史、啟動 Guardian/webhook、碰撞現有播放 Session。
+- **G3 保持原有 U4 底座，未接入正式播放路徑**。下一工程入口依 G2-B 安全隔離設計；G1 仍需 T3 完成才能完整結案。
