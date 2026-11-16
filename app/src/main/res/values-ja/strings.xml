@@ -735,4 +735,9 @@
     <string name="alarm_edit_delivery_test_scheduled">約10秒後の配信テストを予約しました。</string>
     <string name="alarm_edit_delivery_test_failed">配信テストを予約できませんでした。正確なアラームの権限を確認してください。</string>
     <string name="alarm_edit_delivery_test_cancelled">配信テストを中止しました。</string>
+    <string name="settings_show_incident_events">直近のイベント履歴を表示</string>
+    <string name="settings_hide_incident_events">イベント履歴を隠す</string>
+    <string name="settings_export_incident_diagnostics">診断データを共有</string>
+    <string name="settings_incident_row_summary">%1$s · %2$s</string>
+    <string name="settings_incident_row_reason">発生元：%1$s · コード：%2$s</string>
 </resources>
