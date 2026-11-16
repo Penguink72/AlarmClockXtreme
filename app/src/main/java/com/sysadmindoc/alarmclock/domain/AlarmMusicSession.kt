@@ -180,6 +180,22 @@ class AlarmMusicSession(
         return NextAlarmTrackDecision.PlayTrack(next)
     }
 
+    /**
+     * U4 NEXT_DIFFERENT: apply the existing strategy with the interrupted URI
+     * excluded for this first choice. A one-song pool remains playable.
+     */
+    fun selectFirstTrackAvoiding(interruptedUri: String): NextAlarmTrackDecision {
+        val failed = failedUriSnapshot()
+        val distinctPlayable = snapshot.eligibleEntries(failed)
+            .map { it.uri }.distinct()
+        val effective = if (distinctPlayable.size > 1 && interruptedUri in distinctPlayable) {
+            snapshot.copy(entries = snapshot.entries.filterNot { it.uri == interruptedUri })
+        } else snapshot
+        val next = policy.selectNext(effective, failed)
+            ?: return NextAlarmTrackDecision.FallbackToDefaultTone("NO_ELIGIBLE_MUSIC_TRACKS")
+        return NextAlarmTrackDecision.PlayTrack(next)
+    }
+
     fun onTrackStarted(candidate: PlaybackTrackCandidate) {
         consecutiveFailures.set(0)
         policy.onTrackStarted(candidate)
