@@ -714,4 +714,15 @@
     <plurals name="alarm_edit_squats"><item quantity="other">%1$d 次深蹲</item></plurals>
     <plurals name="alarm_edit_challenges"><item quantity="other">%1$d 項挑戰</item></plurals>
     <plurals name="alarm_edit_meters"><item quantity="other">%1$d 公尺</item></plurals>
+    <!-- P2-U5: user-reviewed reversible exclusion of likely MediaStore system sounds. -->
+    <string name="music_library_system_tones_preview_title">疑似系統鈴聲</string>
+    <string name="music_library_system_tones_preview_detail">以下 %1$d 首已索引曲目被標記為系統鈴聲，請確認後再排除。</string>
+    <string name="music_library_system_tones_false_positive_warning">系統鈴聲標記與資料夾名稱無法證明檔案一定是出廠預設。僅排除已辨識的 MediaStore 音效，不更動 SAF 資料夾；可復原。</string>
+    <string name="music_library_system_tones_confirm">排除這些候選音效</string>
+    <string name="music_library_system_tones_cancel">取消</string>
+    <string name="music_library_system_tones_preview_button">檢視系統鈴聲候選（%1$d）</string>
+    <string name="music_library_system_tones_undo">復原排除</string>
+    <string name="music_library_system_tones_excluded">已排除 %1$d 首疑似系統鈴聲。</string>
+    <string name="music_library_system_tones_restored">已復原 %1$d 首曲目的原始加入狀態。</string>
+    <string name="music_library_system_tones_error">無法更新系統鈴聲排除狀態，音樂庫仍可使用。</string>
 </resources>
