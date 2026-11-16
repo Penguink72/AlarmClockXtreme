@@ -439,6 +439,17 @@ fun AlarmListScreen(
                     )
                 }
 
+                // Five-second alarm goal: an existing one-tap quick alarm must
+                // be reachable without scrolling past a long alarm list.
+                item {
+                    Box(modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp)) {
+                        QuickAlarmRow(
+                            onQuickAlarm = viewModel::createQuickAlarm,
+                            napDefaultMinutes = state.napDefaultMinutes
+                        )
+                    }
+                }
+
                 item {
                     RecentPlaybackCard(
                         recentHistory = recentHistory,
@@ -753,14 +764,6 @@ fun AlarmListScreen(
                     }
                 }
 
-                item {
-                    Box(modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp)) {
-                        QuickAlarmRow(
-                            onQuickAlarm = viewModel::createQuickAlarm,
-                            napDefaultMinutes = state.napDefaultMinutes
-                        )
-                    }
-                }
                 if (youTubeAvailable) {
                     item {
                         YouTubeDownloadCard(
@@ -1276,7 +1279,8 @@ private fun QuickAlarmRow(
                 .horizontalScroll(rememberScrollState()),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            listOf(10 to "10 min", 30 to "30 min", 60 to "1 hour", 120 to "2 hours").forEach { (minutes, label) ->
+            listOf(10, 30, 60, 120).forEach { minutes ->
+                val label = stringResource(R.string.alarmlist_min, minutes)
                 AppFilterChip(
                     label = label,
                     selected = false,
