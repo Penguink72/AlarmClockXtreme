@@ -727,4 +727,12 @@
     <string name="music_library_system_tones_error">システム音の除外更新に失敗しました。ライブラリは引き続き利用できます。</string>
     <string name="alarmlist_quick_alarm_created">クイックアラームを%1$sに設定しました</string>
     <string name="alarmlist_quick_alarm_schedule_failed">クイックアラームを設定できませんでした。保存済みのアラームを無効にしました。正確なアラームの権限を確認してください。</string>
+    <string name="alarm_edit_delivery_test_label">システムアラームの配信テスト</string>
+    <string name="alarm_edit_delivery_test_run">10秒後にテスト</string>
+    <string name="alarm_edit_delivery_test_cancel">テストを中止</string>
+    <string name="alarm_edit_delivery_test_limitation">システム標準音を使った独立テストで、Androidの予約・通知・画面起動を確認します。このアラームのプレイリスト、通常の再生、スヌーズは検証しません。</string>
+    <string name="alarm_edit_delivery_test_active_alarm">現在鳴っているアラームを停止してからテストしてください。</string>
+    <string name="alarm_edit_delivery_test_scheduled">約10秒後の配信テストを予約しました。</string>
+    <string name="alarm_edit_delivery_test_failed">配信テストを予約できませんでした。正確なアラームの権限を確認してください。</string>
+    <string name="alarm_edit_delivery_test_cancelled">配信テストを中止しました。</string>
 </resources>
