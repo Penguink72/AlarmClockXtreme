@@ -55,3 +55,6 @@
 - **本次 G2-A 只有隔離的資料模型與持久化憑證；尚未有 AlarmManager→正式 Receiver→AlarmService→Media3 的測試派送、未有 1 分鐘再響及 UI**。不能把 G2-A 當成 G2 完工；不能以舊 B2-0 系統送達測試取代。
 - 不在 G2 正式隔離入口就緒之前開啟測試播放或轉發外部整合。避免測試錯改真實鬧鐘、寫入歷史、啟動 Guardian/webhook、碰撞現有播放 Session。
 - **G3 保持原有 U4 底座，未接入正式播放路徑**。下一工程入口依 G2-B 安全隔離設計；G1 仍需 T3 完成才能完整結案。
+
+- G2-A 互斥補強：`63d9790` 禁止新測試覆蓋未結束／未過期的舊 Session；`815d21f` 增加取消後才允許下一 Session 的測試。此層只記錄隔離測試憑證，不排程／不發聲，G2-B/C 必須另行證明。
+- 最新含 G1 + G2-A 程式提交 `815d21fa937158e433f12c4e759708de31bd15e5`；[CI Run 43901925376](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/43901925376) 本次核對為待執行。舊的單獨 `ce4053a` Run 43900172550 因引用尚未提交的 helper 而編譯失敗，後續 `5f4f2b3` 已補 helper；必須等待完整 HEAD CI，不得轉述為已通過。
