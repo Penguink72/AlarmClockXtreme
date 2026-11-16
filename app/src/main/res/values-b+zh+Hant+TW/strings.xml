@@ -727,4 +727,12 @@
     <string name="music_library_system_tones_error">無法更新系統鈴聲排除狀態，音樂庫仍可使用。</string>
     <string name="alarmlist_quick_alarm_created">快速鬧鐘已排定於 %1$s</string>
     <string name="alarmlist_quick_alarm_schedule_failed">快速鬧鐘排程失敗。已停用該筆鬧鐘，請檢查精確鬧鐘權限。</string>
+    <string name="alarm_edit_delivery_test_label">系統鬧鐘送達測試</string>
+    <string name="alarm_edit_delivery_test_run">10 秒後測試</string>
+    <string name="alarm_edit_delivery_test_cancel">取消測試</string>
+    <string name="alarm_edit_delivery_test_limitation">獨立使用系統預設鈴聲測試 Android 排程、通知與喚醒畫面；不會測試此鬧鐘的音樂清單、正式播放或貪睡流程。</string>
+    <string name="alarm_edit_delivery_test_active_alarm">請先解除正在響鈴的鬧鐘，再執行測試。</string>
+    <string name="alarm_edit_delivery_test_scheduled">已排定約 10 秒後進行送達測試。</string>
+    <string name="alarm_edit_delivery_test_failed">無法安排送達測試，請確認精確鬧鐘權限。</string>
+    <string name="alarm_edit_delivery_test_cancelled">已取消送達測試。</string>
 </resources>
