@@ -363,11 +363,40 @@ class AlarmScheduler @Inject constructor(
             )
             return false
         }
-        repository.updateNextTrigger(sanitizedAlarm.id, triggerTime)
-        DirectBootAlarmCache.saveIfEarlier(context, sanitizedAlarm, triggerTime)
-        scheduleSupportingWork(sanitizedAlarm, triggerTime)
-        requestWidgetUpdateIfNeeded(requestWidgetUpdate)
-        syncBedtimeDndRule()
+        try {
+            repository.updateNextTrigger(sanitizedAlarm.id, triggerTime)
+        } catch (error: Exception) {
+            // OS registration succeeded but persistence failed: undo the new
+            // pending intent, keep the current ringing Service alive, and
+            // report failure so snooze cannot silently disappear on reboot.
+            runCatching { cancelMainScheduledAlarm(sanitizedAlarm.id) }
+            recordScheduleIncident(
+                sanitizedAlarm.id,
+                AlarmIncidentEvent.fireIdFor(sanitizedAlarm.id, triggerTime),
+                triggerTime,
+                AlarmIncidentEvent.STATUS_FAILED,
+                "SCHEDULE_AT_PERSIST_FAILED_${error.javaClass.simpleName}"
+            )
+            return false
+        }
+        // Once the OS accepted registration and the target is persisted,
+        // supporting work, widget or DND sync failures must not make the
+        // caller think the snooze itself was rejected.
+        try {
+            DirectBootAlarmCache.saveIfEarlier(context, sanitizedAlarm, triggerTime)
+            scheduleSupportingWork(sanitizedAlarm, triggerTime)
+            requestWidgetUpdateIfNeeded(requestWidgetUpdate)
+            syncBedtimeDndRule()
+        } catch (error: Exception) {
+            android.util.Log.e("AlarmScheduler", "Nonfatal auxiliary scheduling error", error)
+            recordScheduleIncident(
+                sanitizedAlarm.id,
+                AlarmIncidentEvent.fireIdFor(sanitizedAlarm.id, triggerTime),
+                triggerTime,
+                AlarmIncidentEvent.STATUS_FAILED,
+                "SCHEDULE_AT_AUXILIARY_FAILED_${error.javaClass.simpleName}"
+            )
+        }
         return true
     }
 
