@@ -48,6 +48,10 @@ import com.sysadmindoc.alarmclock.data.repository.AlarmRepository
 import com.sysadmindoc.alarmclock.data.repository.CalendarRepository
 import com.sysadmindoc.alarmclock.data.repository.MusicLibraryRepository
 import com.sysadmindoc.alarmclock.data.repository.WeatherRepository
+import com.sysadmindoc.alarmclock.domain.AlarmSnoozeMusicModeStore
+import com.sysadmindoc.alarmclock.domain.SnoozeMusicResumeMode
+import com.sysadmindoc.alarmclock.domain.SnoozeMusicRestoreCheckpoint
+import com.sysadmindoc.alarmclock.domain.SnoozeMusicRestoreStore
 import com.sysadmindoc.alarmclock.domain.AlarmMusicSession
 import com.sysadmindoc.alarmclock.domain.AlarmMusicSessionId
 import com.sysadmindoc.alarmclock.domain.NextAlarmTrackDecision
@@ -256,6 +260,14 @@ class AlarmService : Service() {
     private val audioStarting = AtomicBoolean(false)
     private val musicSessionGeneration = AtomicLong(0L)
     private val activeMusicSession = AtomicReference<AlarmMusicSession?>(null)
+    private data class ActiveMusicPlayback(
+        val alarmId: Long,
+        val fireId: String,
+        val uri: String,
+        val playlistId: String?,
+        val playback: AlarmPlaybackPlayer
+    )
+    private val activeMusicPlayback = AtomicReference<ActiveMusicPlayback?>(null)
     private val failedMusicUris = Collections.synchronizedSet(mutableSetOf<String>())
     // Bounded skip: an unmounted SD card with thousands of pool tracks must not
     // keep the alarm silent while every URI is tried. After this many
@@ -1270,7 +1282,30 @@ class AlarmService : Service() {
                 return@launch
             }
             activeMusicSession.set(session)
-            startNextSessionMusicTrack(alarm, session, generation)
+            val checkpoint = SnoozeMusicRestoreStore.readEligible(
+                this@AlarmService, alarm.id, session.sessionId.fireId,
+                System.currentTimeMillis()
+            )?.takeIf { it.playlistId == session.snapshot.playlistId }
+            if (checkpoint == null) {
+                startNextSessionMusicTrack(alarm, session, generation)
+            } else if (checkpoint.mode == SnoozeMusicResumeMode.RESUME_INTERRUPTED) {
+                val candidate = session.snapshot.eligibleEntries()
+                    .firstOrNull { it.uri == checkpoint.uri &&
+                        !it.track.fileName.endsWith(".flv", ignoreCase = true) }
+                val position = checkpoint.positionMs
+                if (candidate != null && position != null) {
+                    startMedia3MusicTrack(alarm, session, candidate, generation, position)
+                } else {
+                    startNextSessionMusicTrack(alarm, session, generation)
+                }
+            } else {
+                when (val decision = session.selectFirstTrackAvoiding(checkpoint.uri)) {
+                    is NextAlarmTrackDecision.PlayTrack ->
+                        startMedia3MusicTrack(alarm, session, decision.candidate, generation)
+                    is NextAlarmTrackDecision.FallbackToDefaultTone ->
+                        startMusicDefaultFallback(alarm)
+                }
+            }
         }
     }
 
@@ -1304,7 +1339,8 @@ class AlarmService : Service() {
         alarm: Alarm,
         session: AlarmMusicSession,
         candidate: PlaybackTrackCandidate,
-        generation: Long
+        generation: Long,
+        restorePositionMs: Long? = null
     ) {
         try {
             val fadeInMs = alarm.gradualVolumeSeconds * 1000L
