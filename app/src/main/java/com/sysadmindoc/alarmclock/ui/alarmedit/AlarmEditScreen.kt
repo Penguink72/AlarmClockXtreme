@@ -68,6 +68,7 @@ import com.sysadmindoc.alarmclock.ui.components.appSwitchColors
 import com.sysadmindoc.alarmclock.ui.ringtone.MusicLibraryDialog
 import com.sysadmindoc.alarmclock.ui.ringtone.MusicCatalogPreviewController
 import com.sysadmindoc.alarmclock.ui.ringtone.RingtonePickerSheet
+import com.sysadmindoc.alarmclock.data.readiness.ProductionTestAlarmScheduler
 import com.sysadmindoc.alarmclock.ui.onboarding.OnboardingTestAlarm
 import com.sysadmindoc.alarmclock.service.AlarmService
 import com.sysadmindoc.alarmclock.ui.theme.*
@@ -663,6 +664,45 @@ fun AlarmEditScreen(
                         soundPreviewScope.launch {
                             snackbarHostState.showSnackbar(
                                 context.getString(R.string.alarm_edit_delivery_test_cancelled)
+                            )
+                        }
+                    },
+                    onRunProductionAlarmTest = {
+                        val savedId = viewModel.savedAlarmIdForProductionTest()
+                        when {
+                            AlarmService.activeAlarm.get() != null -> {
+                                soundPreviewScope.launch {
+                                    snackbarHostState.showSnackbar(
+                                        context.getString(R.string.alarm_edit_delivery_test_active_alarm)
+                                    )
+                                }
+                            }
+                            savedId <= 0L -> {
+                                soundPreviewScope.launch {
+                                    snackbarHostState.showSnackbar(
+                                        context.getString(R.string.b2_test_requires_saved)
+                                    )
+                                }
+                            }
+                            else -> {
+                                soundPreviewController.stop()
+                                val result = ProductionTestAlarmScheduler.schedule(context, savedId)
+                                soundPreviewScope.launch {
+                                    snackbarHostState.showSnackbar(
+                                        context.getString(
+                                            if (result.isSuccess) R.string.b2_test_scheduled
+                                            else R.string.b2_test_failed
+                                        )
+                                    )
+                                }
+                            }
+                        }
+                    },
+                    onCancelProductionAlarmTest = {
+                        ProductionTestAlarmScheduler.cancel(context)
+                        soundPreviewScope.launch {
+                            snackbarHostState.showSnackbar(
+                                context.getString(R.string.b2_test_cancelled)
                             )
                         }
                     },
