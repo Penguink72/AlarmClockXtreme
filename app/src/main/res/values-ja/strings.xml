@@ -850,4 +850,46 @@
     <string name="firing_challenge_difference_support">2つのグリッドを比較し、1つだけ異なるタイルを選びます。</string>
     <string name="firing_challenge_chess_support">小さな盤面から一手詰めの手を選びます。</string>
     <string name="firing_challenge_rsvp_support">素早く表示される単語を読み、見た単語を選びます。</string>
+    <!-- L1-B: wake-up challenge status messages and count formats -->
+    <string name="firing_challenge_math_status">下の計算問題を解くと停止できます。</string>
+    <string name="firing_challenge_shake_status">目標回数に達するまで端末を振り続けます。</string>
+    <string name="firing_challenge_sequence_status">数字を小さい順にタップしてください。</string>
+    <string name="firing_challenge_memory_status">まずパターンを覚えてから再現します。</string>
+    <string name="firing_challenge_typing_status">表示されたフレーズを正確に入力します。</string>
+    <string name="firing_challenge_voice_status">下のフレーズを話すか、文字入力に切り替えます。</string>
+    <string name="firing_challenge_handwriting_status">表示された語句を手書きするか、文字入力に切り替えます。</string>
+    <string name="firing_challenge_walk_status">必要な歩数を歩き、起床したことを確認します。</string>
+    <string name="firing_challenge_nfc_status">登録済みのNFCタグを読み取って続けます。</string>
+    <string name="firing_challenge_barcode_status">保存したバーコードまたはQRコードを読み取ります。</string>
+    <string name="firing_challenge_photo_status">参照写真と一致する写真を撮影して完了します。</string>
+    <string name="firing_challenge_squat_status">必要なスクワット回数を完了します。</string>
+    <string name="firing_challenge_pushup_status">端末を床に置き、指定回数の腕立て伏せを行います。</string>
+    <string name="firing_challenge_plank_status">指定時間が終わるまで端末を水平に保ちます。</string>
+    <string name="firing_challenge_maze_status">壁を避けて出口を探します。</string>
+    <string name="firing_challenge_wifi_status">指定のWi-Fiネットワークに再接続します。</string>
+    <string name="firing_challenge_sheep_status">羊だけをタップし、ヤギを避けます。</string>
+    <string name="firing_challenge_simon_status">再生が終わってからパッドを順番にタップします。</string>
+    <string name="firing_challenge_date_status">今日の日付を正確に逆順で入力してください。</string>
+    <string name="firing_challenge_stroop_status">文字が表示されているインク色をタップします。</string>
+    <string name="firing_challenge_rps_status">3回勝つとアラームを停止できます。</string>
+    <string name="firing_challenge_emoji_status">絵文字をめくり、すべてのペアを完成させます。</string>
+    <string name="firing_challenge_speed_status">フレーズを素早く正確に入力して続けます。</string>
+    <string name="firing_challenge_wordle_status">5文字の単語を入力し、色のヒントを使って解きます。</string>
+    <string name="firing_challenge_pvt_status">緑の四角が現れたらすぐタップします。</string>
+    <string name="firing_challenge_difference_status">右側のグリッドで変化したタイルをタップします。</string>
+    <string name="firing_challenge_chess_status">一手詰めの手を選びます。</string>
+    <string name="firing_challenge_rsvp_status">高速表示される単語を見て、覚えた単語を選びます。</string>
+    <string name="firing_challenge_none_status">準備ができたらスワイプまたはタップして停止します。</string>
+    <string name="firing_hold_accessibility">「停止」を%1$.1f秒長押し</string>
+    <string name="firing_challenge_before_dismiss">停止する前に起床チャレンジを完了してください</string>
+    <string name="firing_keep_holding">そのまま長押し</string>
+    <string name="firing_hold_to_dismiss_short">%1$.1f秒長押しして停止</string>
+    <string name="firing_snooze_for_minutes">%1$d分スヌーズ</string>
+    <string name="firing_minutes_short">%1$d分</string>
+    <string name="firing_decrease_snooze">スヌーズの分数を減らす</string>
+    <string name="firing_snooze_minutes">%1$d分スヌーズ</string>
+    <string name="firing_increase_snooze">スヌーズの分数を増やす</string>
+    <string name="firing_default">既定</string>
+    <plurals name="firing_retry_count"><item quantity="other">再試行%1$d回</item></plurals>
+    <plurals name="firing_snoozes_left"><item quantity="other">あと%1$d回スヌーズできます</item></plurals>
 </resources>
