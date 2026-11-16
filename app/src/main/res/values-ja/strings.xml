@@ -714,4 +714,15 @@
     <plurals name="alarm_edit_squats"><item quantity="other">スクワット%1$d回</item></plurals>
     <plurals name="alarm_edit_challenges"><item quantity="other">%1$d件のチャレンジ</item></plurals>
     <plurals name="alarm_edit_meters"><item quantity="other">%1$dメートル</item></plurals>
+    <!-- P2-U5: user-reviewed reversible exclusion of likely MediaStore system sounds. -->
+    <string name="music_library_system_tones_preview_title">システム音の候補</string>
+    <string name="music_library_system_tones_preview_detail">システム音として識別された%1$d件の登録済み音源を、除外前に確認してください。</string>
+    <string name="music_library_system_tones_false_positive_warning">着信音のフラグやフォルダー名だけでは工場出荷時の音源とは断定できません。対象はMediaStoreの候補のみで、SAFフォルダーは除外しません。元に戻せます。</string>
+    <string name="music_library_system_tones_confirm">候補を除外</string>
+    <string name="music_library_system_tones_cancel">キャンセル</string>
+    <string name="music_library_system_tones_preview_button">システム音候補を確認（%1$d）</string>
+    <string name="music_library_system_tones_undo">除外を元に戻す</string>
+    <string name="music_library_system_tones_excluded">システム音の候補%1$d件を除外しました。</string>
+    <string name="music_library_system_tones_restored">%1$d件の元の登録状態を復元しました。</string>
+    <string name="music_library_system_tones_error">システム音の除外更新に失敗しました。ライブラリは引き続き利用できます。</string>
 </resources>
