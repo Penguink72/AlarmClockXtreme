@@ -812,6 +812,51 @@ class MusicLibraryDatabaseTest {
     }
 
     @Test
+    fun playlistSelectionSaveAndReadbackSurviveRepositoryRecreation() = runBlocking {
+        val context = ApplicationProvider.getApplicationContext<Application>()
+        val database = Room.inMemoryDatabaseBuilder(context, AlarmDatabase::class.java)
+            .allowMainThreadQueries()
+            .build()
+        try {
+            val first = MusicLibraryRepository(
+                database.musicLibraryDao(), database.playbackHistoryDao()
+            )
+            val tracks = listOf(
+                MusicTrack("content://music/erhu1", "Erhu one", "MEDIA_STORE"),
+                MusicTrack("content://music/erhu2", "Erhu two", "MEDIA_STORE"),
+                MusicTrack("content://music/erhu3", "Erhu three", "MEDIA_STORE")
+            )
+            first.replaceTracks(tracks)
+            val playlist = first.create("Jia Peng Fang")
+            first.addTracks(
+                playlistId = playlist.playlistId,
+                selectedUris = tracks.map(MusicTrack::uri)
+            )
+            first.saveSettings(
+                alarmId = 71L,
+                draft = AlarmMusicSettingsDraft(
+                    playlistId = playlist.playlistId,
+                    playbackStrategy = AlarmMusicPlaybackStrategy.PLAYLIST_ORDER
+                )
+            )
+
+            // A new ViewModel/repository session must see the exact persisted
+            // playlist selection, not an earlier UI draft or SMART_ALL.
+            val reopened = MusicLibraryRepository(
+                database.musicLibraryDao(), database.playbackHistoryDao()
+            )
+            val saved = reopened.getSettings(71L)
+            assertEquals(playlist.playlistId, saved.playlistId)
+            assertEquals(AlarmMusicPlaybackStrategy.PLAYLIST_ORDER, saved.playbackStrategy)
+            assertEquals(3, reopened.observeItems(playlist.playlistId).first().size)
+            assertEquals(playlist.playlistId, reopened.getPlaylistsSnapshot()
+                .first { it.playlistId == playlist.playlistId }.playlistId)
+        } finally {
+            database.close()
+        }
+    }
+
+    @Test
     fun playbackHistoryKeepsTheRecordedDisplayTitleAfterLibraryRefresh() = runBlocking {
         val context: Context = ApplicationProvider.getApplicationContext<Application>()
         val database = Room.inMemoryDatabaseBuilder(context, AlarmDatabase::class.java)
