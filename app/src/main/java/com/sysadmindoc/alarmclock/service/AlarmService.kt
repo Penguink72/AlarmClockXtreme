@@ -2352,6 +2352,46 @@ class AlarmService : Service() {
         return AlarmAudioRouting.alarmSonificationAttributes()
     }
 
+    /**
+     * The next AlarmManager occurrence must already be armed. Persist a
+     * track that truly entered onIsPlaying=true before releasing Media3.
+     * A failed checkpoint does not cancel the successfully armed snooze.
+     */
+    private fun saveSnoozedMusicPosition(
+        alarm: Alarm, sourceFireId: String, targetAt: Long
+    ) {
+        if (targetAt <= 0L || !alarm.randomMusicEnabled ||
+            activeProductionTestSessionId != null) return
+        val active = activeMusicPlayback.get() ?: return
+        if (active.alarmId != alarm.id || active.fireId != sourceFireId ||
+            active.playback !== alarmPlayback) return
+        val now = System.currentTimeMillis()
+        val mode = AlarmSnoozeMusicModeStore.get(this, alarm.id)
+        val position = runCatching { active.playback.positionMs() }.getOrNull()
+        val checkpoint = SnoozeMusicRestoreCheckpoint(
+            alarmId = alarm.id,
+            sourceFireId = sourceFireId,
+            nextFireId = AlarmIncidentEvent.fireIdFor(alarm.id, targetAt),
+            uri = active.uri,
+            positionMs = position,
+            playlistId = active.playlistId,
+            mode = mode,
+            recordedAtMs = now,
+            expiresAtMs = minOf(
+                targetAt + 5 * 60_000L,
+                now + SnoozeMusicRestoreCheckpoint.MAX_CHECKPOINT_TTL_MS
+            )
+        )
+        if (!SnoozeMusicRestoreStore.save(this, checkpoint)) {
+            recordIncidentAsync(
+                type = AlarmIncidentEvent.TYPE_AUDIO,
+                status = AlarmIncidentEvent.STATUS_FAILED,
+                reasonCode = "U4_SNOOZE_CHECKPOINT_UNAVAILABLE",
+                source = "AlarmService"
+            )
+        }
+    }
+
     private suspend fun snoozeAlarm(
         alarmId: Long,
         requestedFireId: String,
@@ -2432,6 +2472,11 @@ class AlarmService : Service() {
             }
         }
 
+        // Record a valid playback checkpoint before stopAlarmPlayback()
+        // releases the Media3 player, without risking the armed snooze.
+        if (capOutcome != SnoozeCapOutcome.AUTO_DISMISS) {
+            saveSnoozedMusicPosition(alarm, previousFireId, targetAt)
+        }
         // The OS has accepted the next occurrence at this point. Any
         // remaining bookkeeping failure is nonfatal to the scheduled alarm.
         // Always clear the old firing state and acknowledge the registered
