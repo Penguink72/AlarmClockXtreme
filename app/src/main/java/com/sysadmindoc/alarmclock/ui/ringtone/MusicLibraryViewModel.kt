@@ -57,6 +57,7 @@ data class MusicLibraryUiState(
     val catalogSourceScope: MusicPoolSourceScope? = null,
     val supplementalCatalog: MusicLibrarySupplementalCatalog = MusicLibrarySupplementalCatalog(),
     val loadingPool: Boolean = false,
+    val systemToneUndoCount: Int = 0,
     val poolSourceScope: MusicPoolSourceScope = MusicPoolSourceScope.Folders
 )
 
@@ -163,6 +164,21 @@ internal fun filterLibraryCatalog(
 /** An existing index is browseable immediately; permission/source changes are
  * scanned on explicit Refresh. Only the empty first-install catalog auto-scans.
  */
+/**
+ * Only metadata with a positive system-tone signal and MediaStore origin can
+ * be offered as a possible stock ringtone. SAF music in an Alarms/ folder
+ * may be user-created and is deliberately left alone. This still cannot
+ * distinguish an OEM tone from a custom tone marked IS_RINGTONE.
+ */
+internal fun recognizedSystemToneCandidates(
+    tracks: List<MusicPoolUiTrack>,
+    metadataByUri: Map<String, MusicCatalogTrackMetadata>
+): List<MusicPoolUiTrack> = tracks.filter { item ->
+    item.track.source == MusicLibraryIndexer.SOURCE_MEDIA_STORE &&
+        item.membershipState != MusicPoolEntry.EXCLUDED &&
+        metadataByUri[item.track.uri]?.isSystemTone == true
+}
+
 internal fun shouldAutoScanMusicCatalog(
     autoScanIfEmpty: Boolean,
     indexedTrackCount: Int,
@@ -588,8 +604,62 @@ class MusicLibraryViewModel @Inject constructor(
         videoOnly = videoOnly
     )
 
+    // Snapshot is only valid for the immediate last automated exclusion.
+    // Ordinary membership changes invalidate it so Undo never overwrites a
+    // subsequent explicit user decision.
+    private var systemToneUndoSnapshot: Map<String, String?> = emptyMap()
+
+    fun excludeRecognizedSystemTones() {
+        if (_uiState.value.loadingPool || _uiState.value.scanning) return
+        val current = _uiState.value
+        val candidates = recognizedSystemToneCandidates(
+            current.poolTracks, current.supplementalCatalog.trackMetadataByUri
+        ).map { it.track.uri }
+        if (candidates.isEmpty()) return
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(loadingPool = true)
+            try {
+                val snapshot = repository.excludeSystemToneCandidates(candidates)
+                systemToneUndoSnapshot = snapshot
+                loadPoolCandidatesNow()
+                _uiState.value = _uiState.value.copy(systemToneUndoCount = snapshot.size)
+                reportStatus(context.getString(R.string.music_library_system_tones_excluded, snapshot.size))
+            } catch (error: CancellationException) {
+                throw error
+            } catch (error: Exception) {
+                reportStatus(context.getString(R.string.music_library_system_tones_error))
+            } finally {
+                _uiState.value = _uiState.value.copy(loadingPool = false)
+            }
+        }
+    }
+
+    fun undoRecognizedSystemToneExclusion() {
+        if (_uiState.value.loadingPool || _uiState.value.scanning) return
+        val snapshot = systemToneUndoSnapshot.toMap()
+        if (snapshot.isEmpty()) return
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(loadingPool = true)
+            try {
+                repository.undoSystemToneCandidateExclusion(snapshot)
+                systemToneUndoSnapshot = emptyMap()
+                loadPoolCandidatesNow()
+                _uiState.value = _uiState.value.copy(systemToneUndoCount = 0)
+                reportStatus(context.getString(R.string.music_library_system_tones_restored, snapshot.size))
+            } catch (error: CancellationException) {
+                throw error
+            } catch (error: Exception) {
+                reportStatus(context.getString(R.string.music_library_system_tones_error))
+            } finally {
+                _uiState.value = _uiState.value.copy(loadingPool = false)
+            }
+        }
+    }
+
     fun updateSelectedCatalogMembership(included: Boolean, videoOnly: Boolean = false) {
         if (_uiState.value.loadingPool || _uiState.value.scanning) return
+        systemToneUndoSnapshot = emptyMap()
+        _uiState.value = _uiState.value.copy(systemToneUndoCount = 0)
         val selected = catalogUrisForMembershipUpdate(
             tracks = visibleCatalogTracks(videoOnly),
             selectedUris = _uiState.value.selectedCatalogUris,
