@@ -1453,6 +1453,21 @@ class AlarmService : Service() {
                 disableVideoTracks = true
             )
             playbackRef = playback
+            // A very short/local file can enter onIsPlaying before the
+            // createMedia3Playback() call returns an adapter. Preserve the
+            // actually-playing reference for a subsequent U4 snooze capture.
+            if (playbackStarted.get() && isMusicSessionActive(alarm, generation) &&
+                activeMusicSession.get() === session) {
+                activeMusicPlayback.set(
+                    ActiveMusicPlayback(
+                        alarmId = alarm.id,
+                        fireId = fireId,
+                        uri = candidate.uri,
+                        playlistId = session.snapshot.playlistId,
+                        playback = playback
+                    )
+                )
+            }
             if (!isMusicSessionActive(alarm, generation) || activeMusicSession.get() !== session) {
                 playback.stopAndRelease()
                 return
