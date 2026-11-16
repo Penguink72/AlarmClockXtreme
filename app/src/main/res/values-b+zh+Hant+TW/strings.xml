@@ -903,4 +903,8 @@
     <string name="b2_test_requires_saved">請先儲存此鬧鐘，再執行正式音樂測試。</string>
     <string name="b2_test_cancelled">已取消正式音樂測試。</string>
     <string name="b2_test_saved_only">測試採用上次儲存的鬧鐘與音樂設定，不含尚未儲存的修改。</string>
+    <string name="u4_snooze_mode_label">貪睡後音樂播放方式</string>
+    <string name="u4_snooze_resume_position">從同一首音樂的中斷位置續播</string>
+    <string name="u4_snooze_next_different">直接換另一首音樂播放</string>
+    <string name="u4_snooze_mode_note">適用於音樂鬧鐘。若音樂失效或無法定位播放位置，會改用可播放的備援。</string>
 </resources>
