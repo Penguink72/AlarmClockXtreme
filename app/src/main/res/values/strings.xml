@@ -2587,4 +2587,14 @@
     <string name="alarm_edit_preview_failed">Unable to preview the selected sound.</string>
     <string name="firing_snooze_schedule_failed">Snooze could not be scheduled. Alarm is still ringing. Try again or dismiss it.</string>
     <string name="firing_snooze_confirmation_timeout">Could not confirm snooze scheduling. Check that the alarm is still ringing and try again.</string>
+    <!-- P3.1-L1: source-matched alarm editor and snooze locale entries; see docs/tcl/P31-L1-TRILINGUAL-CORE-LOCALE-CONTRACT-20261116.md -->
+    <string name="alarm_edit_remaining_now">Ringing now</string>
+    <string name="alarm_edit_remaining_under_minute">less than 1 min</string>
+    <string name="alarm_edit_remaining_days_hours_minutes">%1$d d %2$d h %3$d min</string>
+    <string name="alarm_edit_remaining_days_hours">%1$d d %2$d h</string>
+    <string name="alarm_edit_remaining_days_minutes">%1$d d %2$d min</string>
+    <string name="alarm_edit_remaining_days_only">%1$d d</string>
+    <string name="alarm_edit_remaining_hours_minutes">%1$d h %2$d min</string>
+    <string name="alarm_edit_remaining_hours_only">%1$d h</string>
+    <string name="alarm_edit_remaining_minutes_only">%1$d min</string>
 </resources>

@@ -59,7 +59,7 @@ import com.sysadmindoc.alarmclock.R
 import com.sysadmindoc.alarmclock.data.model.Alarm
 import com.sysadmindoc.alarmclock.data.model.ShiftPattern
 import com.sysadmindoc.alarmclock.domain.LocationDismissPolicy
-import com.sysadmindoc.alarmclock.domain.NextAlarmCalculator
+import com.sysadmindoc.alarmclock.domain.RemainingTimeParts
 import com.sysadmindoc.alarmclock.ui.components.AppFilterChip
 import com.sysadmindoc.alarmclock.ui.components.AppSectionTitle
 import com.sysadmindoc.alarmclock.ui.components.AppStatusChip
@@ -125,7 +125,7 @@ internal fun LazyListScope.alarmEditOverviewSections(
                     val hour12 = if (state.hour % 12 == 0) 12 else state.hour % 12
                     val locale = LocalConfiguration.current.locales[0]
                     val amPm = java.time.LocalTime.of(state.hour, state.minute)
-                        .format(java.time.format.DateTimeFormatter.ofPattern("a"))
+                        .format(java.time.format.DateTimeFormatter.ofPattern("a", locale))
                     Text(
                         text = String.format(locale, "%d:%02d", hour12, state.minute),
                         style = ClockTimeLarge,
@@ -153,19 +153,44 @@ internal fun LazyListScope.alarmEditOverviewSections(
         // the "Upcoming fire dates" section computes.
         val nextFireMillis = state.forecastDates.firstOrNull { !it.skippedByVacation }?.timeMillis
         if (nextFireMillis != null) {
-            val ringCalculator = remember { NextAlarmCalculator() }
+            // The clock is sampled only by this screen. Projection is pure,
+            // so recomposition cannot silently read a different time than
+            // the tick that triggered it.
             var nowTick by remember { mutableStateOf(System.currentTimeMillis()) }
             LaunchedEffect(nextFireMillis) {
                 while (true) {
                     nowTick = System.currentTimeMillis()
-                    kotlinx.coroutines.delay(30_000)
+                    kotlinx.coroutines.delay(15_000L)
                 }
             }
             val remaining = remember(nextFireMillis, nowTick) {
-                ringCalculator.formatRemaining(nextFireMillis)
+                RemainingTimeParts.between(nextFireMillis, nowTick)
+            }
+            val remainingLabel = when {
+                remaining.due -> stringResource(R.string.alarm_edit_remaining_now)
+                remaining.underMinute -> stringResource(R.string.alarm_edit_remaining_under_minute)
+                remaining.days > 0 && remaining.hours > 0 && remaining.minutes > 0 ->
+                    stringResource(
+                        R.string.alarm_edit_remaining_days_hours_minutes,
+                        remaining.days, remaining.hours, remaining.minutes
+                    )
+                remaining.days > 0 && remaining.hours > 0 ->
+                    stringResource(R.string.alarm_edit_remaining_days_hours, remaining.days, remaining.hours)
+                remaining.days > 0 && remaining.minutes > 0 ->
+                    stringResource(R.string.alarm_edit_remaining_days_minutes, remaining.days, remaining.minutes)
+                remaining.days > 0 ->
+                    stringResource(R.string.alarm_edit_remaining_days_only, remaining.days)
+                remaining.hours > 0 && remaining.minutes > 0 ->
+                    stringResource(R.string.alarm_edit_remaining_hours_minutes, remaining.hours, remaining.minutes)
+                remaining.hours > 0 ->
+                    stringResource(R.string.alarm_edit_remaining_hours_only, remaining.hours)
+                else -> stringResource(R.string.alarm_edit_remaining_minutes_only, remaining.minutes)
             }
             Text(
-                text = stringResource(R.string.alarm_edit_rings_in, remaining),
+                // "Rings in now" is ungrammatical. Due uses the complete
+                // localized status instead of being inserted into a duration.
+                text = if (remaining.due) remainingLabel
+                else stringResource(R.string.alarm_edit_rings_in, remainingLabel),
                 color = MaterialTheme.colorScheme.primary,
                 style = MaterialTheme.typography.titleSmall,
                 modifier = Modifier
