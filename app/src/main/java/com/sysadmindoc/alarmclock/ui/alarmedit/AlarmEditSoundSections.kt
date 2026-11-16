@@ -88,6 +88,8 @@ internal fun LazyListScope.alarmEditSoundSections(
     onManagePlaylists: () -> Unit = {},
     onPreviewCurrentSound: () -> Unit = {},
     onStopSoundPreview: () -> Unit = {},
+    onRunSystemAlarmDeliveryTest: () -> Unit = {},
+    onCancelSystemAlarmDeliveryTest: () -> Unit = {},
     previewActive: Boolean = false,
     previewBusy: Boolean = false
 ) {
@@ -212,6 +214,23 @@ internal fun LazyListScope.alarmEditSoundSections(
         }
         SettingsHint(
             stringResource(R.string.alarm_edit_preview_current_sound_description),
+            tone = HintTone.Neutral
+        )
+        // The existing onboarding diagnostic uses a separate OS-scheduled
+        // PendingIntent. It checks AlarmManager/notification/device delivery,
+        // NOT the selected playlist or production AlarmService chain.
+        SettingsRow(label = stringResource(R.string.alarm_edit_delivery_test_label)) {
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                OutlinedButton(onClick = onRunSystemAlarmDeliveryTest) {
+                    Text(stringResource(R.string.alarm_edit_delivery_test_run))
+                }
+                OutlinedButton(onClick = onCancelSystemAlarmDeliveryTest) {
+                    Text(stringResource(R.string.alarm_edit_delivery_test_cancel))
+                }
+            }
+        }
+        SettingsHint(
+            stringResource(R.string.alarm_edit_delivery_test_limitation),
             tone = HintTone.Neutral
         )
 
