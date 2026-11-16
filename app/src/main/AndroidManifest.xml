@@ -199,6 +199,17 @@
             android:taskAffinity=""
             android:theme="@style/Theme.AlarmClockXtreme" />
 
+        <!-- B2 full-path diagnostic: own UI, no real snooze/guardian actions. -->
+        <activity
+            android:name=".ui.onboarding.ProductionTestAlarmActivity"
+            android:exported="false"
+            android:excludeFromRecents="true"
+            android:showOnLockScreen="true"
+            android:showWhenLocked="true"
+            android:turnScreenOn="true"
+            android:taskAffinity=""
+            android:theme="@style/Theme.AlarmClockXtreme" />
+
         <activity
             android:name=".ui.onboarding.OnboardingTestAlarmActivity"
             android:exported="false"
