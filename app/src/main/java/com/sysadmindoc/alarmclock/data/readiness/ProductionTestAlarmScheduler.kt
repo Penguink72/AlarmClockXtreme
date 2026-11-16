@@ -62,6 +62,7 @@ internal object ProductionTestAlarmScheduler {
         val manager = context.getSystemService(AlarmManager::class.java) ?: return false
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !manager.canScheduleExactAlarms()) return false
         val targetAt = System.currentTimeMillis() + SNOOZE_MS
+        if (targetAt >= session.expiresAtMs) return false
         val nextPi = pendingIntent(context, session, 1, targetAt)
         return try {
             manager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, targetAt, nextPi)
