@@ -68,6 +68,8 @@ import com.sysadmindoc.alarmclock.ui.components.appSwitchColors
 import com.sysadmindoc.alarmclock.ui.ringtone.MusicLibraryDialog
 import com.sysadmindoc.alarmclock.ui.ringtone.MusicCatalogPreviewController
 import com.sysadmindoc.alarmclock.ui.ringtone.RingtonePickerSheet
+import com.sysadmindoc.alarmclock.ui.onboarding.OnboardingTestAlarm
+import com.sysadmindoc.alarmclock.service.AlarmService
 import com.sysadmindoc.alarmclock.ui.theme.*
 import com.sysadmindoc.alarmclock.util.LocationHelper
 import com.sysadmindoc.alarmclock.util.PhotoMatcher
@@ -638,6 +640,32 @@ fun AlarmEditScreen(
                         }
                     },
                     onStopSoundPreview = { soundPreviewController.stop() },
+                    onRunSystemAlarmDeliveryTest = {
+                        if (AlarmService.activeAlarm.get() != null) {
+                            soundPreviewScope.launch {
+                                snackbarHostState.showSnackbar(
+                                    context.getString(R.string.alarm_edit_delivery_test_active_alarm)
+                                )
+                            }
+                        } else {
+                            soundPreviewController.stop()
+                            val result = OnboardingTestAlarm.schedule(context)
+                            soundPreviewScope.launch {
+                                snackbarHostState.showSnackbar(context.getString(
+                                    if (result.isSuccess) R.string.alarm_edit_delivery_test_scheduled
+                                    else R.string.alarm_edit_delivery_test_failed
+                                ))
+                            }
+                        }
+                    },
+                    onCancelSystemAlarmDeliveryTest = {
+                        OnboardingTestAlarm.cancel(context)
+                        soundPreviewScope.launch {
+                            snackbarHostState.showSnackbar(
+                                context.getString(R.string.alarm_edit_delivery_test_cancelled)
+                            )
+                        }
+                    },
                     previewActive = soundPreviewState.playingUri != null,
                     previewBusy = soundPreviewBusy
                 )
