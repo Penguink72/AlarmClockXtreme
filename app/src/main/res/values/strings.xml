@@ -2618,4 +2618,9 @@
     <string name="alarm_edit_delivery_test_scheduled">Delivery test scheduled for approximately 10 seconds from now.</string>
     <string name="alarm_edit_delivery_test_failed">Could not schedule delivery test. Check exact alarm access.</string>
     <string name="alarm_edit_delivery_test_cancelled">Delivery test cancelled.</string>
+    <string name="settings_show_incident_events">Show recent event chain</string>
+    <string name="settings_hide_incident_events">Hide event chain</string>
+    <string name="settings_export_incident_diagnostics">Share diagnostic bundle</string>
+    <string name="settings_incident_row_summary">%1$s · %2$s</string>
+    <string name="settings_incident_row_reason">Source: %1$s · Code: %2$s</string>
 </resources>
