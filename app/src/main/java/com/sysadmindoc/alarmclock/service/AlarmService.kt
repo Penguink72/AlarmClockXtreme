@@ -31,6 +31,10 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
 import androidx.core.app.NotificationCompat
 import androidx.work.*
+import com.sysadmindoc.alarmclock.data.readiness.ProductionTestAlarmScheduler
+import com.sysadmindoc.alarmclock.data.readiness.ProductionTestSessionStore
+import com.sysadmindoc.alarmclock.data.readiness.ProductionTestStage
+import com.sysadmindoc.alarmclock.ui.onboarding.ProductionTestAlarmActivity
 import com.sysadmindoc.alarmclock.data.local.entity.AlarmIncidentEvent
 import com.sysadmindoc.alarmclock.R
 import com.sysadmindoc.alarmclock.data.local.entity.AlarmEvent
@@ -103,6 +107,9 @@ class AlarmService : Service() {
 
     companion object {
         const val ACTION_START_ALARM = "com.sysadmindoc.alarmclock.START_ALARM"
+        const val ACTION_PRODUCTION_TEST_SNOOZE = "com.sysadmindoc.alarmclock.B2_TEST_SNOOZE"
+        const val ACTION_PRODUCTION_TEST_DISMISS = "com.sysadmindoc.alarmclock.B2_TEST_DISMISS"
+        const val EXTRA_PRODUCTION_TEST_SESSION_ID = "b2_test_session_id"
         const val ACTION_SNOOZE = "com.sysadmindoc.alarmclock.SNOOZE"
         const val ACTION_DISMISS = "com.sysadmindoc.alarmclock.DISMISS"
         const val ACTION_SET_CHALLENGE_DUCKING =
@@ -220,6 +227,7 @@ class AlarmService : Service() {
     private var playbackWatchdogJob: Job? = null
     @Volatile
     private var forceBuiltInSpeakerForFallback: Boolean = false
+    @Volatile private var activeProductionTestSessionId: String? = null
     private var currentAlarmId: Long = -1
     private var currentFireId: String = ""
     private var currentScheduledAt: Long = 0L
@@ -310,7 +318,21 @@ class AlarmService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when (intent?.action) {
+            ACTION_PRODUCTION_TEST_SNOOZE, ACTION_PRODUCTION_TEST_DISMISS -> {
+                handleProductionTestAction(intent)
+                return START_NOT_STICKY
+            }
             ACTION_START_ALARM -> {
+                val diagnosticSession = intent.getStringExtra(EXTRA_PRODUCTION_TEST_SESSION_ID)
+                if (!diagnosticSession.isNullOrBlank()) {
+                    startProductionTest(intent, diagnosticSession)
+                    return START_NOT_STICKY
+                }
+                if (activeProductionTestSessionId != null) {
+                    // Real alarms always win: never report a test as an
+                    // ordinary missed alarm or let its audio preempt a wakeup.
+                    abortProductionTestForRealAlarm()
+                }
                 val alarmId = intent.getLongExtra(AlarmScheduler.EXTRA_ALARM_ID, -1)
                 if (alarmId != -1L) {
                     val scheduledAt = intent.getLongExtra(AlarmScheduler.EXTRA_SCHEDULED_AT, 0L)
@@ -536,6 +558,164 @@ class AlarmService : Service() {
             }
         }
         return START_NOT_STICKY
+    }
+
+    /**
+     * B2 diagnostic runs the same AlarmService music pipeline as a real alarm,
+     * but has no real AlarmEvent, AlarmRuntimeState, nextTriggerTime, Guardian,
+     * webhook or playback history effects. A real alarm preempts it immediately.
+     */
+    private fun startProductionTest(intent: Intent, sessionId: String) {
+        val now = System.currentTimeMillis()
+        val proof = ProductionTestSessionStore.read(this, now) ?: return
+        val session = proof.session
+        val alarmId = intent.getLongExtra(AlarmScheduler.EXTRA_ALARM_ID, -1L)
+        val fireId = intent.getStringExtra(AlarmScheduler.EXTRA_ALARM_FIRE_ID).orEmpty()
+        val expected = if (session.nextOccurrence == 0) {
+            ProductionTestStage.RECEIVER_DELIVERED
+        } else {
+            ProductionTestStage.SNOOZE_DELIVERED
+        }
+        if (session.sourceAlarmId != alarmId || proof.stage != expected ||
+            !session.canAccept(sessionId, fireId, now)) return
+        if (currentAlarmId != -1L || activeProductionTestSessionId != null) {
+            ProductionTestSessionStore.advance(
+                this, sessionId, fireId, ProductionTestStage.FAILED, now
+            )
+            return
+        }
+
+        activeProductionTestSessionId = sessionId
+        currentAlarmId = alarmId
+        currentFireId = fireId
+        currentScheduledAt = intent.getLongExtra(AlarmScheduler.EXTRA_SCHEDULED_AT, 0L)
+        startForegroundWithPlaceholder()
+        serviceScope.launch {
+            try {
+                val source = repository.getById(alarmId)?.sanitized()
+                    ?: error("B2 source alarm no longer exists")
+                if (activeProductionTestSessionId != sessionId || currentFireId != fireId) {
+                    return@launch
+                }
+                if (session.nextOccurrence == 0 && !ProductionTestSessionStore.advance(
+                        this@AlarmService, sessionId, fireId,
+                        ProductionTestStage.SERVICE_ACKNOWLEDGED, System.currentTimeMillis()
+                    )) error("B2 service acknowledgement failed")
+                val diagnosticAlarm = source.copy(
+                    randomMusicEnabled = true,
+                    gradualVolumeSeconds = 0,
+                    overrideSystemVolume = false,
+                    vibrationEnabled = false,
+                    backupSoundEnabled = false,
+                    guardianEnabled = false
+                )
+                val activityIntent = Intent(
+                    this@AlarmService, ProductionTestAlarmActivity::class.java
+                ).apply {
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                    putExtra(ProductionTestAlarmScheduler.EXTRA_SESSION_ID, sessionId)
+                }
+                val activityPi = PendingIntent.getActivity(
+                    this@AlarmService, 20261, activityIntent,
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                )
+                val notification = NotificationCompat.Builder(
+                    this@AlarmService, CHANNEL_ALARM
+                )
+                    .setSmallIcon(R.drawable.ic_alarm)
+                    .setContentTitle(getString(R.string.b2_test_title))
+                    .setContentText(getString(R.string.b2_test_description))
+                    .setContentIntent(activityPi)
+                    .setFullScreenIntent(activityPi, true)
+                    .setCategory(NotificationCompat.CATEGORY_ALARM)
+                    .setPriority(NotificationCompat.PRIORITY_HIGH)
+                    .setOngoing(true)
+                    .build()
+                getSystemService(NotificationManager::class.java)
+                    .notify(NOTIFICATION_ID, notification)
+                runCatching { startActivity(activityIntent) }
+                startAudio(diagnosticAlarm)
+            } catch (e: Exception) {
+                Log.e(TAG, "B2 diagnostic startup failed", e)
+                ProductionTestSessionStore.advance(
+                    this@AlarmService, sessionId, fireId,
+                    ProductionTestStage.FAILED, System.currentTimeMillis()
+                )
+                if (activeProductionTestSessionId == sessionId && currentFireId == fireId) {
+                    stopProductionTestPlayback()
+                }
+            }
+        }
+    }
+
+    private fun onProductionTestTrackStarted(fireId: String, sessionId: String) {
+        val now = System.currentTimeMillis()
+        val proof = ProductionTestSessionStore.read(this, now) ?: return
+        val stage = if (proof.session.nextOccurrence == 0) {
+            ProductionTestStage.AUDIO_STARTED
+        } else {
+            ProductionTestStage.AUDIO_RESTARTED
+        }
+        ProductionTestSessionStore.advance(this, sessionId, fireId, stage, now)
+    }
+
+    private fun handleProductionTestAction(intent: Intent) {
+        val sessionId = intent.getStringExtra(EXTRA_PRODUCTION_TEST_SESSION_ID).orEmpty()
+        val fireId = intent.getStringExtra(
+            ProductionTestAlarmScheduler.EXTRA_TEST_FIRE_ID
+        ).orEmpty()
+        if (activeProductionTestSessionId != sessionId || currentFireId != fireId ||
+            sessionId.isBlank()) return
+        serviceScope.launch {
+            val now = System.currentTimeMillis()
+            val proof = ProductionTestSessionStore.read(this@AlarmService, now)
+                ?: return@launch
+            if (!proof.session.canAccept(sessionId, fireId, now)) return@launch
+            if (intent.action == ACTION_PRODUCTION_TEST_SNOOZE) {
+                if (ProductionTestAlarmScheduler.scheduleSnooze(
+                        this@AlarmService, proof.session
+                    )) {
+                    stopProductionTestPlayback()
+                }
+            } else if (intent.action == ACTION_PRODUCTION_TEST_DISMISS) {
+                ProductionTestSessionStore.advance(
+                    this@AlarmService, sessionId, fireId,
+                    ProductionTestStage.DISMISSED, now
+                )
+                ProductionTestAlarmScheduler.cancel(this@AlarmService)
+                stopProductionTestPlayback()
+            }
+        }
+    }
+
+    private fun stopProductionTestPlayback() {
+        stopAlarmPlayback()
+        activeProductionTestSessionId = null
+        currentAlarmId = -1L
+        currentFireId = ""
+        currentScheduledAt = 0L
+        if (isForeground.compareAndSet(true, false)) {
+            stopForeground(STOP_FOREGROUND_REMOVE)
+        }
+        stopSelf()
+    }
+
+    private fun abortProductionTestForRealAlarm() {
+        val sessionId = activeProductionTestSessionId ?: return
+        val fireId = currentFireId
+        ProductionTestSessionStore.advance(
+            this, sessionId, fireId,
+            ProductionTestStage.CANCELLED, System.currentTimeMillis()
+        )
+        ProductionTestAlarmScheduler.cancel(this)
+        stopAlarmPlayback()
+        activeProductionTestSessionId = null
+        currentAlarmId = -1L
+        currentFireId = ""
+        currentScheduledAt = 0L
+        if (isForeground.compareAndSet(true, false)) {
+            stopForeground(STOP_FOREGROUND_REMOVE)
+        }
     }
 
     private suspend fun startAlarm(alarmId: Long) {
@@ -1150,12 +1330,17 @@ class AlarmService : Service() {
                         )
                         session.onTrackStarted(candidate)
                         MusicPlaybackState.updateTitle(candidate.track.displayTitle)
-                        val startedAt = System.currentTimeMillis()
-                        serviceScope.launch {
-                            runCatching {
-                                musicLibraryRepository.recordStarted(fireId, startedAt, candidate.track)
-                            }.onFailure { error ->
-                                Log.e(TAG, "Could not record started music playback", error)
+                        val testId = activeProductionTestSessionId
+                        if (testId != null) {
+                            onProductionTestTrackStarted(fireId, testId)
+                        } else {
+                            val startedAt = System.currentTimeMillis()
+                            serviceScope.launch {
+                                runCatching {
+                                    musicLibraryRepository.recordStarted(fireId, startedAt, candidate.track)
+                                }.onFailure { error ->
+                                    Log.e(TAG, "Could not record started music playback", error)
+                                }
                             }
                         }
                     }
@@ -2636,7 +2821,7 @@ class AlarmService : Service() {
         fireId: String = currentFireId,
         scheduledAt: Long = currentScheduledAt
     ) {
-        if (alarmId <= 0L) return
+        if (alarmId <= 0L || activeProductionTestSessionId != null) return
         // Repository-owned scope: records issued right before stopSelf()
         // must not race serviceScope.cancel() in onDestroy().
         alarmIncidentRepository.recordAsync(
@@ -2659,7 +2844,7 @@ class AlarmService : Service() {
         fireId: String = currentFireId,
         scheduledAt: Long = currentScheduledAt
     ) {
-        if (alarmId <= 0L) return
+        if (alarmId <= 0L || activeProductionTestSessionId != null) return
         alarmIncidentRepository.record(
             alarmId = alarmId,
             fireId = fireId.ifBlank { AlarmIncidentEvent.fireIdFor(alarmId, scheduledAt) },
