@@ -505,29 +505,54 @@ class AlarmListViewModel @Inject constructor(
      * Create a quick alarm X minutes from now.
      * One-shot, no repeat, default settings.
      */
+    private val quickAlarmInFlight = java.util.concurrent.atomic.AtomicBoolean(false)
+
     fun createQuickAlarm(minutesFromNow: Int) {
+        if (minutesFromNow <= 0 || !quickAlarmInFlight.compareAndSet(false, true)) return
         viewModelScope.launch {
-            val triggerTime = System.currentTimeMillis() + (minutesFromNow * 60 * 1000L)
-            val instant = Instant.ofEpochMilli(triggerTime)
-            val localTime = instant.atZone(ZoneId.systemDefault()).toLocalTime()
-
-            // Settings > Defaults says it is "the behavior new alarms start
-            // with", and a quick alarm is a new alarm.
-            val defaults = preferencesManager.getCurrentSettings()
-            val alarm = Alarm(
-                hour = localTime.hour,
-                minute = localTime.minute,
-                label = context.getString(R.string.alarmlist_quick_alarm_label, minutesFromNow),
-                isEnabled = true,
-                repeatDays = emptySet(),
-                snoozeDurationMinutes = defaults.defaultSnoozeDuration,
-                gradualVolumeSeconds = defaults.defaultGradualVolume,
-                nextTriggerTime = triggerTime
-            )
-
-            val id = repository.save(alarm)
-            scheduler.scheduleAt(alarm.copy(id = id), triggerTime)
-            emitFeedback("Quick alarm set for ${formatFeedbackTime(triggerTime)}")
+            var persistedId: Long? = null
+            try {
+                val triggerTime = System.currentTimeMillis() + minutesFromNow.toLong() * 60_000L
+                val instant = Instant.ofEpochMilli(triggerTime)
+                val localTime = instant.atZone(ZoneId.systemDefault()).toLocalTime()
+                val defaults = preferencesManager.getCurrentSettings()
+                val alarm = Alarm(
+                    hour = localTime.hour,
+                    minute = localTime.minute,
+                    label = context.getString(R.string.alarmlist_quick_alarm_label, minutesFromNow),
+                    isEnabled = true,
+                    repeatDays = emptySet(),
+                    snoozeDurationMinutes = defaults.defaultSnoozeDuration,
+                    gradualVolumeSeconds = defaults.defaultGradualVolume,
+                    nextTriggerTime = triggerTime
+                )
+                val id = repository.save(alarm)
+                persistedId = id
+                // Writing the row is not proof that AlarmManager accepted the
+                // alarm. A failed schedule must not generate a success toast.
+                if (scheduler.scheduleAt(alarm.copy(id = id), triggerTime)) {
+                    emitFeedback(
+                        context.getString(
+                            R.string.alarmlist_quick_alarm_created,
+                            formatFeedbackTime(triggerTime)
+                        )
+                    )
+                } else {
+                    repository.setEnabled(id, enabled = false, nextTrigger = 0)
+                    emitFeedback(context.getString(R.string.alarmlist_quick_alarm_schedule_failed))
+                }
+            } catch (error: CancellationException) {
+                throw error
+            } catch (error: Exception) {
+                // Disable the saved row if a later step fails. Keep it visible
+                // for explicit retry rather than leaving a phantom live alarm.
+                persistedId?.let { id ->
+                    runCatching { repository.setEnabled(id, enabled = false, nextTrigger = 0) }
+                }
+                emitFeedback(context.getString(R.string.alarmlist_quick_alarm_schedule_failed))
+            } finally {
+                quickAlarmInFlight.set(false)
+            }
         }
     }
 
