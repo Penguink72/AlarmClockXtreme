@@ -233,6 +233,7 @@ class AlarmService : Service() {
     private var currentWakeConfirmRefireCount: Int = 0
     private val serviceScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
     private var wakeLock: PowerManager.WakeLock? = null
+    private val snoozeRequestActive = AtomicBoolean(false)
     // v1.9.1: AtomicBoolean (was @Volatile Boolean). Multiple coroutines on
     // serviceScope's IO dispatcher can race the foreground stop path — e.g.
     // the auto-silence job firing at the same moment the user taps Dismiss.
@@ -393,9 +394,30 @@ class AlarmService : Service() {
                     ?.coerceIn(MIN_CUSTOM_SNOOZE_MINUTES, MAX_CUSTOM_SNOOZE_MINUTES)
                 val snoozeAtMillis = intent.getLongExtra(EXTRA_SNOOZE_UNTIL_MILLIS, -1L)
                     .takeIf { it > System.currentTimeMillis() }
-                // v1.5.1: If the service was killed+restarted between fire and
-                // snooze, currentSnoozeCount is 0 (fresh instance). Re-read the
-                // persisted count so the progressive-snooze ladder doesn't reset.
+                // Stale/duplicate button or notification actions must not
+                // extend an already-armed snooze for the same fireId.
+                val completed = lastSnoozeResponse.get()
+                if (completed?.alarmId == alarmId && completed.fireId == fireId &&
+                    completed.accepted
+                ) {
+                    recordIncidentAsync(
+                        type = AlarmIncidentEvent.TYPE_USER_ACTION,
+                        status = AlarmIncidentEvent.STATUS_SKIPPED,
+                        reasonCode = "DUPLICATE_SNOOZE_ALREADY_ARMED",
+                        source = "AlarmService", alarmId = alarmId
+                    )
+                    return START_NOT_STICKY
+                }
+                if (!snoozeRequestActive.compareAndSet(false, true)) {
+                    recordIncidentAsync(
+                        type = AlarmIncidentEvent.TYPE_USER_ACTION,
+                        status = AlarmIncidentEvent.STATUS_SKIPPED,
+                        reasonCode = "DUPLICATE_SNOOZE_IN_PROGRESS",
+                        source = "AlarmService", alarmId = alarmId
+                    )
+                    return START_NOT_STICKY
+                }
+                // v1.5.1: Restore count only for a genuinely new service.
                 if (currentAlarmId == -1L && alarmId > 0L) {
                     currentAlarmId = alarmId
                     currentScheduledAt = scheduledAt
@@ -420,6 +442,8 @@ class AlarmService : Service() {
                             source = "AlarmService",
                             alarmId = alarmId
                         )
+                    } finally {
+                        snoozeRequestActive.set(false)
                     }
                 }
             }
