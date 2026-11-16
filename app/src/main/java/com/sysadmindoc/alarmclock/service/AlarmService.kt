@@ -468,8 +468,9 @@ class AlarmService : Service() {
                                 fireId,
                                 currentAlarmId,
                                 currentFireId,
-                                reply?.alarmId == alarmId &&
-                                    reply.fireId == fireId && reply.accepted
+                                reply?.let {
+                                    it.alarmId == alarmId && it.fireId == fireId && it.accepted
+                                } == true
                             )
                         ) {
                             recordIncidentAsync(
