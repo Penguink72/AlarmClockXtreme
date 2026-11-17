@@ -132,7 +132,11 @@ internal fun LazyListScope.alarmEditSoundSections(
             label = stringResource(R.string.alarm_edit_alarm_sound),
             trailing = {
                 SettingsValueButton(
-                    label = when (state.ringtoneUri) {
+                    // Show the active source, not the dormant ringtone
+                    // value retained while a music playlist is selected.
+                    label = if (state.randomMusicEnabled) {
+                        stringResource(R.string.music_library_title)
+                    } else when (state.ringtoneUri) {
                         "" -> stringResource(R.string.alarm_edit_default)
                         "silent" -> stringResource(R.string.alarm_edit_silent)
                         else -> stringResource(R.string.alarm_edit_custom)
