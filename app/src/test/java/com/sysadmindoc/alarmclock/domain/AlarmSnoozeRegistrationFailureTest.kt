@@ -130,6 +130,53 @@ class AlarmSnoozeRegistrationFailureTest {
     }
 
     @Test
+    fun incidentLoggerFailureDoesNotCancelAnAlreadyPersistedSnooze() = runTest {
+        val alarmManager = mockk<AlarmManager>(relaxed = true)
+        every { alarmManager.canScheduleExactAlarms() } returns false
+
+        val repository = mockk<AlarmRepository>(relaxed = true)
+        val incidentRepository = mockk<AlarmIncidentRepository>()
+        every {
+            incidentRepository.recordAsync(
+                any(), any(), any(), any(), any(), any(), any(), any(), any()
+            )
+        } throws IllegalStateException("injected incident logging failure")
+        val preferencesManager = mockk<PreferencesManager>()
+        coEvery { preferencesManager.getCurrentSettings() } returns AppSettings()
+        every { preferencesManager.getCachedSettings() } returns AppSettings()
+
+        val realContext: Context = ApplicationProvider.getApplicationContext()
+        val context = object : ContextWrapper(realContext) {
+            override fun getSystemService(name: String): Any? =
+                if (name == Context.ALARM_SERVICE) alarmManager
+                else super.getSystemService(name)
+        }
+        val scheduler = AlarmScheduler(
+            context = context,
+            repository = repository,
+            calculator = mockk(relaxed = true),
+            preferencesManager = preferencesManager,
+            holidayRepository = mockk(relaxed = true),
+            alarmIncidentRepository = incidentRepository,
+            weatherRepository = mockk(relaxed = true)
+        )
+        val alarm = Alarm(
+            id = 877L, hour = 7, minute = 0,
+            label = "Logger failure probe", isEnabled = true
+        )
+        val target = System.currentTimeMillis() + 18 * 60_000L
+
+        assertTrue(scheduler.scheduleSnooze(alarm, customMinutes = 9))
+        assertTrue(scheduler.scheduleSnoozeAt(alarm, target))
+
+        coVerify(exactly = 2) { repository.updateNextTrigger(877L, any()) }
+        verify(exactly = 2) {
+            alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, any(), any())
+        }
+        verify(exactly = 0) { alarmManager.cancel(any()) }
+    }
+
+    @Test
     fun registrationStatusNeverTreatsFailureAsAccepted() {
         assertFalse(AlarmRegistrationResult.FAILED.registered)
         assertTrue(AlarmRegistrationResult.EXACT.registered)
