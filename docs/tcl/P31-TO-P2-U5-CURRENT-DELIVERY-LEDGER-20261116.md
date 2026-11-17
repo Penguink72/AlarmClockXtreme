@@ -92,3 +92,36 @@
 - 最終 CI 證據補充（本輪）：`34052056df28b1254e684d363e95ed71b12d0647` 的 [Run 43964110045](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/43964110045) 已確認 **Build F-Droid debug APK 成功**、**F-Droid unit tests 816/816（failures=0, errors=0, skipped=0）**；跨 Runner v160 簽章 Job 最後讀取仍 in_progress，故完整 3/3 尚未裁定。
 - `994134ad414336de0965ee769e519334291462fb` 修復 U4 持久化快照讀回時可空 playlistId 的解析，屬前一個成功測試 SHA 之後的新程式變動；[最新 CI Run 43964849123](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/43964849123) 最後查核為 pending。**不得使用 `34052056` 的 816/816 代表 `994134a` 已機械驗證。**
 - 與作者授權一致：原 G1 亮屏十分鐘 T3 未完成，不再阻擋 G2/G3 開發，亦不自動填為 PASS。仍保留真實生活鬧鐘應有的系統備援。
+
+
+## 2026-11-17 上午｜G1/G2/G3 安全回歸切片（後續已推送）
+
+### 本切片的輸入與閘門
+- 遠端 PR #13 基準 `0966356df551da8369ae4df3705c921f884572f9`，在施工前與 PR 的 HEAD 相同；無平行新提交。
+- [前一輪 CI Run 43964849123](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/43964849123) 已完整 **3/3 綠燈、816/816 測試**（SHA `994134ad414336de0965ee769e519334291462fb`）。本輪程式不同 SHA，必須另外取得 CI，禁止沿用這個成功作為新程式的 T2。
+- 作者既有授權：**T3 實機測試非 Code-Go 阻斷條件**。因此仍持續遠端施工，但安全與發聲行為未經裝置實證時，T3 永遠保留未驗，不能改列 PASS。
+
+### G1-R2：貪睡排程／資料庫／診斷容錯（P0）
+- `a0e393e`：補 `AlarmScheduler.scheduleSnooze()` 及 `scheduleSnoozeAt()` 的 inexact fallback。若 OS `setAndAllowWhileIdle` 已接受，但 `repository.updateNextTrigger` 失敗，回滾新 `PendingIntent`，不再留下「服務認為拒絕、OS 卻之後幽靈再響」的排程。
+- `cacc65a`：只在 OS 和 Room 都成功後認可貪睡；事件紀錄系統寫入失敗不會把已儲存的有效排程誤判為失敗、也不會取消它。失敗路徑的記錄同樣隔離例外。
+- `52208d5` + `85cf8bd`：注入 Room 寫入失敗與診斷紀錄例外，分別驗證「回滾兩種 snooze」與「已儲存排程保持有效」。
+- 狀態：T1 已推；T2 見最新 CI；T3 原亮屏十分鐘問題仍未驗（使用者選擇不阻擋後續）。
+
+### G2-R2：正式診斷測試的精確火次與隔離（P0）
+- `c3879a2`、`84043f1`、`9f79659`：測試 Session 新增 `matchesDelivery()`，必須核對來源鬧鐘、Session UUID、fireId 和 **完整 scheduledAtMs**；`SNOOZE_REGISTERED` 會把 1 分鐘後的**實際新火次時間**與 `nextOccurrence=1` 原子保存，拒絕漏填、過期或造假的時間。
+- `7776e7e`：正式 `AlarmReceiver` 診斷路徑不再在 `startForegroundService` 成功的瞬間釋放 15 秒交接 WakeLock；改與正式鬧鐘一致，等待有界 timeout，降低 Doze 廣播交給 Service 之間 CPU 睡眠導致的漏響。Service 啟動失敗時即釋放。
+- `991451c`、`1c35eaa`：Service 再次核對完整火次，阻止普通 `ACTION_SNOOZE`／`ACTION_DISMISS` 操作 B2 測試所借用的真實 alarmId；對內部晚到 dismiss 加防護；測試備援音訊強制 `dismissAtRingtoneEnd=false`，避免修改真實鬧鐘、歷史及第三方動作。
+- `475840f`、`7384fa5`：增加可持久化的第二火次時間、回放不重複接受、錯誤時間／跨來源／過期拒絕等單元測試。
+- `93fa664`：新增 `ProductionTestReceiverDeliveryTest` Robolectric，經真實 `AlarmReceiver` 路由驗證測試 Service 只啟動一次，以及錯誤時間／舊 fireId 不應啟動 Service。
+- 狀態：T1 已推，T2 最新 CI 另驗；不把 B2 形式上完整狀態機等同於已在特定 OEM 手機發聲。
+
+### G3-R2：換曲後的清單游標正確性（P1）
+- `8cbccd3`：`PlaylistOrderSelectionPolicy` 在 `NEXT_DIFFERENT` 的**第一首**會從被中斷 URI 後方選取，遇相鄰重複 URI 則跳過；成功選到後保留完整清單游標，下一首不會因前次縮小候選集合又播同一首。
+- `8d6cecf`：測試三首歌中斷 B→C→A→B、重複 URI 插槽 A/A/B/C→B→C→A，以及只有一首 URI 重複時仍能發聲。一般隨機與洗牌策略不改動。
+- 當同 URI 在播放清單中重複多個位置時，僅有 URI 而無前次 playlistItemId，將以第一個匹配插槽為契約。未假裝能還原被中斷的精確重複插槽。
+- 狀態：T1 已推，T2 最新 CI 另驗。
+
+### 新版機械驗證（仍以外部 Actions 為準）
+- 本輪最後程式 SHA：`85cf8bd73520f4ab5b8a83f7f484bbe66f05fe95`。
+- [Run 43987464864](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/43987464864) 是此 SHA 對應的完整 F-Droid Debug / unit tests / v160 升級簽章工作流；文件追加時最近一次查核為 **pending**。前面連續 push 的 CI 被 `concurrency` 取消，不是測試失敗。
+- 後續依最終 CI 日誌處理編譯與失敗案例，保留 PR #13 Draft，不動 main，不修改 Room v28／簽章，不要求這輪立刻進行 T3。
