@@ -197,3 +197,6 @@
 - 本切片最新 App SHA `0c46800c385bce79e512df0d1aa5c52fe8bb5fe6`。
 - [Actions Run 44057827720](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/44057827720) 在記錄時 `pending`；等待完整 unit tests／APK／跨 runner sign 驗證，若編譯或測試失敗須修補後以新程式 SHA 重跑。
 - 繼續保持 PR Draft、不動 main、Room v28、既有 debug 簽章以及原音樂播放歷史資料。
+
+- `a963e32b`：U5 確認 UI 以前只列出前 5 個候選名稱，不能逐首檢視排除風險。現在使用凍結候選集的 LazyColumn 顯示所有可能的出廠音效，並允許單筆取消勾選；真正送至 ViewModel 的只有當下仍勾選的 URI，然後再與最新 metadata 取交集。不聲稱 OEM 音效辨識準確率，也不默默刪除音樂檔案。
+- **本輪最新 App SHA**：`a963e32bccd776da6479ca394c221104e984c44b`；[CI Run 44058063317](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/44058063317) 已觸發，記錄時 `pending`。前一 `0c46800c` Run 被 concurrency 取消，不能作為成功或失敗結論。只有新完整 Run 3/3 才能把本切片提升 T2。
