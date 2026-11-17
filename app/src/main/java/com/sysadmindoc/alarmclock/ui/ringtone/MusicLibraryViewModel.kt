@@ -746,8 +746,12 @@ class MusicLibraryViewModel @Inject constructor(
         val visibleUris = visiblePoolTracks().mapTo(HashSet()) { it.track.uri }
         val selected = _uiState.value.selectedPoolUris.filterTo(LinkedHashSet()) { it in visibleUris }
         if (selected.isEmpty()) return
+        // Any explicit membership write supersedes the previous automated
+        // exclusion. Claim the lock before coroutine dispatch to avoid an
+        // overlapping Undo or another bulk write from a second tap.
+        systemToneUndoSnapshot = emptyMap()
+        _uiState.value = _uiState.value.copy(loadingPool = true, systemToneUndoCount = 0)
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(loadingPool = true)
             try {
                 repository.setPoolMembership(selected, included)
                 // Refresh in the same coroutine; otherwise repeated taps can
@@ -784,8 +788,9 @@ class MusicLibraryViewModel @Inject constructor(
      */
     fun addSourceToPool(sourceId: String) {
         if (_uiState.value.scanning || _uiState.value.loadingPool) return
+        systemToneUndoSnapshot = emptyMap()
+        _uiState.value = _uiState.value.copy(loadingPool = true, systemToneUndoCount = 0)
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(loadingPool = true)
             try {
                 // The pool dialog may have been opened before a later rescan.
                 // Read the selected source and current indexed candidates
