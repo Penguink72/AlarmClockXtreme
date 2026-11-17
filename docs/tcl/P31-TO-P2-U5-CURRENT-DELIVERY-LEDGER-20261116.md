@@ -125,3 +125,7 @@
 - 本輪最後程式 SHA：`85cf8bd73520f4ab5b8a83f7f484bbe66f05fe95`。
 - [Run 43987464864](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/43987464864) 是此 SHA 對應的完整 F-Droid Debug / unit tests / v160 升級簽章工作流；文件追加時最近一次查核為 **pending**。前面連續 push 的 CI 被 `concurrency` 取消，不是測試失敗。
 - 後續依最終 CI 日誌處理編譯與失敗案例，保留 PR #13 Draft，不動 main，不修改 Room v28／簽章，不要求這輪立刻進行 T3。
+
+- G1 非精準排程補強 `cacc65a` 後的逆向負例 `85cf8bd`：即使事件 `AlarmIncidentRepository.recordAsync()` 主動拋錯，OS+Room 已接受的 `scheduleSnooze()` 與 `scheduleSnoozeAt()` 必須仍回傳成功、不可呼叫 `AlarmManager.cancel`。
+- G2 額外證據 `43602ec`：實際 `AlarmReceiver` 的第二次火次路由，測試先寫 `SNOOZE_REGISTERED` 的目標時間，再以正確第二 fireId 搭配**第一火次的時間**重放，確保不啟動 Service；用真正新時間才接受並送入 `AlarmService.ACTION_START_ALARM`。
+- 本輪最終 App 程式 SHA `43602ec23f4da01c25fa41ebece61ae2e311c1dc`。[CI Run 43987702305](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/43987702305) 在此記錄時為 pending；先前 SHA 的 cancelled 只是 concurrent push 的取消，不代表失敗。等同 SHA 之完整 CI 與 F-Droid build／upgrade signing 未成功前，G1-R2/G2-R2/G3-R2 標 T1，T2「待驗」，T3「作者選擇非阻斷」。
