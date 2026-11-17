@@ -64,6 +64,7 @@ class BackupManagerExportImportTest {
     fun musicBackupCannotImportWithoutMusicRepository() = runTest {
         val backup = BackupData(
             alarms = listOf(morningAlarm().copy(id = 43L, randomMusicEnabled = true).toAlarmBackup()),
+            settings = null,
             alarmMusicSettings = listOf(
                 AlarmMusicSettingsBackup(alarmId = 43L, playbackStrategy = "PLAYLIST_ORDER")
             )
