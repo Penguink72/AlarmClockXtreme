@@ -377,8 +377,12 @@ private fun MusicCatalogContent(
                 TextButton(
                     enabled = systemToneCandidates.isNotEmpty() && !state.loadingPool,
                     onClick = {
+                        // Send the exact reviewed snapshot; the ViewModel
+                        // revalidates it against the current indexed catalog
+                        // and can never add an unreviewed candidate.
+                        val confirmed = systemToneCandidates.map { it.track.uri }
                         confirmSystemToneExclusion = false
-                        viewModel.excludeRecognizedSystemTones()
+                        viewModel.excludeRecognizedSystemTones(confirmed)
                     }
                 ) {
                     Text(stringResource(R.string.music_library_system_tones_confirm))
