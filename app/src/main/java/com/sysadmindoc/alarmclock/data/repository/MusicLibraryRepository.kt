@@ -721,6 +721,13 @@ class MusicLibraryRepository @Inject constructor(
         return toAlarmMusicSettingsDraft(settings, filters)
     }
 
+    /** Remove an abandoned per-alarm music contract after failed duplication. */
+    suspend fun deleteSettings(alarmId: Long) {
+        if (alarmId <= 0L) return
+        musicLibraryDao.clearAlarmMusicFacetFilters(alarmId)
+        musicLibraryDao.deleteAlarmMusicSettings(alarmId)
+    }
+
     override suspend fun saveSettings(alarmId: Long, draft: AlarmMusicSettingsDraft) {
         if (alarmId <= 0L) return
         val normalizedPlaylistId = draft.playlistId

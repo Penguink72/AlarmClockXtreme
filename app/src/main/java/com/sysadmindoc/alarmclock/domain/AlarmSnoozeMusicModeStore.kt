@@ -20,6 +20,13 @@ object AlarmSnoozeMusicModeStore {
     }
 
     @SuppressLint("ApplySharedPref")
+    fun delete(context: Context, alarmId: Long): Boolean {
+        if (alarmId <= 0L) return false
+        return context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+            .edit().remove(key(alarmId)).commit()
+    }
+
+    @SuppressLint("ApplySharedPref")
     fun save(context: Context, alarmId: Long, mode: SnoozeMusicResumeMode): Boolean {
         if (alarmId <= 0L) return false
         return context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)

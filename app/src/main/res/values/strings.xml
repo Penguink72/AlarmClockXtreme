@@ -2644,4 +2644,7 @@
     <string name="alarm_music_settings_draft_hint">Changes here are drafts. Save the alarm itself to persist its sound and schedule.</string>
     <string name="alarm_edit_schedule_failed">Alarm settings were saved, but the next ring could not be registered. Check alarm permissions and try Save again.</string>
     <string name="alarm_edit_saved_unarmed">Settings were saved, but this occurrence is not scheduled (pause, holiday, or expired time).</string>
+    <string name="alarmlist_duplicate_complete">Alarm duplicated with matching music settings</string>
+    <string name="alarmlist_duplicate_unscheduled">Alarm copied with music settings, but its next ring is suppressed.</string>
+    <string name="alarmlist_duplicate_failed">Alarm copy failed; the incomplete copy was removed.</string>
 </resources>

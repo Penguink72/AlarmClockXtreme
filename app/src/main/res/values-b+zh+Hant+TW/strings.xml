@@ -913,4 +913,7 @@
     <string name="alarm_music_settings_draft_hint">這裡的修改尚未正式儲存。返回鬧鐘編輯頁按「儲存」，才會保存聲音來源並安排響鈴。</string>
     <string name="alarm_edit_schedule_failed">設定已儲存，但下次響鈴未能登記。請檢查精準鬧鐘權限後重新儲存。</string>
     <string name="alarm_edit_saved_unarmed">設定已儲存，但這次響鈴未排程（暫停、假日或已過時段）。</string>
+    <string name="alarmlist_duplicate_complete">已複製鬧鐘並保留音樂設定</string>
+    <string name="alarmlist_duplicate_unscheduled">鬧鐘與音樂設定已複製，但下次響鈴因暫停或略過而未排程。</string>
+    <string name="alarmlist_duplicate_failed">鬧鐘複製失敗；已嘗試清除不完整複本。</string>
 </resources>

@@ -13,6 +13,8 @@ import com.sysadmindoc.alarmclock.data.repository.AlarmEventRepository
 import com.sysadmindoc.alarmclock.data.repository.AlarmRepository
 import com.sysadmindoc.alarmclock.data.repository.MusicLibraryRepository
 import com.sysadmindoc.alarmclock.domain.AlarmScheduler
+import com.sysadmindoc.alarmclock.domain.AlarmSchedulingOutcome
+import com.sysadmindoc.alarmclock.domain.AlarmSnoozeMusicModeStore
 import com.sysadmindoc.alarmclock.domain.NextAlarmCalculator
 import com.sysadmindoc.alarmclock.domain.VacationAlarmPolicy
 import com.sysadmindoc.alarmclock.service.HistoryReplayActions
@@ -488,32 +490,60 @@ class AlarmListViewModel @Inject constructor(
     /**
      * Duplicate an alarm with a new ID, same settings, enabled by default.
      */
+
+    private val duplicateInFlight = java.util.concurrent.atomic.AtomicBoolean(false)
+
     fun duplicateAlarm(alarm: Alarm) {
+        if (!duplicateInFlight.compareAndSet(false, true)) return
         viewModelScope.launch {
-            val duplicate = alarm.copy(
-                id = 0,
-                label = if (alarm.label.isBlank()) {
-                    context.getString(R.string.alarmlist_copy)
-                } else {
-                    context.getString(R.string.alarmlist_copy_of, alarm.label)
-                },
-                isEnabled = true,
-                createdAt = System.currentTimeMillis(),
-                nextTriggerTime = 0,
-                sortOrder = 0
-            )
-            val id = repository.save(duplicate)
-            val saved = duplicate.copy(id = id)
-            val nextTrigger = calculator.calculate(saved)
-            repository.updateNextTrigger(id, nextTrigger)
-            scheduler.schedule(saved.copy(nextTriggerTime = nextTrigger))
-            emitFeedback(
-                if (duplicate.label.isBlank()) {
-                    "Alarm duplicated"
-                } else {
-                    "\"${duplicate.label}\" duplicated"
+            var insertedId: Long? = null
+            try {
+                // Copy the complete sound contract before creating the new
+                // alarm ID; a plain Alarm.copy() loses these per-ID stores.
+                val musicDraft = musicLibraryRepository.getSettings(alarm.id)
+                val snoozeMode = AlarmSnoozeMusicModeStore.get(context, alarm.id)
+                val duplicate = alarm.copy(
+                    id = 0,
+                    label = if (alarm.label.isBlank()) {
+                        context.getString(R.string.alarmlist_copy)
+                    } else {
+                        context.getString(R.string.alarmlist_copy_of, alarm.label)
+                    },
+                    isEnabled = true,
+                    createdAt = System.currentTimeMillis(),
+                    nextTriggerTime = 0,
+                    sortOrder = 0
+                )
+                val id = repository.save(duplicate)
+                insertedId = id
+                musicLibraryRepository.saveSettings(id, musicDraft)
+                check(AlarmSnoozeMusicModeStore.save(context, id, snoozeMode)) {
+                    "Could not copy snooze music preference"
                 }
-            )
+                val saved = duplicate.copy(id = id)
+                when (scheduler.scheduleWithResult(saved)) {
+                    AlarmSchedulingOutcome.EXACT, AlarmSchedulingOutcome.INEXACT ->
+                        emitFeedback(context.getString(R.string.alarmlist_duplicate_complete))
+                    AlarmSchedulingOutcome.SUPPRESSED ->
+                        emitFeedback(context.getString(R.string.alarmlist_duplicate_unscheduled))
+                    AlarmSchedulingOutcome.FAILED ->
+                        error("Could not register the duplicated alarm")
+                }
+            } catch (error: CancellationException) {
+                throw error
+            } catch (error: Exception) {
+                // All-or-nothing duplication: do not leave a clone with a
+                // stale default playlist or an enabled but unarmed alarm.
+                insertedId?.let { id ->
+                    runCatching { scheduler.cancel(id) }
+                    runCatching { musicLibraryRepository.deleteSettings(id) }
+                    runCatching { AlarmSnoozeMusicModeStore.delete(context, id) }
+                    runCatching { repository.deleteById(id) }
+                }
+                emitFeedback(context.getString(R.string.alarmlist_duplicate_failed))
+            } finally {
+                duplicateInFlight.set(false)
+            }
         }
     }
 
