@@ -345,7 +345,12 @@ private fun MusicCatalogContent(
     modifier: Modifier = Modifier
 ) {
     val coroutineScope = rememberCoroutineScope()
-    var confirmSystemToneExclusion by rememberSaveable { mutableStateOf(false) }
+    // Freeze the candidate identities and display titles at the moment
+    // the user opens review. A background refresh must not silently expand
+    // the reviewed bulk-operation scope while this dialog is on screen.
+    var reviewedSystemToneCandidates by remember {
+        mutableStateOf<List<MusicPoolUiTrack>>(emptyList())
+    }
     val systemToneCandidates = remember(
         state.poolTracks, state.supplementalCatalog.trackMetadataByUri
     ) {
@@ -353,17 +358,17 @@ private fun MusicCatalogContent(
             state.poolTracks, state.supplementalCatalog.trackMetadataByUri
         )
     }
-    if (confirmSystemToneExclusion) {
+    if (reviewedSystemToneCandidates.isNotEmpty()) {
         AlertDialog(
-            onDismissRequest = { confirmSystemToneExclusion = false },
+            onDismissRequest = { reviewedSystemToneCandidates = emptyList() },
             title = { Text(stringResource(R.string.music_library_system_tones_preview_title)) },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     Text(stringResource(
                         R.string.music_library_system_tones_preview_detail,
-                        systemToneCandidates.size
+                        reviewedSystemToneCandidates.size
                     ))
-                    systemToneCandidates.take(5).forEach { candidate ->
+                    reviewedSystemToneCandidates.take(5).forEach { candidate ->
                         Text("• " + candidate.track.displayTitle, maxLines = 1,
                             overflow = TextOverflow.Ellipsis)
                     }
@@ -375,13 +380,14 @@ private fun MusicCatalogContent(
             },
             confirmButton = {
                 TextButton(
-                    enabled = systemToneCandidates.isNotEmpty() && !state.loadingPool,
+                    enabled = reviewedSystemToneCandidates.isNotEmpty() &&
+                        !state.loadingPool && !state.scanning,
                     onClick = {
                         // Send the exact reviewed snapshot; the ViewModel
                         // revalidates it against the current indexed catalog
                         // and can never add an unreviewed candidate.
-                        val confirmed = systemToneCandidates.map { it.track.uri }
-                        confirmSystemToneExclusion = false
+                        val confirmed = reviewedSystemToneCandidates.map { it.track.uri }
+                        reviewedSystemToneCandidates = emptyList()
                         viewModel.excludeRecognizedSystemTones(confirmed)
                     }
                 ) {
@@ -389,7 +395,7 @@ private fun MusicCatalogContent(
                 }
             },
             dismissButton = {
-                TextButton(onClick = { confirmSystemToneExclusion = false }) {
+                TextButton(onClick = { reviewedSystemToneCandidates = emptyList() }) {
                     Text(stringResource(R.string.music_library_system_tones_cancel))
                 }
             }
@@ -654,7 +660,9 @@ private fun MusicCatalogContent(
             OutlinedButton(
                 enabled = systemToneCandidates.isNotEmpty() &&
                     !state.loadingPool && !state.scanning,
-                onClick = { confirmSystemToneExclusion = true }
+                onClick = {
+                    reviewedSystemToneCandidates = systemToneCandidates.toList()
+                }
             ) {
                 Text(stringResource(
                     R.string.music_library_system_tones_preview_button,
