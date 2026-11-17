@@ -98,4 +98,55 @@ class AlarmEditMusicSaveConcurrencyTest {
         coVerify(exactly = 2) { music.saveSettings(91L, any()) }
         assertTrue(viewModel.alarmMusicSettingsState.value.saved)
     }
+
+    @Test fun wholeAlarmQuickDoubleSaveCreatesOneRowWithMatchingSoundSnapshot() = runTest {
+        Dispatchers.setMain(StandardTestDispatcher(testScheduler))
+        val alarms = mockk<AlarmRepository>(relaxed = true)
+        val scheduler = mockk<AlarmScheduler>(relaxed = true)
+        val calculator = mockk<NextAlarmCalculator>(relaxed = true)
+        val preferences = mockk<PreferencesManager>(relaxed = true)
+        val music = mockk<MusicLibraryRepository>(relaxed = true)
+        coEvery { preferences.getCurrentSettings() } returns AppSettings()
+        coEvery { music.evaluateAlarmMusicDraft(any()) } returns
+            EvaluatedAlarmMusicSettings(
+                playlists = emptyList(), artists = emptyList(), folders = emptyList(),
+                matchingPlayableTrackCount = 2, unavailableTrackCount = 0
+            )
+        val allowFirstInsert = CompletableDeferred<Unit>()
+        var writes = 0
+        coEvery { alarms.save(any()) } coAnswers {
+            writes++
+            if (writes == 1) allowFirstInsert.await()
+            915_001L
+        }
+        val viewModel = AlarmEditViewModel(
+            SavedStateHandle(),
+            ApplicationProvider.getApplicationContext<Application>(),
+            alarms, scheduler, calculator, preferences, music
+        )
+        runCurrent()
+        viewModel.onAlarmMusicSettingsAction(
+            AlarmMusicSettingsAction.SelectPlaylist("morning")
+        )
+        var navigations = 0
+        viewModel.save { navigations++ }
+        viewModel.save { navigations++ }
+        // A late tap while the full save is in flight must not mutate its sound.
+        viewModel.onAlarmMusicSettingsAction(
+            AlarmMusicSettingsAction.SelectPlaylist("later")
+        )
+        runCurrent()
+        assertTrue(viewModel.uiState.value.isSaving)
+        coVerify(exactly = 1) { alarms.save(any()) }
+        allowFirstInsert.complete(Unit)
+        runCurrent()
+        coVerify(exactly = 1) {
+            music.saveSettings(915_001L, match { it.playlistId == "morning" })
+        }
+        coVerify(exactly = 1) {
+            scheduler.schedule(match { it.id == 915_001L && it.randomMusicEnabled })
+        }
+        assertTrue(viewModel.alarmMusicSettingsState.value.draft.playlistId == "morning")
+        assertTrue(navigations == 1)
+    }
 }

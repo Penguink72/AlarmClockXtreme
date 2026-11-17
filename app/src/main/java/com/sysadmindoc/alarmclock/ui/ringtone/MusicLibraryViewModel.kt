@@ -680,8 +680,6 @@ class MusicLibraryViewModel @Inject constructor(
 
     fun updateSelectedCatalogMembership(included: Boolean, videoOnly: Boolean = false) {
         if (_uiState.value.loadingPool || _uiState.value.scanning) return
-        systemToneUndoSnapshot = emptyMap()
-        _uiState.value = _uiState.value.copy(systemToneUndoCount = 0)
         val selected = catalogUrisForMembershipUpdate(
             tracks = visibleCatalogTracks(videoOnly),
             selectedUris = _uiState.value.selectedCatalogUris,
@@ -689,9 +687,11 @@ class MusicLibraryViewModel @Inject constructor(
             included = included
         )
         if (selected.isEmpty()) return
-
+        // A no-op must preserve the existing system-tone Undo. A real manual
+        // mutation supersedes Undo and claims the lock before coroutine dispatch.
+        systemToneUndoSnapshot = emptyMap()
+        _uiState.value = _uiState.value.copy(loadingPool = true, systemToneUndoCount = 0)
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(loadingPool = true)
             try {
                 repository.setPoolMembership(selected, included)
                 loadPoolCandidatesNow()

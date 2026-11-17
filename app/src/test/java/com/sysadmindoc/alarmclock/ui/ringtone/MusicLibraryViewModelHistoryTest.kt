@@ -21,6 +21,8 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -128,5 +130,46 @@ class MusicLibraryViewModelHistoryTest {
 
         viewModel.stopReplay()
         verify(exactly = 1) { replayActions.stop() }
+    }
+
+    @Test
+    fun doubleCatalogMembershipTapStartsOneWriteBeforeCoroutineDispatch() = runTest {
+        Dispatchers.setMain(StandardTestDispatcher(testScheduler))
+        val uri = "content://music/one"
+        coEvery { repository.poolCandidates() } returns listOf(
+            com.sysadmindoc.alarmclock.data.local.MusicPoolTrack(
+                com.sysadmindoc.alarmclock.data.local.entity.MusicTrack(
+                    uri = uri, title = "One", source = "MEDIA_STORE"
+                ),
+                membershipState = null
+            )
+        )
+        coEvery { repository.buildSupplementalCatalog(any()) } returns
+            MusicLibrarySupplementalCatalog()
+        val allowWrite = kotlinx.coroutines.CompletableDeferred<Unit>()
+        coEvery { repository.setPoolMembership(any(), true) } coAnswers {
+            allowWrite.await()
+        }
+        val viewModel = MusicLibraryViewModel(
+            indexer = indexer,
+            repository = repository,
+            previewController = previewController,
+            replayActions = replayActions,
+            context = context
+        )
+        runCurrent()
+        viewModel.loadPoolCandidates()
+        runCurrent()
+        viewModel.selectVisibleCatalogTracks(listOf(uri))
+        viewModel.updateSelectedCatalogMembership(included = true)
+        viewModel.updateSelectedCatalogMembership(included = true)
+        assertTrue(viewModel.uiState.value.loadingPool)
+        runCurrent()
+        coVerify(exactly = 1) {
+            repository.setPoolMembership(match { uri in it }, true)
+        }
+        allowWrite.complete(Unit)
+        runCurrent()
+        assertFalse(viewModel.uiState.value.loadingPool)
     }
 }

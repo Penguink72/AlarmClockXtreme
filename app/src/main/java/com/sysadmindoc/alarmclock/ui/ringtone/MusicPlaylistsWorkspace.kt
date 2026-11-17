@@ -492,7 +492,7 @@ internal fun MusicPlaylistsWorkspace(
     val dialog = dialogMode
     if (dialog != null) {
         AlertDialog(
-            onDismissRequest = { dialogMode = null },
+            onDismissRequest = { if (!busy) dialogMode = null },
             title = {
                 Text(
                     stringResource(
@@ -516,13 +516,17 @@ internal fun MusicPlaylistsWorkspace(
                 TextButton(
                     enabled = name.isNotBlank() && !busy,
                     onClick = {
+                        if (busy || name.isBlank()) return@TextButton
+                        // Claim synchronously: rapid taps must not create or
+                        // rename the same playlist twice while Room is busy.
+                        val submittedName = name.trim()
+                        busy = true
                         scope.launch {
-                            busy = true
                             try {
                                 val repo = repository ?: return@launch
                                 when (dialog) {
                                     PlaylistDialogMode.CREATE -> {
-                                        val created = repo.create(name.trim())
+                                        val created = repo.create(submittedName)
                                         if (selectedTrackUris.isNotEmpty()) {
                                             val result = repo.addTracks(
                                                 created.playlistId,
@@ -570,7 +574,7 @@ internal fun MusicPlaylistsWorkspace(
                                         selectedPlaylistId = created.playlistId
                                     }
                                     is PlaylistDialogMode.RENAME -> {
-                                        repo.rename(dialog.playlistId, name.trim())
+                                        repo.rename(dialog.playlistId, submittedName)
                                     }
                                 }
                                 dialogMode = null
@@ -588,7 +592,7 @@ internal fun MusicPlaylistsWorkspace(
                 }
             },
             dismissButton = {
-                TextButton(onClick = { dialogMode = null }) {
+                TextButton(enabled = !busy, onClick = { dialogMode = null }) {
                     Text(stringResource(R.string.music_playlist_cancel))
                 }
             }

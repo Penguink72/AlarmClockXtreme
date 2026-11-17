@@ -193,6 +193,7 @@ class AlarmEditViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(AlarmEditUiState())
     private val musicEvaluationRequest = AtomicLong(0L)
     private val musicSaveInFlight = AtomicBoolean(false)
+    private val alarmSaveInFlight = AtomicBoolean(false)
     val uiState: StateFlow<AlarmEditUiState> = _uiState
         .map { state ->
             state.copy(
@@ -367,6 +368,9 @@ class AlarmEditViewModel @Inject constructor(
     }
 
     fun onAlarmMusicSettingsAction(action: AlarmMusicSettingsAction) {
+        // A whole-alarm Save captured a coherent source + playlist draft.
+        // Ignore later selection changes while that transaction is in flight.
+        if (alarmSaveInFlight.get()) return
         when (action) {
             is AlarmMusicSettingsAction.SelectPlaylist -> {
                 _uiState.value = _uiState.value.withSelectedMusicSource()
@@ -883,14 +887,14 @@ class AlarmEditViewModel @Inject constructor(
     )
 
     fun save(onComplete: () -> Unit) {
-        // Re-entrancy guard: a fast double-tap on the Save button would otherwise
-        // create two alarm rows. The state flag still updates, but races against
-        // recomposition; this synchronous check is reliable.
-        if (_uiState.value.isSaving) return
+        // Claim before coroutine dispatch: a second tap cannot enqueue another
+        // row insert or race music-source settings against the alarm row.
+        if (!alarmSaveInFlight.compareAndSet(false, true)) return
+        val s = _uiState.value
+        val musicDraft = _alarmMusicSettingsState.value.draft
+        _uiState.value = s.copy(isSaving = true, saveError = null)
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isSaving = true, saveError = null)
-            val s = _uiState.value
-
+            try {
             // Physical-challenge readiness preflight: refuse to save an alarm whose
             // dismiss challenge has no registered reference, because it could never
             // be dismissed. Hardware/permission gaps only warn (handled in the UI);
@@ -1008,7 +1012,8 @@ class AlarmEditViewModel @Inject constructor(
                     id = if (s.isEditing) alarmId else savedId
                 )
                 try {
-                    val musicDraft = _alarmMusicSettingsState.value.draft
+                    // Use the music snapshot from the same click as the alarm's
+                    // randomMusicEnabled flag, not a newer UI selection.
                     musicLibraryRepository.saveSettings(savedAlarm.id, musicDraft)
                     check(AlarmSnoozeMusicModeStore.save(
                         context, savedAlarm.id, musicDraft.snoozeMusicMode
@@ -1038,11 +1043,17 @@ class AlarmEditViewModel @Inject constructor(
                     scheduler.syncBedtimeDndRule()
                 }
                 onComplete()
+            } catch (error: CancellationException) {
+                throw error
             } catch (_: Exception) {
                 _uiState.value = _uiState.value.copy(
                     isSaving = false,
                     saveError = context.getString(R.string.alarm_edit_save_error_generic)
                 )
+            }
+            } finally {
+                // Includes early preflight returns and coroutine cancellation.
+                alarmSaveInFlight.set(false)
             }
         }
     }
