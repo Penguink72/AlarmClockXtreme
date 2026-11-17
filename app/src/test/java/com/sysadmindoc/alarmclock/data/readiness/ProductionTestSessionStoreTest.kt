@@ -55,8 +55,20 @@ class ProductionTestSessionStoreTest {
             ProductionTestStage.SERVICE_ACKNOWLEDGED, now + 4L))
         assertTrue(ProductionTestSessionStore.advance(context, session.sessionId, session.fireId(),
             ProductionTestStage.AUDIO_STARTED, now + 5L))
+        val snoozeAt = now + 61_000L
         assertTrue(ProductionTestSessionStore.advance(context, session.sessionId, session.fireId(),
-            ProductionTestStage.SNOOZE_REGISTERED, now + 6L))
+            ProductionTestStage.SNOOZE_REGISTERED, now + 6L,
+            nextScheduledAtMs = snoozeAt))
+        val registered = ProductionTestSessionStore.read(context, now + 7L)
+        assertEquals(snoozeAt, registered?.session?.scheduledAtMs)
+        assertFalse(registered!!.session.matchesDelivery(
+            session.sourceAlarmId, session.sessionId, session.fireId(1),
+            session.scheduledAtMs, now + 7L
+        ))
+        assertTrue(registered.session.matchesDelivery(
+            session.sourceAlarmId, session.sessionId, session.fireId(1),
+            snoozeAt, now + 7L
+        ))
         assertFalse(ProductionTestSessionStore.advance(context, session.sessionId, session.fireId(0),
             ProductionTestStage.SNOOZE_DELIVERED, now + 7L))
         assertTrue(ProductionTestSessionStore.advance(context, session.sessionId, session.fireId(1),
@@ -68,6 +80,40 @@ class ProductionTestSessionStoreTest {
         assertFalse(ProductionTestSessionStore.advance(context, session.sessionId, session.fireId(1),
             ProductionTestStage.AUDIO_RESTARTED, now + 11L))
         assertEquals(ProductionTestStage.DISMISSED, ProductionTestSessionStore.read(context, now + 12L)?.stage)
+    }
+
+    @Test fun missingOrStaleSnoozeTargetCannotAdvanceProof() {
+        val session = ProductionTestSession.new(79, now)
+        assertTrue(ProductionTestSessionStore.writeNew(context, session))
+        val steps = listOf(
+            ProductionTestStage.REGISTERED,
+            ProductionTestStage.RECEIVER_DELIVERED,
+            ProductionTestStage.SERVICE_ACKNOWLEDGED,
+            ProductionTestStage.AUDIO_STARTED
+        )
+        steps.forEachIndexed { i, stage ->
+            assertTrue(ProductionTestSessionStore.advance(
+                context, session.sessionId, session.fireId(), stage, now + i + 1L
+            ))
+        }
+        assertFalse(ProductionTestSessionStore.advance(
+            context, session.sessionId, session.fireId(),
+            ProductionTestStage.SNOOZE_REGISTERED, now + 5L
+        ))
+        assertFalse(ProductionTestSessionStore.advance(
+            context, session.sessionId, session.fireId(),
+            ProductionTestStage.SNOOZE_REGISTERED, now + 6L,
+            nextScheduledAtMs = now + 1L
+        ))
+        assertFalse(ProductionTestSessionStore.advance(
+            context, session.sessionId, session.fireId(),
+            ProductionTestStage.SNOOZE_REGISTERED, now + 7L,
+            nextScheduledAtMs = session.expiresAtMs
+        ))
+        assertEquals(ProductionTestStage.AUDIO_STARTED,
+            ProductionTestSessionStore.read(context, now + 8L)?.stage)
+        assertEquals(session.scheduledAtMs,
+            ProductionTestSessionStore.read(context, now + 8L)?.session?.scheduledAtMs)
     }
 
     @Test fun oldOrOtherSessionCannotAdvanceAndExpiryNeverLooksSuccessful() {
