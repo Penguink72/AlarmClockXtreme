@@ -106,8 +106,11 @@ internal fun MusicPlaylistsWorkspace(
             if (repo == null || busy) {
                 status = null
             } else {
+                // Claim in the click callback, before dispatching the
+                // coroutine. A second tap in the same frame cannot enqueue
+                // another bulk insert of the same 200+ selected songs.
+                busy = true
                 scope.launch {
-                    busy = true
                     try {
                         val result = repo.addTracks(
                             playlistId = playlistId,
