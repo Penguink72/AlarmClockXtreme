@@ -49,6 +49,7 @@ internal fun MusicPlaylistsWorkspace(
     initialTargetPlaylistId: String?,
     onSelectionHandled: () -> Unit,
     onAddTracksToPlaylist: (String) -> Unit,
+    onApplyToAlarm: ((String) -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     val scope = rememberCoroutineScope()
@@ -239,6 +240,17 @@ internal fun MusicPlaylistsWorkspace(
                     ),
                     style = MaterialTheme.typography.bodySmall
                 )
+            }
+            // U1.2/U2: one clear action from the music center to the
+            // authoritative per-alarm sound draft. No parallel picker state.
+            if (onApplyToAlarm != null && playlist != null) {
+                OutlinedButton(
+                    modifier = Modifier.fillMaxWidth(),
+                    enabled = !busy && playlist.playableTrackCount > 0,
+                    onClick = { onApplyToAlarm(playlist.playlistId) }
+                ) {
+                    Text(stringResource(R.string.music_playlist_apply_to_alarm))
+                }
             }
             if (selectedPlaylistItemIds.isNotEmpty()) {
                 Row(
