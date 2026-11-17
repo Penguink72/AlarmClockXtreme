@@ -1,6 +1,7 @@
 package com.sysadmindoc.alarmclock.domain
 
 import android.app.AlarmManager
+import android.app.PendingIntent
 import android.app.Application
 import android.content.Context
 import android.content.ContextWrapper
@@ -125,7 +126,7 @@ class AlarmSnoozeRegistrationFailureTest {
         verify(exactly = 2) {
             alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, any(), any())
         }
-        verify(exactly = 2) { alarmManager.cancel(any()) }
+        verify(exactly = 2) { alarmManager.cancel(any<PendingIntent>()) }
         coVerify(exactly = 2) { repository.updateNextTrigger(876L, any()) }
     }
 
@@ -173,7 +174,7 @@ class AlarmSnoozeRegistrationFailureTest {
         verify(exactly = 2) {
             alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, any(), any())
         }
-        verify(exactly = 0) { alarmManager.cancel(any()) }
+        verify(exactly = 0) { alarmManager.cancel(any<PendingIntent>()) }
     }
 
     @Test
