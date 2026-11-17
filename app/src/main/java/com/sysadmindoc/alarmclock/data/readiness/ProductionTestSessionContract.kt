@@ -30,6 +30,23 @@ internal data class ProductionTestSession(
         return incomingSessionId == sessionId && incomingFireId == fireId()
     }
 
+    /**
+     * A broadcast must match the exact alarm and registered wall-clock
+     * occurrence, not merely carry a plausible time within the session TTL.
+     * After the test snooze is registered, scheduledAtMs identifies that
+     * second occurrence rather than the first.
+     */
+    fun matchesDelivery(
+        incomingAlarmId: Long,
+        incomingSessionId: String,
+        incomingFireId: String,
+        incomingScheduledAtMs: Long,
+        nowMs: Long
+    ): Boolean =
+        incomingAlarmId == sourceAlarmId &&
+            incomingScheduledAtMs == scheduledAtMs &&
+            canAccept(incomingSessionId, incomingFireId, nowMs)
+
     fun isActiveAt(nowMs: Long): Boolean =
         nowMs >= createdAtMs && nowMs < expiresAtMs
 
