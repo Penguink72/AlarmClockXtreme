@@ -18,7 +18,6 @@ import com.sysadmindoc.alarmclock.domain.NextAlarmCalculator
 import com.sysadmindoc.alarmclock.service.HistoryReplayActions
 import com.sysadmindoc.alarmclock.service.ReplayUiState
 import io.mockk.coEvery
-import io.mockk.firstArg
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
