@@ -179,6 +179,24 @@ internal fun recognizedSystemToneCandidates(
         metadataByUri[item.track.uri]?.isSystemTone == true
 }
 
+/**
+ * U5: the exact candidate URIs shown in the user's confirmation dialog are
+ * the upper bound of this operation. Never expand the set while the catalog
+ * changes or after a delayed coroutine starts.
+ */
+internal fun confirmedSystemToneUris(
+    tracks: List<MusicPoolUiTrack>,
+    metadataByUri: Map<String, MusicCatalogTrackMetadata>,
+    confirmedUris: Collection<String>
+): Set<String> {
+    val confirmed = confirmedUris.toHashSet()
+    if (confirmed.isEmpty()) return emptySet()
+    return recognizedSystemToneCandidates(tracks, metadataByUri)
+        .asSequence().map { it.track.uri }
+        .filter { it in confirmed }
+        .toSet()
+}
+
 internal fun shouldAutoScanMusicCatalog(
     autoScanIfEmpty: Boolean,
     indexedTrackCount: Int,
@@ -609,15 +627,19 @@ class MusicLibraryViewModel @Inject constructor(
     // subsequent explicit user decision.
     private var systemToneUndoSnapshot: Map<String, String?> = emptyMap()
 
-    fun excludeRecognizedSystemTones() {
+    fun excludeRecognizedSystemTones(confirmedUris: Collection<String>) {
         if (_uiState.value.loadingPool || _uiState.value.scanning) return
         val current = _uiState.value
-        val candidates = recognizedSystemToneCandidates(
-            current.poolTracks, current.supplementalCatalog.trackMetadataByUri
-        ).map { it.track.uri }
+        val candidates = confirmedSystemToneUris(
+            current.poolTracks,
+            current.supplementalCatalog.trackMetadataByUri,
+            confirmedUris
+        )
         if (candidates.isEmpty()) return
+        // Claim the operation synchronously. Two quick confirmation taps
+        // cannot queue overlapping DAO writes with incompatible Undo states.
+        _uiState.value = current.copy(loadingPool = true)
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(loadingPool = true)
             try {
                 val snapshot = repository.excludeSystemToneCandidates(candidates)
                 systemToneUndoSnapshot = snapshot
@@ -638,8 +660,8 @@ class MusicLibraryViewModel @Inject constructor(
         if (_uiState.value.loadingPool || _uiState.value.scanning) return
         val snapshot = systemToneUndoSnapshot.toMap()
         if (snapshot.isEmpty()) return
+        _uiState.value = _uiState.value.copy(loadingPool = true)
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(loadingPool = true)
             try {
                 repository.undoSystemToneCandidateExclusion(snapshot)
                 systemToneUndoSnapshot = emptyMap()
