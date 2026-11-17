@@ -908,4 +908,5 @@
     <string name="u4_snooze_next_different">別の曲に切り替えて再生</string>
     <string name="u4_snooze_mode_note">音源が利用できない場合やシークできない場合は、再生可能な代替音を使用します。</string>
     <string name="music_playlist_apply_to_alarm">このプレイリストをアラームに適用</string>
+    <string name="alarmlist_quick_alarm_elapsed_ms">アラーム登録を確認：%1$d ミリ秒（タップから登録まで）</string>
 </resources>
