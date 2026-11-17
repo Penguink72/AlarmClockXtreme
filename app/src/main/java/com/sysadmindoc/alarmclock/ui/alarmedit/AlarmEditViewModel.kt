@@ -166,7 +166,11 @@ internal fun shouldApplyMusicEvaluation(
     latestRequestId: Long,
     requested: AlarmMusicSettingsDraft,
     current: AlarmMusicSettingsDraft
-): Boolean = requestId == latestRequestId && requested == current
+): Boolean = requestId == latestRequestId &&
+    // Snooze playback mode does not affect eligible playlist evaluation.
+    // Changing only this mode while a 4,935-track query is in flight must
+    // not leave the screen stuck with loading=true forever.
+    requested.copy(snoozeMusicMode = current.snoozeMusicMode) == current
 
 @HiltViewModel
 class AlarmEditViewModel @Inject constructor(
@@ -460,7 +464,10 @@ class AlarmEditViewModel @Inject constructor(
                             ownerAlarmId = action.alarmId.takeIf { it > 0L }
                         )
                         _alarmMusicSettingsState.update { state ->
-                            state.copy(
+                            // A user can select a different source while the
+                            // duplicate operation awaits Room. Do not let the
+                            // late result hijack their newer selection.
+                            if (state.draft.playlistId != sourceId) state else state.copy(
                                 draft = state.draft.copy(playlistId = copy.playlistId),
                                 saved = false,
                                 error = null
