@@ -234,3 +234,10 @@
 - PR #13 說明應改用本矩陣作最新狀態；舊的「B2/U4 全部未實作」只能標記為 PR 建立時歷史敘述。G2/G3 已正式接線，T1 已有，T2 依相同 code SHA 的最新 CI 裁定，T3 未驗。
 - 不變更 main、Room v28、簽章與已保存資料；待 A Gate 完成才接續 U1.2/U2/U5 功能閉環。
 
+
+### A1 實際 CI 讀回補充（Run 44099211724）
+- 對應程式 SHA 204054d544f5296b868f6cd2709a3083cd603e73。
+- Build F-Droid debug APK (strict)：SUCCESS。
+- Unit tests F-Droid debug (strict)：SUCCESS。直接讀取 Job 134094366219 日誌的 UNIT_TEST_COUNTS：**files=153, tests=835, failures=0, errors=0, skipped=0**；修補後已實際完成單元測試，不再停在 Kotlin 測試編譯。
+- Verify persistent signing on 2nd runner (v160 upgrade APK)：**in_progress**（本次最後讀取）。只有該 Job SUCCESS 才可裁定完整 T2 3/3。
+- 後續文件只有證據同步，未再修改正式 App 或測試原始碼。主張「全綠」前仍應讀取 Run 最終結論。
