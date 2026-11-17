@@ -8,6 +8,31 @@ import org.junit.Test
 class AlarmEditDraftTest {
 
     @Test
+    fun `u2 ringtone and music playlist choose a single effective source`() {
+        val initial = AlarmEditUiState(
+            ringtoneUri = "content://ringtone/original",
+            randomMusicEnabled = false
+        )
+        val music = initial.withSelectedMusicSource()
+        assertTrue(music.randomMusicEnabled)
+        assertEquals("content://ringtone/original", music.ringtoneUri)
+        val ringtone = music.withSelectedRingtone("content://ringtone/new")
+        assertFalse(ringtone.randomMusicEnabled)
+        assertEquals("content://ringtone/new", ringtone.ringtoneUri)
+        assertTrue(ringtone.withSelectedMusicSource().randomMusicEnabled)
+    }
+
+    @Test
+    fun `u2 stale catalog or save response cannot overwrite newer sound draft`() {
+        val older = AlarmMusicSettingsDraft(playlistId = "old")
+        val newer = AlarmMusicSettingsDraft(playlistId = "new")
+        assertTrue(shouldApplyMusicEvaluation(3L, 3L, newer, newer))
+        assertFalse(shouldApplyMusicEvaluation(2L, 3L, older, newer))
+        assertFalse(shouldApplyMusicEvaluation(3L, 3L, older, newer))
+        assertFalse(shouldApplyMusicEvaluation(3L, 4L, newer, newer))
+    }
+
+    @Test
     fun `user-editable fields make a loaded draft dirty`() {
         val loaded = AlarmEditUiState(hour = 7, minute = 30, label = "Work")
 
