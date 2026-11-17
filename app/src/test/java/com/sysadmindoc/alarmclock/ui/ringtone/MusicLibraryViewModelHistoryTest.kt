@@ -144,7 +144,7 @@ class MusicLibraryViewModelHistoryTest {
                 membershipState = null
             )
         )
-        coEvery { repository.buildSupplementalCatalog(any()) } returns
+        coEvery { repository.buildSupplementalCatalog(null) } returns
             MusicLibrarySupplementalCatalog()
         val allowWrite = kotlinx.coroutines.CompletableDeferred<Unit>()
         coEvery { repository.setPoolMembership(any(), true) } coAnswers {
