@@ -119,11 +119,23 @@ interface MusicLibraryDao {
     @Transaction
     suspend fun restoreSystemToneExclusion(previous: Map<String, String?>) {
         if (previous.isEmpty()) return
-        val previouslyUnselected = previous.filterValues { it == null }.keys
+        // A later manual restore can have changed one of these URIs to
+        // INCLUDED. Undo must never overwrite that newer explicit choice.
+        // Missing indexed tracks are skipped rather than resurrecting
+        // orphan pool-membership rows after a catalog refresh.
+        val eligible = getPoolCandidates().asSequence()
+            .filter { candidate ->
+                candidate.track.uri in previous &&
+                    candidate.membershipState == MusicPoolEntry.EXCLUDED
+            }
+            .map { it.track.uri }
+            .toSet()
+        if (eligible.isEmpty()) return
+        val previouslyUnselected = eligible.filterTo(LinkedHashSet()) { previous[it] == null }
         if (previouslyUnselected.isNotEmpty()) deletePoolEntries(previouslyUnselected)
         val now = System.currentTimeMillis()
-        val original = previous.filterValues { it != null }.map { (uri, state) ->
-            MusicPoolEntry(uri, requireNotNull(state), now)
+        val original = eligible.mapNotNull { uri ->
+            previous[uri]?.let { state -> MusicPoolEntry(uri, state, now) }
         }
         if (original.isNotEmpty()) setPoolEntries(original)
     }
