@@ -103,10 +103,7 @@ class AlarmReceiver : BroadcastReceiver() {
         val scheduledAt = intent.getLongExtra(ProductionTestAlarmScheduler.EXTRA_TRIGGER_AT, 0L)
         val proof = ProductionTestSessionStore.read(context, now) ?: return
         val session = proof.session
-        if (session.sourceAlarmId != alarmId ||
-            !session.canAccept(sessionId, fireId, now) ||
-            scheduledAt <= session.createdAtMs || scheduledAt >= session.expiresAtMs
-        ) return
+        if (!session.matchesDelivery(alarmId, sessionId, fireId, scheduledAt, now)) return
         val expected = if (session.nextOccurrence == 0) {
             ProductionTestStage.REGISTERED
         } else {
@@ -125,8 +122,10 @@ class AlarmReceiver : BroadcastReceiver() {
             putExtra(AlarmService.EXTRA_PRODUCTION_TEST_SESSION_ID, sessionId)
         }
         val deliveryLock = AlarmDeliveryWakeLock.acquire(context)
+        var serviceStartSucceeded = false
         try {
             context.startForegroundService(serviceIntent)
+            serviceStartSucceeded = true
         } catch (error: Exception) {
             Log.e("AlarmReceiver", "B2 test service launch failed", error)
             ProductionTestSessionStore.advance(
@@ -134,7 +133,11 @@ class AlarmReceiver : BroadcastReceiver() {
                 ProductionTestStage.FAILED, System.currentTimeMillis()
             )
         } finally {
-            AlarmDeliveryWakeLock.release(deliveryLock)
+            // Mirror the production alarm handoff. An immediate release here
+            // lets a dozing phone sleep between broadcast and cold Service
+            // startup. Successful starts retain the bounded 15-second lock;
+            // Android releases it on timeout without a permanent wakelock.
+            if (!serviceStartSucceeded) AlarmDeliveryWakeLock.release(deliveryLock)
         }
     }
 }
