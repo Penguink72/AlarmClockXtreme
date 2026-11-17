@@ -48,6 +48,74 @@ class SnoozeNextDifferentPolicyTest {
         }
     }
 
+    @Test fun playlistOrderContinuesAfterInterruptedSongInsteadOfRepeatingResumedSong() {
+        val source = snapshot(3, AlarmMusicPlaybackStrategy.PLAYLIST_ORDER)
+        val session = AlarmMusicSession(
+            AlarmMusicSessionId(42, "snoozed-fire", 1),
+            source, PlaylistOrderSelectionPolicy()
+        )
+        val resumed = (session.selectFirstTrackAvoiding("content://music/1")
+            as NextAlarmTrackDecision.PlayTrack).candidate
+        assertEquals("content://music/2", resumed.uri)
+        session.onTrackStarted(resumed)
+
+        val afterResumed = (session.selectNextTrack()
+            as NextAlarmTrackDecision.PlayTrack).candidate
+        assertEquals("content://music/0", afterResumed.uri)
+        session.onTrackStarted(afterResumed)
+        assertEquals("content://music/1", (session.selectNextTrack()
+            as NextAlarmTrackDecision.PlayTrack).candidate.uri)
+    }
+
+    @Test fun duplicateUriSlotsAreSkippedOnlyForFirstSnoozeChoice() {
+        val source = PlaylistSnapshot(
+            playlistId = "duplicate-order",
+            playbackStrategy = AlarmMusicPlaybackStrategy.PLAYLIST_ORDER,
+            entries = listOf("a", "a", "b", "c").mapIndexed { index, name ->
+                PlaybackTrackCandidate(
+                    track = MusicTrack("content://music/$name", name, "MEDIA_STORE"),
+                    playlistItemId = "slot-$index",
+                    position = index
+                )
+            }
+        )
+        val session = AlarmMusicSession(
+            AlarmMusicSessionId(42, "duplicate-snooze-fire", 1),
+            source, PlaylistOrderSelectionPolicy()
+        )
+        val resumed = (session.selectFirstTrackAvoiding("content://music/a")
+            as NextAlarmTrackDecision.PlayTrack).candidate
+        assertEquals("slot-2", resumed.playlistItemId)
+        session.onTrackStarted(resumed)
+        val next = (session.selectNextTrack() as NextAlarmTrackDecision.PlayTrack).candidate
+        assertEquals("slot-3", next.playlistItemId)
+        session.onTrackStarted(next)
+        assertEquals("slot-0", (session.selectNextTrack()
+            as NextAlarmTrackDecision.PlayTrack).candidate.playlistItemId)
+    }
+
+    @Test fun duplicateOnlyUriPoolNeverBecomesSilent() {
+        val source = PlaylistSnapshot(
+            playlistId = "duplicate-only",
+            playbackStrategy = AlarmMusicPlaybackStrategy.PLAYLIST_ORDER,
+            entries = (0..1).map { index ->
+                PlaybackTrackCandidate(
+                    track = MusicTrack("content://music/a", "A", "MEDIA_STORE"),
+                    playlistItemId = "duplicate-$index",
+                    position = index
+                )
+            }
+        )
+        val session = AlarmMusicSession(
+            AlarmMusicSessionId(42, "duplicate-only-fire", 1),
+            source, PlaylistOrderSelectionPolicy()
+        )
+        val decision = session.selectFirstTrackAvoiding("content://music/a")
+        assertTrue(decision is NextAlarmTrackDecision.PlayTrack)
+        assertEquals("content://music/a",
+            (decision as NextAlarmTrackDecision.PlayTrack).candidate.uri)
+    }
+
     @Test fun noEligibleTrackSignalsFallback() {
         val source = snapshot(0, AlarmMusicPlaybackStrategy.RANDOM_WITH_REPEATS)
         val session = AlarmMusicSession(
