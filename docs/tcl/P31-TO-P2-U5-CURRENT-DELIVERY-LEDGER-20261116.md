@@ -241,3 +241,23 @@
 - Unit tests F-Droid debug (strict)：SUCCESS。直接讀取 Job 134094366219 日誌的 UNIT_TEST_COUNTS：**files=153, tests=835, failures=0, errors=0, skipped=0**；修補後已實際完成單元測試，不再停在 Kotlin 測試編譯。
 - Verify persistent signing on 2nd runner (v160 upgrade APK)：**in_progress**（本次最後讀取）。只有該 Job SUCCESS 才可裁定完整 T2 3/3。
 - 後續文件只有證據同步，未再修改正式 App 或測試原始碼。主張「全綠」前仍應讀取 Run 最終結論。
+
+## 2026-11-17 夜間續作｜U1.2/U2/U5 快速連點與來源快照
+
+### A Gate 真正完成
+- 前一段 A1 修補 code SHA `204054d544f5296b868f6cd2709a3083cd603e73` 的 [Run 44099211724](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/44099211724) 完整 **3/3 SUCCESS**：F-Droid debug APK Build、Unit tests（**835/835**，153 XML，0 failures/errors/skipped）、第二 Runner v160 簽章升級檢查。後續的 `5b746bbd`／`ad4c95dc` 是文件提交，不修改 App。
+- A2 G1/G2/G3 的可驗機械測試矩陣已在上節；T3 仍未驗，不能以完整單元測試代替手機亮屏貪睡實測。
+
+### 本次封閉的三個接縫（T1 已推；T2 待新 Run）
+- [程式提交 `e222a57d67cf3013f4990e52b11e88e807029f9f`](https://github.com/Penguink72/AlarmClockXtreme/commit/e222a57d67cf3013f4990e52b11e88e807029f9f)，單一 Git tree 原子提交，修改五個文件，無 Room Schema、正式鬧鐘 Service、簽章或版號變動。
+- **U2 整體鬧鐘 Save 與音樂來源同步**：`AlarmEditViewModel.save()` 在 coroutine dispatch 前用 `alarmSaveInFlight` 單飛鎖；同一次點擊擷取 `AlarmEditUiState` 與 `AlarmMusicSettingsDraft`，避免 Alarm row 的 `randomMusicEnabled` 屬於 A 來源，但較晚持久化的 playlist 屬於 B 來源；處理預先檢查提早返回／協程取消時釋放鎖；正在保存期間拒絕新的音樂草稿 action。原有內層音樂設定 Save 的單飛鎖保持獨立。
+- **U1.2 建立／重新命名**：`MusicPlaylistsWorkspace` 在 click callback 中立刻設定 `busy`，凍結提交名稱，保存中禁止對話框取消／滑動關閉；避免同 frame 連點與後來文字變更影響執行中的資料庫工作。
+- **U5 手動加入／排除與 Undo**：`MusicLibraryViewModel.updateSelectedCatalogMembership` 先計算確實要更新的 URI，空集合不消耗先前的 Undo；非空集合才同步設 `loadingPool` 並失效舊 Undo 快照，避免雙擊或 Undo 跟手動 DAO 寫入交錯。
+- 新增 `AlarmEditMusicSaveConcurrencyTest.wholeAlarmQuickDoubleSaveCreatesOneRowWithMatchingSoundSnapshot` 與 `MusicLibraryViewModelHistoryTest.doubleCatalogMembershipTapStartsOneWriteBeforeCoroutineDispatch`。原有 U1/U2/U5 測試保持。
+- 新 App code SHA `e222a57d67cf3013f4990e52b11e88e807029f9f` 對應 [CI Run 44107395773](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/44107395773)；本段寫入時 workflow 仍在進行。**只有該 SHA 的三個 jobs 都 SUCCESS 才能標 T2 PASS**，不可引用上一輪 835/835 直接替代。
+
+### 下個獨立切片
+1. 依 Run 44107395773 的直接單元測試日誌修補可能出現的失敗；維持既有測試，禁止為了綠燈直接略過。
+2. 進一步核對播放清單複製／刪除／重排的連點鎖與「套用到指定鬧鐘後是否需再次儲存」的 UX 回饋；目前只修建立與重新命名。
+3. U5 的可能系統音認定仍需 OEM 裝置抽查；目前無法證明 100% 辨識，Undo 不刪原始檔案。
+4. 後續再接 L1-B 三語與 U3 使用者五秒操作測量，不因本次小改動要求立即重裝 APK。
