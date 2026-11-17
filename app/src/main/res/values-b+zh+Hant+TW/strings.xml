@@ -916,4 +916,5 @@
     <string name="alarmlist_duplicate_complete">已複製鬧鐘並保留音樂設定</string>
     <string name="alarmlist_duplicate_unscheduled">鬧鐘與音樂設定已複製，但下次響鈴因暫停或略過而未排程。</string>
     <string name="alarmlist_duplicate_failed">鬧鐘複製失敗；已嘗試清除不完整複本。</string>
+    <string name="alarm_edit_schedule_failed_new">Android 未接受響鈴排程，因此沒有建立新的鬧鐘。請檢查鬧鐘權限後重試。</string>
 </resources>

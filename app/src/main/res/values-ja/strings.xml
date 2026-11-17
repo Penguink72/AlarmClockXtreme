@@ -916,4 +916,5 @@
     <string name="alarmlist_duplicate_complete">音楽設定とともにアラームを複製しました</string>
     <string name="alarmlist_duplicate_unscheduled">アラームと音楽設定は複製されましたが、次回の通知は停止またはスキップ中です。</string>
     <string name="alarmlist_duplicate_failed">アラームの複製に失敗しました。不完全な複製の削除を試みました。</string>
+    <string name="alarm_edit_schedule_failed_new">Android が通知予定を受け付けなかったため、新しいアラームは作成されませんでした。権限を確認して再試行してください。</string>
 </resources>

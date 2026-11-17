@@ -180,5 +180,44 @@ class AlarmEditMusicSaveConcurrencyTest {
         assertFalse(viewModel.uiState.value.isSaving)
         assertTrue(viewModel.uiState.value.saveError != null)
         coVerify(exactly = 1) { alarms.save(any()) }
+        coVerify(exactly = 1) { music.deleteSettings(717L) }
+        coVerify(exactly = 1) { alarms.deleteById(717L) }
+    }
+
+    @Test fun failedMusicWriteRollsBackExistingAlarmAndMusicState() = runTest {
+        Dispatchers.setMain(StandardTestDispatcher(testScheduler))
+        val original = Alarm(id = 91L, hour = 7, minute = 30, randomMusicEnabled = false)
+        val oldDraft = AlarmMusicSettingsDraft(playlistId = "previous")
+        val alarms = mockk<AlarmRepository>(relaxed = true)
+        val scheduler = mockk<AlarmScheduler>(relaxed = true)
+        val prefs = mockk<PreferencesManager>(relaxed = true)
+        val music = mockk<MusicLibraryRepository>(relaxed = true)
+        coEvery { prefs.getCurrentSettings() } returns AppSettings()
+        coEvery { alarms.getById(91L) } returns original
+        coEvery { alarms.save(any()) } returns 91L
+        coEvery { music.getSettings(91L) } returns oldDraft
+        coEvery { music.evaluateAlarmMusicDraft(any()) } returns
+            EvaluatedAlarmMusicSettings(emptyList(), emptyList(), emptyList(), 2, 0)
+        var writes = 0
+        coEvery { music.saveSettings(91L, any()) } coAnswers {
+            writes++
+            if (writes == 1) throw IllegalStateException("Injected music failure")
+        }
+        val vm = AlarmEditViewModel(
+            SavedStateHandle(mapOf("alarmId" to 91L)),
+            ApplicationProvider.getApplicationContext<Application>(),
+            alarms, scheduler, mockk(relaxed = true), prefs, music
+        )
+        runCurrent()
+        vm.onAlarmMusicSettingsAction(AlarmMusicSettingsAction.SelectPlaylist("new"))
+        var navigated = false
+        vm.save { navigated = true }
+        runCurrent()
+        assertFalse(navigated)
+        assertFalse(vm.uiState.value.isSaving)
+        assertTrue(vm.uiState.value.saveError != null)
+        coVerify(exactly = 1) { music.saveSettings(91L, match { it.playlistId == "new" }) }
+        coVerify(exactly = 1) { music.saveSettings(91L, match { it.playlistId == "previous" }) }
+        coVerify(exactly = 1) { alarms.save(original) }
     }
 }

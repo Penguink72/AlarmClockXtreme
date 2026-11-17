@@ -973,6 +973,12 @@ class AlarmEditViewModel @Inject constructor(
                 // A settings failure must not report success. Undo the unscheduled
                 // alarm-row write so a retry cannot silently create duplicates.
                 val previousAlarm = if (s.isEditing) repository.getById(alarmId) else null
+                val previousMusic = if (s.isEditing) {
+                    musicLibraryRepository.getSettings(alarmId)
+                } else null
+                val previousSnoozeMode = if (s.isEditing) {
+                    AlarmSnoozeMusicModeStore.get(context, alarmId)
+                } else null
                 val savedId = repository.save(alarm)
                 val savedAlarm = alarm.copy(
                     id = if (s.isEditing) alarmId else savedId
@@ -985,10 +991,33 @@ class AlarmEditViewModel @Inject constructor(
                         context, savedAlarm.id, musicDraft.snoozeMusicMode
                     )) { "Could not save snooze playback mode" }
                 } catch (musicSaveError: Exception) {
+                    // A failed preference write can happen AFTER the music
+                    // Room transaction commits. Roll back every written layer,
+                    // not just the Alarm row.
                     runCatching {
-                        if (s.isEditing && previousAlarm != null) {
+                        if (previousMusic != null) {
+                            musicLibraryRepository.saveSettings(savedAlarm.id, previousMusic)
+                        } else {
+                            musicLibraryRepository.deleteSettings(savedAlarm.id)
+                        }
+                    }.onFailure { rollbackError ->
+                        android.util.Log.e("AlarmEditViewModel", "Music rollback failed", rollbackError)
+                    }
+                    runCatching {
+                        if (previousSnoozeMode != null) {
+                            AlarmSnoozeMusicModeStore.save(
+                                context, savedAlarm.id, previousSnoozeMode
+                            )
+                        } else {
+                            AlarmSnoozeMusicModeStore.delete(context, savedAlarm.id)
+                        }
+                    }.onFailure { rollbackError ->
+                        android.util.Log.e("AlarmEditViewModel", "Snooze rollback failed", rollbackError)
+                    }
+                    runCatching {
+                        if (previousAlarm != null) {
                             repository.save(previousAlarm)
-                        } else if (!s.isEditing) {
+                        } else {
                             repository.deleteById(savedId)
                         }
                     }.onFailure { rollbackError ->
@@ -1003,25 +1032,47 @@ class AlarmEditViewModel @Inject constructor(
                 if (savedAlarm.isEnabled) {
                     when (scheduler.scheduleWithResult(savedAlarm)) {
                         AlarmSchedulingOutcome.FAILED -> {
-                            // The row may be persisted but Android did not arm
-                            // the next occurrence: never call onComplete().
-                            loadedDraft = s.copy(isSaving = false)
-                            loadedMusicDraft = musicDraft
+                            // A newly inserted unarmed row would duplicate on
+                            // retry because this editor still has alarmId=-1.
+                            // Remove all new per-ID stores before returning.
+                            if (!s.isEditing) {
+                                runCatching { musicLibraryRepository.deleteSettings(savedAlarm.id) }
+                                runCatching { AlarmSnoozeMusicModeStore.delete(context, savedAlarm.id) }
+                                runCatching { repository.deleteById(savedAlarm.id) }
+                            } else {
+                                // Existing ID is stable; retain persisted edits
+                                // for an explicit retry, but never claim armed.
+                                loadedDraft = s.copy(isSaving = false)
+                                loadedMusicDraft = musicDraft
+                            }
                             _uiState.value = _uiState.value.copy(
                                 isSaving = false,
-                                saveError = context.getString(R.string.alarm_edit_schedule_failed)
+                                saveError = context.getString(
+                                    if (s.isEditing) R.string.alarm_edit_schedule_failed
+                                    else R.string.alarm_edit_schedule_failed_new
+                                )
                             )
                             return@launch
                         }
                         AlarmSchedulingOutcome.SUPPRESSED -> {
-                            // Pause/holiday/expired one-shot is intentionally
-                            // unarmed. Tell the user rather than imply ringing.
+                            // An intentionally unscheduled NEW alarm is still
+                            // persisted, so leave the new editor rather than
+                            // letting a second Save insert a duplicate row.
                             loadedDraft = s.copy(isSaving = false)
                             loadedMusicDraft = musicDraft
                             _uiState.value = _uiState.value.copy(
                                 isSaving = false,
-                                saveError = context.getString(R.string.alarm_edit_saved_unarmed)
+                                saveError = if (s.isEditing)
+                                    context.getString(R.string.alarm_edit_saved_unarmed) else null
                             )
+                            if (!s.isEditing) {
+                                android.widget.Toast.makeText(
+                                    context,
+                                    context.getString(R.string.alarm_edit_saved_unarmed),
+                                    android.widget.Toast.LENGTH_LONG
+                                ).show()
+                                onComplete()
+                            }
                             return@launch
                         }
                         AlarmSchedulingOutcome.EXACT,
