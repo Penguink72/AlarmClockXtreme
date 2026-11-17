@@ -159,7 +159,20 @@ class MusicLibraryViewModelHistoryTest {
         )
         runCurrent()
         viewModel.loadPoolCandidates()
-        runCurrent()
+        // Source discovery runs on Dispatchers.IO, not on runTest's virtual
+        // scheduler. Wait for the actual indexed-catalog load to finish before
+        // selecting tracks; otherwise the action legitimately returns early
+        // while loadingPool=true and the test never exercises the write path.
+        for (attempt in 0 until 300) {
+            runCurrent()
+            if (!viewModel.uiState.value.loadingPool &&
+                viewModel.uiState.value.poolTracks.any { it.track.uri == uri }
+            ) break
+            Thread.sleep(10)
+        }
+        assertFalse("Catalog must finish loading before a membership action",
+            viewModel.uiState.value.loadingPool)
+        assertTrue(viewModel.uiState.value.poolTracks.any { it.track.uri == uri })
         viewModel.selectVisibleCatalogTracks(listOf(uri))
         viewModel.updateSelectedCatalogMembership(included = true)
         viewModel.updateSelectedCatalogMembership(included = true)
@@ -169,7 +182,12 @@ class MusicLibraryViewModelHistoryTest {
             repository.setPoolMembership(match { uri in it }, true)
         }
         allowWrite.complete(Unit)
-        runCurrent()
+        // Post-write refresh also discovers folder sources on IO.
+        for (attempt in 0 until 300) {
+            runCurrent()
+            if (!viewModel.uiState.value.loadingPool) break
+            Thread.sleep(10)
+        }
         assertFalse(viewModel.uiState.value.loadingPool)
     }
 }
