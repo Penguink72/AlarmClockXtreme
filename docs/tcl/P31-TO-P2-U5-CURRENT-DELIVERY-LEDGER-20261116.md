@@ -129,3 +129,40 @@
 - G1 非精準排程補強 `cacc65a` 後的逆向負例 `85cf8bd`：即使事件 `AlarmIncidentRepository.recordAsync()` 主動拋錯，OS+Room 已接受的 `scheduleSnooze()` 與 `scheduleSnoozeAt()` 必須仍回傳成功、不可呼叫 `AlarmManager.cancel`。
 - G2 額外證據 `43602ec`：實際 `AlarmReceiver` 的第二次火次路由，測試先寫 `SNOOZE_REGISTERED` 的目標時間，再以正確第二 fireId 搭配**第一火次的時間**重放，確保不啟動 Service；用真正新時間才接受並送入 `AlarmService.ACTION_START_ALARM`。
 - 本輪最終 App 程式 SHA `43602ec23f4da01c25fa41ebece61ae2e311c1dc`。[CI Run 43987702305](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/43987702305) 在此記錄時為 pending；先前 SHA 的 cancelled 只是 concurrent push 的取消，不代表失敗。等同 SHA 之完整 CI 與 F-Droid build／upgrade signing 未成功前，G1-R2/G2-R2/G3-R2 標 T1，T2「待驗」，T3「作者選擇非阻斷」。
+
+
+## 2026-11-17 中午｜CI 恢復綠燈後接續 U1／U2／U3／U5
+
+### 先決 CI 閘門
+- 前一輪 `43602ec` [Run 43987702305](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/43987702305) 不是 PASS：建置及第二 Runner 簽章 Job 成功，但 unit-test Kotlin 因 MockK `AlarmManager.cancel(any())` 多載歧義於第 128/176 行無法編譯（測試檔，非實際 Android 程式）。
+- `ad3369191e46024d57bca299d9cbf753c480513a` 明確改成 `any<PendingIntent>()`；[Run 44016231152](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/44016231152) 已完成 **3/3 SUCCESS**：F-Droid debug APK、unit tests **826/826**（0 failures/errors/skipped）、v160 second-runner persistent signing。
+- **依作者「若通過才接續 U1/U2/U3/U5」授權，所有 U 切片均在上述綠燈後才開始提交。**
+
+### U1／U1.2：播放回播保留，大曲庫至鬧鐘閉環
+- 保留已完成的播放歷史一鍵回播、歌曲歌名及一首一首 Media3 起聲紀錄，不重寫核心播放器。
+- `410ad368`、`9c8cb1cb`、`3360b9cf`：同一 `MusicLibraryDialog` 的 `MusicPlaylistsWorkspace` 加入「套用至鬧鐘」操作，只有有可播曲目的清單可用。只在鬧鐘編輯頁提供 `onPlaylistChosenForAlarm`，使用共用的 `AlarmMusicSettingsAction.SelectPlaylist`；其他音樂中心入口不另造設定狀態。使用者仍需明示儲存，避免寫入未確認來源。
+- `1c8f66ca`：新增 `MusicLargeLibraryPlaylistRoundTripTest`：4,935 首已索引曲目、批次挑選 200+ 首、建立清單、儲存特定鬧鐘清單和順序模式、重建 Repository 後讀回與正式火次 snapshot；既有 4,935 首索引不強制重新掃描。
+- U1 T3 既有回播基準不回退；U1.2 完整真機 UX/秒數仍未驗，這一批屬 T1，待新 T2。
+
+### U2：唯一來源／Sound Hub 一致化
+- `8a51f452`：`AlarmEditViewModel` 改為選鈴聲後停用 `randomMusicEnabled`，選任何播放清單即啟用音樂來源；只保存非啟用來源的偏好供將來切換，不同時有兩個正式有效播放來源。
+- 同一提交：音樂來源估算採 `musicEvaluationRequest` 序號及當前草稿雙重驗證；舊的 4,935 首查詢晚到不回寫舊清單／舊曲數／錯誤狀態；完成儲存時只對相同草稿回報 saved，不把之後的新草稿假標為成功。
+- `ddc827e8`：編輯頁鈴聲欄若音樂播放為主則顯示「音樂庫」而非休眠中的鈴聲 URI。 `70fd0d60`：新增 U2 單一生效來源與非同步草稿防護單元測試。
+- 套用清單按鈕有英文、繁中、日文資源 `music_playlist_apply_to_alarm`；不能把此切片冒稱完成了全 App 所有來源 Picker 合併。
+
+### U3：五秒快速設鬧鐘有真實量測
+- `31273b11`：`AlarmListViewModel.createQuickAlarm` 在按鈕觸發時計 `SystemClock.elapsedRealtime()`，收到 Scheduler 成功／失敗結果後公開 `QuickAlarmCreationMetric(elapsedMs,scheduled)`；僅成功且 `elapsedMs <= 5000` 才表示達到既定機械時間目標。已存在的原子防重複提交與失敗時停用無效鬧鐘保留。
+- `9f802f85`：首頁成功註冊後顯示實測毫秒數；英文、繁中、日文 `alarmlist_quick_alarm_elapsed_ms` 文字。這量測是**從點擊至 OS 排程登記確認**，不包含使用者閱讀／觸控反應，不代表已實機完成全流程 T3。
+- `a7a7a7bf`：`AlarmListQuickAlarmTest` 驗證雙擊只建立一筆、OS 拒絕時保存列被停用、不能報成功，以及五秒門檻的邊界。
+- 不假設效能必達 5 秒；故不把 T3 先標通過。
+
+### U5：原廠系統音候選確認隔離
+- `ffa5085f`：`confirmedSystemToneUris()` 僅允許使用者在確認視窗看過的 Uri ∩ 最新索引中仍判定疑似系統音的 Uri；排除/還原操作先同步設 `loadingPool` 再排程 DAO，避免快點兩次覆蓋舊 Undo 快照。
+- `ccd8c0c0`：`MusicLibraryDialog` 將確認當下的確切 Uri 集送回 ViewModel，不能把後來才新增的系統音候選暗中一起排除。
+- `3bd44210`：測試確認後才出現的候選、使用者 SAF 自有音、未確認及已排除之音均不應新增排除。
+- 保留使用者逐首包含/排除、還原及掃描原資料，不改 Room v28。
+
+### 本切片機械驗收
+- 本輪最後 App 修改：`a7a7a7bf26a87b807991a73804b716c310b0da8e`。
+- [CI Run 44017961918](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/44017961918) 在寫入本段時尚未完整驗證；**U1.2/U2/U3/U5 = T1；T2 待本 Run 完成；T3 仍非阻斷但未驗。**
+- 未合併 PR #9～#13、未動 main、未改 Room v28 或 CI 簽章。若 Run 失敗，先根據直接日誌修補，不依舊綠燈放行。
