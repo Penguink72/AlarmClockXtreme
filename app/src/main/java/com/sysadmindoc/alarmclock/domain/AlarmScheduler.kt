@@ -265,13 +265,20 @@ class AlarmScheduler @Inject constructor(
                 )
                 registeredInAlarmManager = true
                 repository.updateNextTrigger(sanitizedAlarm.id, snoozeTime)
-                recordScheduleIncident(
-                    alarmId = sanitizedAlarm.id,
-                    fireId = fireId,
-                    triggerTime = snoozeTime,
-                    status = AlarmIncidentEvent.STATUS_SUCCEEDED,
-                    reasonCode = "SNOOZE_INEXACT_NO_EXACT_PERMISSION"
-                )
+                // Auxiliary event logging is not a registration failure:
+                // once OS + Room agree, never undo a live wakeup because
+                // the diagnostic sink itself threw.
+                runCatching {
+                    recordScheduleIncident(
+                        alarmId = sanitizedAlarm.id,
+                        fireId = fireId,
+                        triggerTime = snoozeTime,
+                        status = AlarmIncidentEvent.STATUS_SUCCEEDED,
+                        reasonCode = "SNOOZE_INEXACT_NO_EXACT_PERMISSION"
+                    )
+                }.onFailure {
+                    android.util.Log.e("AlarmScheduler", "Could not log registered snooze", it)
+                }
                 true
             } catch (e: Exception) {
                 // Registration may have succeeded before Room persistence
@@ -284,13 +291,17 @@ class AlarmScheduler @Inject constructor(
                             "AlarmScheduler", "Could not roll back unpersisted snooze", it
                         ) }
                 }
-                recordScheduleIncident(
-                    alarmId = sanitizedAlarm.id,
-                    fireId = fireId,
-                    triggerTime = snoozeTime,
-                    status = AlarmIncidentEvent.STATUS_FAILED,
-                    reasonCode = "SNOOZE_INEXACT_FAILED_${e.javaClass.simpleName}"
-                )
+                runCatching {
+                    recordScheduleIncident(
+                        alarmId = sanitizedAlarm.id,
+                        fireId = fireId,
+                        triggerTime = snoozeTime,
+                        status = AlarmIncidentEvent.STATUS_FAILED,
+                        reasonCode = "SNOOZE_INEXACT_FAILED_${e.javaClass.simpleName}"
+                    )
+                }.onFailure {
+                    android.util.Log.e("AlarmScheduler", "Could not log failed snooze", it)
+                }
                 false
             }
         }
@@ -317,13 +328,20 @@ class AlarmScheduler @Inject constructor(
                 )
                 registeredInAlarmManager = true
                 repository.updateNextTrigger(sanitizedAlarm.id, snoozeTime)
-                recordScheduleIncident(
-                    alarmId = sanitizedAlarm.id,
-                    fireId = fireId,
-                    triggerTime = snoozeTime,
-                    status = AlarmIncidentEvent.STATUS_SUCCEEDED,
-                    reasonCode = "SNOOZE_AT_INEXACT_NO_EXACT_PERMISSION"
-                )
+                // Auxiliary event logging is not a registration failure:
+                // once OS + Room agree, never undo a live wakeup because
+                // the diagnostic sink itself threw.
+                runCatching {
+                    recordScheduleIncident(
+                        alarmId = sanitizedAlarm.id,
+                        fireId = fireId,
+                        triggerTime = snoozeTime,
+                        status = AlarmIncidentEvent.STATUS_SUCCEEDED,
+                        reasonCode = "SNOOZE_AT_INEXACT_NO_EXACT_PERMISSION"
+                    )
+                }.onFailure {
+                    android.util.Log.e("AlarmScheduler", "Could not log registered snooze", it)
+                }
                 true
             } catch (e: Exception) {
                 // Registration may have succeeded before Room persistence
@@ -336,13 +354,17 @@ class AlarmScheduler @Inject constructor(
                             "AlarmScheduler", "Could not roll back unpersisted snooze", it
                         ) }
                 }
-                recordScheduleIncident(
-                    alarmId = sanitizedAlarm.id,
-                    fireId = fireId,
-                    triggerTime = snoozeTime,
-                    status = AlarmIncidentEvent.STATUS_FAILED,
-                    reasonCode = "SNOOZE_AT_INEXACT_FAILED_${e.javaClass.simpleName}"
-                )
+                runCatching {
+                    recordScheduleIncident(
+                        alarmId = sanitizedAlarm.id,
+                        fireId = fireId,
+                        triggerTime = snoozeTime,
+                        status = AlarmIncidentEvent.STATUS_FAILED,
+                        reasonCode = "SNOOZE_AT_INEXACT_FAILED_${e.javaClass.simpleName}"
+                    )
+                }.onFailure {
+                    android.util.Log.e("AlarmScheduler", "Could not log failed snooze", it)
+                }
                 false
             }
         }
