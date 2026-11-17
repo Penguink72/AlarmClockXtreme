@@ -634,7 +634,11 @@ class AlarmService : Service() {
                     overrideSystemVolume = false,
                     vibrationEnabled = false,
                     backupSoundEnabled = false,
-                    guardianEnabled = false
+                    guardianEnabled = false,
+                    // A source alarm may auto-dismiss at ringtone end. Its
+                    // fallback player must never invoke real dismissAlarm()
+                    // or mutate the source alarm from a B2 diagnostic.
+                    dismissAtRingtoneEnd = false
                 )
                 val activityIntent = Intent(
                     this@AlarmService, ProductionTestAlarmActivity::class.java
@@ -2626,6 +2630,14 @@ class AlarmService : Service() {
         challengeRetryCount: Int = 0,
         challengeSolveTimeMs: Long = 0L
     ) {
+        if (activeProductionTestSessionId != null) {
+            // Defense in depth for a late ringtone-completion or other
+            // internal dismiss callback. A B2 test must not write a real
+            // alarm event, snooze count, next trigger, or external action.
+            ProductionTestAlarmScheduler.cancel(this)
+            stopProductionTestPlayback()
+            return
+        }
         SnoozeCountdownReceiver.cancel(this)
         autoSilenceJob?.cancel()
         backupSoundJob?.cancel()
