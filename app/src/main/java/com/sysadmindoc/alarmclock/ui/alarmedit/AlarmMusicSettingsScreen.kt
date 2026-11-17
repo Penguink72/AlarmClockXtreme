@@ -75,15 +75,10 @@ fun AlarmMusicSettingsScreen(
                             overflow = TextOverflow.Ellipsis
                         )
                         TextButton(
-                            enabled = state.integrationAvailable && !state.loading && !state.saving,
-                            onClick = { onAction(AlarmMusicSettingsAction.Save) }
+                            enabled = !state.saving,
+                            onClick = onDismiss
                         ) {
-                            Text(
-                                stringResource(
-                                    if (state.saving) R.string.alarm_music_settings_saving
-                                    else R.string.alarm_music_settings_save
-                                )
-                            )
+                            Text(stringResource(R.string.alarm_music_settings_apply_draft))
                         }
                     }
                 }
@@ -104,6 +99,12 @@ fun AlarmMusicSettingsScreen(
                                 style = MaterialTheme.typography.bodyMedium
                             )
                         }
+                    }
+                    item {
+                        Text(
+                            stringResource(R.string.alarm_music_settings_draft_hint),
+                            style = MaterialTheme.typography.bodySmall
+                        )
                     }
                     item {
                         SettingsGroupTitle(R.string.alarm_music_settings_playlist_label)

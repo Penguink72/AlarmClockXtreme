@@ -909,4 +909,8 @@
     <string name="u4_snooze_mode_note">音源が利用できない場合やシークできない場合は、再生可能な代替音を使用します。</string>
     <string name="music_playlist_apply_to_alarm">このプレイリストをアラームに適用</string>
     <string name="alarmlist_quick_alarm_elapsed_ms">アラーム登録を確認：%1$d ミリ秒（タップから登録まで）</string>
+    <string name="alarm_music_settings_apply_draft">アラームの下書きに適用</string>
+    <string name="alarm_music_settings_draft_hint">ここでの変更は下書きです。アラーム編集画面で保存すると、音源と次回の通知予定が確定します。</string>
+    <string name="alarm_edit_schedule_failed">設定は保存されましたが、次回のアラームを登録できませんでした。権限を確認し、もう一度保存してください。</string>
+    <string name="alarm_edit_saved_unarmed">設定は保存されましたが、今回は予約されていません（停止中、休日、または時刻超過）。</string>
 </resources>

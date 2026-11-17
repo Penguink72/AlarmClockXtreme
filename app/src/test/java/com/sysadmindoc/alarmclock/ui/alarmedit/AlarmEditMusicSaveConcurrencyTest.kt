@@ -10,6 +10,7 @@ import com.sysadmindoc.alarmclock.data.repository.AlarmRepository
 import com.sysadmindoc.alarmclock.data.repository.EvaluatedAlarmMusicSettings
 import com.sysadmindoc.alarmclock.data.repository.MusicLibraryRepository
 import com.sysadmindoc.alarmclock.domain.AlarmScheduler
+import com.sysadmindoc.alarmclock.domain.AlarmSchedulingOutcome
 import com.sysadmindoc.alarmclock.domain.NextAlarmCalculator
 import com.sysadmindoc.alarmclock.domain.SnoozeMusicResumeMode
 import io.mockk.coEvery
@@ -38,7 +39,7 @@ import org.robolectric.annotation.Config
 class AlarmEditMusicSaveConcurrencyTest {
     @After fun tearDown() { Dispatchers.resetMain() }
 
-    @Test fun quickDoubleSaveDoesNotWriteTwiceAndNewerModeRemainsUnsaved() = runTest {
+    @Test fun musicOnlyEditIsDirtyAndPersistsOnlyWhenWholeAlarmSaveCompletes() = runTest {
         Dispatchers.setMain(StandardTestDispatcher(testScheduler))
         val alarms = mockk<AlarmRepository>(relaxed = true)
         val scheduler = mockk<AlarmScheduler>(relaxed = true)
@@ -49,21 +50,18 @@ class AlarmEditMusicSaveConcurrencyTest {
         coEvery { alarms.getById(91L) } returns Alarm(
             id = 91L, hour = 7, minute = 30, label = "Music save probe"
         )
+        coEvery { alarms.save(any()) } returns 91L
+        coEvery { scheduler.scheduleWithResult(any(), any(), any()) } returns
+            AlarmSchedulingOutcome.EXACT
         coEvery { music.getSettings(91L) } returns AlarmMusicSettingsDraft()
         coEvery { music.evaluateAlarmMusicDraft(any()) } returns
             EvaluatedAlarmMusicSettings(
-                playlists = emptyList(),
-                artists = emptyList(),
-                folders = emptyList(),
-                matchingPlayableTrackCount = 2,
-                unavailableTrackCount = 0
+                playlists = emptyList(), artists = emptyList(), folders = emptyList(),
+                matchingPlayableTrackCount = 2, unavailableTrackCount = 0
             )
         val firstWriteCanFinish = CompletableDeferred<Unit>()
-        var writes = 0
         coEvery { music.saveSettings(91L, any()) } coAnswers {
-            writes++
-            if (writes == 1) firstWriteCanFinish.await()
-            Unit
+            firstWriteCanFinish.await()
         }
 
         val viewModel = AlarmEditViewModel(
@@ -72,31 +70,37 @@ class AlarmEditMusicSaveConcurrencyTest {
             alarms, scheduler, calculator, preferences, music
         )
         runCurrent()
-        assertTrue(viewModel.alarmMusicSettingsState.value.integrationAvailable)
-
-        viewModel.onAlarmMusicSettingsAction(AlarmMusicSettingsAction.Save)
-        viewModel.onAlarmMusicSettingsAction(AlarmMusicSettingsAction.Save)
-        runCurrent()
-        coVerify(exactly = 1) { music.saveSettings(91L, any()) }
-        assertTrue(viewModel.alarmMusicSettingsState.value.saving)
-
-        // The in-flight write captured NEXT_DIFFERENT. A newer
-        // RESUME_INTERRUPTED choice cannot inherit that old Save ACK.
+        assertFalse(viewModel.uiState.value.hasUnsavedChanges)
         viewModel.onAlarmMusicSettingsAction(
             AlarmMusicSettingsAction.SetSnoozeMusicMode(
                 SnoozeMusicResumeMode.RESUME_INTERRUPTED
             )
         )
+        runCurrent()
+        assertTrue(viewModel.uiState.value.hasUnsavedChanges)
+        coVerify(exactly = 0) { music.saveSettings(91L, any()) }
+
+        var navigations = 0
+        viewModel.save { navigations++ }
+        viewModel.save { navigations++ }
+        runCurrent()
+        coVerify(exactly = 1) { music.saveSettings(91L, any()) }
+        assertTrue(viewModel.uiState.value.isSaving)
+        // A late edit cannot change the in-flight source snapshot.
+        viewModel.onAlarmMusicSettingsAction(
+            AlarmMusicSettingsAction.SetSnoozeMusicMode(SnoozeMusicResumeMode.NEXT_DIFFERENT)
+        )
+        assertTrue(
+            viewModel.alarmMusicSettingsState.value.draft.snoozeMusicMode ==
+                SnoozeMusicResumeMode.RESUME_INTERRUPTED
+        )
         firstWriteCanFinish.complete(Unit)
         runCurrent()
-        assertFalse(viewModel.alarmMusicSettingsState.value.saving)
-        assertFalse(viewModel.alarmMusicSettingsState.value.saved)
-        assertTrue(viewModel.alarmMusicSettingsState.value.error == null)
-
-        viewModel.onAlarmMusicSettingsAction(AlarmMusicSettingsAction.Save)
-        runCurrent()
-        coVerify(exactly = 2) { music.saveSettings(91L, any()) }
-        assertTrue(viewModel.alarmMusicSettingsState.value.saved)
+        coVerify(exactly = 1) {
+            scheduler.scheduleWithResult(match { it.id == 91L }, any(), any())
+        }
+        assertTrue(navigations == 1)
+        assertFalse(viewModel.uiState.value.hasUnsavedChanges)
     }
 
     @Test fun wholeAlarmQuickDoubleSaveCreatesOneRowWithMatchingSoundSnapshot() = runTest {
@@ -107,6 +111,8 @@ class AlarmEditMusicSaveConcurrencyTest {
         val preferences = mockk<PreferencesManager>(relaxed = true)
         val music = mockk<MusicLibraryRepository>(relaxed = true)
         coEvery { preferences.getCurrentSettings() } returns AppSettings()
+        coEvery { scheduler.scheduleWithResult(any(), any(), any()) } returns
+            AlarmSchedulingOutcome.EXACT
         coEvery { music.evaluateAlarmMusicDraft(any()) } returns
             EvaluatedAlarmMusicSettings(
                 playlists = emptyList(), artists = emptyList(), folders = emptyList(),
@@ -144,9 +150,35 @@ class AlarmEditMusicSaveConcurrencyTest {
             music.saveSettings(915_001L, match { it.playlistId == "morning" })
         }
         coVerify(exactly = 1) {
-            scheduler.schedule(match { it.id == 915_001L && it.randomMusicEnabled })
+            scheduler.scheduleWithResult(match { it.id == 915_001L && it.randomMusicEnabled }, any(), any())
         }
         assertTrue(viewModel.alarmMusicSettingsState.value.draft.playlistId == "morning")
         assertTrue(navigations == 1)
+    }
+    @Test fun scheduleRejectionDoesNotClaimWholeAlarmSaveComplete() = runTest {
+        Dispatchers.setMain(StandardTestDispatcher(testScheduler))
+        val alarms = mockk<AlarmRepository>(relaxed = true)
+        val scheduler = mockk<AlarmScheduler>(relaxed = true)
+        val preferences = mockk<PreferencesManager>(relaxed = true)
+        val music = mockk<MusicLibraryRepository>(relaxed = true)
+        coEvery { preferences.getCurrentSettings() } returns AppSettings()
+        coEvery { alarms.save(any()) } returns 717L
+        coEvery { scheduler.scheduleWithResult(any(), any(), any()) } returns
+            AlarmSchedulingOutcome.FAILED
+        coEvery { music.evaluateAlarmMusicDraft(any()) } returns
+            EvaluatedAlarmMusicSettings(emptyList(), emptyList(), emptyList(), 2, 0)
+        val viewModel = AlarmEditViewModel(
+            SavedStateHandle(),
+            ApplicationProvider.getApplicationContext<Application>(),
+            alarms, scheduler, mockk(relaxed = true), preferences, music
+        )
+        runCurrent()
+        var claimedComplete = false
+        viewModel.save { claimedComplete = true }
+        runCurrent()
+        assertFalse(claimedComplete)
+        assertFalse(viewModel.uiState.value.isSaving)
+        assertTrue(viewModel.uiState.value.saveError != null)
+        coVerify(exactly = 1) { alarms.save(any()) }
     }
 }

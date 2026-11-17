@@ -2640,4 +2640,8 @@
     <string name="u4_snooze_mode_note">Applies to alarm music. If a track cannot be accessed or seeked, the alarm uses a playable fallback.</string>
     <string name="music_playlist_apply_to_alarm">Apply this playlist to the alarm</string>
     <string name="alarmlist_quick_alarm_elapsed_ms">Alarm registered in %1$d ms (tap to schedule)</string>
+    <string name="alarm_music_settings_apply_draft">Apply to alarm draft</string>
+    <string name="alarm_music_settings_draft_hint">Changes here are drafts. Save the alarm itself to persist its sound and schedule.</string>
+    <string name="alarm_edit_schedule_failed">Alarm settings were saved, but the next ring could not be registered. Check alarm permissions and try Save again.</string>
+    <string name="alarm_edit_saved_unarmed">Settings were saved, but this occurrence is not scheduled (pause, holiday, or expired time).</string>
 </resources>

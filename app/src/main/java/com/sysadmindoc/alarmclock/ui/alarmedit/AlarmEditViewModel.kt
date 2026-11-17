@@ -12,6 +12,7 @@ import com.sysadmindoc.alarmclock.data.repository.MusicLibraryRepository
 import com.sysadmindoc.alarmclock.domain.AlarmScheduler
 import com.sysadmindoc.alarmclock.domain.LocationDismissPolicy
 import com.sysadmindoc.alarmclock.domain.AlarmSnoozeMusicModeStore
+import com.sysadmindoc.alarmclock.domain.AlarmSchedulingOutcome
 import com.sysadmindoc.alarmclock.domain.NextAlarmCalculator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -20,6 +21,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -190,21 +192,25 @@ class AlarmEditViewModel @Inject constructor(
         alarmId.takeIf { it > 0L && _uiState.value.isEditing } ?: -1L
 
     private var loadedDraft: AlarmEditUiState? = null
+    private var loadedMusicDraft: AlarmMusicSettingsDraft? = null
     private val _uiState = MutableStateFlow(AlarmEditUiState())
     private val musicEvaluationRequest = AtomicLong(0L)
-    private val musicSaveInFlight = AtomicBoolean(false)
     private val alarmSaveInFlight = AtomicBoolean(false)
-    val uiState: StateFlow<AlarmEditUiState> = _uiState
-        .map { state ->
-            state.copy(
-                hasUnsavedChanges = loadedDraft?.let { state.hasDraftChangesFrom(it) } == true
-            )
-        }
-        .stateIn(viewModelScope, SharingStarted.Eagerly, _uiState.value)
-
     private val _alarmMusicSettingsState = MutableStateFlow(
         AlarmMusicSettingsUiState(integrationAvailable = true, loading = true)
     )
+    // Any sound-only change must participate in the editor's discard warning;
+    // UI alone is not the authority for playlist, strategy or snooze mode.
+    val uiState: StateFlow<AlarmEditUiState> = combine(
+        _uiState, _alarmMusicSettingsState
+    ) { state, music ->
+        state.copy(
+            hasUnsavedChanges =
+                (loadedDraft?.let { state.hasDraftChangesFrom(it) } == true) ||
+                (loadedMusicDraft?.let { music.draft != it } == true)
+        )
+    }.stateIn(viewModelScope, SharingStarted.Eagerly, _uiState.value)
+
     val alarmMusicSettingsState: StateFlow<AlarmMusicSettingsUiState> =
         _alarmMusicSettingsState.asStateFlow()
 
@@ -318,6 +324,7 @@ class AlarmEditViewModel @Inject constructor(
             } else {
                 AlarmMusicSettingsDraft()
             }
+            loadedMusicDraft = initialMusicDraft
             _alarmMusicSettingsState.update {
                 it.copy(draft = initialMusicDraft, loading = true, error = null)
             }
@@ -487,50 +494,7 @@ class AlarmEditViewModel @Inject constructor(
                     }
                 }
             }
-            AlarmMusicSettingsAction.Save -> {
-                val draft = _alarmMusicSettingsState.value.draft
-                if (alarmId > 0) {
-                    // This lock is claimed before coroutine dispatch, not in
-                    // the coroutine. Double-tapping Save cannot enqueue two
-                    // asynchronous writes that complete out of order.
-                    if (!musicSaveInFlight.compareAndSet(false, true)) return
-                    _alarmMusicSettingsState.update {
-                        it.copy(saving = true, saved = false, error = null)
-                    }
-                    viewModelScope.launch {
-                        try {
-                            musicLibraryRepository.saveSettings(alarmId, draft)
-                            check(AlarmSnoozeMusicModeStore.save(
-                                context, alarmId, draft.snoozeMusicMode
-                            )) { "Failed to persist per-alarm snooze mode" }
-                            _alarmMusicSettingsState.update { current ->
-                                current.copy(
-                                    saved = current.draft == draft,
-                                    error = null
-                                )
-                            }
-                        } catch (error: CancellationException) {
-                            throw error
-                        } catch (error: Exception) {
-                            _alarmMusicSettingsState.update { current ->
-                                current.copy(
-                                    saved = false,
-                                    error = error.message ?: context.getString(
-                                        R.string.alarm_edit_save_error_generic
-                                    )
-                                )
-                            }
-                        } finally {
-                            musicSaveInFlight.set(false)
-                            _alarmMusicSettingsState.update { it.copy(saving = false) }
-                        }
-                    }
-                } else {
-                    _alarmMusicSettingsState.update {
-                        it.copy(saving = false, saved = true, error = null)
-                    }
-                }
-            }
+
         }
     }
 
@@ -630,10 +594,12 @@ class AlarmEditViewModel @Inject constructor(
     }
 
     fun updateRingtoneUri(uri: String) {
+        if (alarmSaveInFlight.get()) return
         _uiState.value = _uiState.value.withSelectedRingtone(uri)
     }
 
     fun updateRandomMusicEnabled(enabled: Boolean) {
+        if (alarmSaveInFlight.get()) return
         _uiState.value = _uiState.value.copy(randomMusicEnabled = enabled)
     }
 
@@ -1035,12 +1001,45 @@ class AlarmEditViewModel @Inject constructor(
                     throw musicSaveError
                 }
                 if (savedAlarm.isEnabled) {
-                    scheduler.schedule(savedAlarm)
+                    when (scheduler.scheduleWithResult(savedAlarm)) {
+                        AlarmSchedulingOutcome.FAILED -> {
+                            // The row may be persisted but Android did not arm
+                            // the next occurrence: never call onComplete().
+                            loadedDraft = s.copy(isSaving = false)
+                            loadedMusicDraft = musicDraft
+                            _uiState.value = _uiState.value.copy(
+                                isSaving = false,
+                                saveError = context.getString(R.string.alarm_edit_schedule_failed)
+                            )
+                            return@launch
+                        }
+                        AlarmSchedulingOutcome.SUPPRESSED -> {
+                            // Pause/holiday/expired one-shot is intentionally
+                            // unarmed. Tell the user rather than imply ringing.
+                            loadedDraft = s.copy(isSaving = false)
+                            loadedMusicDraft = musicDraft
+                            _uiState.value = _uiState.value.copy(
+                                isSaving = false,
+                                saveError = context.getString(R.string.alarm_edit_saved_unarmed)
+                            )
+                            return@launch
+                        }
+                        AlarmSchedulingOutcome.EXACT,
+                        AlarmSchedulingOutcome.INEXACT -> Unit
+                    }
                 } else {
                     // Edit flow may have just disabled the alarm — make sure any
                     // previously-armed AlarmManager / worker entry is torn down.
                     if (s.isEditing) scheduler.cancel(alarmId)
                     scheduler.syncBedtimeDndRule()
+                }
+                // This is the single real persistence acknowledgement, shared
+                // by the alarm and music drafts. The dialog only edits drafts.
+                loadedDraft = s.copy(isSaving = false)
+                loadedMusicDraft = musicDraft
+                _uiState.value = _uiState.value.copy(isSaving = false, saveError = null)
+                _alarmMusicSettingsState.update { current ->
+                    current.copy(saved = current.draft == musicDraft, saving = false)
                 }
                 onComplete()
             } catch (error: CancellationException) {

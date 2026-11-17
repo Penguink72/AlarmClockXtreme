@@ -62,7 +62,6 @@ sealed interface AlarmMusicSettingsAction {
     data class ToggleFolder(val folderId: String) : AlarmMusicSettingsAction
     data object ClearFilters : AlarmMusicSettingsAction
     data class DuplicateSelectedPlaylistForAlarm(val alarmId: Long) : AlarmMusicSettingsAction
-    data object Save : AlarmMusicSettingsAction
 }
 
 /**

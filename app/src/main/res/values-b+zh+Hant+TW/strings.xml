@@ -909,4 +909,8 @@
     <string name="u4_snooze_mode_note">適用於音樂鬧鐘。若音樂失效或無法定位播放位置，會改用可播放的備援。</string>
     <string name="music_playlist_apply_to_alarm">將此播放清單套用到鬧鐘</string>
     <string name="alarmlist_quick_alarm_elapsed_ms">鬧鐘排程已確認：%1$d 毫秒（從點擊到完成登記）</string>
+    <string name="alarm_music_settings_apply_draft">套用至鬧鐘草稿</string>
+    <string name="alarm_music_settings_draft_hint">這裡的修改尚未正式儲存。返回鬧鐘編輯頁按「儲存」，才會保存聲音來源並安排響鈴。</string>
+    <string name="alarm_edit_schedule_failed">設定已儲存，但下次響鈴未能登記。請檢查精準鬧鐘權限後重新儲存。</string>
+    <string name="alarm_edit_saved_unarmed">設定已儲存，但這次響鈴未排程（暫停、假日或已過時段）。</string>
 </resources>
