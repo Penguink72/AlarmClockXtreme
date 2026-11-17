@@ -907,4 +907,5 @@
     <string name="u4_snooze_resume_position">從同一首音樂的中斷位置續播</string>
     <string name="u4_snooze_next_different">直接換另一首音樂播放</string>
     <string name="u4_snooze_mode_note">適用於音樂鬧鐘。若音樂失效或無法定位播放位置，會改用可播放的備援。</string>
+    <string name="music_playlist_apply_to_alarm">將此播放清單套用到鬧鐘</string>
 </resources>
