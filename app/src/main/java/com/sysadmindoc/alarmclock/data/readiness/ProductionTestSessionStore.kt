@@ -58,17 +58,28 @@ internal object ProductionTestSessionStore {
         sessionId: String,
         incomingFireId: String,
         nextStage: ProductionTestStage,
-        nowMs: Long
+        nowMs: Long,
+        nextScheduledAtMs: Long? = null
     ): Boolean = synchronized(lock) {
         val previous = readRaw(context) ?: return@synchronized false
         val session = previous.session
         if (!session.canAccept(sessionId, incomingFireId, nowMs)) return@synchronized false
         if (nowMs < previous.observedAtMs) return@synchronized false
         if (!canAdvanceProductionTestStage(previous.stage, nextStage)) return@synchronized false
-        val nextOccurrence = if (nextStage == ProductionTestStage.SNOOZE_REGISTERED) 1
-            else session.nextOccurrence
+        // The second occurrence must be durably bound to the exact target
+        // before its receiver can attest delivery. Reject missing, stale or
+        // out-of-window timestamps; other stages may not rewrite this field.
+        val isSnoozeRegistration = nextStage == ProductionTestStage.SNOOZE_REGISTERED
+        if (isSnoozeRegistration) {
+            if (nextScheduledAtMs == null || nextScheduledAtMs <= nowMs ||
+                nextScheduledAtMs >= session.expiresAtMs) return@synchronized false
+        } else if (nextScheduledAtMs != null) {
+            return@synchronized false
+        }
         write(context, ProductionTestProof(
-            session = session.copy(nextOccurrence = nextOccurrence),
+            session = if (isSnoozeRegistration) {
+                session.copy(nextOccurrence = 1, scheduledAtMs = nextScheduledAtMs!!)
+            } else session,
             stage = nextStage,
             observedAtMs = nowMs
         ))
