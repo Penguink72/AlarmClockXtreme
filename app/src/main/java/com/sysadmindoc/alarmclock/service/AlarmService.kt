@@ -419,6 +419,10 @@ class AlarmService : Service() {
                 }
             }
             ACTION_SNOOZE -> {
+                // A B2 test intentionally borrows the source alarm ID only
+                // for playback. Never let a normal notification/button action
+                // schedule a real snooze for that borrowed identity.
+                if (activeProductionTestSessionId != null) return START_NOT_STICKY
                 val alarmId = intent.getLongExtra(AlarmScheduler.EXTRA_ALARM_ID, currentAlarmId)
                 val scheduledAt = intent.getLongExtra(AlarmScheduler.EXTRA_SCHEDULED_AT, currentScheduledAt)
                 val fireId = intent.getStringExtra(AlarmScheduler.EXTRA_ALARM_FIRE_ID)
@@ -543,6 +547,9 @@ class AlarmService : Service() {
                 }
             }
             ACTION_DISMISS -> {
+                // Only ACTION_PRODUCTION_TEST_DISMISS may terminate a test;
+                // normal dismiss side effects would mutate the source row.
+                if (activeProductionTestSessionId != null) return START_NOT_STICKY
                 val alarmId = intent.getLongExtra(AlarmScheduler.EXTRA_ALARM_ID, currentAlarmId)
                 val scheduledAt = intent.getLongExtra(AlarmScheduler.EXTRA_SCHEDULED_AT, currentScheduledAt)
                 val fireId = intent.getStringExtra(AlarmScheduler.EXTRA_ALARM_FIRE_ID)
@@ -587,13 +594,14 @@ class AlarmService : Service() {
         val session = proof.session
         val alarmId = intent.getLongExtra(AlarmScheduler.EXTRA_ALARM_ID, -1L)
         val fireId = intent.getStringExtra(AlarmScheduler.EXTRA_ALARM_FIRE_ID).orEmpty()
+        val scheduledAt = intent.getLongExtra(AlarmScheduler.EXTRA_SCHEDULED_AT, 0L)
         val expected = if (session.nextOccurrence == 0) {
             ProductionTestStage.RECEIVER_DELIVERED
         } else {
             ProductionTestStage.SNOOZE_DELIVERED
         }
-        if (session.sourceAlarmId != alarmId || proof.stage != expected ||
-            !session.canAccept(sessionId, fireId, now)) {
+        if (proof.stage != expected ||
+            !session.matchesDelivery(alarmId, sessionId, fireId, scheduledAt, now)) {
             rejectUnmatchedProductionTestStart()
             return
         }
@@ -607,7 +615,7 @@ class AlarmService : Service() {
         activeProductionTestSessionId = sessionId
         currentAlarmId = alarmId
         currentFireId = fireId
-        currentScheduledAt = intent.getLongExtra(AlarmScheduler.EXTRA_SCHEDULED_AT, 0L)
+        currentScheduledAt = scheduledAt
         startForegroundWithPlaceholder()
         serviceScope.launch {
             try {
