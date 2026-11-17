@@ -2648,4 +2648,9 @@
     <string name="alarmlist_duplicate_unscheduled">Alarm copied with music settings, but its next ring is suppressed.</string>
     <string name="alarmlist_duplicate_failed">Alarm copy failed; the incomplete copy was removed.</string>
     <string name="alarm_edit_schedule_failed_new">Alarm was not created because Android did not accept its schedule. Check alarm permissions and retry.</string>
+    <string name="alarmlist_enable_confirmed">Alarm registered with Android.</string>
+    <string name="alarmlist_enable_degraded">Alarm registered with reduced timing precision.</string>
+    <string name="alarmlist_enable_suppressed">Alarm enabled but not scheduled (paused or skipped).</string>
+    <string name="alarmlist_enable_failed">Alarm could not be registered. Check alarm permissions.</string>
+    <string name="alarmlist_batch_enable_result">%1$d registered, %2$d suppressed, %3$d failed</string>
 </resources>

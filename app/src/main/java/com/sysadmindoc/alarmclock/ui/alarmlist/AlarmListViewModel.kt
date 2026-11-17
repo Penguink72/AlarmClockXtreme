@@ -368,27 +368,59 @@ class AlarmListViewModel @Inject constructor(
         }
     }
 
-    fun enableSelected() {
-        viewModelScope.launch {
-            var enabledCount = 0
-            _selectedIds.value.forEach { id ->
-                val alarm = repository.getById(id) ?: return@forEach
-                if (!alarm.isEnabled) {
-                    val nextTrigger = calculator.calculate(alarm)
-                    repository.setEnabled(id, enabled = true, nextTrigger = nextTrigger)
-                    scheduler.schedule(alarm.copy(isEnabled = true, nextTriggerTime = nextTrigger))
-                    enabledCount += 1
+    private val enableSelectedInFlight = java.util.concurrent.atomic.AtomicBoolean(false)
+
+    /**
+     * One authority for the enabled bit + actual AlarmManager registration.
+     * Room's enabled=true is not an acknowledgement from Android.
+     */
+    private suspend fun enableWithAcknowledgement(alarm: Alarm): AlarmSchedulingOutcome {
+        repository.setEnabled(alarm.id, enabled = true, nextTrigger = 0)
+        return try {
+            when (val outcome = scheduler.scheduleWithResult(alarm.copy(isEnabled = true))) {
+                AlarmSchedulingOutcome.FAILED -> {
+                    repository.setEnabled(alarm.id, enabled = false, nextTrigger = 0)
+                    outcome
                 }
+                else -> outcome
             }
-            clearSelection()
-            if (enabledCount > 0) {
-                emitFeedback(
-                    if (enabledCount == 1) {
-                        "1 alarm enabled"
-                    } else {
-                        "$enabledCount alarms enabled"
+        } catch (error: CancellationException) {
+            throw error
+        } catch (error: Exception) {
+            runCatching { repository.setEnabled(alarm.id, enabled = false, nextTrigger = 0) }
+            AlarmSchedulingOutcome.FAILED
+        }
+    }
+
+    fun enableSelected() {
+        if (!enableSelectedInFlight.compareAndSet(false, true)) return
+        val targetIds = _selectedIds.value.toList()
+        viewModelScope.launch {
+            var registered = 0
+            var suppressed = 0
+            var failed = 0
+            try {
+                targetIds.forEach { id ->
+                    val alarm = repository.getById(id) ?: return@forEach
+                    if (!alarm.isEnabled) {
+                        when (enableWithAcknowledgement(alarm)) {
+                            AlarmSchedulingOutcome.EXACT, AlarmSchedulingOutcome.INEXACT -> registered++
+                            AlarmSchedulingOutcome.SUPPRESSED -> suppressed++
+                            AlarmSchedulingOutcome.FAILED -> failed++
+                        }
                     }
-                )
+                }
+                clearSelection()
+                if (registered + suppressed + failed > 0) {
+                    emitFeedback(
+                        context.getString(
+                            R.string.alarmlist_batch_enable_result,
+                            registered, suppressed, failed
+                        )
+                    )
+                }
+            } finally {
+                enableSelectedInFlight.set(false)
             }
         }
     }
@@ -422,24 +454,39 @@ class AlarmListViewModel @Inject constructor(
         }
     }
 
+    private val togglesInFlight = java.util.concurrent.ConcurrentHashMap.newKeySet<Long>()
+
     fun toggleAlarm(alarm: Alarm) {
+        if (!togglesInFlight.add(alarm.id)) return
         viewModelScope.launch {
-            val newEnabled = !alarm.isEnabled
-            if (newEnabled) {
-                val nextTrigger = calculator.calculate(alarm)
-                repository.setEnabled(alarm.id, enabled = true, nextTrigger = nextTrigger)
-                scheduler.schedule(alarm.copy(isEnabled = true, nextTriggerTime = nextTrigger))
-                emitFeedback("Alarm enabled for ${formatFeedbackTime(nextTrigger)}")
-            } else {
-                val lockMinutes = preferencesManager.getCachedSettings().cancellationLockMinutes
-                if (lockMinutes > 0 && alarm.nextTriggerTime > 0) {
-                    val minutesUntilFire = (alarm.nextTriggerTime - System.currentTimeMillis()) / 60_000
-                    if (minutesUntilFire in 0..lockMinutes) {
-                        emitFeedback("Locked — fires in $minutesUntilFire min. Long-press toggle to override.")
-                        return@launch
+            try {
+                if (!alarm.isEnabled) {
+                    when (enableWithAcknowledgement(alarm)) {
+                        AlarmSchedulingOutcome.EXACT ->
+                            emitFeedback(context.getString(R.string.alarmlist_enable_confirmed))
+                        AlarmSchedulingOutcome.INEXACT ->
+                            emitFeedback(context.getString(R.string.alarmlist_enable_degraded))
+                        AlarmSchedulingOutcome.SUPPRESSED ->
+                            emitFeedback(context.getString(R.string.alarmlist_enable_suppressed))
+                        AlarmSchedulingOutcome.FAILED ->
+                            emitFeedback(context.getString(R.string.alarmlist_enable_failed))
                     }
+                } else {
+                    val lockMinutes = preferencesManager.getCachedSettings().cancellationLockMinutes
+                    if (lockMinutes > 0 && alarm.nextTriggerTime > 0) {
+                        val minutesUntilFire =
+                            (alarm.nextTriggerTime - System.currentTimeMillis()) / 60_000
+                        if (minutesUntilFire in 0..lockMinutes) {
+                            emitFeedback(
+                                "Locked — fires in $minutesUntilFire min. Long-press toggle to override."
+                            )
+                            return@launch
+                        }
+                    }
+                    disableAlarm(alarm)
                 }
-                disableAlarm(alarm)
+            } finally {
+                togglesInFlight.remove(alarm.id)
             }
         }
     }

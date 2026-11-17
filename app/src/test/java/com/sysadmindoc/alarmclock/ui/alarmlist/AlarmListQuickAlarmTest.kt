@@ -18,6 +18,7 @@ import com.sysadmindoc.alarmclock.domain.NextAlarmCalculator
 import com.sysadmindoc.alarmclock.service.HistoryReplayActions
 import com.sysadmindoc.alarmclock.service.ReplayUiState
 import io.mockk.coEvery
+import io.mockk.firstArg
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
@@ -179,5 +180,55 @@ class AlarmListQuickAlarmTest {
         coVerify(exactly = 1) { scheduler.cancel(copyId) }
         coVerify(exactly = 1) { music.deleteSettings(copyId) }
         coVerify(exactly = 1) { alarmRepository.deleteById(copyId) }
+    }
+
+    @Test fun listToggleFailureDisablesPhantomAlarmInsteadOfClaimingSuccess() = runTest {
+        Dispatchers.setMain(StandardTestDispatcher(testScheduler))
+        val id = 510_018L
+        coEvery { scheduler.scheduleWithResult(any(), any(), any()) } returns
+            AlarmSchedulingOutcome.FAILED
+        val vm = create()
+        vm.toggleAlarm(Alarm(id = id, hour = 8, minute = 20, isEnabled = false))
+        vm.toggleAlarm(Alarm(id = id, hour = 8, minute = 20, isEnabled = false))
+        runCurrent()
+        coVerify(exactly = 1) {
+            scheduler.scheduleWithResult(match { it.id == id && it.isEnabled }, any(), any())
+        }
+        coVerify(exactly = 1) { alarmRepository.setEnabled(id, true, 0) }
+        coVerify(exactly = 1) { alarmRepository.setEnabled(id, false, 0) }
+    }
+
+    @Test fun listToggleAcknowledgedAlarmIsNeverDisabledAsAFailure() = runTest {
+        Dispatchers.setMain(StandardTestDispatcher(testScheduler))
+        val id = 510_019L
+        coEvery { scheduler.scheduleWithResult(any(), any(), any()) } returns
+            AlarmSchedulingOutcome.EXACT
+        val vm = create()
+        vm.toggleAlarm(Alarm(id = id, hour = 8, minute = 30, isEnabled = false))
+        runCurrent()
+        coVerify(exactly = 1) { alarmRepository.setEnabled(id, true, 0) }
+        coVerify(exactly = 0) { alarmRepository.setEnabled(id, false, 0) }
+    }
+
+    @Test fun batchEnableCountsOnlyActuallyRegisteredAlarmsAsScheduled() = runTest {
+        Dispatchers.setMain(StandardTestDispatcher(testScheduler))
+        coEvery { alarmRepository.getById(601L) } returns
+            Alarm(id = 601L, hour = 8, minute = 0, isEnabled = false)
+        coEvery { alarmRepository.getById(602L) } returns
+            Alarm(id = 602L, hour = 8, minute = 5, isEnabled = false)
+        coEvery { scheduler.scheduleWithResult(any(), any(), any()) } coAnswers {
+            when (firstArg<Alarm>().id) {
+                601L -> AlarmSchedulingOutcome.EXACT
+                else -> AlarmSchedulingOutcome.FAILED
+            }
+        }
+        val vm = create()
+        vm.selectMany(setOf(601L, 602L))
+        vm.enableSelected()
+        vm.enableSelected()
+        runCurrent()
+        coVerify(exactly = 1) { alarmRepository.setEnabled(601L, true, 0) }
+        coVerify(exactly = 1) { alarmRepository.setEnabled(602L, true, 0) }
+        coVerify(exactly = 1) { alarmRepository.setEnabled(602L, false, 0) }
     }
 }

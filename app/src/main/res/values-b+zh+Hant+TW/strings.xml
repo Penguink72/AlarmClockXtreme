@@ -917,4 +917,9 @@
     <string name="alarmlist_duplicate_unscheduled">鬧鐘與音樂設定已複製，但下次響鈴因暫停或略過而未排程。</string>
     <string name="alarmlist_duplicate_failed">鬧鐘複製失敗；已嘗試清除不完整複本。</string>
     <string name="alarm_edit_schedule_failed_new">Android 未接受響鈴排程，因此沒有建立新的鬧鐘。請檢查鬧鐘權限後重試。</string>
+    <string name="alarmlist_enable_confirmed">鬧鐘已向系統完成排程登記。</string>
+    <string name="alarmlist_enable_degraded">已登記鬧鐘，但系統改採非精準排程。</string>
+    <string name="alarmlist_enable_suppressed">鬧鐘已啟用，但因暫停或略過未排程。</string>
+    <string name="alarmlist_enable_failed">未能登記鬧鐘，請檢查精準鬧鐘權限。</string>
+    <string name="alarmlist_batch_enable_result">已登記 %1$d 個、暫不排程 %2$d 個、失敗 %3$d 個</string>
 </resources>
