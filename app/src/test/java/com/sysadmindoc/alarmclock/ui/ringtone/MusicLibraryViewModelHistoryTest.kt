@@ -190,4 +190,41 @@ class MusicLibraryViewModelHistoryTest {
         }
         assertFalse(viewModel.uiState.value.loadingPool)
     }
+
+    @Test
+    fun oldRecentHistoryReplyCannotOverwriteNewDateSelection() = runTest {
+        Dispatchers.setMain(StandardTestDispatcher(testScheduler))
+        val delayedRecent = kotlinx.coroutines.CompletableDeferred<List<PlaybackHistoryEntry>>()
+        val date = LocalDate.of(2026, 11, 16)
+        val byDate = listOf(
+            PlaybackHistoryEntry(
+                id = 41L, fireId = "f41", startedAt = 41L, playOrder = 1,
+                title = "Selected date", uri = "content://music/date"
+            )
+        )
+        coEvery { repository.recentHistory(100) } coAnswers { delayedRecent.await() }
+        coEvery { repository.historyForDate(any(), any()) } returns byDate
+
+        val viewModel = MusicLibraryViewModel(
+            indexer = indexer, repository = repository,
+            previewController = previewController, replayActions = replayActions,
+            context = context
+        )
+        runCurrent() // the initial recent-history request is now suspended
+        viewModel.loadHistory(date)
+        runCurrent()
+        assertEquals(date, viewModel.uiState.value.selectedDate)
+        assertEquals(byDate, viewModel.uiState.value.history)
+        delayedRecent.complete(
+            listOf(
+                PlaybackHistoryEntry(
+                    id = 20L, fireId = "old", startedAt = 20L, playOrder = 1,
+                    title = "Stale recent", uri = "content://music/old"
+                )
+            )
+        )
+        runCurrent()
+        assertEquals(HistoryFilterMode.BY_DATE, viewModel.uiState.value.historyFilterMode)
+        assertEquals(byDate, viewModel.uiState.value.history)
+    }
 }

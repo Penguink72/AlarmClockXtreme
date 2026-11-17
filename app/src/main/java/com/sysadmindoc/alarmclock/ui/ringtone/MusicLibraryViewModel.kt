@@ -18,6 +18,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -25,6 +26,7 @@ import kotlinx.coroutines.withContext
 import java.time.LocalDate
 import java.time.ZoneId
 import java.util.Locale
+import java.util.concurrent.atomic.AtomicLong
 import javax.inject.Inject
 
 enum class HistoryFilterMode {
@@ -249,6 +251,7 @@ class MusicLibraryViewModel @Inject constructor(
     val playlistRepository: MusicPlaylistRepository
         get() = repository
     private val _uiState = MutableStateFlow(MusicLibraryUiState())
+    private val historyRequestVersion = AtomicLong(0L)
     val uiState: StateFlow<MusicLibraryUiState> = _uiState.asStateFlow()
     val replayState: StateFlow<ReplayUiState> = replayActions.state
 
@@ -541,8 +544,10 @@ class MusicLibraryViewModel @Inject constructor(
 
     fun loadPoolCandidates(autoScanIfEmpty: Boolean = false) {
         if (_uiState.value.loadingPool) return
+        // Claim before coroutine dispatch; two taps/open events in one frame
+        // must not enqueue duplicate 4,935-track catalog reads.
+        _uiState.value = _uiState.value.copy(loadingPool = true)
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(loadingPool = true)
             try {
                 // Show the persisted index first. A full MediaStore/SAF scan
                 // can take minutes for several thousand files and must not
@@ -851,26 +856,35 @@ class MusicLibraryViewModel @Inject constructor(
     }
 
     fun loadRecentHistory(limit: Int = 100) {
+        val requestId = historyRequestVersion.incrementAndGet()
         _uiState.value = _uiState.value.copy(historyFilterMode = HistoryFilterMode.RECENT)
         viewModelScope.launch {
             try {
-                _uiState.value = _uiState.value.copy(
-                    history = repository.recentHistory(limit)
-                )
+                val rows = repository.recentHistory(limit)
+                _uiState.update { current ->
+                    if (historyRequestVersion.get() != requestId ||
+                        current.historyFilterMode != HistoryFilterMode.RECENT
+                    ) current else current.copy(history = rows)
+                }
             } catch (error: CancellationException) {
                 throw error
             } catch (error: Exception) {
-                _uiState.value = _uiState.value.copy(
-                    status = context.getString(
-                        R.string.music_library_history_read_failed,
-                        error.message.orEmpty()
+                _uiState.update { current ->
+                    if (historyRequestVersion.get() != requestId ||
+                        current.historyFilterMode != HistoryFilterMode.RECENT
+                    ) current else current.copy(
+                        status = context.getString(
+                            R.string.music_library_history_read_failed,
+                            error.message.orEmpty()
+                        )
                     )
-                )
+                }
             }
         }
     }
 
     fun loadHistory(date: LocalDate) {
+        val requestId = historyRequestVersion.incrementAndGet()
         _uiState.value = _uiState.value.copy(
             historyFilterMode = HistoryFilterMode.BY_DATE,
             selectedDate = date
@@ -880,18 +894,26 @@ class MusicLibraryViewModel @Inject constructor(
             val from = date.atStartOfDay(zone).toInstant().toEpochMilli()
             val to = date.plusDays(1).atStartOfDay(zone).toInstant().toEpochMilli()
             try {
-                _uiState.value = _uiState.value.copy(
-                    history = repository.historyForDate(from, to)
-                )
+                val rows = repository.historyForDate(from, to)
+                _uiState.update { current ->
+                    if (historyRequestVersion.get() != requestId ||
+                        current.historyFilterMode != HistoryFilterMode.BY_DATE ||
+                        current.selectedDate != date
+                    ) current else current.copy(history = rows)
+                }
             } catch (error: CancellationException) {
                 throw error
             } catch (error: Exception) {
-                _uiState.value = _uiState.value.copy(
-                    status = context.getString(
-                        R.string.music_library_history_read_failed,
-                        error.message.orEmpty()
+                _uiState.update { current ->
+                    if (historyRequestVersion.get() != requestId ||
+                        current.selectedDate != date
+                    ) current else current.copy(
+                        status = context.getString(
+                            R.string.music_library_history_read_failed,
+                            error.message.orEmpty()
+                        )
                     )
-                )
+                }
             }
         }
     }

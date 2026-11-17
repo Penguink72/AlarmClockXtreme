@@ -270,16 +270,15 @@ internal fun MusicPlaylistsWorkspace(
                     TextButton(
                         enabled = !busy,
                         onClick = {
+                            if (busy) return@TextButton
                             val playlistId = selectedPlaylistId ?: return@TextButton
+                            val removedIds = selectedPlaylistItemIds.toList()
+                            busy = true
                             scope.launch {
-                                busy = true
                                 try {
                                     val repo = repository ?: return@launch
-                                    repo.removeItems(
-                                        playlistId,
-                                        selectedPlaylistItemIds.toList()
-                                    )
-                                    status = "removed:${selectedPlaylistItemIds.size}"
+                                    repo.removeItems(playlistId, removedIds)
+                                    status = "removed:${removedIds.size}"
                                     selectedPlaylistItemIds = emptySet()
                                 } catch (error: CancellationException) {
                                     throw error
@@ -297,10 +296,12 @@ internal fun MusicPlaylistsWorkspace(
             }
             if (playlistIsEditable) previousOrder?.let { oldOrder ->
                 TextButton(
+                    enabled = !busy,
                     onClick = {
                         val repo = repository
                         val playlistId = selectedPlaylistId
-                        if (repo != null && playlistId != null) {
+                        if (!busy && repo != null && playlistId != null) {
+                            busy = true
                             scope.launch {
                                 try {
                                     repo.reorder(playlistId, oldOrder)
@@ -309,6 +310,8 @@ internal fun MusicPlaylistsWorkspace(
                                     throw error
                                 } catch (error: Exception) {
                                     status = error.message ?: error.javaClass.simpleName
+                                } finally {
+                                    busy = false
                                 }
                             }
                         }
@@ -345,16 +348,20 @@ internal fun MusicPlaylistsWorkspace(
                                             .coerceAtLeast(if (totalDrag == 0f) 0 else 1)
                                         if (stepCount > 0) {
                                             val offset = if (totalDrag < 0f) -stepCount else stepCount
-                                            movePlaylistItem(
-                                                item = item,
-                                                offset = offset,
-                                                currentItems = items.orEmpty(),
-                                                repository = repository,
-                                                playlistId = selectedPlaylistId,
-                                                onPreviousOrder = { previousOrder = it },
-                                                onStatus = { status = it },
-                                                scope = scope
-                                            )
+                                            if (!busy) {
+                                                busy = true
+                                                if (!movePlaylistItem(
+                                                        item = item,
+                                                        offset = offset,
+                                                        currentItems = items.orEmpty(),
+                                                        repository = repository,
+                                                        playlistId = selectedPlaylistId,
+                                                        onPreviousOrder = { previousOrder = it },
+                                                        onStatus = { status = it },
+                                                        onFinished = { busy = false },
+                                                        scope = scope
+                                                    )) busy = false
+                                            }
                                         }
                                     },
                                     onDragCancel = { totalDrag = 0f },
@@ -375,28 +382,37 @@ internal fun MusicPlaylistsWorkspace(
                                 }
                             },
                             onRemove = {
-                                scope.launch {
-                                    try {
-                                        val repo = repository ?: return@launch
-                                        repo.removeItem(item.playlistItemId)
-                                    } catch (error: CancellationException) {
-                                        throw error
-                                    } catch (error: Exception) {
-                                        status = error.message ?: error.javaClass.simpleName
+                                if (!busy) {
+                                    busy = true
+                                    scope.launch {
+                                        try {
+                                            val repo = repository ?: return@launch
+                                            repo.removeItem(item.playlistItemId)
+                                        } catch (error: CancellationException) {
+                                            throw error
+                                        } catch (error: Exception) {
+                                            status = error.message ?: error.javaClass.simpleName
+                                        } finally {
+                                            busy = false
+                                        }
                                     }
                                 }
                             },
                             onMove = { offset ->
-                                movePlaylistItem(
-                                    item = item,
-                                    offset = offset,
-                                    currentItems = items.orEmpty(),
-                                    repository = repository,
-                                    playlistId = selectedPlaylistId,
-                                    onPreviousOrder = { previousOrder = it },
-                                    onStatus = { status = it },
-                                    scope = scope
-                                )
+                                if (!busy) {
+                                    busy = true
+                                    if (!movePlaylistItem(
+                                            item = item,
+                                            offset = offset,
+                                            currentItems = items.orEmpty(),
+                                            repository = repository,
+                                            playlistId = selectedPlaylistId,
+                                            onPreviousOrder = { previousOrder = it },
+                                            onStatus = { status = it },
+                                            onFinished = { busy = false },
+                                            scope = scope
+                                        )) busy = false
+                                }
                             }
                         )
                     }
@@ -461,8 +477,9 @@ internal fun MusicPlaylistsWorkspace(
                                 dialogMode = PlaylistDialogMode.RENAME(playlist.playlistId)
                             },
                             onCopy = {
-                                scope.launch {
+                                if (!busy) {
                                     busy = true
+                                    scope.launch {
                                     try {
                                         val repo = repository ?: return@launch
                                         val copy = repo.duplicate(playlist.playlistId)
@@ -473,6 +490,7 @@ internal fun MusicPlaylistsWorkspace(
                                         status = error.message ?: error.javaClass.simpleName
                                     } finally {
                                         busy = false
+                                    }
                                     }
                                 }
                             },
@@ -649,9 +667,10 @@ internal fun MusicPlaylistsWorkspace(
                 TextButton(
                     enabled = !busy,
                     onClick = {
+                        if (busy) return@TextButton
                         pendingDeletePlaylistId = null
+                        busy = true
                         scope.launch {
-                            busy = true
                             try {
                                 val repo = repository ?: return@launch
                                 when (
@@ -833,11 +852,12 @@ private fun movePlaylistItem(
     playlistId: String?,
     onPreviousOrder: (List<String>) -> Unit,
     onStatus: (String?) -> Unit,
+    onFinished: () -> Unit,
     scope: kotlinx.coroutines.CoroutineScope
-) {
+): Boolean {
     val from = currentItems.indexOfFirst { it.playlistItemId == item.playlistItemId }
     val to = (from + offset).coerceIn(0, currentItems.lastIndex)
-    if (from < 0 || from == to || repository == null || playlistId == null) return
+    if (from < 0 || from == to || repository == null || playlistId == null) return false
     val oldOrder = currentItems.map(MusicPlaylistItem::playlistItemId)
     val newOrder = oldOrder.toMutableList().apply {
         add(to, removeAt(from))
@@ -851,8 +871,11 @@ private fun movePlaylistItem(
             throw error
         } catch (error: Exception) {
             onStatus(error.message ?: error.javaClass.simpleName)
+        } finally {
+            onFinished()
         }
     }
+    return true
 }
 
 private sealed interface PlaylistDialogMode {
