@@ -261,3 +261,8 @@
 2. 進一步核對播放清單複製／刪除／重排的連點鎖與「套用到指定鬧鐘後是否需再次儲存」的 UX 回饋；目前只修建立與重新命名。
 3. U5 的可能系統音認定仍需 OEM 裝置抽查；目前無法證明 100% 辨識，Undo 不刪原始檔案。
 4. 後續再接 L1-B 三語與 U3 使用者五秒操作測量，不因本次小改動要求立即重裝 APK。
+
+### U1.2/U2/U5 本切片第一次 CI 直接日誌與測試補正
+- [Run 44107395773](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/44107395773) 的 targeted unit 測試 FAILED：新增的 `MusicLibraryViewModelHistoryTest.doubleCatalogMembershipTapStartsOneWriteBeforeCoroutineDispatch` 沒有觸發預期的 `setPoolMembership`。直接 job log 列出 `buildSupplementalCatalog(null, continuation {})`；測試 MockK Stub 卻以 `any()` 匹配 nullable 預設值，造成補充曲庫載入未能使用預設結果，並非已證明正式 U5 批次加入程式故障。失敗測試及斷言保留。
+- 修補提交 [`0afd3c6e8622fa17631a8702b27d52aaa009fb44`](https://github.com/Penguink72/AlarmClockXtreme/commit/0afd3c6e8622fa17631a8702b27d52aaa009fb44)：只將 `repository.buildSupplementalCatalog(any())` Stub 改為 `repository.buildSupplementalCatalog(null)`，符合實際呼叫，不刪測試。
+- 新 code SHA 0afd3c6e8622fa17631a8702b27d52aaa009fb44 已觸發 [CI Run 44108276894](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/44108276894)。本段記錄時為 pending（GitHub workflow 同分支使用 concurrency 排隊，前一 Run 的簽章 job 尚在執行）。**T2 等新 Run，禁止把前一失敗或文件提交當作正式 App 功能回歸結論**。
