@@ -424,7 +424,15 @@ fun SettingsScreen(
             IncidentTimelineSection(
                 timeline = state.incidentTimeline,
                 use24Hour = state.settings.is24HourFormat,
-                onClearIncidentHistory = viewModel::clearIncidentHistory
+                onClearIncidentHistory = viewModel::clearIncidentHistory,
+                onExportDiagnostics = {
+                    if (!supportExportBusy) {
+                        screenScope.launch {
+                            viewModel.createSupportExport()
+                                .onSuccess { shareSupportExport(it) }
+                        }
+                    }
+                }
             )
             }
             settingsItem("readiness-permissions") {

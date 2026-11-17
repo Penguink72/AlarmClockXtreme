@@ -162,6 +162,7 @@ fun AlarmListScreen(
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val recentHistory by viewModel.recentHistory.collectAsStateWithLifecycle()
     val replayState by viewModel.replayState.collectAsStateWithLifecycle()
+    val quickAlarmMetric by viewModel.quickAlarmMetric.collectAsStateWithLifecycle()
     var showTemplates by remember { mutableStateOf(false) }
     var searchQuery by remember { mutableStateOf("") }
     var showBulkDeleteConfirmation by remember { mutableStateOf(false) }
@@ -437,6 +438,31 @@ fun AlarmListScreen(
                         },
                         onCycleSort = viewModel::cycleSortOrder,
                     )
+                }
+
+                // Five-second alarm goal: an existing one-tap quick alarm must
+                // be reachable without scrolling past a long alarm list.
+                item {
+                    Box(modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp)) {
+                        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                            QuickAlarmRow(
+                                onQuickAlarm = viewModel::createQuickAlarm,
+                                napDefaultMinutes = state.napDefaultMinutes
+                            )
+                            // Only display measured successful registrations,
+                            // never a made-up five-second pass claim.
+                            quickAlarmMetric?.takeIf { it.scheduled }?.let { metric ->
+                                Text(
+                                    stringResource(
+                                        R.string.alarmlist_quick_alarm_elapsed_ms,
+                                        metric.elapsedMs
+                                    ),
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = TextSecondary
+                                )
+                            }
+                        }
+                    }
                 }
 
                 item {
@@ -753,14 +779,6 @@ fun AlarmListScreen(
                     }
                 }
 
-                item {
-                    Box(modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp)) {
-                        QuickAlarmRow(
-                            onQuickAlarm = viewModel::createQuickAlarm,
-                            napDefaultMinutes = state.napDefaultMinutes
-                        )
-                    }
-                }
                 if (youTubeAvailable) {
                     item {
                         YouTubeDownloadCard(
@@ -1276,7 +1294,8 @@ private fun QuickAlarmRow(
                 .horizontalScroll(rememberScrollState()),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            listOf(10 to "10 min", 30 to "30 min", 60 to "1 hour", 120 to "2 hours").forEach { (minutes, label) ->
+            listOf(10, 30, 60, 120).forEach { minutes ->
+                val label = stringResource(R.string.alarmlist_min, minutes)
                 AppFilterChip(
                     label = label,
                     selected = false,

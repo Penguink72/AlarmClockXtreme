@@ -21,6 +21,8 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -128,5 +130,101 @@ class MusicLibraryViewModelHistoryTest {
 
         viewModel.stopReplay()
         verify(exactly = 1) { replayActions.stop() }
+    }
+
+    @Test
+    fun doubleCatalogMembershipTapStartsOneWriteBeforeCoroutineDispatch() = runTest {
+        Dispatchers.setMain(StandardTestDispatcher(testScheduler))
+        val uri = "content://music/one"
+        coEvery { repository.poolCandidates() } returns listOf(
+            com.sysadmindoc.alarmclock.data.local.MusicPoolTrack(
+                com.sysadmindoc.alarmclock.data.local.entity.MusicTrack(
+                    uri = uri, title = "One", source = "MEDIA_STORE"
+                ),
+                membershipState = null
+            )
+        )
+        coEvery { repository.buildSupplementalCatalog(null) } returns
+            MusicLibrarySupplementalCatalog()
+        val allowWrite = kotlinx.coroutines.CompletableDeferred<Unit>()
+        coEvery { repository.setPoolMembership(any(), true) } coAnswers {
+            allowWrite.await()
+        }
+        val viewModel = MusicLibraryViewModel(
+            indexer = indexer,
+            repository = repository,
+            previewController = previewController,
+            replayActions = replayActions,
+            context = context
+        )
+        runCurrent()
+        viewModel.loadPoolCandidates()
+        // Source discovery runs on Dispatchers.IO, not on runTest's virtual
+        // scheduler. Wait for the actual indexed-catalog load to finish before
+        // selecting tracks; otherwise the action legitimately returns early
+        // while loadingPool=true and the test never exercises the write path.
+        for (attempt in 0 until 300) {
+            runCurrent()
+            if (!viewModel.uiState.value.loadingPool &&
+                viewModel.uiState.value.poolTracks.any { it.track.uri == uri }
+            ) break
+            Thread.sleep(10)
+        }
+        assertFalse("Catalog must finish loading before a membership action",
+            viewModel.uiState.value.loadingPool)
+        assertTrue(viewModel.uiState.value.poolTracks.any { it.track.uri == uri })
+        viewModel.selectVisibleCatalogTracks(listOf(uri))
+        viewModel.updateSelectedCatalogMembership(included = true)
+        viewModel.updateSelectedCatalogMembership(included = true)
+        assertTrue(viewModel.uiState.value.loadingPool)
+        runCurrent()
+        coVerify(exactly = 1) {
+            repository.setPoolMembership(match { uri in it }, true)
+        }
+        allowWrite.complete(Unit)
+        // Post-write refresh also discovers folder sources on IO.
+        for (attempt in 0 until 300) {
+            runCurrent()
+            if (!viewModel.uiState.value.loadingPool) break
+            Thread.sleep(10)
+        }
+        assertFalse(viewModel.uiState.value.loadingPool)
+    }
+
+    @Test
+    fun oldRecentHistoryReplyCannotOverwriteNewDateSelection() = runTest {
+        Dispatchers.setMain(StandardTestDispatcher(testScheduler))
+        val delayedRecent = kotlinx.coroutines.CompletableDeferred<List<PlaybackHistoryEntry>>()
+        val date = LocalDate.of(2026, 11, 16)
+        val byDate = listOf(
+            PlaybackHistoryEntry(
+                id = 41L, fireId = "f41", startedAt = 41L, playOrder = 1,
+                title = "Selected date", uri = "content://music/date"
+            )
+        )
+        coEvery { repository.recentHistory(100) } coAnswers { delayedRecent.await() }
+        coEvery { repository.historyForDate(any(), any()) } returns byDate
+
+        val viewModel = MusicLibraryViewModel(
+            indexer = indexer, repository = repository,
+            previewController = previewController, replayActions = replayActions,
+            context = context
+        )
+        runCurrent() // the initial recent-history request is now suspended
+        viewModel.loadHistory(date)
+        runCurrent()
+        assertEquals(date, viewModel.uiState.value.selectedDate)
+        assertEquals(byDate, viewModel.uiState.value.history)
+        delayedRecent.complete(
+            listOf(
+                PlaybackHistoryEntry(
+                    id = 20L, fireId = "old", startedAt = 20L, playOrder = 1,
+                    title = "Stale recent", uri = "content://music/old"
+                )
+            )
+        )
+        runCurrent()
+        assertEquals(HistoryFilterMode.BY_DATE, viewModel.uiState.value.historyFilterMode)
+        assertEquals(byDate, viewModel.uiState.value.history)
     }
 }

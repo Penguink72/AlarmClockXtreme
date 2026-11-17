@@ -40,6 +40,17 @@ internal enum class AlarmRegistrationResult {
     val registered: Boolean get() = this != FAILED
 }
 
+/**
+ * Outcome of registering the next occurrence, distinct from simply saving a
+ * Room row. SUPPRESSED is an intentional no-fire state (paused, disabled,
+ * holiday or expired one-shot); FAILED means the OS registration did not hold.
+ * EXACT/INEXACT acknowledge Android API acceptance, not audible delivery.
+ */
+enum class AlarmSchedulingOutcome {
+    EXACT, INEXACT, SUPPRESSED, FAILED;
+    val registered: Boolean get() = this == EXACT || this == INEXACT
+}
+
 @Singleton
 class AlarmScheduler @Inject constructor(
     @ApplicationContext private val context: Context,
@@ -77,17 +88,26 @@ class AlarmScheduler @Inject constructor(
         requestWidgetUpdate: Boolean = true,
         notBeforeMillis: Long = 0L
     ) {
+        scheduleWithResult(alarm, requestWidgetUpdate, notBeforeMillis)
+    }
+
+    /** Use this path for user-facing Save/Enable acknowledgements. */
+    suspend fun scheduleWithResult(
+        alarm: Alarm,
+        requestWidgetUpdate: Boolean = true,
+        notBeforeMillis: Long = 0L
+    ): AlarmSchedulingOutcome {
         val sanitizedAlarm = alarm.sanitized()
         if (!sanitizedAlarm.isEnabled) {
             cancel(sanitizedAlarm.id)
-            return
+            return AlarmSchedulingOutcome.SUPPRESSED
         }
 
         if (!canScheduleExactAlarms()) {
             cancelScheduledEntries(sanitizedAlarm.id)
             repository.updateNextTrigger(sanitizedAlarm.id, 0)
             requestWidgetUpdateIfNeeded(requestWidgetUpdate)
-            return
+            return AlarmSchedulingOutcome.FAILED
         }
 
         // v1.11.6 (roadmap N6): hard-suspend all alarms when the user has
@@ -100,7 +120,7 @@ class AlarmScheduler @Inject constructor(
             cancelScheduledEntries(sanitizedAlarm.id)
             repository.updateNextTrigger(sanitizedAlarm.id, 0)
             requestWidgetUpdateIfNeeded(requestWidgetUpdate)
-            return
+            return AlarmSchedulingOutcome.SUPPRESSED
         }
 
         var triggerTime = if (notBeforeMillis > System.currentTimeMillis()) {
@@ -119,7 +139,7 @@ class AlarmScheduler @Inject constructor(
                 repository.setEnabled(sanitizedAlarm.id, enabled = false, nextTrigger = 0)
             }
             requestWidgetUpdateIfNeeded(requestWidgetUpdate)
-            return
+            return AlarmSchedulingOutcome.SUPPRESSED
         }
         val settings = currentSettings  // already fetched for the pause-state check above
 
@@ -150,7 +170,7 @@ class AlarmScheduler @Inject constructor(
                     cancelScheduledEntries(sanitizedAlarm.id)
                     repository.updateNextTrigger(sanitizedAlarm.id, 0)
                     requestWidgetUpdateIfNeeded(requestWidgetUpdate)
-                    return
+                    return AlarmSchedulingOutcome.SUPPRESSED
                 }
             } else {
                 var advanced = advanceTriggerPastHolidays(sanitizedAlarm, triggerTime, holidayZone)
@@ -178,7 +198,7 @@ class AlarmScheduler @Inject constructor(
                     cancelScheduledEntries(sanitizedAlarm.id)
                     repository.updateNextTrigger(sanitizedAlarm.id, 0)
                     requestWidgetUpdateIfNeeded(requestWidgetUpdate)
-                    return
+                    return AlarmSchedulingOutcome.SUPPRESSED
                 }
                 triggerTime = advanced
             }
@@ -218,16 +238,53 @@ class AlarmScheduler @Inject constructor(
             }
         }
 
-        // A failed API call must not leave a persistent phantom next trigger.
-        if (scheduleAlarmClock(sanitizedAlarm.id, triggerTime).registered) {
+        // A persisted row is not a scheduling acknowledgement. Report the
+        // exact registration outcome to user-facing creation/toggle paths.
+        val registration = scheduleAlarmClock(sanitizedAlarm.id, triggerTime)
+        if (!registration.registered) {
+            repository.updateNextTrigger(sanitizedAlarm.id, 0)
+            requestWidgetUpdateIfNeeded(requestWidgetUpdate)
+            return AlarmSchedulingOutcome.FAILED
+        }
+        try {
             repository.updateNextTrigger(sanitizedAlarm.id, triggerTime)
+        } catch (error: Exception) {
+            // Android accepted the PendingIntent but Room failed. Cancel the
+            // orphan OS entry instead of reporting an armed alarm after reboot.
+            runCatching { cancelMainScheduledAlarm(sanitizedAlarm.id) }
+            runCatching { repository.updateNextTrigger(sanitizedAlarm.id, 0) }
+            recordScheduleIncident(
+                sanitizedAlarm.id,
+                AlarmIncidentEvent.fireIdFor(sanitizedAlarm.id, triggerTime),
+                triggerTime,
+                AlarmIncidentEvent.STATUS_FAILED,
+                "SCHEDULE_PERSIST_FAILED_${error.javaClass.simpleName}"
+            )
+            requestWidgetUpdateIfNeeded(requestWidgetUpdate)
+            return AlarmSchedulingOutcome.FAILED
+        }
+        // Supporting workers, DND and widgets cannot revoke an accepted
+        // alarm. Log auxiliary failure without changing the registered ACK.
+        try {
             DirectBootAlarmCache.saveIfEarlier(context, sanitizedAlarm, triggerTime)
             scheduleSupportingWork(sanitizedAlarm, triggerTime)
-        } else {
-            repository.updateNextTrigger(sanitizedAlarm.id, 0)
+            requestWidgetUpdateIfNeeded(requestWidgetUpdate)
+            syncBedtimeDndRule()
+        } catch (error: Exception) {
+            android.util.Log.e("AlarmScheduler", "Auxiliary scheduling failed", error)
+            recordScheduleIncident(
+                sanitizedAlarm.id,
+                AlarmIncidentEvent.fireIdFor(sanitizedAlarm.id, triggerTime),
+                triggerTime,
+                AlarmIncidentEvent.STATUS_FAILED,
+                "SCHEDULE_AUXILIARY_FAILED_${error.javaClass.simpleName}"
+            )
         }
-        requestWidgetUpdateIfNeeded(requestWidgetUpdate)
-        syncBedtimeDndRule()
+        return when (registration) {
+            AlarmRegistrationResult.EXACT -> AlarmSchedulingOutcome.EXACT
+            AlarmRegistrationResult.INEXACT -> AlarmSchedulingOutcome.INEXACT
+            AlarmRegistrationResult.FAILED -> AlarmSchedulingOutcome.FAILED
+        }
     }
 
     /**
@@ -256,29 +313,52 @@ class AlarmScheduler @Inject constructor(
             // maintenance window) and leave an incident record.
             val sanitizedAlarm = alarm.sanitized()
             val fireId = AlarmIncidentEvent.fireIdFor(sanitizedAlarm.id, snoozeTime)
+            var registeredInAlarmManager = false
             return try {
                 alarmManager.setAndAllowWhileIdle(
                     AlarmManager.RTC_WAKEUP,
                     snoozeTime,
                     createPendingIntent(sanitizedAlarm.id, snoozeTime, fireId)
                 )
+                registeredInAlarmManager = true
                 repository.updateNextTrigger(sanitizedAlarm.id, snoozeTime)
-                recordScheduleIncident(
-                    alarmId = sanitizedAlarm.id,
-                    fireId = fireId,
-                    triggerTime = snoozeTime,
-                    status = AlarmIncidentEvent.STATUS_SUCCEEDED,
-                    reasonCode = "SNOOZE_INEXACT_NO_EXACT_PERMISSION"
-                )
+                // Auxiliary event logging is not a registration failure:
+                // once OS + Room agree, never undo a live wakeup because
+                // the diagnostic sink itself threw.
+                runCatching {
+                    recordScheduleIncident(
+                        alarmId = sanitizedAlarm.id,
+                        fireId = fireId,
+                        triggerTime = snoozeTime,
+                        status = AlarmIncidentEvent.STATUS_SUCCEEDED,
+                        reasonCode = "SNOOZE_INEXACT_NO_EXACT_PERMISSION"
+                    )
+                }.onFailure {
+                    android.util.Log.e("AlarmScheduler", "Could not log registered snooze", it)
+                }
                 true
             } catch (e: Exception) {
-                recordScheduleIncident(
-                    alarmId = sanitizedAlarm.id,
-                    fireId = fireId,
-                    triggerTime = snoozeTime,
-                    status = AlarmIncidentEvent.STATUS_FAILED,
-                    reasonCode = "SNOOZE_INEXACT_FAILED_${e.javaClass.simpleName}"
-                )
+                // Registration may have succeeded before Room persistence
+                // failed. Roll back ONLY that newly armed alarm; otherwise
+                // the service would report a rejected snooze while a phantom
+                // second ring remains in AlarmManager.
+                if (registeredInAlarmManager) {
+                    runCatching { cancelMainScheduledAlarm(sanitizedAlarm.id) }
+                        .onFailure { android.util.Log.e(
+                            "AlarmScheduler", "Could not roll back unpersisted snooze", it
+                        ) }
+                }
+                runCatching {
+                    recordScheduleIncident(
+                        alarmId = sanitizedAlarm.id,
+                        fireId = fireId,
+                        triggerTime = snoozeTime,
+                        status = AlarmIncidentEvent.STATUS_FAILED,
+                        reasonCode = "SNOOZE_INEXACT_FAILED_${e.javaClass.simpleName}"
+                    )
+                }.onFailure {
+                    android.util.Log.e("AlarmScheduler", "Could not log failed snooze", it)
+                }
                 false
             }
         }
@@ -296,29 +376,52 @@ class AlarmScheduler @Inject constructor(
         if (!canScheduleExactAlarms()) {
             val sanitizedAlarm = alarm.sanitized()
             val fireId = AlarmIncidentEvent.fireIdFor(sanitizedAlarm.id, snoozeTime)
+            var registeredInAlarmManager = false
             return try {
                 alarmManager.setAndAllowWhileIdle(
                     AlarmManager.RTC_WAKEUP,
                     snoozeTime,
                     createPendingIntent(sanitizedAlarm.id, snoozeTime, fireId)
                 )
+                registeredInAlarmManager = true
                 repository.updateNextTrigger(sanitizedAlarm.id, snoozeTime)
-                recordScheduleIncident(
-                    alarmId = sanitizedAlarm.id,
-                    fireId = fireId,
-                    triggerTime = snoozeTime,
-                    status = AlarmIncidentEvent.STATUS_SUCCEEDED,
-                    reasonCode = "SNOOZE_AT_INEXACT_NO_EXACT_PERMISSION"
-                )
+                // Auxiliary event logging is not a registration failure:
+                // once OS + Room agree, never undo a live wakeup because
+                // the diagnostic sink itself threw.
+                runCatching {
+                    recordScheduleIncident(
+                        alarmId = sanitizedAlarm.id,
+                        fireId = fireId,
+                        triggerTime = snoozeTime,
+                        status = AlarmIncidentEvent.STATUS_SUCCEEDED,
+                        reasonCode = "SNOOZE_AT_INEXACT_NO_EXACT_PERMISSION"
+                    )
+                }.onFailure {
+                    android.util.Log.e("AlarmScheduler", "Could not log registered snooze", it)
+                }
                 true
             } catch (e: Exception) {
-                recordScheduleIncident(
-                    alarmId = sanitizedAlarm.id,
-                    fireId = fireId,
-                    triggerTime = snoozeTime,
-                    status = AlarmIncidentEvent.STATUS_FAILED,
-                    reasonCode = "SNOOZE_AT_INEXACT_FAILED_${e.javaClass.simpleName}"
-                )
+                // Registration may have succeeded before Room persistence
+                // failed. Roll back ONLY that newly armed alarm; otherwise
+                // the service would report a rejected snooze while a phantom
+                // second ring remains in AlarmManager.
+                if (registeredInAlarmManager) {
+                    runCatching { cancelMainScheduledAlarm(sanitizedAlarm.id) }
+                        .onFailure { android.util.Log.e(
+                            "AlarmScheduler", "Could not roll back unpersisted snooze", it
+                        ) }
+                }
+                runCatching {
+                    recordScheduleIncident(
+                        alarmId = sanitizedAlarm.id,
+                        fireId = fireId,
+                        triggerTime = snoozeTime,
+                        status = AlarmIncidentEvent.STATUS_FAILED,
+                        reasonCode = "SNOOZE_AT_INEXACT_FAILED_${e.javaClass.simpleName}"
+                    )
+                }.onFailure {
+                    android.util.Log.e("AlarmScheduler", "Could not log failed snooze", it)
+                }
                 false
             }
         }

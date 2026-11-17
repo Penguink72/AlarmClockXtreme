@@ -1,6 +1,7 @@
 package com.sysadmindoc.alarmclock.ui.alarmlist
 
 import com.sysadmindoc.alarmclock.R
+import android.os.SystemClock
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sysadmindoc.alarmclock.data.local.entity.AlarmEvent
@@ -12,6 +13,8 @@ import com.sysadmindoc.alarmclock.data.repository.AlarmEventRepository
 import com.sysadmindoc.alarmclock.data.repository.AlarmRepository
 import com.sysadmindoc.alarmclock.data.repository.MusicLibraryRepository
 import com.sysadmindoc.alarmclock.domain.AlarmScheduler
+import com.sysadmindoc.alarmclock.domain.AlarmSchedulingOutcome
+import com.sysadmindoc.alarmclock.domain.AlarmSnoozeMusicModeStore
 import com.sysadmindoc.alarmclock.domain.NextAlarmCalculator
 import com.sysadmindoc.alarmclock.domain.VacationAlarmPolicy
 import com.sysadmindoc.alarmclock.service.HistoryReplayActions
@@ -28,6 +31,18 @@ import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 enum class AlarmSortOrder { TIME, MANUAL, CREATED, ENABLED_FIRST }
+
+/** Monotonic tap-to-AlarmManager-ack measurement; never a wall-clock guess. */
+data class QuickAlarmCreationMetric(
+    val elapsedMs: Long,
+    val scheduled: Boolean
+) {
+    val withinFiveSeconds: Boolean get() = scheduled && elapsedMs <= GOAL_MS
+
+    companion object {
+        const val GOAL_MS = 5_000L
+    }
+}
 
 internal fun sortAlarmsForList(alarms: List<Alarm>, sort: AlarmSortOrder): List<Alarm> {
     return when (sort) {
@@ -115,6 +130,9 @@ class AlarmListViewModel @Inject constructor(
     private val _recentHistory = MutableStateFlow<List<PlaybackHistoryEntry>>(emptyList())
     val recentHistory: StateFlow<List<PlaybackHistoryEntry>> = _recentHistory.asStateFlow()
     val replayState: StateFlow<ReplayUiState> = replayActions.state
+
+    private val _quickAlarmMetric = MutableStateFlow<QuickAlarmCreationMetric?>(null)
+    val quickAlarmMetric: StateFlow<QuickAlarmCreationMetric?> = _quickAlarmMetric.asStateFlow()
 
     init {
         observeRecentHistory()
@@ -350,27 +368,59 @@ class AlarmListViewModel @Inject constructor(
         }
     }
 
-    fun enableSelected() {
-        viewModelScope.launch {
-            var enabledCount = 0
-            _selectedIds.value.forEach { id ->
-                val alarm = repository.getById(id) ?: return@forEach
-                if (!alarm.isEnabled) {
-                    val nextTrigger = calculator.calculate(alarm)
-                    repository.setEnabled(id, enabled = true, nextTrigger = nextTrigger)
-                    scheduler.schedule(alarm.copy(isEnabled = true, nextTriggerTime = nextTrigger))
-                    enabledCount += 1
+    private val enableSelectedInFlight = java.util.concurrent.atomic.AtomicBoolean(false)
+
+    /**
+     * One authority for the enabled bit + actual AlarmManager registration.
+     * Room's enabled=true is not an acknowledgement from Android.
+     */
+    private suspend fun enableWithAcknowledgement(alarm: Alarm): AlarmSchedulingOutcome {
+        repository.setEnabled(alarm.id, enabled = true, nextTrigger = 0)
+        return try {
+            when (val outcome = scheduler.scheduleWithResult(alarm.copy(isEnabled = true))) {
+                AlarmSchedulingOutcome.FAILED -> {
+                    repository.setEnabled(alarm.id, enabled = false, nextTrigger = 0)
+                    outcome
                 }
+                else -> outcome
             }
-            clearSelection()
-            if (enabledCount > 0) {
-                emitFeedback(
-                    if (enabledCount == 1) {
-                        "1 alarm enabled"
-                    } else {
-                        "$enabledCount alarms enabled"
+        } catch (error: CancellationException) {
+            throw error
+        } catch (error: Exception) {
+            runCatching { repository.setEnabled(alarm.id, enabled = false, nextTrigger = 0) }
+            AlarmSchedulingOutcome.FAILED
+        }
+    }
+
+    fun enableSelected() {
+        if (!enableSelectedInFlight.compareAndSet(false, true)) return
+        val targetIds = _selectedIds.value.toList()
+        viewModelScope.launch {
+            var registered = 0
+            var suppressed = 0
+            var failed = 0
+            try {
+                targetIds.forEach { id ->
+                    val alarm = repository.getById(id) ?: return@forEach
+                    if (!alarm.isEnabled) {
+                        when (enableWithAcknowledgement(alarm)) {
+                            AlarmSchedulingOutcome.EXACT, AlarmSchedulingOutcome.INEXACT -> registered++
+                            AlarmSchedulingOutcome.SUPPRESSED -> suppressed++
+                            AlarmSchedulingOutcome.FAILED -> failed++
+                        }
                     }
-                )
+                }
+                clearSelection()
+                if (registered + suppressed + failed > 0) {
+                    emitFeedback(
+                        context.getString(
+                            R.string.alarmlist_batch_enable_result,
+                            registered, suppressed, failed
+                        )
+                    )
+                }
+            } finally {
+                enableSelectedInFlight.set(false)
             }
         }
     }
@@ -404,24 +454,39 @@ class AlarmListViewModel @Inject constructor(
         }
     }
 
+    private val togglesInFlight = java.util.concurrent.ConcurrentHashMap.newKeySet<Long>()
+
     fun toggleAlarm(alarm: Alarm) {
+        if (!togglesInFlight.add(alarm.id)) return
         viewModelScope.launch {
-            val newEnabled = !alarm.isEnabled
-            if (newEnabled) {
-                val nextTrigger = calculator.calculate(alarm)
-                repository.setEnabled(alarm.id, enabled = true, nextTrigger = nextTrigger)
-                scheduler.schedule(alarm.copy(isEnabled = true, nextTriggerTime = nextTrigger))
-                emitFeedback("Alarm enabled for ${formatFeedbackTime(nextTrigger)}")
-            } else {
-                val lockMinutes = preferencesManager.getCachedSettings().cancellationLockMinutes
-                if (lockMinutes > 0 && alarm.nextTriggerTime > 0) {
-                    val minutesUntilFire = (alarm.nextTriggerTime - System.currentTimeMillis()) / 60_000
-                    if (minutesUntilFire in 0..lockMinutes) {
-                        emitFeedback("Locked — fires in $minutesUntilFire min. Long-press toggle to override.")
-                        return@launch
+            try {
+                if (!alarm.isEnabled) {
+                    when (enableWithAcknowledgement(alarm)) {
+                        AlarmSchedulingOutcome.EXACT ->
+                            emitFeedback(context.getString(R.string.alarmlist_enable_confirmed))
+                        AlarmSchedulingOutcome.INEXACT ->
+                            emitFeedback(context.getString(R.string.alarmlist_enable_degraded))
+                        AlarmSchedulingOutcome.SUPPRESSED ->
+                            emitFeedback(context.getString(R.string.alarmlist_enable_suppressed))
+                        AlarmSchedulingOutcome.FAILED ->
+                            emitFeedback(context.getString(R.string.alarmlist_enable_failed))
                     }
+                } else {
+                    val lockMinutes = preferencesManager.getCachedSettings().cancellationLockMinutes
+                    if (lockMinutes > 0 && alarm.nextTriggerTime > 0) {
+                        val minutesUntilFire =
+                            (alarm.nextTriggerTime - System.currentTimeMillis()) / 60_000
+                        if (minutesUntilFire in 0..lockMinutes) {
+                            emitFeedback(
+                                "Locked — fires in $minutesUntilFire min. Long-press toggle to override."
+                            )
+                            return@launch
+                        }
+                    }
+                    disableAlarm(alarm)
                 }
-                disableAlarm(alarm)
+            } finally {
+                togglesInFlight.remove(alarm.id)
             }
         }
     }
@@ -472,32 +537,60 @@ class AlarmListViewModel @Inject constructor(
     /**
      * Duplicate an alarm with a new ID, same settings, enabled by default.
      */
+
+    private val duplicateInFlight = java.util.concurrent.atomic.AtomicBoolean(false)
+
     fun duplicateAlarm(alarm: Alarm) {
+        if (!duplicateInFlight.compareAndSet(false, true)) return
         viewModelScope.launch {
-            val duplicate = alarm.copy(
-                id = 0,
-                label = if (alarm.label.isBlank()) {
-                    context.getString(R.string.alarmlist_copy)
-                } else {
-                    context.getString(R.string.alarmlist_copy_of, alarm.label)
-                },
-                isEnabled = true,
-                createdAt = System.currentTimeMillis(),
-                nextTriggerTime = 0,
-                sortOrder = 0
-            )
-            val id = repository.save(duplicate)
-            val saved = duplicate.copy(id = id)
-            val nextTrigger = calculator.calculate(saved)
-            repository.updateNextTrigger(id, nextTrigger)
-            scheduler.schedule(saved.copy(nextTriggerTime = nextTrigger))
-            emitFeedback(
-                if (duplicate.label.isBlank()) {
-                    "Alarm duplicated"
-                } else {
-                    "\"${duplicate.label}\" duplicated"
+            var insertedId: Long? = null
+            try {
+                // Copy the complete sound contract before creating the new
+                // alarm ID; a plain Alarm.copy() loses these per-ID stores.
+                val musicDraft = musicLibraryRepository.getSettings(alarm.id)
+                val snoozeMode = AlarmSnoozeMusicModeStore.get(context, alarm.id)
+                val duplicate = alarm.copy(
+                    id = 0,
+                    label = if (alarm.label.isBlank()) {
+                        context.getString(R.string.alarmlist_copy)
+                    } else {
+                        context.getString(R.string.alarmlist_copy_of, alarm.label)
+                    },
+                    isEnabled = true,
+                    createdAt = System.currentTimeMillis(),
+                    nextTriggerTime = 0,
+                    sortOrder = 0
+                )
+                val id = repository.save(duplicate)
+                insertedId = id
+                musicLibraryRepository.saveSettings(id, musicDraft)
+                check(AlarmSnoozeMusicModeStore.save(context, id, snoozeMode)) {
+                    "Could not copy snooze music preference"
                 }
-            )
+                val saved = duplicate.copy(id = id)
+                when (scheduler.scheduleWithResult(saved)) {
+                    AlarmSchedulingOutcome.EXACT, AlarmSchedulingOutcome.INEXACT ->
+                        emitFeedback(context.getString(R.string.alarmlist_duplicate_complete))
+                    AlarmSchedulingOutcome.SUPPRESSED ->
+                        emitFeedback(context.getString(R.string.alarmlist_duplicate_unscheduled))
+                    AlarmSchedulingOutcome.FAILED ->
+                        error("Could not register the duplicated alarm")
+                }
+            } catch (error: CancellationException) {
+                throw error
+            } catch (error: Exception) {
+                // All-or-nothing duplication: do not leave a clone with a
+                // stale default playlist or an enabled but unarmed alarm.
+                insertedId?.let { id ->
+                    runCatching { scheduler.cancel(id) }
+                    runCatching { musicLibraryRepository.deleteSettings(id) }
+                    runCatching { AlarmSnoozeMusicModeStore.delete(context, id) }
+                    runCatching { repository.deleteById(id) }
+                }
+                emitFeedback(context.getString(R.string.alarmlist_duplicate_failed))
+            } finally {
+                duplicateInFlight.set(false)
+            }
         }
     }
 
@@ -505,29 +598,62 @@ class AlarmListViewModel @Inject constructor(
      * Create a quick alarm X minutes from now.
      * One-shot, no repeat, default settings.
      */
+    private val quickAlarmInFlight = java.util.concurrent.atomic.AtomicBoolean(false)
+
     fun createQuickAlarm(minutesFromNow: Int) {
+        if (minutesFromNow <= 0 || !quickAlarmInFlight.compareAndSet(false, true)) return
+        val startedAt = SystemClock.elapsedRealtime()
+        _quickAlarmMetric.value = null
         viewModelScope.launch {
-            val triggerTime = System.currentTimeMillis() + (minutesFromNow * 60 * 1000L)
-            val instant = Instant.ofEpochMilli(triggerTime)
-            val localTime = instant.atZone(ZoneId.systemDefault()).toLocalTime()
-
-            // Settings > Defaults says it is "the behavior new alarms start
-            // with", and a quick alarm is a new alarm.
-            val defaults = preferencesManager.getCurrentSettings()
-            val alarm = Alarm(
-                hour = localTime.hour,
-                minute = localTime.minute,
-                label = context.getString(R.string.alarmlist_quick_alarm_label, minutesFromNow),
-                isEnabled = true,
-                repeatDays = emptySet(),
-                snoozeDurationMinutes = defaults.defaultSnoozeDuration,
-                gradualVolumeSeconds = defaults.defaultGradualVolume,
-                nextTriggerTime = triggerTime
-            )
-
-            val id = repository.save(alarm)
-            scheduler.scheduleAt(alarm.copy(id = id), triggerTime)
-            emitFeedback("Quick alarm set for ${formatFeedbackTime(triggerTime)}")
+            var persistedId: Long? = null
+            var scheduled = false
+            try {
+                val triggerTime = System.currentTimeMillis() + minutesFromNow.toLong() * 60_000L
+                val instant = Instant.ofEpochMilli(triggerTime)
+                val localTime = instant.atZone(ZoneId.systemDefault()).toLocalTime()
+                val defaults = preferencesManager.getCurrentSettings()
+                val alarm = Alarm(
+                    hour = localTime.hour,
+                    minute = localTime.minute,
+                    label = context.getString(R.string.alarmlist_quick_alarm_label, minutesFromNow),
+                    isEnabled = true,
+                    repeatDays = emptySet(),
+                    snoozeDurationMinutes = defaults.defaultSnoozeDuration,
+                    gradualVolumeSeconds = defaults.defaultGradualVolume,
+                    nextTriggerTime = triggerTime
+                )
+                val id = repository.save(alarm)
+                persistedId = id
+                // Writing the row is not proof that AlarmManager accepted the
+                // alarm. A failed schedule must not generate a success toast.
+                if (scheduler.scheduleAt(alarm.copy(id = id), triggerTime)) {
+                    scheduled = true
+                    emitFeedback(
+                        context.getString(
+                            R.string.alarmlist_quick_alarm_created,
+                            formatFeedbackTime(triggerTime)
+                        )
+                    )
+                } else {
+                    repository.setEnabled(id, enabled = false, nextTrigger = 0)
+                    emitFeedback(context.getString(R.string.alarmlist_quick_alarm_schedule_failed))
+                }
+            } catch (error: CancellationException) {
+                throw error
+            } catch (error: Exception) {
+                // Disable the saved row if a later step fails. Keep it visible
+                // for explicit retry rather than leaving a phantom live alarm.
+                persistedId?.let { id ->
+                    runCatching { repository.setEnabled(id, enabled = false, nextTrigger = 0) }
+                }
+                emitFeedback(context.getString(R.string.alarmlist_quick_alarm_schedule_failed))
+            } finally {
+                _quickAlarmMetric.value = QuickAlarmCreationMetric(
+                    elapsedMs = (SystemClock.elapsedRealtime() - startedAt).coerceAtLeast(0L),
+                    scheduled = scheduled
+                )
+                quickAlarmInFlight.set(false)
+            }
         }
     }
 

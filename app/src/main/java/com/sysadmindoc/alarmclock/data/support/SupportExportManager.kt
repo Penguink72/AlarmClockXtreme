@@ -319,7 +319,7 @@ class SupportExportManager @Inject constructor(
         const val FILE_PREFIX = "alarmclockxtreme-support"
         const val CRASH_LOG_FILE_PREFIX = "alarmclockxtreme-crash-logs"
         const val MAX_CRASH_LOGS = 10
-        const val MAX_INCIDENTS = 25
+        const val MAX_INCIDENTS = 100
         val FILE_TIMESTAMP: DateTimeFormatter = DateTimeFormatter
             .ofPattern("yyyyMMdd-HHmmss", Locale.US)
             .withZone(java.time.ZoneOffset.UTC)

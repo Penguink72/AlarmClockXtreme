@@ -10,6 +10,8 @@ import java.util.concurrent.atomic.AtomicReference
 internal interface AlarmPlaybackPlayer {
     fun setVolume(left: Float, right: Float)
     fun durationMs(): Long
+    /** Current played position, or null when the player cannot provide a valid timestamp. */
+    fun positionMs(): Long?
     fun seekTo(positionMs: Long)
     fun stopAndRelease()
 }
@@ -89,6 +91,10 @@ internal class MediaPlayerAlarmPlaybackPlayer(
 
     override fun durationMs(): Long = runCatching { player.duration.toLong() }.getOrDefault(0L)
 
+    override fun positionMs(): Long? = runCatching {
+        player.currentPosition.toLong().takeIf { it >= 0L }
+    }.getOrNull()
+
     override fun seekTo(positionMs: Long) {
         player.seekTo(positionMs.coerceIn(0L, Int.MAX_VALUE.toLong()).toInt())
     }
@@ -116,6 +122,10 @@ internal class Media3AlarmPlaybackPlayer(
     }
 
     override fun durationMs(): Long = callOnPlaybackMainThread { player.duration.coerceAtLeast(0L) }
+
+    override fun positionMs(): Long? = runCatching {
+        callOnPlaybackMainThread { player.currentPosition.takeIf { it >= 0L } }
+    }.getOrNull()
 
     override fun seekTo(positionMs: Long) {
         PlaybackMainThread.run { player.seekTo(positionMs.coerceAtLeast(0L)) }

@@ -1,6 +1,7 @@
 package com.sysadmindoc.alarmclock.domain
 
 import android.app.AlarmManager
+import android.app.PendingIntent
 import android.app.Application
 import android.content.Context
 import android.content.ContextWrapper
@@ -82,6 +83,98 @@ class AlarmSnoozeRegistrationFailureTest {
         coVerify(exactly = 0) { repository.updateNextTrigger(id, any()) }
         verify(exactly = 1) { alarmManager.setAlarmClock(any(), any()) }
         verify(exactly = 1) { alarmManager.setAndAllowWhileIdle(any(), any(), any()) }
+    }
+
+    @Test
+    fun inexactRegistrationIsRolledBackWhenDatabasePersistenceFails() = runTest {
+        val alarmManager = mockk<AlarmManager>(relaxed = true)
+        every { alarmManager.canScheduleExactAlarms() } returns false
+
+        val repository = mockk<AlarmRepository>(relaxed = true)
+        coEvery { repository.updateNextTrigger(876L, any()) } throws
+            IllegalStateException("injected Room write failure")
+        val preferencesManager = mockk<PreferencesManager>()
+        coEvery { preferencesManager.getCurrentSettings() } returns AppSettings()
+        every { preferencesManager.getCachedSettings() } returns AppSettings()
+
+        val realContext: Context = ApplicationProvider.getApplicationContext()
+        val context = object : ContextWrapper(realContext) {
+            override fun getSystemService(name: String): Any? =
+                if (name == Context.ALARM_SERVICE) alarmManager
+                else super.getSystemService(name)
+        }
+        val scheduler = AlarmScheduler(
+            context = context,
+            repository = repository,
+            calculator = mockk(relaxed = true),
+            preferencesManager = preferencesManager,
+            holidayRepository = mockk(relaxed = true),
+            alarmIncidentRepository = mockk(relaxed = true),
+            weatherRepository = mockk(relaxed = true)
+        )
+        val alarm = Alarm(
+            id = 876L, hour = 7, minute = 0,
+            label = "Persistence failure probe", isEnabled = true
+        )
+        val target = System.currentTimeMillis() + 15 * 60_000L
+
+        assertFalse(scheduler.scheduleSnooze(alarm, customMinutes = 8))
+        assertFalse(scheduler.scheduleSnoozeAt(alarm, target))
+
+        // Both registration APIs accepted the PendingIntent; neither may
+        // leave a live OS alarm after the subsequent database failure.
+        verify(exactly = 2) {
+            alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, any(), any())
+        }
+        verify(exactly = 2) { alarmManager.cancel(any<PendingIntent>()) }
+        coVerify(exactly = 2) { repository.updateNextTrigger(876L, any()) }
+    }
+
+    @Test
+    fun incidentLoggerFailureDoesNotCancelAnAlreadyPersistedSnooze() = runTest {
+        val alarmManager = mockk<AlarmManager>(relaxed = true)
+        every { alarmManager.canScheduleExactAlarms() } returns false
+
+        val repository = mockk<AlarmRepository>(relaxed = true)
+        val incidentRepository = mockk<AlarmIncidentRepository>()
+        every {
+            incidentRepository.recordAsync(
+                any(), any(), any(), any(), any(), any(), any(), any(), any()
+            )
+        } throws IllegalStateException("injected incident logging failure")
+        val preferencesManager = mockk<PreferencesManager>()
+        coEvery { preferencesManager.getCurrentSettings() } returns AppSettings()
+        every { preferencesManager.getCachedSettings() } returns AppSettings()
+
+        val realContext: Context = ApplicationProvider.getApplicationContext()
+        val context = object : ContextWrapper(realContext) {
+            override fun getSystemService(name: String): Any? =
+                if (name == Context.ALARM_SERVICE) alarmManager
+                else super.getSystemService(name)
+        }
+        val scheduler = AlarmScheduler(
+            context = context,
+            repository = repository,
+            calculator = mockk(relaxed = true),
+            preferencesManager = preferencesManager,
+            holidayRepository = mockk(relaxed = true),
+            alarmIncidentRepository = incidentRepository,
+            weatherRepository = mockk(relaxed = true)
+        )
+        val alarm = Alarm(
+            id = 877L, hour = 7, minute = 0,
+            label = "Logger failure probe", isEnabled = true
+        )
+        val target = System.currentTimeMillis() + 18 * 60_000L
+
+        assertTrue(scheduler.scheduleSnooze(alarm, customMinutes = 9))
+        assertTrue(scheduler.scheduleSnoozeAt(alarm, target))
+
+        coVerify(exactly = 2) { repository.updateNextTrigger(877L, any()) }
+        verify(exactly = 2) {
+            alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, any(), any())
+        }
+        verify(exactly = 0) { alarmManager.cancel(any<PendingIntent>()) }
     }
 
     @Test

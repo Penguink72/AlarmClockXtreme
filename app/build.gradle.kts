@@ -22,8 +22,8 @@ android {
         versionCode = 137
         versionName = "1.15.35"
         // P3.1-U1: users may already have Preview 3 v148 installed, so CI builds
-        // L1 locale update must upgrade v155/v156 and preserve all existing alarms and settings.
-        val minAllowedCiVersionCode = 157
+        // P3.1-to-U5 working build must upgrade v157/v158 and preserve existing alarm/music data.
+        val minAllowedCiVersionCode = 159
         providers.gradleProperty("ciVersionCode").orNull?.toIntOrNull()?.let { overrideVersionCode ->
             val baseVersionCode = maxOf(requireNotNull(versionCode), minAllowedCiVersionCode)
             check(overrideVersionCode >= baseVersionCode) {
@@ -273,7 +273,8 @@ val verifyCoreLocaleCoverage by tasks.registering {
 
     val guardedSources = listOf(
         "src/main/java/com/sysadmindoc/alarmclock/ui/alarmedit/AlarmEditOverviewSections.kt",
-        "src/main/java/com/sysadmindoc/alarmclock/ui/alarmedit/AlarmEditDismissSections.kt"
+        "src/main/java/com/sysadmindoc/alarmclock/ui/alarmedit/AlarmEditDismissSections.kt",
+        "src/main/java/com/sysadmindoc/alarmclock/ui/alarmfiring/AlarmFiringScreen.kt"
     )
     val baseResources = "src/main/res/values/strings.xml"
     val translated = listOf(

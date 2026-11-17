@@ -136,6 +136,13 @@ class MusicLibraryRepository @Inject constructor(
         )
     }
 
+    /** User-confirmed candidate exclusion, never an implicit scan side effect. */
+    suspend fun excludeSystemToneCandidates(uris: Collection<String>): Map<String, String?> =
+        musicLibraryDao.excludeSystemToneCandidates(uris)
+
+    suspend fun undoSystemToneCandidateExclusion(previous: Map<String, String?>) =
+        musicLibraryDao.restoreSystemToneExclusion(previous)
+
     suspend fun pickRandomTrack(): MusicTrack? = musicLibraryDao.pickRandom()
 
     suspend fun pickRandomTrack(excludedUris: List<String>): MusicTrack? =
@@ -712,6 +719,13 @@ class MusicLibraryRepository @Inject constructor(
         val settings = musicLibraryDao.getAlarmMusicSettings(alarmId)
         val filters = musicLibraryDao.getAlarmMusicFacetFilters(alarmId)
         return toAlarmMusicSettingsDraft(settings, filters)
+    }
+
+    /** Remove an abandoned per-alarm music contract after failed duplication. */
+    suspend fun deleteSettings(alarmId: Long) {
+        if (alarmId <= 0L) return
+        musicLibraryDao.clearAlarmMusicFacetFilters(alarmId)
+        musicLibraryDao.deleteAlarmMusicSettings(alarmId)
     }
 
     override suspend fun saveSettings(alarmId: Long, draft: AlarmMusicSettingsDraft) {

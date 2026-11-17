@@ -31,6 +31,10 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
 import androidx.core.app.NotificationCompat
 import androidx.work.*
+import com.sysadmindoc.alarmclock.data.readiness.ProductionTestAlarmScheduler
+import com.sysadmindoc.alarmclock.data.readiness.ProductionTestSessionStore
+import com.sysadmindoc.alarmclock.data.readiness.ProductionTestStage
+import com.sysadmindoc.alarmclock.ui.onboarding.ProductionTestAlarmActivity
 import com.sysadmindoc.alarmclock.data.local.entity.AlarmIncidentEvent
 import com.sysadmindoc.alarmclock.R
 import com.sysadmindoc.alarmclock.data.local.entity.AlarmEvent
@@ -44,6 +48,10 @@ import com.sysadmindoc.alarmclock.data.repository.AlarmRepository
 import com.sysadmindoc.alarmclock.data.repository.CalendarRepository
 import com.sysadmindoc.alarmclock.data.repository.MusicLibraryRepository
 import com.sysadmindoc.alarmclock.data.repository.WeatherRepository
+import com.sysadmindoc.alarmclock.domain.AlarmSnoozeMusicModeStore
+import com.sysadmindoc.alarmclock.domain.SnoozeMusicResumeMode
+import com.sysadmindoc.alarmclock.domain.SnoozeMusicRestoreCheckpoint
+import com.sysadmindoc.alarmclock.domain.SnoozeMusicRestoreStore
 import com.sysadmindoc.alarmclock.domain.AlarmMusicSession
 import com.sysadmindoc.alarmclock.domain.AlarmMusicSessionId
 import com.sysadmindoc.alarmclock.domain.NextAlarmTrackDecision
@@ -103,6 +111,9 @@ class AlarmService : Service() {
 
     companion object {
         const val ACTION_START_ALARM = "com.sysadmindoc.alarmclock.START_ALARM"
+        const val ACTION_PRODUCTION_TEST_SNOOZE = "com.sysadmindoc.alarmclock.B2_TEST_SNOOZE"
+        const val ACTION_PRODUCTION_TEST_DISMISS = "com.sysadmindoc.alarmclock.B2_TEST_DISMISS"
+        const val EXTRA_PRODUCTION_TEST_SESSION_ID = "b2_test_session_id"
         const val ACTION_SNOOZE = "com.sysadmindoc.alarmclock.SNOOZE"
         const val ACTION_DISMISS = "com.sysadmindoc.alarmclock.DISMISS"
         const val ACTION_SET_CHALLENGE_DUCKING =
@@ -220,6 +231,7 @@ class AlarmService : Service() {
     private var playbackWatchdogJob: Job? = null
     @Volatile
     private var forceBuiltInSpeakerForFallback: Boolean = false
+    @Volatile private var activeProductionTestSessionId: String? = null
     private var currentAlarmId: Long = -1
     private var currentFireId: String = ""
     private var currentScheduledAt: Long = 0L
@@ -248,6 +260,14 @@ class AlarmService : Service() {
     private val audioStarting = AtomicBoolean(false)
     private val musicSessionGeneration = AtomicLong(0L)
     private val activeMusicSession = AtomicReference<AlarmMusicSession?>(null)
+    private data class ActiveMusicPlayback(
+        val alarmId: Long,
+        val fireId: String,
+        val uri: String,
+        val playlistId: String?,
+        val playback: AlarmPlaybackPlayer
+    )
+    private val activeMusicPlayback = AtomicReference<ActiveMusicPlayback?>(null)
     private val failedMusicUris = Collections.synchronizedSet(mutableSetOf<String>())
     // Bounded skip: an unmounted SD card with thousands of pool tracks must not
     // keep the alarm silent while every URI is tried. After this many
@@ -310,7 +330,21 @@ class AlarmService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when (intent?.action) {
+            ACTION_PRODUCTION_TEST_SNOOZE, ACTION_PRODUCTION_TEST_DISMISS -> {
+                handleProductionTestAction(intent)
+                return START_NOT_STICKY
+            }
             ACTION_START_ALARM -> {
+                val diagnosticSession = intent.getStringExtra(EXTRA_PRODUCTION_TEST_SESSION_ID)
+                if (!diagnosticSession.isNullOrBlank()) {
+                    startProductionTest(intent, diagnosticSession)
+                    return START_NOT_STICKY
+                }
+                if (activeProductionTestSessionId != null) {
+                    // Real alarms always win: never report a test as an
+                    // ordinary missed alarm or let its audio preempt a wakeup.
+                    abortProductionTestForRealAlarm()
+                }
                 val alarmId = intent.getLongExtra(AlarmScheduler.EXTRA_ALARM_ID, -1)
                 if (alarmId != -1L) {
                     val scheduledAt = intent.getLongExtra(AlarmScheduler.EXTRA_SCHEDULED_AT, 0L)
@@ -385,6 +419,10 @@ class AlarmService : Service() {
                 }
             }
             ACTION_SNOOZE -> {
+                // A B2 test intentionally borrows the source alarm ID only
+                // for playback. Never let a normal notification/button action
+                // schedule a real snooze for that borrowed identity.
+                if (activeProductionTestSessionId != null) return START_NOT_STICKY
                 val alarmId = intent.getLongExtra(AlarmScheduler.EXTRA_ALARM_ID, currentAlarmId)
                 val scheduledAt = intent.getLongExtra(AlarmScheduler.EXTRA_SCHEDULED_AT, currentScheduledAt)
                 val fireId = intent.getStringExtra(AlarmScheduler.EXTRA_ALARM_FIRE_ID)
@@ -417,12 +455,25 @@ class AlarmService : Service() {
                     )
                     return START_NOT_STICKY
                 }
-                // v1.5.1: Restore count only for a genuinely new service.
-                if (currentAlarmId == -1L && alarmId > 0L) {
+                // A notification snooze may cold-start AlarmService after the
+                // ringing process was reclaimed. startForegroundService() MUST
+                // be acknowledged synchronously, not after the IO-dispatched
+                // scheduler completes; otherwise Android 14+ can kill the
+                // process before the next snooze PendingIntent is registered.
+                val restoredFromColdStart = currentAlarmId == -1L && alarmId > 0L
+                if (restoredFromColdStart) {
                     currentAlarmId = alarmId
                     currentScheduledAt = scheduledAt
                     currentFireId = fireId
                     currentSnoozeCount = readPersistedSnoozeCount(alarmId)
+                    startForegroundWithPlaceholder()
+                    recordIncidentAsync(
+                        type = AlarmIncidentEvent.TYPE_FOREGROUND_SERVICE,
+                        status = AlarmIncidentEvent.STATUS_RECEIVED,
+                        reasonCode = "COLD_SNOOZE_COMMAND_RECEIVED",
+                        source = "AlarmService",
+                        alarmId = alarmId
+                    )
                 }
                 serviceScope.launch {
                     try {
@@ -444,6 +495,40 @@ class AlarmService : Service() {
                         )
                     } finally {
                         snoozeRequestActive.set(false)
+                        // If the restored cold service rejected snooze, there
+                        // is no ringing activity to keep a placeholder FGS alive.
+                        // A new alarm might have preempted the action while we
+                        // suspended on Room; never tear that new alarm down.
+                        val reply = lastSnoozeResponse.get()
+                        if (shouldStopRejectedColdSnooze(
+                                restoredFromColdStart,
+                                alarmId,
+                                fireId,
+                                currentAlarmId,
+                                currentFireId,
+                                reply?.let {
+                                    it.alarmId == alarmId && it.fireId == fireId && it.accepted
+                                } == true
+                            )
+                        ) {
+                            recordIncidentAsync(
+                                type = AlarmIncidentEvent.TYPE_FOREGROUND_SERVICE,
+                                status = AlarmIncidentEvent.STATUS_FAILED,
+                                reasonCode = "COLD_SNOOZE_REJECTED_SERVICE_STOPPED",
+                                source = "AlarmService",
+                                alarmId = alarmId
+                            )
+                            currentAlarmId = -1L
+                            currentFireId = ""
+                            activeAlarm.updateAndGet { snapshot ->
+                                if (snapshot?.alarmId == alarmId && snapshot.fireId == fireId) null
+                                else snapshot
+                            }
+                            if (isForeground.compareAndSet(true, false)) {
+                                stopForeground(STOP_FOREGROUND_REMOVE)
+                            }
+                            stopSelf()
+                        }
                     }
                 }
             }
@@ -462,6 +547,9 @@ class AlarmService : Service() {
                 }
             }
             ACTION_DISMISS -> {
+                // Only ACTION_PRODUCTION_TEST_DISMISS may terminate a test;
+                // normal dismiss side effects would mutate the source row.
+                if (activeProductionTestSessionId != null) return START_NOT_STICKY
                 val alarmId = intent.getLongExtra(AlarmScheduler.EXTRA_ALARM_ID, currentAlarmId)
                 val scheduledAt = intent.getLongExtra(AlarmScheduler.EXTRA_SCHEDULED_AT, currentScheduledAt)
                 val fireId = intent.getStringExtra(AlarmScheduler.EXTRA_ALARM_FIRE_ID)
@@ -489,6 +577,196 @@ class AlarmService : Service() {
             }
         }
         return START_NOT_STICKY
+    }
+
+    /**
+     * B2 diagnostic runs the same AlarmService music pipeline as a real alarm,
+     * but has no real AlarmEvent, AlarmRuntimeState, nextTriggerTime, Guardian,
+     * webhook or playback history effects. A real alarm preempts it immediately.
+     */
+    private fun startProductionTest(intent: Intent, sessionId: String) {
+        val now = System.currentTimeMillis()
+        val proof = ProductionTestSessionStore.read(this, now)
+        if (proof == null) {
+            rejectUnmatchedProductionTestStart()
+            return
+        }
+        val session = proof.session
+        val alarmId = intent.getLongExtra(AlarmScheduler.EXTRA_ALARM_ID, -1L)
+        val fireId = intent.getStringExtra(AlarmScheduler.EXTRA_ALARM_FIRE_ID).orEmpty()
+        val scheduledAt = intent.getLongExtra(AlarmScheduler.EXTRA_SCHEDULED_AT, 0L)
+        val expected = if (session.nextOccurrence == 0) {
+            ProductionTestStage.RECEIVER_DELIVERED
+        } else {
+            ProductionTestStage.SNOOZE_DELIVERED
+        }
+        if (proof.stage != expected ||
+            !session.matchesDelivery(alarmId, sessionId, fireId, scheduledAt, now)) {
+            rejectUnmatchedProductionTestStart()
+            return
+        }
+        if (currentAlarmId != -1L || activeProductionTestSessionId != null) {
+            ProductionTestSessionStore.advance(
+                this, sessionId, fireId, ProductionTestStage.FAILED, now
+            )
+            return
+        }
+
+        activeProductionTestSessionId = sessionId
+        currentAlarmId = alarmId
+        currentFireId = fireId
+        currentScheduledAt = scheduledAt
+        startForegroundWithPlaceholder()
+        serviceScope.launch {
+            try {
+                val source = repository.getById(alarmId)?.sanitized()
+                    ?: error("B2 source alarm no longer exists")
+                if (activeProductionTestSessionId != sessionId || currentFireId != fireId) {
+                    return@launch
+                }
+                if (session.nextOccurrence == 0 && !ProductionTestSessionStore.advance(
+                        this@AlarmService, sessionId, fireId,
+                        ProductionTestStage.SERVICE_ACKNOWLEDGED, System.currentTimeMillis()
+                    )) error("B2 service acknowledgement failed")
+                val diagnosticAlarm = source.copy(
+                    randomMusicEnabled = true,
+                    gradualVolumeSeconds = 0,
+                    overrideSystemVolume = false,
+                    vibrationEnabled = false,
+                    backupSoundEnabled = false,
+                    guardianEnabled = false,
+                    // A source alarm may auto-dismiss at ringtone end. Its
+                    // fallback player must never invoke real dismissAlarm()
+                    // or mutate the source alarm from a B2 diagnostic.
+                    dismissAtRingtoneEnd = false
+                )
+                val activityIntent = Intent(
+                    this@AlarmService, ProductionTestAlarmActivity::class.java
+                ).apply {
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                    putExtra(ProductionTestAlarmScheduler.EXTRA_SESSION_ID, sessionId)
+                }
+                val activityPi = PendingIntent.getActivity(
+                    this@AlarmService, 20261, activityIntent,
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                )
+                val notification = NotificationCompat.Builder(
+                    this@AlarmService, CHANNEL_ALARM
+                )
+                    .setSmallIcon(R.drawable.ic_alarm)
+                    .setContentTitle(getString(R.string.b2_test_title))
+                    .setContentText(getString(R.string.b2_test_description))
+                    .setContentIntent(activityPi)
+                    .setFullScreenIntent(activityPi, true)
+                    .setCategory(NotificationCompat.CATEGORY_ALARM)
+                    .setPriority(NotificationCompat.PRIORITY_HIGH)
+                    .setOngoing(true)
+                    .build()
+                getSystemService(NotificationManager::class.java)
+                    .notify(NOTIFICATION_ID, notification)
+                runCatching { startActivity(activityIntent) }
+                startAudio(diagnosticAlarm)
+            } catch (e: Exception) {
+                Log.e(TAG, "B2 diagnostic startup failed", e)
+                ProductionTestSessionStore.advance(
+                    this@AlarmService, sessionId, fireId,
+                    ProductionTestStage.FAILED, System.currentTimeMillis()
+                )
+                if (activeProductionTestSessionId == sessionId && currentFireId == fireId) {
+                    stopProductionTestPlayback()
+                }
+            }
+        }
+    }
+
+    private fun rejectUnmatchedProductionTestStart() {
+        // The receiver may have handed off a test before its cancellation
+        // committed. Android still requires a foreground-service response.
+        // Never touch an unrelated live alarm while rejecting an old test.
+        if (currentAlarmId != -1L) return
+        startForegroundWithPlaceholder()
+        if (isForeground.compareAndSet(true, false)) {
+            stopForeground(STOP_FOREGROUND_REMOVE)
+        }
+        stopSelf()
+    }
+
+    private fun onProductionTestTrackStarted(fireId: String, sessionId: String) {
+        val now = System.currentTimeMillis()
+        val proof = ProductionTestSessionStore.read(this, now) ?: return
+        val stage = if (proof.session.nextOccurrence == 0) {
+            ProductionTestStage.AUDIO_STARTED
+        } else {
+            ProductionTestStage.AUDIO_RESTARTED
+        }
+        ProductionTestSessionStore.advance(this, sessionId, fireId, stage, now)
+    }
+
+    private fun handleProductionTestAction(intent: Intent) {
+        val sessionId = intent.getStringExtra(EXTRA_PRODUCTION_TEST_SESSION_ID).orEmpty()
+        val fireId = intent.getStringExtra(
+            ProductionTestAlarmScheduler.EXTRA_TEST_FIRE_ID
+        ).orEmpty()
+        if (activeProductionTestSessionId != sessionId || currentFireId != fireId ||
+            sessionId.isBlank()) {
+            // A late editor cancellation may start an otherwise idle Service.
+            // Do not leave a background Service alive, and never stop a real
+            // alarm or another live diagnostic in this stale-action branch.
+            if (currentAlarmId == -1L && activeProductionTestSessionId == null) {
+                stopSelf()
+            }
+            return
+        }
+        serviceScope.launch {
+            val now = System.currentTimeMillis()
+            val proof = ProductionTestSessionStore.read(this@AlarmService, now)
+                ?: return@launch
+            if (!proof.session.canAccept(sessionId, fireId, now)) return@launch
+            if (intent.action == ACTION_PRODUCTION_TEST_SNOOZE) {
+                if (ProductionTestAlarmScheduler.scheduleSnooze(
+                        this@AlarmService, proof.session
+                    )) {
+                    stopProductionTestPlayback()
+                }
+            } else if (intent.action == ACTION_PRODUCTION_TEST_DISMISS) {
+                ProductionTestSessionStore.advance(
+                    this@AlarmService, sessionId, fireId,
+                    ProductionTestStage.DISMISSED, now
+                )
+                ProductionTestAlarmScheduler.cancel(this@AlarmService)
+                stopProductionTestPlayback()
+            }
+        }
+    }
+
+    private fun stopProductionTestPlayback() {
+        stopAlarmPlayback()
+        activeProductionTestSessionId = null
+        currentAlarmId = -1L
+        currentFireId = ""
+        currentScheduledAt = 0L
+        if (isForeground.compareAndSet(true, false)) {
+            stopForeground(STOP_FOREGROUND_REMOVE)
+        }
+        stopSelf()
+    }
+
+    private fun abortProductionTestForRealAlarm() {
+        val sessionId = activeProductionTestSessionId ?: return
+        val fireId = currentFireId
+        ProductionTestSessionStore.advance(
+            this, sessionId, fireId,
+            ProductionTestStage.CANCELLED, System.currentTimeMillis()
+        )
+        ProductionTestAlarmScheduler.cancel(this)
+        stopAlarmPlayback()
+        activeProductionTestSessionId = null
+        currentAlarmId = -1L
+        currentFireId = ""
+        currentScheduledAt = 0L
+        if (isForeground.compareAndSet(true, false)) {
+            stopForeground(STOP_FOREGROUND_REMOVE)
+        }
     }
 
     private suspend fun startAlarm(alarmId: Long) {
@@ -1024,7 +1302,30 @@ class AlarmService : Service() {
                 return@launch
             }
             activeMusicSession.set(session)
-            startNextSessionMusicTrack(alarm, session, generation)
+            val checkpoint = SnoozeMusicRestoreStore.readEligible(
+                this@AlarmService, alarm.id, session.sessionId.fireId,
+                System.currentTimeMillis()
+            )?.takeIf { it.playlistId == session.snapshot.playlistId }
+            if (checkpoint == null) {
+                startNextSessionMusicTrack(alarm, session, generation)
+            } else if (checkpoint.mode == SnoozeMusicResumeMode.RESUME_INTERRUPTED) {
+                val candidate = session.snapshot.eligibleEntries()
+                    .firstOrNull { it.uri == checkpoint.uri &&
+                        !it.track.fileName.endsWith(".flv", ignoreCase = true) }
+                val position = checkpoint.positionMs
+                if (candidate != null && position != null) {
+                    startMedia3MusicTrack(alarm, session, candidate, generation, position)
+                } else {
+                    startNextSessionMusicTrack(alarm, session, generation)
+                }
+            } else {
+                when (val decision = session.selectFirstTrackAvoiding(checkpoint.uri)) {
+                    is NextAlarmTrackDecision.PlayTrack ->
+                        startMedia3MusicTrack(alarm, session, decision.candidate, generation)
+                    is NextAlarmTrackDecision.FallbackToDefaultTone ->
+                        startMusicDefaultFallback(alarm)
+                }
+            }
         }
     }
 
@@ -1058,7 +1359,8 @@ class AlarmService : Service() {
         alarm: Alarm,
         session: AlarmMusicSession,
         candidate: PlaybackTrackCandidate,
-        generation: Long
+        generation: Long,
+        restorePositionMs: Long? = null
     ) {
         try {
             val fadeInMs = alarm.gradualVolumeSeconds * 1000L
@@ -1079,6 +1381,7 @@ class AlarmService : Service() {
                 audioAttributes = AlarmAudioRouting.media3AlarmSonificationAttributes(),
                 repeatMode = Player.REPEAT_MODE_OFF,
                 initialVolume = initialVolume,
+                initialSeekPositionMs = restorePositionMs,
                 onReady = onReady@{
                     // READY only means the media is buffered. Playback can still
                     // be suppressed without sound, so the start watchdog stays
@@ -1102,13 +1405,35 @@ class AlarmService : Service() {
                             source = "AlarmService"
                         )
                         session.onTrackStarted(candidate)
+                        playbackRef?.let { player ->
+                            activeMusicPlayback.set(
+                                ActiveMusicPlayback(
+                                    alarmId = alarm.id,
+                                    fireId = fireId,
+                                    uri = candidate.uri,
+                                    playlistId = session.snapshot.playlistId,
+                                    playback = player
+                                )
+                            )
+                        }
                         MusicPlaybackState.updateTitle(candidate.track.displayTitle)
-                        val startedAt = System.currentTimeMillis()
-                        serviceScope.launch {
-                            runCatching {
-                                musicLibraryRepository.recordStarted(fireId, startedAt, candidate.track)
-                            }.onFailure { error ->
-                                Log.e(TAG, "Could not record started music playback", error)
+                        val testId = activeProductionTestSessionId
+                        if (testId != null) {
+                            onProductionTestTrackStarted(fireId, testId)
+                        } else {
+                            if (SnoozeMusicRestoreStore.readEligible(
+                                    this@AlarmService, alarm.id, fireId,
+                                    System.currentTimeMillis()
+                                ) != null) {
+                                SnoozeMusicRestoreStore.clear(this@AlarmService, alarm.id)
+                            }
+                            val startedAt = System.currentTimeMillis()
+                            serviceScope.launch {
+                                runCatching {
+                                    musicLibraryRepository.recordStarted(fireId, startedAt, candidate.track)
+                                }.onFailure { error ->
+                                    Log.e(TAG, "Could not record started music playback", error)
+                                }
                             }
                         }
                     }
@@ -1148,6 +1473,21 @@ class AlarmService : Service() {
                 disableVideoTracks = true
             )
             playbackRef = playback
+            // A very short/local file can enter onIsPlaying before the
+            // createMedia3Playback() call returns an adapter. Preserve the
+            // actually-playing reference for a subsequent U4 snooze capture.
+            if (playbackStarted.get() && isMusicSessionActive(alarm, generation) &&
+                activeMusicSession.get() === session) {
+                activeMusicPlayback.set(
+                    ActiveMusicPlayback(
+                        alarmId = alarm.id,
+                        fireId = fireId,
+                        uri = candidate.uri,
+                        playlistId = session.snapshot.playlistId,
+                        playback = playback
+                    )
+                )
+            }
             if (!isMusicSessionActive(alarm, generation) || activeMusicSession.get() !== session) {
                 playback.stopAndRelease()
                 return
@@ -1628,6 +1968,7 @@ class AlarmService : Service() {
         audioAttributes: androidx.media3.common.AudioAttributes,
         repeatMode: Int,
         initialVolume: Float,
+        initialSeekPositionMs: Long? = null,
         onReady: () -> Unit,
         onStarted: () -> Unit = {},
         onEnded: () -> Unit,
@@ -1650,6 +1991,9 @@ class AlarmService : Service() {
             val player = playerBuilder.build().apply {
                 setAudioAttributes(audioAttributes, false)
                 setMediaItem(mediaItem)
+                // Apply saved position before prepare/playWhenReady so READY
+                // cannot race the assignment of the player adapter.
+                initialSeekPositionMs?.let { seekTo(it.coerceAtLeast(0L)) }
                 this.repeatMode = repeatMode
                 volume = initialVolume.coerceIn(0f, 1f)
                 addListener(object : Player.Listener {
@@ -2044,6 +2388,46 @@ class AlarmService : Service() {
         return AlarmAudioRouting.alarmSonificationAttributes()
     }
 
+    /**
+     * The next AlarmManager occurrence must already be armed. Persist a
+     * track that truly entered onIsPlaying=true before releasing Media3.
+     * A failed checkpoint does not cancel the successfully armed snooze.
+     */
+    private fun saveSnoozedMusicPosition(
+        alarm: Alarm, sourceFireId: String, targetAt: Long
+    ) {
+        if (targetAt <= 0L || !alarm.randomMusicEnabled ||
+            activeProductionTestSessionId != null) return
+        val active = activeMusicPlayback.get() ?: return
+        if (active.alarmId != alarm.id || active.fireId != sourceFireId ||
+            active.playback !== alarmPlayback) return
+        val now = System.currentTimeMillis()
+        val mode = AlarmSnoozeMusicModeStore.get(this, alarm.id)
+        val position = runCatching { active.playback.positionMs() }.getOrNull()
+        val checkpoint = SnoozeMusicRestoreCheckpoint(
+            alarmId = alarm.id,
+            sourceFireId = sourceFireId,
+            nextFireId = AlarmIncidentEvent.fireIdFor(alarm.id, targetAt),
+            uri = active.uri,
+            positionMs = position,
+            playlistId = active.playlistId,
+            mode = mode,
+            recordedAtMs = now,
+            expiresAtMs = minOf(
+                targetAt + 5 * 60_000L,
+                now + SnoozeMusicRestoreCheckpoint.MAX_CHECKPOINT_TTL_MS
+            )
+        )
+        if (!SnoozeMusicRestoreStore.save(this, checkpoint)) {
+            recordIncidentAsync(
+                type = AlarmIncidentEvent.TYPE_AUDIO,
+                status = AlarmIncidentEvent.STATUS_FAILED,
+                reasonCode = "U4_SNOOZE_CHECKPOINT_UNAVAILABLE",
+                source = "AlarmService"
+            )
+        }
+    }
+
     private suspend fun snoozeAlarm(
         alarmId: Long,
         requestedFireId: String,
@@ -2124,6 +2508,11 @@ class AlarmService : Service() {
             }
         }
 
+        // Record a valid playback checkpoint before stopAlarmPlayback()
+        // releases the Media3 player, without risking the armed snooze.
+        if (capOutcome != SnoozeCapOutcome.AUTO_DISMISS) {
+            saveSnoozedMusicPosition(alarm, previousFireId, targetAt)
+        }
         // The OS has accepted the next occurrence at this point. Any
         // remaining bookkeeping failure is nonfatal to the scheduled alarm.
         // Always clear the old firing state and acknowledge the registered
@@ -2241,6 +2630,14 @@ class AlarmService : Service() {
         challengeRetryCount: Int = 0,
         challengeSolveTimeMs: Long = 0L
     ) {
+        if (activeProductionTestSessionId != null) {
+            // Defense in depth for a late ringtone-completion or other
+            // internal dismiss callback. A B2 test must not write a real
+            // alarm event, snooze count, next trigger, or external action.
+            ProductionTestAlarmScheduler.cancel(this)
+            stopProductionTestPlayback()
+            return
+        }
         SnoozeCountdownReceiver.cancel(this)
         autoSilenceJob?.cancel()
         backupSoundJob?.cancel()
@@ -2589,7 +2986,7 @@ class AlarmService : Service() {
         fireId: String = currentFireId,
         scheduledAt: Long = currentScheduledAt
     ) {
-        if (alarmId <= 0L) return
+        if (alarmId <= 0L || activeProductionTestSessionId != null) return
         // Repository-owned scope: records issued right before stopSelf()
         // must not race serviceScope.cancel() in onDestroy().
         alarmIncidentRepository.recordAsync(
@@ -2612,7 +3009,7 @@ class AlarmService : Service() {
         fireId: String = currentFireId,
         scheduledAt: Long = currentScheduledAt
     ) {
-        if (alarmId <= 0L) return
+        if (alarmId <= 0L || activeProductionTestSessionId != null) return
         alarmIncidentRepository.record(
             alarmId = alarmId,
             fireId = fireId.ifBlank { AlarmIncidentEvent.fireIdFor(alarmId, scheduledAt) },
@@ -2689,6 +3086,7 @@ class AlarmService : Service() {
     private fun stopAlarmPlayback() {
         musicSessionGeneration.incrementAndGet()
         activeMusicSession.set(null)
+        activeMusicPlayback.set(null)
         failedMusicUris.clear()
         consecutiveMusicFailures.set(0)
         MusicPlaybackState.updateTitle(null)

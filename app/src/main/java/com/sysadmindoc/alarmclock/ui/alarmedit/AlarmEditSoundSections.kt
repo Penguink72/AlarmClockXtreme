@@ -88,6 +88,10 @@ internal fun LazyListScope.alarmEditSoundSections(
     onManagePlaylists: () -> Unit = {},
     onPreviewCurrentSound: () -> Unit = {},
     onStopSoundPreview: () -> Unit = {},
+    onRunSystemAlarmDeliveryTest: () -> Unit = {},
+    onCancelSystemAlarmDeliveryTest: () -> Unit = {},
+    onRunProductionAlarmTest: () -> Unit = {},
+    onCancelProductionAlarmTest: () -> Unit = {},
     previewActive: Boolean = false,
     previewBusy: Boolean = false
 ) {
@@ -128,7 +132,11 @@ internal fun LazyListScope.alarmEditSoundSections(
             label = stringResource(R.string.alarm_edit_alarm_sound),
             trailing = {
                 SettingsValueButton(
-                    label = when (state.ringtoneUri) {
+                    // Show the active source, not the dormant ringtone
+                    // value retained while a music playlist is selected.
+                    label = if (state.randomMusicEnabled) {
+                        stringResource(R.string.music_library_title)
+                    } else when (state.ringtoneUri) {
                         "" -> stringResource(R.string.alarm_edit_default)
                         "silent" -> stringResource(R.string.alarm_edit_silent)
                         else -> stringResource(R.string.alarm_edit_custom)
@@ -214,6 +222,37 @@ internal fun LazyListScope.alarmEditSoundSections(
             stringResource(R.string.alarm_edit_preview_current_sound_description),
             tone = HintTone.Neutral
         )
+        // The existing onboarding diagnostic uses a separate OS-scheduled
+        // PendingIntent. It checks AlarmManager/notification/device delivery,
+        // NOT the selected playlist or production AlarmService chain.
+        SettingsRow(label = stringResource(R.string.alarm_edit_delivery_test_label)) {
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                OutlinedButton(onClick = onRunSystemAlarmDeliveryTest) {
+                    Text(stringResource(R.string.alarm_edit_delivery_test_run))
+                }
+                OutlinedButton(onClick = onCancelSystemAlarmDeliveryTest) {
+                    Text(stringResource(R.string.alarm_edit_delivery_test_cancel))
+                }
+            }
+        }
+        SettingsHint(
+            stringResource(R.string.alarm_edit_delivery_test_limitation),
+            tone = HintTone.Neutral
+        )
+
+        // Separate production-path diagnostic. The onboarding delivery-only
+        // test above is retained and explicitly named for its narrower scope.
+        SettingsRow(label = stringResource(R.string.b2_test_title)) {
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                OutlinedButton(onClick = onRunProductionAlarmTest) {
+                    Text(stringResource(R.string.b2_test_run))
+                }
+                OutlinedButton(onClick = onCancelProductionAlarmTest) {
+                    Text(stringResource(R.string.b2_test_cancel))
+                }
+            }
+        }
+        SettingsHint(stringResource(R.string.b2_test_saved_only), tone = HintTone.Neutral)
 
         SettingsRow(
             label = stringResource(R.string.alarm_edit_override_volume),

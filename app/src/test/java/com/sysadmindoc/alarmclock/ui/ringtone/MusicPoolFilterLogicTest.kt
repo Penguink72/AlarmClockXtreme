@@ -164,6 +164,43 @@ class MusicPoolFilterLogicTest {
     }
 
     @Test
+    fun indexed4935TrackSearchResolvesArtistWithoutReindexOrFileAccess() {
+        val rows = (1..4935).map { index ->
+            MusicPoolUiTrack(
+                track = MusicTrack(
+                    uri = "content://indexed/$index",
+                    title = "Catalog item $index",
+                    source = MusicLibraryIndexer.SOURCE_MEDIA_STORE,
+                    fileName = "track_$index.mp3"
+                ),
+                membershipState = null,
+                sourceName = "Device"
+            )
+        }
+        val matching = rows[4290]
+        val metadata = mapOf(
+            matching.track.uri to MusicCatalogTrackMetadata(
+                uri = matching.track.uri, artist = "Jia Peng Fang",
+                album = "Instrumental"
+            )
+        )
+        assertEquals(
+            listOf(matching),
+            filterLibraryCatalog(
+                rows, MusicPoolFilter.ALL_CANDIDATES, "Jia Peng Fang",
+                metadataByUri = metadata
+            )
+        )
+        assertEquals(4935, rows.size)
+        assertFalse(
+            shouldAutoScanMusicCatalog(
+                autoScanIfEmpty = true, indexedTrackCount = rows.size,
+                hasAudioPermission = true, hasFolderSources = true
+            )
+        )
+    }
+
+    @Test
     fun catalogSearchMatchesArtistAlbumAndFolderMetadataWithoutRescan() {
         val tracks = listOf(poolItemSaf1, poolItemVideo, poolItemMediaStore)
         val meta = mapOf(

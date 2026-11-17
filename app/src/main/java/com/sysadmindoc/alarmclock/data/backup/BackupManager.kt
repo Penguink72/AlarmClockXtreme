@@ -8,6 +8,8 @@ import com.sysadmindoc.alarmclock.data.preferences.AppSettings
 import com.sysadmindoc.alarmclock.data.preferences.DEFAULT_NEWS_FEED_URL
 import com.sysadmindoc.alarmclock.data.preferences.PreferencesManager
 import com.sysadmindoc.alarmclock.data.repository.AlarmRepository
+import com.sysadmindoc.alarmclock.domain.AlarmSnoozeMusicModeStore
+import com.sysadmindoc.alarmclock.domain.SnoozeMusicResumeMode
 import com.sysadmindoc.alarmclock.domain.AlarmScheduler
 import com.sysadmindoc.alarmclock.domain.LongPressThreshold
 import com.squareup.moshi.JsonClass
@@ -143,7 +145,8 @@ data class AlarmMusicSettingsBackup(
     val playbackStrategy: String = "RANDOM_WITH_REPEATS",
     val artistFilters: List<String> = emptyList(),
     val folderFilters: List<String> = emptyList(),
-    val continuousUntilDismiss: Boolean = true
+    val continuousUntilDismiss: Boolean = true,
+    val snoozeMusicMode: String = "NEXT_DIFFERENT"
 )
 
 @JsonClass(generateAdapter = true)
@@ -572,12 +575,21 @@ class BackupManager @Inject constructor(
     suspend fun export(): String {
         val alarms = repository.getAll()
         val settings = preferencesManager.getCurrentSettings()
-        val playlistsBackup = runCatching {
-            musicLibraryRepository?.exportPlaylistsForBackup().orEmpty()
-        }.getOrDefault(emptyList())
-        val alarmMusicSettingsBackup = runCatching {
-            musicLibraryRepository?.exportAlarmMusicSettingsForBackup(alarms.map { it.id }).orEmpty()
-        }.getOrDefault(emptyList())
+        // Fail closed: a repository read failure must never quietly export an
+        // apparently valid backup missing playlists or per-alarm sound settings.
+        check(musicLibraryRepository != null || alarms.none { it.randomMusicEnabled }) {
+            "Music alarm backup unavailable: music repository is not connected"
+        }
+        val playlistsBackup = musicLibraryRepository?.exportPlaylistsForBackup().orEmpty()
+        val alarmMusicSettingsBackup = musicLibraryRepository
+            ?.exportAlarmMusicSettingsForBackup(alarms.map { it.id })
+            .orEmpty().map { setting ->
+            setting.copy(
+                snoozeMusicMode = AlarmSnoozeMusicModeStore.get(
+                    context, setting.alarmId
+                ).name
+            )
+        }
 
         val backup = BackupData(
             alarms = alarms.map { alarm -> alarm.toAlarmBackup() },
@@ -931,6 +943,14 @@ class BackupManager @Inject constructor(
             }
 
             val importedAlarms = backup.alarms.mapNotNull { it.toAlarmOrNull() }
+            if ((backup.musicPlaylists.isNotEmpty() ||
+                        backup.alarmMusicSettings.isNotEmpty()) &&
+                musicLibraryRepository == null
+            ) {
+                return Result.failure(
+                    IllegalStateException("This backup contains music settings, but the music repository is unavailable")
+                )
+            }
 
             // Replace used to delete every alarm and only then start inserting.
             // A crash in that window, or an import whose rows all turn out to be
@@ -966,13 +986,15 @@ class BackupManager @Inject constructor(
             // save+schedule so genuine bad rows are skipped with a log
             // entry while the rest of the backup still lands.
             if (backup.musicPlaylists.isNotEmpty()) {
-                runCatching {
-                    musicLibraryRepository?.importPlaylistsFromBackup(backup.musicPlaylists)
-                }
+                // A missing or failed playlist import cannot be downgraded to
+                // a successful alarm-only restoration.
+                requireNotNull(musicLibraryRepository)
+                    .importPlaylistsFromBackup(backup.musicPlaylists)
             }
             val musicSettingsByOriginalId = backup.alarmMusicSettings.associateBy { it.alarmId }
 
             var count = 0
+            var failedMusicSettings = 0
             val savedIds = mutableSetOf<Long>()
             val alarmsToSchedule = mutableListOf<Alarm>()
             for (alarm in importedAlarms) {
@@ -980,16 +1002,25 @@ class BackupManager @Inject constructor(
                     val originalId = alarm.id
                     val alarmToSave = alarm.prepareForImport(options)
                     val savedId = repository.save(alarmToSave)
-                    savedIds += savedId
                     val savedAlarm = alarmToSave.copy(id = savedId)
                     musicSettingsByOriginalId[originalId]?.let { musicSettings ->
-                        runCatching {
-                            musicLibraryRepository?.importAlarmMusicSettingsFromBackup(
-                                savedAlarm.id,
-                                musicSettings
-                            )
+                        try {
+                            requireNotNull(musicLibraryRepository)
+                                .importAlarmMusicSettingsFromBackup(savedAlarm.id, musicSettings)
+                            val mode = runCatching {
+                                SnoozeMusicResumeMode.valueOf(musicSettings.snoozeMusicMode)
+                            }.getOrDefault(SnoozeMusicResumeMode.NEXT_DIFFERENT)
+                            check(AlarmSnoozeMusicModeStore.save(context, savedAlarm.id, mode)) {
+                                "Could not restore snooze playback preference"
+                            }
+                        } catch (error: Exception) {
+                            // The alarm row was already inserted. Never count a
+                            // broken sound restoration as a complete alarm.
+                            failedMusicSettings++
+                            throw error
                         }
                     }
+                    savedIds += savedId
                     if (savedAlarm.isEnabled) {
                         alarmsToSchedule += savedAlarm
                     }
@@ -1063,7 +1094,15 @@ class BackupManager @Inject constructor(
             if (skipped > 0) {
                 android.util.Log.w("BackupManager", "Skipped $skipped alarm(s) during import")
             }
-            Result.success(count)
+            if (failedMusicSettings > 0) {
+                Result.failure(
+                    IllegalStateException(
+                        "Partial restore: ${failedMusicSettings} alarm music setting(s) could not be restored; ${count} alarm(s) completed"
+                    )
+                )
+            } else {
+                Result.success(count)
+            }
         } catch (e: Exception) {
             Result.failure(e)
         }

@@ -48,6 +48,35 @@ class BackupManagerExportImportTest {
     }
 
     @Test
+    fun exportRejectsMusicRepositoryReadFailureInsteadOfSilentlyDroppingPlaylists() = runTest {
+        val music = mockk<com.sysadmindoc.alarmclock.data.repository.MusicLibraryRepository>(relaxed = true)
+        coEvery { repository.getAll() } returns listOf(morningAlarm().copy(id = 27L, randomMusicEnabled = true))
+        coEvery { preferencesManager.getCurrentSettings() } returns AppSettings()
+        coEvery { music.exportPlaylistsForBackup() } throws IllegalStateException("DAO unavailable")
+        val manager = BackupManager(context, repository, preferencesManager, scheduler, music)
+
+        val result = runCatching { manager.export() }
+        assertTrue(result.isFailure)
+        assertTrue(result.exceptionOrNull()?.message?.contains("DAO unavailable") == true)
+    }
+
+    @Test
+    fun musicBackupCannotImportWithoutMusicRepository() = runTest {
+        val backup = BackupData(
+            alarms = listOf(morningAlarm().copy(id = 43L, randomMusicEnabled = true).toAlarmBackup()),
+            settings = null,
+            alarmMusicSettings = listOf(
+                AlarmMusicSettingsBackup(alarmId = 43L, playbackStrategy = "PLAYLIST_ORDER")
+            )
+        )
+        val backupFile = File(context.cacheDir, "backup-with-music-without-repository.json")
+            .apply { writeText(backupAdapter.toJson(backup)) }
+        val result = backupManager.importFromUri(Uri.fromFile(backupFile))
+        assertTrue(result.isFailure)
+        coVerify(exactly = 0) { repository.save(any()) }
+    }
+
+    @Test
     fun exportIncludesAlarmAndSettingsRoundTripFields() = runTest {
         coEvery { repository.getAll() } returns listOf(
             morningAlarm().copy(

@@ -165,9 +165,11 @@ import kotlinx.coroutines.launch
 internal fun IncidentTimelineSection(
     timeline: SettingsIncidentTimelineState,
     use24Hour: Boolean,
-    onClearIncidentHistory: () -> Unit
+    onClearIncidentHistory: () -> Unit,
+    onExportDiagnostics: () -> Unit = {}
 ) {
     var showClearDialog by remember { mutableStateOf(false) }
+    var showEventTimeline by remember { mutableStateOf(false) }
     SettingsGroup(
         title = stringResource(R.string.settings_diagnostics),
         description = stringResource(R.string.settings_diagnostics_description)
@@ -218,6 +220,34 @@ internal fun IncidentTimelineSection(
                     stringResource(R.string.settings_none_code)
                 }
             )
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                TextButton(onClick = { showEventTimeline = !showEventTimeline }) {
+                    Text(stringResource(
+                        if (showEventTimeline) R.string.settings_hide_incident_events
+                        else R.string.settings_show_incident_events
+                    ))
+                }
+                OutlinedButton(onClick = onExportDiagnostics) {
+                    Text(stringResource(R.string.settings_export_incident_diagnostics))
+                }
+            }
+            if (showEventTimeline) {
+                timeline.recentEvents.forEach { event ->
+                    // Raw reason codes are intentionally kept stable for bug
+                    // reports; the surrounding UI labels are localized.
+                    SettingsInfo(
+                        label = stringResource(
+                            R.string.settings_incident_row_summary,
+                            formatIncidentTimestamp(event.eventAt, use24Hour),
+                            event.status
+                        ),
+                        description = stringResource(
+                            R.string.settings_incident_row_reason,
+                            event.source, event.reasonCode
+                        )
+                    )
+                }
+            }
             Text(
                 text = stringResource(R.string.settings_clear_diagnostics_hint),
                 color = TextSecondary,

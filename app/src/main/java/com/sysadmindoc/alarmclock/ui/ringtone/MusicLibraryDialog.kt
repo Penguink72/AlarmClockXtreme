@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -24,6 +25,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
@@ -91,7 +93,9 @@ fun MusicLibraryDialog(
     previewController: MusicCatalogPreviewController? = viewModel.previewController,
     playlistRepository: MusicPlaylistRepository? = viewModel.playlistRepository,
     initialShowHistory: Boolean = false,
-    initialShowPlaylists: Boolean = false
+    initialShowPlaylists: Boolean = false,
+    /** Editor-only callback; other Music Center entry points remain read/write standalone. */
+    onPlaylistChosenForAlarm: ((String) -> Unit)? = null
 ) {
     val context = LocalContext.current
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -269,6 +273,7 @@ fun MusicLibraryDialog(
                                 viewModel.clearCatalogSelection()
                                 workspaceName = MusicLibraryWorkspace.MEDIA_LIBRARY.name
                             },
+                            onApplyToAlarm = onPlaylistChosenForAlarm,
                             modifier = Modifier.padding(padding)
                         )
                         browseMode == MusicLibraryBrowseMode.FOLDERS -> MusicFoldersContent(
@@ -341,6 +346,89 @@ private fun MusicCatalogContent(
     modifier: Modifier = Modifier
 ) {
     val coroutineScope = rememberCoroutineScope()
+    // Freeze the candidate identities and display titles at the moment
+    // the user opens review. A background refresh must not silently expand
+    // the reviewed bulk-operation scope while this dialog is on screen.
+    var reviewedSystemToneCandidates by remember {
+        mutableStateOf<List<MusicPoolUiTrack>>(emptyList())
+    }
+    var unselectedSystemToneUris by remember { mutableStateOf<Set<String>>(emptySet()) }
+    val systemToneCandidates = remember(
+        state.poolTracks, state.supplementalCatalog.trackMetadataByUri
+    ) {
+        recognizedSystemToneCandidates(
+            state.poolTracks, state.supplementalCatalog.trackMetadataByUri
+        )
+    }
+    if (reviewedSystemToneCandidates.isNotEmpty()) {
+        AlertDialog(
+            onDismissRequest = { reviewedSystemToneCandidates = emptyList() },
+            title = { Text(stringResource(R.string.music_library_system_tones_preview_title)) },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(stringResource(
+                        R.string.music_library_system_tones_preview_detail,
+                        reviewedSystemToneCandidates.size
+                    ))
+                    // Display all frozen candidates rather than only the
+                    // first five. A false positive can be unchecked before
+                    // committing a single bulk exclusion.
+                    LazyColumn(modifier = Modifier.heightIn(max = 260.dp)) {
+                        items(
+                            reviewedSystemToneCandidates,
+                            key = { it.track.uri }
+                        ) { candidate ->
+                            val uri = candidate.track.uri
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Checkbox(
+                                    checked = uri !in unselectedSystemToneUris,
+                                    onCheckedChange = { checked ->
+                                        unselectedSystemToneUris =
+                                            if (checked) unselectedSystemToneUris - uri
+                                            else unselectedSystemToneUris + uri
+                                    }
+                                )
+                                Text(
+                                    candidate.track.displayTitle,
+                                    maxLines = 2,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                            }
+                        }
+                    }
+                    Text(
+                        stringResource(R.string.music_library_system_tones_false_positive_warning),
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    enabled = reviewedSystemToneCandidates.any {
+                        it.track.uri !in unselectedSystemToneUris
+                    } && !state.loadingPool && !state.scanning,
+                    onClick = {
+                        // Send the exact reviewed snapshot; the ViewModel
+                        // revalidates it against the current indexed catalog
+                        // and can never add an unreviewed candidate.
+                        val confirmed = reviewedSystemToneCandidates
+                            .map { it.track.uri }
+                            .filterNot { it in unselectedSystemToneUris }
+                        reviewedSystemToneCandidates = emptyList()
+                        unselectedSystemToneUris = emptySet()
+                        viewModel.excludeRecognizedSystemTones(confirmed)
+                    }
+                ) {
+                    Text(stringResource(R.string.music_library_system_tones_confirm))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { reviewedSystemToneCandidates = emptyList() }) {
+                    Text(stringResource(R.string.music_library_system_tones_cancel))
+                }
+            }
+        )
+    }
     val previewState by previewController?.state?.collectAsStateWithLifecycle()
         ?: remember { mutableStateOf(MusicCatalogPreviewState()) }
     // Cache the 4,000+ track filter across unrelated scan/status/audio-state
@@ -590,6 +678,31 @@ private fun MusicCatalogContent(
             }
             OutlinedButton(onClick = onManageSources) {
                 Text(stringResource(R.string.music_library_sources_button))
+            }
+        }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            OutlinedButton(
+                enabled = systemToneCandidates.isNotEmpty() &&
+                    !state.loadingPool && !state.scanning,
+                onClick = {
+                    reviewedSystemToneCandidates = systemToneCandidates.toList()
+                    unselectedSystemToneUris = emptySet()
+                }
+            ) {
+                Text(stringResource(
+                    R.string.music_library_system_tones_preview_button,
+                    systemToneCandidates.size
+                ))
+            }
+            if (state.systemToneUndoCount > 0) {
+                TextButton(
+                    enabled = !state.loadingPool && !state.scanning,
+                    onClick = viewModel::undoRecognizedSystemToneExclusion
+                ) { Text(stringResource(R.string.music_library_system_tones_undo)) }
             }
         }
         OutlinedButton(

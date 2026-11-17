@@ -18,6 +18,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -25,6 +26,7 @@ import kotlinx.coroutines.withContext
 import java.time.LocalDate
 import java.time.ZoneId
 import java.util.Locale
+import java.util.concurrent.atomic.AtomicLong
 import javax.inject.Inject
 
 enum class HistoryFilterMode {
@@ -57,6 +59,7 @@ data class MusicLibraryUiState(
     val catalogSourceScope: MusicPoolSourceScope? = null,
     val supplementalCatalog: MusicLibrarySupplementalCatalog = MusicLibrarySupplementalCatalog(),
     val loadingPool: Boolean = false,
+    val systemToneUndoCount: Int = 0,
     val poolSourceScope: MusicPoolSourceScope = MusicPoolSourceScope.Folders
 )
 
@@ -163,6 +166,39 @@ internal fun filterLibraryCatalog(
 /** An existing index is browseable immediately; permission/source changes are
  * scanned on explicit Refresh. Only the empty first-install catalog auto-scans.
  */
+/**
+ * Only metadata with a positive system-tone signal and MediaStore origin can
+ * be offered as a possible stock ringtone. SAF music in an Alarms/ folder
+ * may be user-created and is deliberately left alone. This still cannot
+ * distinguish an OEM tone from a custom tone marked IS_RINGTONE.
+ */
+internal fun recognizedSystemToneCandidates(
+    tracks: List<MusicPoolUiTrack>,
+    metadataByUri: Map<String, MusicCatalogTrackMetadata>
+): List<MusicPoolUiTrack> = tracks.filter { item ->
+    item.track.source == MusicLibraryIndexer.SOURCE_MEDIA_STORE &&
+        item.membershipState != MusicPoolEntry.EXCLUDED &&
+        metadataByUri[item.track.uri]?.isSystemTone == true
+}
+
+/**
+ * U5: the exact candidate URIs shown in the user's confirmation dialog are
+ * the upper bound of this operation. Never expand the set while the catalog
+ * changes or after a delayed coroutine starts.
+ */
+internal fun confirmedSystemToneUris(
+    tracks: List<MusicPoolUiTrack>,
+    metadataByUri: Map<String, MusicCatalogTrackMetadata>,
+    confirmedUris: Collection<String>
+): Set<String> {
+    val confirmed = confirmedUris.toHashSet()
+    if (confirmed.isEmpty()) return emptySet()
+    return recognizedSystemToneCandidates(tracks, metadataByUri)
+        .asSequence().map { it.track.uri }
+        .filter { it in confirmed }
+        .toSet()
+}
+
 internal fun shouldAutoScanMusicCatalog(
     autoScanIfEmpty: Boolean,
     indexedTrackCount: Int,
@@ -215,6 +251,7 @@ class MusicLibraryViewModel @Inject constructor(
     val playlistRepository: MusicPlaylistRepository
         get() = repository
     private val _uiState = MutableStateFlow(MusicLibraryUiState())
+    private val historyRequestVersion = AtomicLong(0L)
     val uiState: StateFlow<MusicLibraryUiState> = _uiState.asStateFlow()
     val replayState: StateFlow<ReplayUiState> = replayActions.state
 
@@ -507,8 +544,10 @@ class MusicLibraryViewModel @Inject constructor(
 
     fun loadPoolCandidates(autoScanIfEmpty: Boolean = false) {
         if (_uiState.value.loadingPool) return
+        // Claim before coroutine dispatch; two taps/open events in one frame
+        // must not enqueue duplicate 4,935-track catalog reads.
+        _uiState.value = _uiState.value.copy(loadingPool = true)
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(loadingPool = true)
             try {
                 // Show the persisted index first. A full MediaStore/SAF scan
                 // can take minutes for several thousand files and must not
@@ -588,6 +627,62 @@ class MusicLibraryViewModel @Inject constructor(
         videoOnly = videoOnly
     )
 
+    // Snapshot is only valid for the immediate last automated exclusion.
+    // Ordinary membership changes invalidate it so Undo never overwrites a
+    // subsequent explicit user decision.
+    private var systemToneUndoSnapshot: Map<String, String?> = emptyMap()
+
+    fun excludeRecognizedSystemTones(confirmedUris: Collection<String>) {
+        if (_uiState.value.loadingPool || _uiState.value.scanning) return
+        val current = _uiState.value
+        val candidates = confirmedSystemToneUris(
+            current.poolTracks,
+            current.supplementalCatalog.trackMetadataByUri,
+            confirmedUris
+        )
+        if (candidates.isEmpty()) return
+        // Claim the operation synchronously. Two quick confirmation taps
+        // cannot queue overlapping DAO writes with incompatible Undo states.
+        _uiState.value = current.copy(loadingPool = true)
+        viewModelScope.launch {
+            try {
+                val snapshot = repository.excludeSystemToneCandidates(candidates)
+                systemToneUndoSnapshot = snapshot
+                loadPoolCandidatesNow()
+                _uiState.value = _uiState.value.copy(systemToneUndoCount = snapshot.size)
+                reportStatus(context.getString(R.string.music_library_system_tones_excluded, snapshot.size))
+            } catch (error: CancellationException) {
+                throw error
+            } catch (error: Exception) {
+                reportStatus(context.getString(R.string.music_library_system_tones_error))
+            } finally {
+                _uiState.value = _uiState.value.copy(loadingPool = false)
+            }
+        }
+    }
+
+    fun undoRecognizedSystemToneExclusion() {
+        if (_uiState.value.loadingPool || _uiState.value.scanning) return
+        val snapshot = systemToneUndoSnapshot.toMap()
+        if (snapshot.isEmpty()) return
+        _uiState.value = _uiState.value.copy(loadingPool = true)
+        viewModelScope.launch {
+            try {
+                repository.undoSystemToneCandidateExclusion(snapshot)
+                systemToneUndoSnapshot = emptyMap()
+                loadPoolCandidatesNow()
+                _uiState.value = _uiState.value.copy(systemToneUndoCount = 0)
+                reportStatus(context.getString(R.string.music_library_system_tones_restored, snapshot.size))
+            } catch (error: CancellationException) {
+                throw error
+            } catch (error: Exception) {
+                reportStatus(context.getString(R.string.music_library_system_tones_error))
+            } finally {
+                _uiState.value = _uiState.value.copy(loadingPool = false)
+            }
+        }
+    }
+
     fun updateSelectedCatalogMembership(included: Boolean, videoOnly: Boolean = false) {
         if (_uiState.value.loadingPool || _uiState.value.scanning) return
         val selected = catalogUrisForMembershipUpdate(
@@ -597,9 +692,11 @@ class MusicLibraryViewModel @Inject constructor(
             included = included
         )
         if (selected.isEmpty()) return
-
+        // A no-op must preserve the existing system-tone Undo. A real manual
+        // mutation supersedes Undo and claims the lock before coroutine dispatch.
+        systemToneUndoSnapshot = emptyMap()
+        _uiState.value = _uiState.value.copy(loadingPool = true, systemToneUndoCount = 0)
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(loadingPool = true)
             try {
                 repository.setPoolMembership(selected, included)
                 loadPoolCandidatesNow()
@@ -654,8 +751,12 @@ class MusicLibraryViewModel @Inject constructor(
         val visibleUris = visiblePoolTracks().mapTo(HashSet()) { it.track.uri }
         val selected = _uiState.value.selectedPoolUris.filterTo(LinkedHashSet()) { it in visibleUris }
         if (selected.isEmpty()) return
+        // Any explicit membership write supersedes the previous automated
+        // exclusion. Claim the lock before coroutine dispatch to avoid an
+        // overlapping Undo or another bulk write from a second tap.
+        systemToneUndoSnapshot = emptyMap()
+        _uiState.value = _uiState.value.copy(loadingPool = true, systemToneUndoCount = 0)
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(loadingPool = true)
             try {
                 repository.setPoolMembership(selected, included)
                 // Refresh in the same coroutine; otherwise repeated taps can
@@ -692,8 +793,9 @@ class MusicLibraryViewModel @Inject constructor(
      */
     fun addSourceToPool(sourceId: String) {
         if (_uiState.value.scanning || _uiState.value.loadingPool) return
+        systemToneUndoSnapshot = emptyMap()
+        _uiState.value = _uiState.value.copy(loadingPool = true, systemToneUndoCount = 0)
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(loadingPool = true)
             try {
                 // The pool dialog may have been opened before a later rescan.
                 // Read the selected source and current indexed candidates
@@ -754,26 +856,35 @@ class MusicLibraryViewModel @Inject constructor(
     }
 
     fun loadRecentHistory(limit: Int = 100) {
+        val requestId = historyRequestVersion.incrementAndGet()
         _uiState.value = _uiState.value.copy(historyFilterMode = HistoryFilterMode.RECENT)
         viewModelScope.launch {
             try {
-                _uiState.value = _uiState.value.copy(
-                    history = repository.recentHistory(limit)
-                )
+                val rows = repository.recentHistory(limit)
+                _uiState.update { current ->
+                    if (historyRequestVersion.get() != requestId ||
+                        current.historyFilterMode != HistoryFilterMode.RECENT
+                    ) current else current.copy(history = rows)
+                }
             } catch (error: CancellationException) {
                 throw error
             } catch (error: Exception) {
-                _uiState.value = _uiState.value.copy(
-                    status = context.getString(
-                        R.string.music_library_history_read_failed,
-                        error.message.orEmpty()
+                _uiState.update { current ->
+                    if (historyRequestVersion.get() != requestId ||
+                        current.historyFilterMode != HistoryFilterMode.RECENT
+                    ) current else current.copy(
+                        status = context.getString(
+                            R.string.music_library_history_read_failed,
+                            error.message.orEmpty()
+                        )
                     )
-                )
+                }
             }
         }
     }
 
     fun loadHistory(date: LocalDate) {
+        val requestId = historyRequestVersion.incrementAndGet()
         _uiState.value = _uiState.value.copy(
             historyFilterMode = HistoryFilterMode.BY_DATE,
             selectedDate = date
@@ -783,18 +894,26 @@ class MusicLibraryViewModel @Inject constructor(
             val from = date.atStartOfDay(zone).toInstant().toEpochMilli()
             val to = date.plusDays(1).atStartOfDay(zone).toInstant().toEpochMilli()
             try {
-                _uiState.value = _uiState.value.copy(
-                    history = repository.historyForDate(from, to)
-                )
+                val rows = repository.historyForDate(from, to)
+                _uiState.update { current ->
+                    if (historyRequestVersion.get() != requestId ||
+                        current.historyFilterMode != HistoryFilterMode.BY_DATE ||
+                        current.selectedDate != date
+                    ) current else current.copy(history = rows)
+                }
             } catch (error: CancellationException) {
                 throw error
             } catch (error: Exception) {
-                _uiState.value = _uiState.value.copy(
-                    status = context.getString(
-                        R.string.music_library_history_read_failed,
-                        error.message.orEmpty()
+                _uiState.update { current ->
+                    if (historyRequestVersion.get() != requestId ||
+                        current.selectedDate != date
+                    ) current else current.copy(
+                        status = context.getString(
+                            R.string.music_library_history_read_failed,
+                            error.message.orEmpty()
+                        )
                     )
-                )
+                }
             }
         }
     }

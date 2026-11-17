@@ -68,6 +68,10 @@ import com.sysadmindoc.alarmclock.ui.components.appSwitchColors
 import com.sysadmindoc.alarmclock.ui.ringtone.MusicLibraryDialog
 import com.sysadmindoc.alarmclock.ui.ringtone.MusicCatalogPreviewController
 import com.sysadmindoc.alarmclock.ui.ringtone.RingtonePickerSheet
+import com.sysadmindoc.alarmclock.data.readiness.ProductionTestAlarmScheduler
+import com.sysadmindoc.alarmclock.data.readiness.ProductionTestSessionStore
+import com.sysadmindoc.alarmclock.ui.onboarding.OnboardingTestAlarm
+import com.sysadmindoc.alarmclock.service.AlarmService
 import com.sysadmindoc.alarmclock.ui.theme.*
 import com.sysadmindoc.alarmclock.util.LocationHelper
 import com.sysadmindoc.alarmclock.util.PhotoMatcher
@@ -405,7 +409,17 @@ fun AlarmEditScreen(
                 showMusicLibraryDialog = false
                 viewModel.refreshMusicSettingsEvaluation()
             },
-            initialShowPlaylists = openPlaylistsOnLibraryLaunch
+            initialShowPlaylists = openPlaylistsOnLibraryLaunch,
+            onPlaylistChosenForAlarm = { playlistId ->
+                // Shared canonical editor action: the playlist selection also
+                // activates music as the effective sound source. Open the
+                // settings screen to make the ensuing Save explicit.
+                viewModel.onAlarmMusicSettingsAction(
+                    AlarmMusicSettingsAction.SelectPlaylist(playlistId)
+                )
+                showMusicLibraryDialog = false
+                showAlarmMusicSettings = true
+            }
         )
     }
     if (showAlarmMusicSettings) {
@@ -638,6 +652,87 @@ fun AlarmEditScreen(
                         }
                     },
                     onStopSoundPreview = { soundPreviewController.stop() },
+                    onRunSystemAlarmDeliveryTest = {
+                        if (AlarmService.activeAlarm.get() != null) {
+                            soundPreviewScope.launch {
+                                snackbarHostState.showSnackbar(
+                                    context.getString(R.string.alarm_edit_delivery_test_active_alarm)
+                                )
+                            }
+                        } else {
+                            soundPreviewController.stop()
+                            val result = OnboardingTestAlarm.schedule(context)
+                            soundPreviewScope.launch {
+                                snackbarHostState.showSnackbar(context.getString(
+                                    if (result.isSuccess) R.string.alarm_edit_delivery_test_scheduled
+                                    else R.string.alarm_edit_delivery_test_failed
+                                ))
+                            }
+                        }
+                    },
+                    onCancelSystemAlarmDeliveryTest = {
+                        OnboardingTestAlarm.cancel(context)
+                        soundPreviewScope.launch {
+                            snackbarHostState.showSnackbar(
+                                context.getString(R.string.alarm_edit_delivery_test_cancelled)
+                            )
+                        }
+                    },
+                    onRunProductionAlarmTest = {
+                        val savedId = viewModel.savedAlarmIdForProductionTest()
+                        when {
+                            AlarmService.activeAlarm.get() != null -> {
+                                soundPreviewScope.launch {
+                                    snackbarHostState.showSnackbar(
+                                        context.getString(R.string.alarm_edit_delivery_test_active_alarm)
+                                    )
+                                }
+                            }
+                            savedId <= 0L -> {
+                                soundPreviewScope.launch {
+                                    snackbarHostState.showSnackbar(
+                                        context.getString(R.string.b2_test_requires_saved)
+                                    )
+                                }
+                            }
+                            else -> {
+                                soundPreviewController.stop()
+                                val result = ProductionTestAlarmScheduler.schedule(context, savedId)
+                                soundPreviewScope.launch {
+                                    snackbarHostState.showSnackbar(
+                                        context.getString(
+                                            if (result.isSuccess) R.string.b2_test_scheduled
+                                            else R.string.b2_test_failed
+                                        )
+                                    )
+                                }
+                            }
+                        }
+                    },
+                    onCancelProductionAlarmTest = {
+                        val activeProof = ProductionTestSessionStore.read(
+                            context, System.currentTimeMillis()
+                        )
+                        ProductionTestAlarmScheduler.cancel(context)
+                        if (activeProof != null) {
+                            context.startService(Intent(context, AlarmService::class.java).apply {
+                                action = AlarmService.ACTION_PRODUCTION_TEST_DISMISS
+                                putExtra(
+                                    AlarmService.EXTRA_PRODUCTION_TEST_SESSION_ID,
+                                    activeProof.session.sessionId
+                                )
+                                putExtra(
+                                    ProductionTestAlarmScheduler.EXTRA_TEST_FIRE_ID,
+                                    activeProof.session.fireId()
+                                )
+                            })
+                        }
+                        soundPreviewScope.launch {
+                            snackbarHostState.showSnackbar(
+                                context.getString(R.string.b2_test_cancelled)
+                            )
+                        }
+                    },
                     previewActive = soundPreviewState.playingUri != null,
                     previewBusy = soundPreviewBusy
                 )

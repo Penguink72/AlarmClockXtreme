@@ -812,6 +812,134 @@ class MusicLibraryDatabaseTest {
     }
 
     @Test
+    fun systemToneExclusionUndoRestoresPriorMembershipWithoutTouchingUserExclusions() = runBlocking {
+        val context = ApplicationProvider.getApplicationContext<Application>()
+        val database = Room.inMemoryDatabaseBuilder(context, AlarmDatabase::class.java)
+            .allowMainThreadQueries()
+            .build()
+        try {
+            val repository = MusicLibraryRepository(
+                database.musicLibraryDao(), database.playbackHistoryDao()
+            )
+            val tracks = (1..4).map { i ->
+                MusicTrack(
+                    uri = "content://media/tones/$i",
+                    title = "Tone $i",
+                    source = "MEDIA_STORE"
+                )
+            }
+            repository.replaceTracks(tracks)
+            repository.setPoolMembership(listOf(tracks[1].uri), included = true)
+            repository.setPoolMembership(listOf(tracks[2].uri), included = false)
+
+            val original = repository.excludeSystemToneCandidates(
+                tracks.map(MusicTrack::uri) + "content://media/not-indexed"
+            )
+            assertEquals(
+                mapOf(
+                    tracks[0].uri to null,
+                    tracks[1].uri to MusicPoolEntry.INCLUDED,
+                    tracks[3].uri to null
+                ),
+                original
+            )
+            val afterExclude = database.musicLibraryDao().getAllPoolEntries()
+                .associate { it.uri to it.state }
+            assertEquals(MusicPoolEntry.EXCLUDED, afterExclude[tracks[0].uri])
+            assertEquals(MusicPoolEntry.EXCLUDED, afterExclude[tracks[1].uri])
+            assertEquals(MusicPoolEntry.EXCLUDED, afterExclude[tracks[2].uri])
+            assertEquals(MusicPoolEntry.EXCLUDED, afterExclude[tracks[3].uri])
+
+            repository.undoSystemToneCandidateExclusion(original)
+            val restored = database.musicLibraryDao().getAllPoolEntries()
+                .associate { it.uri to it.state }
+            assertFalse(restored.containsKey(tracks[0].uri))
+            assertEquals(MusicPoolEntry.INCLUDED, restored[tracks[1].uri])
+            assertEquals(MusicPoolEntry.EXCLUDED, restored[tracks[2].uri])
+            assertFalse(restored.containsKey(tracks[3].uri))
+        } finally {
+            database.close()
+        }
+    }
+
+    @Test
+    fun systemToneUndoCannotOverwriteManualRestoresMadeAfterExclusion() = runBlocking {
+        val context = ApplicationProvider.getApplicationContext<Application>()
+        val database = Room.inMemoryDatabaseBuilder(context, AlarmDatabase::class.java)
+            .allowMainThreadQueries().build()
+        try {
+            val repository = MusicLibraryRepository(
+                database.musicLibraryDao(), database.playbackHistoryDao()
+            )
+            val tracks = (1..3).map { index ->
+                MusicTrack("content://media/tone-manual/$index", "Tone $index", "MEDIA_STORE")
+            }
+            repository.replaceTracks(tracks)
+            repository.setPoolMembership(listOf(tracks[0].uri), included = true)
+            val before = repository.excludeSystemToneCandidates(tracks.map { it.uri })
+            assertEquals(3, before.size)
+            // Manual actions happen after the bulk exclusion. They must be
+            // authoritative even when an old Undo callback arrives later.
+            repository.setPoolMembership(
+                listOf(tracks[0].uri, tracks[1].uri), included = true
+            )
+            repository.undoSystemToneCandidateExclusion(before)
+            val membership = database.musicLibraryDao().getAllPoolEntries()
+                .associate { it.uri to it.state }
+            assertEquals(MusicPoolEntry.INCLUDED, membership[tracks[0].uri])
+            assertEquals(MusicPoolEntry.INCLUDED, membership[tracks[1].uri])
+            assertFalse(membership.containsKey(tracks[2].uri))
+        } finally {
+            database.close()
+        }
+    }
+
+    @Test
+    fun playlistSelectionSaveAndReadbackSurviveRepositoryRecreation() = runBlocking {
+        val context = ApplicationProvider.getApplicationContext<Application>()
+        val database = Room.inMemoryDatabaseBuilder(context, AlarmDatabase::class.java)
+            .allowMainThreadQueries()
+            .build()
+        try {
+            val first = MusicLibraryRepository(
+                database.musicLibraryDao(), database.playbackHistoryDao()
+            )
+            val tracks = listOf(
+                MusicTrack("content://music/erhu1", "Erhu one", "MEDIA_STORE"),
+                MusicTrack("content://music/erhu2", "Erhu two", "MEDIA_STORE"),
+                MusicTrack("content://music/erhu3", "Erhu three", "MEDIA_STORE")
+            )
+            first.replaceTracks(tracks)
+            val playlist = first.create("Jia Peng Fang")
+            first.addTracks(
+                playlistId = playlist.playlistId,
+                selectedUris = tracks.map(MusicTrack::uri)
+            )
+            first.saveSettings(
+                alarmId = 71L,
+                draft = AlarmMusicSettingsDraft(
+                    playlistId = playlist.playlistId,
+                    playbackStrategy = AlarmMusicPlaybackStrategy.PLAYLIST_ORDER
+                )
+            )
+
+            // A new ViewModel/repository session must see the exact persisted
+            // playlist selection, not an earlier UI draft or SMART_ALL.
+            val reopened = MusicLibraryRepository(
+                database.musicLibraryDao(), database.playbackHistoryDao()
+            )
+            val saved = reopened.getSettings(71L)
+            assertEquals(playlist.playlistId, saved.playlistId)
+            assertEquals(AlarmMusicPlaybackStrategy.PLAYLIST_ORDER, saved.playbackStrategy)
+            assertEquals(3, reopened.observeItems(playlist.playlistId).first().size)
+            assertEquals(playlist.playlistId, reopened.getPlaylistsSnapshot()
+                .first { it.playlistId == playlist.playlistId }.playlistId)
+        } finally {
+            database.close()
+        }
+    }
+
+    @Test
     fun playbackHistoryKeepsTheRecordedDisplayTitleAfterLibraryRefresh() = runBlocking {
         val context: Context = ApplicationProvider.getApplicationContext<Application>()
         val database = Room.inMemoryDatabaseBuilder(context, AlarmDatabase::class.java)
