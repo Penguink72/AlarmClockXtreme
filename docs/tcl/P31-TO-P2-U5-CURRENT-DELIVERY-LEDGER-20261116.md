@@ -266,3 +266,9 @@
 - [Run 44107395773](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/44107395773) 的 targeted unit 測試 FAILED：新增的 `MusicLibraryViewModelHistoryTest.doubleCatalogMembershipTapStartsOneWriteBeforeCoroutineDispatch` 沒有觸發預期的 `setPoolMembership`。直接 job log 列出 `buildSupplementalCatalog(null, continuation {})`；測試 MockK Stub 卻以 `any()` 匹配 nullable 預設值，造成補充曲庫載入未能使用預設結果，並非已證明正式 U5 批次加入程式故障。失敗測試及斷言保留。
 - 修補提交 [`0afd3c6e8622fa17631a8702b27d52aaa009fb44`](https://github.com/Penguink72/AlarmClockXtreme/commit/0afd3c6e8622fa17631a8702b27d52aaa009fb44)：只將 `repository.buildSupplementalCatalog(any())` Stub 改為 `repository.buildSupplementalCatalog(null)`，符合實際呼叫，不刪測試。
 - 新 code SHA 0afd3c6e8622fa17631a8702b27d52aaa009fb44 已觸發 [CI Run 44108276894](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/44108276894)。本段記錄時為 pending（GitHub workflow 同分支使用 concurrency 排隊，前一 Run 的簽章 job 尚在執行）。**T2 等新 Run，禁止把前一失敗或文件提交當作正式 App 功能回歸結論**。
+
+
+## 2026-11-17 S0～S4｜偏差接縫集中修補
+
+- 詳細程式、測試、TCL Gate 與非阻斷風險：[`P31-S0-S4-DIVERGENCE-SEAM-CLOSURE-20261117.md`](P31-S0-S4-DIVERGENCE-SEAM-CLOSURE-20261117.md)。
+- 四批已提交到 PR #13，完整程式驗收以最後 Code SHA `82b63bc71619ad27e28f4f07e3a5551fa601fd49` 對應 CI 為準；早期 S0 與 S1/S2 綠燈不能代替後續修改。
