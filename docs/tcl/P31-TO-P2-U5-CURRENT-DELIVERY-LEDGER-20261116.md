@@ -200,3 +200,37 @@
 
 - `a963e32b`：U5 確認 UI 以前只列出前 5 個候選名稱，不能逐首檢視排除風險。現在使用凍結候選集的 LazyColumn 顯示所有可能的出廠音效，並允許單筆取消勾選；真正送至 ViewModel 的只有當下仍勾選的 URI，然後再與最新 metadata 取交集。不聲稱 OEM 音效辨識準確率，也不默默刪除音樂檔案。
 - **本輪最新 App SHA**：`a963e32bccd776da6479ca394c221104e984c44b`；[CI Run 44058063317](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/44058063317) 已觸發，記錄時 `pending`。前一 `0c46800c` Run 被 concurrency 取消，不能作為成功或失敗結論。只有新完整 Run 3/3 才能把本切片提升 T2。
+
+
+## 2026-11-17 夜間｜TCL「現在先做」：最新 CI 編譯修補與 G1/G2/G3 證據整理
+
+### 範圍與權限
+- 本切片限定 **A1 測試編譯最小修補、A2 G1/G2/G3 機械驗收盤點、A3 PR 狀態更新**。U1.2/U2/U5 與全面 UI 整併屬下一階段。
+- 保留 main、Room v28、既有歌曲/鬧鐘/播放歷史、Debug APK package/signing、其他 Draft PR；不合併、不強推。
+- 作者已選擇 T3 非 Code-Go 阻斷；**T3 未驗不能填 PASS**，必須保留裝置可靠性風險。
+
+### A1｜最新 CI 失敗及修補
+- 前一程式 HEAD a963e32bccd776da6479ca394c221104e984c44b 的 [Run 44058063317](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/44058063317)：APK Build SUCCESS、v160 第二 Runner 簽章 SUCCESS；Unit tests FAILURE，停在 Gradle :app:compileFdroidDebugUnitTestKotlin。直接日誌定位 AlarmEditMusicSaveConcurrencyTest.kt:15 的 Unresolved reference 'coAnswers'（錯誤的獨立 import）。
+- [Commit 204054d544f5296b868f6cd2709a3083cd603e73](https://github.com/Penguink72/AlarmClockXtreme/commit/204054d544f5296b868f6cd2709a3083cd603e73) 只移除 import io.mockk.coAnswers，保留協程 Stub DSL 與原始競態斷言，不修改正式 App。
+- 修補後 [Run 44099211724](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/44099211724) 已由確切 code SHA 的 push 觸發；本段寫入時為 in_progress，**T2 待結論**。測試尚未完整通過前不可引用舊綠燈。
+- 最近一次已通過的共同基準：[Run 44017961918](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/44017961918)，code SHA a7a7a7bf26a87b807991a73804b716c310b0da8e，3/3 SUCCESS，833/833（0 failures/errors/skipped）。**僅代表該 SHA，不代表最新的 U5-R2/U2-R2/U1.2-R2。**
+
+### A2｜G1/G2/G3 原始碼與測試矩陣
+
+| 枝 | 正式程式接點 | 既有機械測試 | 已支持／待執行的驗收 | 不能宣稱 |
+| --- | --- | --- | --- | --- |
+| G1／S1 | AlarmScheduler.scheduleSnooze / scheduleSnoozeAt、SnoozeColdStartPolicy、AlarmService 冷啟動；內部分類 EXACT/INEXACT/FAILED | AlarmSnoozeRegistrationFailureTest、SnoozeColdStartPolicyTest | OS + Room 注入失敗拒絕成功；Room 失敗取消新 PendingIntent；診斷事件失敗不可取消有效排程；錯誤 fireId 不停止新響鈴 | 亮屏 10 分鐘後手機必然再次起聲；INEXACT 等同精準響鈴 |
+| G2／B2 | ProductionTestAlarmScheduler、ProductionTestSessionContract、ProductionTestSessionStore、正式 AlarmReceiver 及 AlarmService / Media3 test mode | ProductionTestSessionContractTest、ProductionTestSessionStoreTest、ProductionTestReceiverDeliveryTest | sessionId/fireId/scheduledAtMs、TTL、重播及錯誤火次拒絕；階段不得跳過；noBackup 專用 proof 不污染正常 Room | Robolectric 代表 OEM 手機已真正起聲，或驗過聲壓與播放路由 |
+| G3／U4 | AlarmSnoozeMusicModeStore、SnoozeMusicRestoreCheckpoint/Store、AlarmMusicSession、AlarmPlaybackPlayer.positionMs、AlarmService | SnoozeMusicRuntimeStoreTest、SnoozeMusicRestoreCheckpointTest、SnoozeNextDifferentPolicyTest、AlarmPlaybackPositionTest | 各鬧鐘模式獨立；快照 fireId/TTL/失效 seek 防護；三種策略、單曲與重複 URI 游標 | 所有格式能毫秒精準 seek；裝置跨程序恢復已實證 |
+
+### A2｜TCL 機械 Gate
+1. .github/workflows/p0-android-baseline.yml 對此分支 push 觸發三個 Jobs：F-Droid debug APK 建置、完整 F-Droid unit tests、v160 second-runner persistent signing。完整 :app:testFdroidDebugUnitTest 包含上表的 G1/G2/G3 測試類別；名為 isolated P3.1-U1 的前置測試步驟只有 U1 等既有目標，**不能假稱 G1/G2/G3 專項已由那個步驟執行**。
+2. T2 PASS 必須是同一個最後 App 程式 SHA 的 Build/Unit/Signing 三個 Jobs SUCCESS，並且完整 XML 測試摘要 0 failures/errors/skipped。若止於測試原始碼編譯失敗，不得聲稱 833/833。
+3. 若新 SHA 失敗，讀取直接 job log，做局部修補並重新 CI；禁止跳過測試、降低嚴格依賴驗證、刪除失敗斷言。
+4. T3 保留 G1：「螢幕保持亮起，右滑貪睡 10 分鐘後實際再次起聲」；G2：「正式 Receiver→Service→Media3 首響及 1 分鐘再響，使用者資料未被測試污染」；G3：「同曲續播、換不同曲、單曲池及失效來源備援」。
+5. G1 EXACT／INEXACT／FAILED 已在內部枚舉／診斷 reasonCode 區分，但部分公開 scheduleSnooze API 仍只回傳 Boolean；**前端是否充分提示降級**尚需後續設計。G2 AUDIO_STARTED 是 Media3 的機械狀態，非物理可聽音量保證。
+
+### A3｜PR 更新規則
+- PR #13 說明應改用本矩陣作最新狀態；舊的「B2/U4 全部未實作」只能標記為 PR 建立時歷史敘述。G2/G3 已正式接線，T1 已有，T2 依相同 code SHA 的最新 CI 裁定，T3 未驗。
+- 不變更 main、Room v28、簽章與已保存資料；待 A Gate 完成才接續 U1.2/U2/U5 功能閉環。
+
