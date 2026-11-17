@@ -271,4 +271,4 @@
 ## 2026-11-17 S0～S4｜偏差接縫集中修補
 
 - 詳細程式、測試、TCL Gate 與非阻斷風險：[`P31-S0-S4-DIVERGENCE-SEAM-CLOSURE-20261117.md`](P31-S0-S4-DIVERGENCE-SEAM-CLOSURE-20261117.md)。
-- 四批已提交到 PR #13，完整程式驗收以最後 Code SHA `82b63bc71619ad27e28f4f07e3a5551fa601fd49` 對應 CI 為準；早期 S0 與 S1/S2 綠燈不能代替後續修改。
+- 四批與首頁啟用 ACK 後補已提交到 PR #13，最新程式 SHA `f4c79188d8925e7b5543f2ba4a1f9ff33bb41548` 應讀取 Run 44117243777 的 CI；早期 S0 與 S1/S2 綠燈不能代替後續修改。

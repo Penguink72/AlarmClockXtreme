@@ -35,12 +35,19 @@
 ## CI 和接下來的 Gate
 - S0 確認 [Run 44112496531](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/44112496531) 3/3 SUCCESS。
 - S1/S2 初版確認 [Run 44114197333](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/44114197333) 3/3 SUCCESS、838/838，0 failures/errors/skipped。
-- S3、S4 的早期 Code SHA workflow 曾因同分支排隊／後續 push 被取消；取消不是 PASS 或 FAIL。**最新完整程式 SHA `82b63bc71619ad27e28f4f07e3a5551fa601fd49`** 應由其專屬 [Actions](https://github.com/Penguink72/AlarmClockXtreme/actions) 確認 3/3，並從 unit XML 核對 0 failures/errors/skipped。本文撰寫時最終 Gate **尚未確認**，不得拿早期綠燈替代。
+- S3、S4 的早期 Code SHA workflow 曾因同分支排隊／後續 push 被取消；取消不是 PASS 或 FAIL。**最新完整程式 SHA `f4c79188d8925e7b5543f2ba4a1f9ff33bb41548`** 應由其專屬 [Actions](https://github.com/Penguink72/AlarmClockXtreme/actions) 確認 3/3，並從 unit XML 核對 0 failures/errors/skipped。本文撰寫時最終 Gate **尚未確認**，不得拿早期綠燈替代。
 - 若測試失敗，先讀直接 job 日誌，保存測試斷言並做最小修復；禁止 skip/delete 測試、忽略 compiler 錯誤或降安全檢核。
 - T3 未驗：亮屏 10 分鐘貪睡再響；多來源播放＋同曲續播/換曲；升級安裝；複製鬧鐘執行效果；跨機備份與 OEM 原廠音分類。T3 非目前作者設定的 Code-Go 阻斷，但**不是 T3 PASS**。
 
 ## 尚需保留的非阻斷風險
 - 備份匯入「多行與多層存儲」完整回滾仍未原子化；目前是失敗顯示＋局部補償，不應宣稱整機回復無缺口。
 - 原本獨立 `Save` 動作移除後，需在最終 UI 手動確認「套用草稿 → 編輯頁儲存」路徑及離開確認語意是否合理，並核對 5 秒完成任務的人類量測。
-- 既有首頁啟用／批次啟用的 `schedule()` 仍有可忽略結果的入口；此切片已建立 `scheduleWithResult`，後續應將所有顯示成功的外層入口統一改用此契約。
+- 首頁啟用／批次啟用的成功提示已在後補切片改走 `enableWithAcknowledgement()`，只有 OS 登記成功才可顯示成功；其餘舊版背景程式呼叫 `schedule()` 時仍需視個別場景評估是否需要向使用者出示結果。
 - 不能把 APK 可編譯、CI unit PASS、或 `Media3.isPlaying` 事件等同物理響鈴、音量、Bluetooth/耳機路由的 T3 證據。
+
+
+## 2026-11-17 S2/S4 後補｜首頁啟用與批次啟用也必須有真實排程 ACK
+
+- [`e554fcb4`](https://github.com/Penguink72/AlarmClockXtreme/commit/e554fcb42c2e5c5403bc44168ffd36d3b43f05dd) 改寫 `AlarmListViewModel.toggleAlarm/enableSelected`：統一呼叫 `enableWithAcknowledgement`，先暫時在 Room 標記 `enabled=true,nextTrigger=0`，再按 `scheduleWithResult` 區分 EXACT / INEXACT / SUPPRESSED / FAILED；FAILED 回復停用、不得顯示已登記；SUPPRESSED 保留啟用但下次不排程的明示。新增五個三語字串及三項測試：失敗不假成功、成功不誤停用、批次的成功與失敗數分開。
+- [`f4c79188`](https://github.com/Penguink72/AlarmClockXtreme/commit/f4c79188d8925e7b5543f2ba4a1f9ff33bb41548) 修復 S3 新測試 `BackupData` 建構漏傳必需的 nullable `settings` 參數。此前 [Run 44115858410](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/44115858410) 已能編譯正式 App，但單元測試原始碼於 `BackupManagerExportImportTest.kt:67` 編譯失敗；不應將此判定為全部 0 failures 的測試成功。
+- 修正後最新 Code SHA `f4c79188d8925e7b5543f2ba4a1f9ff33bb41548` 對應 [Run 44117243777](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/44117243777)：撰寫此節時**排隊中，T2 待驗**。只有最後版本完整單元測試及 2nd Runner 簽章工作均 PASS 才可結案。
