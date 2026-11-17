@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -351,6 +352,7 @@ private fun MusicCatalogContent(
     var reviewedSystemToneCandidates by remember {
         mutableStateOf<List<MusicPoolUiTrack>>(emptyList())
     }
+    var unselectedSystemToneUris by remember { mutableStateOf<Set<String>>(emptySet()) }
     val systemToneCandidates = remember(
         state.poolTracks, state.supplementalCatalog.trackMetadataByUri
     ) {
@@ -368,9 +370,31 @@ private fun MusicCatalogContent(
                         R.string.music_library_system_tones_preview_detail,
                         reviewedSystemToneCandidates.size
                     ))
-                    reviewedSystemToneCandidates.take(5).forEach { candidate ->
-                        Text("• " + candidate.track.displayTitle, maxLines = 1,
-                            overflow = TextOverflow.Ellipsis)
+                    // Display all frozen candidates rather than only the
+                    // first five. A false positive can be unchecked before
+                    // committing a single bulk exclusion.
+                    LazyColumn(modifier = Modifier.heightIn(max = 260.dp)) {
+                        items(
+                            reviewedSystemToneCandidates,
+                            key = { it.track.uri }
+                        ) { candidate ->
+                            val uri = candidate.track.uri
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Checkbox(
+                                    checked = uri !in unselectedSystemToneUris,
+                                    onCheckedChange = { checked ->
+                                        unselectedSystemToneUris =
+                                            if (checked) unselectedSystemToneUris - uri
+                                            else unselectedSystemToneUris + uri
+                                    }
+                                )
+                                Text(
+                                    candidate.track.displayTitle,
+                                    maxLines = 2,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                            }
+                        }
                     }
                     Text(
                         stringResource(R.string.music_library_system_tones_false_positive_warning),
@@ -380,14 +404,18 @@ private fun MusicCatalogContent(
             },
             confirmButton = {
                 TextButton(
-                    enabled = reviewedSystemToneCandidates.isNotEmpty() &&
-                        !state.loadingPool && !state.scanning,
+                    enabled = reviewedSystemToneCandidates.any {
+                        it.track.uri !in unselectedSystemToneUris
+                    } && !state.loadingPool && !state.scanning,
                     onClick = {
                         // Send the exact reviewed snapshot; the ViewModel
                         // revalidates it against the current indexed catalog
                         // and can never add an unreviewed candidate.
-                        val confirmed = reviewedSystemToneCandidates.map { it.track.uri }
+                        val confirmed = reviewedSystemToneCandidates
+                            .map { it.track.uri }
+                            .filterNot { it in unselectedSystemToneUris }
                         reviewedSystemToneCandidates = emptyList()
+                        unselectedSystemToneUris = emptySet()
                         viewModel.excludeRecognizedSystemTones(confirmed)
                     }
                 ) {
@@ -662,6 +690,7 @@ private fun MusicCatalogContent(
                     !state.loadingPool && !state.scanning,
                 onClick = {
                     reviewedSystemToneCandidates = systemToneCandidates.toList()
+                    unselectedSystemToneUris = emptySet()
                 }
             ) {
                 Text(stringResource(
