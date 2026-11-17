@@ -24,6 +24,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicLong
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -187,6 +188,7 @@ class AlarmEditViewModel @Inject constructor(
     private var loadedDraft: AlarmEditUiState? = null
     private val _uiState = MutableStateFlow(AlarmEditUiState())
     private val musicEvaluationRequest = AtomicLong(0L)
+    private val musicSaveInFlight = AtomicBoolean(false)
     val uiState: StateFlow<AlarmEditUiState> = _uiState
         .map { state ->
             state.copy(
@@ -477,30 +479,39 @@ class AlarmEditViewModel @Inject constructor(
             AlarmMusicSettingsAction.Save -> {
                 val draft = _alarmMusicSettingsState.value.draft
                 if (alarmId > 0) {
+                    // This lock is claimed before coroutine dispatch, not in
+                    // the coroutine. Double-tapping Save cannot enqueue two
+                    // asynchronous writes that complete out of order.
+                    if (!musicSaveInFlight.compareAndSet(false, true)) return
+                    _alarmMusicSettingsState.update {
+                        it.copy(saving = true, saved = false, error = null)
+                    }
                     viewModelScope.launch {
-                        _alarmMusicSettingsState.update { it.copy(saving = true, error = null) }
-                        runCatching {
+                        try {
                             musicLibraryRepository.saveSettings(alarmId, draft)
                             check(AlarmSnoozeMusicModeStore.save(
                                 context, alarmId, draft.snoozeMusicMode
                             )) { "Failed to persist per-alarm snooze mode" }
-                        }.onSuccess {
                             _alarmMusicSettingsState.update { current ->
-                                // A newer draft cannot appear saved because an
-                                // older async disk write finished after it.
                                 current.copy(
-                                    saving = false,
                                     saved = current.draft == draft,
                                     error = null
                                 )
                             }
-                        }.onFailure { error ->
-                            _alarmMusicSettingsState.update {
-                                it.copy(
-                                    saving = false,
-                                    error = error.message ?: context.getString(R.string.alarm_edit_save_error_generic)
+                        } catch (error: CancellationException) {
+                            throw error
+                        } catch (error: Exception) {
+                            _alarmMusicSettingsState.update { current ->
+                                current.copy(
+                                    saved = false,
+                                    error = error.message ?: context.getString(
+                                        R.string.alarm_edit_save_error_generic
+                                    )
                                 )
                             }
+                        } finally {
+                            musicSaveInFlight.set(false)
+                            _alarmMusicSettingsState.update { it.copy(saving = false) }
                         }
                     }
                 } else {
