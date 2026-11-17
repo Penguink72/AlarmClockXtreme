@@ -30,6 +30,13 @@ class AlarmEditDraftTest {
         assertFalse(shouldApplyMusicEvaluation(2L, 3L, older, newer))
         assertFalse(shouldApplyMusicEvaluation(3L, 3L, older, newer))
         assertFalse(shouldApplyMusicEvaluation(3L, 4L, newer, newer))
+        // A snooze-only edit does not affect which tracks are eligible; the
+        // outstanding catalog response remains valid and clears loading.
+        assertTrue(shouldApplyMusicEvaluation(
+            3L, 3L, newer,
+            newer.copy(snoozeMusicMode =
+                com.sysadmindoc.alarmclock.domain.SnoozeMusicResumeMode.RESUME_INTERRUPTED)
+        ))
     }
 
     @Test
