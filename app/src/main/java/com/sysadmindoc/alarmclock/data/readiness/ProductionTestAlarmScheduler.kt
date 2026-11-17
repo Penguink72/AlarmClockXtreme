@@ -68,7 +68,8 @@ internal object ProductionTestAlarmScheduler {
             manager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, targetAt, nextPi)
             if (!ProductionTestSessionStore.advance(
                     context, session.sessionId, session.fireId(0),
-                    ProductionTestStage.SNOOZE_REGISTERED, System.currentTimeMillis()
+                    ProductionTestStage.SNOOZE_REGISTERED, System.currentTimeMillis(),
+                    nextScheduledAtMs = targetAt
                 )) {
                 manager.cancel(nextPi)
                 false
