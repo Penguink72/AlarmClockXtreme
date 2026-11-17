@@ -256,12 +256,14 @@ class AlarmScheduler @Inject constructor(
             // maintenance window) and leave an incident record.
             val sanitizedAlarm = alarm.sanitized()
             val fireId = AlarmIncidentEvent.fireIdFor(sanitizedAlarm.id, snoozeTime)
+            var registeredInAlarmManager = false
             return try {
                 alarmManager.setAndAllowWhileIdle(
                     AlarmManager.RTC_WAKEUP,
                     snoozeTime,
                     createPendingIntent(sanitizedAlarm.id, snoozeTime, fireId)
                 )
+                registeredInAlarmManager = true
                 repository.updateNextTrigger(sanitizedAlarm.id, snoozeTime)
                 recordScheduleIncident(
                     alarmId = sanitizedAlarm.id,
@@ -272,6 +274,16 @@ class AlarmScheduler @Inject constructor(
                 )
                 true
             } catch (e: Exception) {
+                // Registration may have succeeded before Room persistence
+                // failed. Roll back ONLY that newly armed alarm; otherwise
+                // the service would report a rejected snooze while a phantom
+                // second ring remains in AlarmManager.
+                if (registeredInAlarmManager) {
+                    runCatching { cancelMainScheduledAlarm(sanitizedAlarm.id) }
+                        .onFailure { android.util.Log.e(
+                            "AlarmScheduler", "Could not roll back unpersisted snooze", it
+                        ) }
+                }
                 recordScheduleIncident(
                     alarmId = sanitizedAlarm.id,
                     fireId = fireId,
@@ -296,12 +308,14 @@ class AlarmScheduler @Inject constructor(
         if (!canScheduleExactAlarms()) {
             val sanitizedAlarm = alarm.sanitized()
             val fireId = AlarmIncidentEvent.fireIdFor(sanitizedAlarm.id, snoozeTime)
+            var registeredInAlarmManager = false
             return try {
                 alarmManager.setAndAllowWhileIdle(
                     AlarmManager.RTC_WAKEUP,
                     snoozeTime,
                     createPendingIntent(sanitizedAlarm.id, snoozeTime, fireId)
                 )
+                registeredInAlarmManager = true
                 repository.updateNextTrigger(sanitizedAlarm.id, snoozeTime)
                 recordScheduleIncident(
                     alarmId = sanitizedAlarm.id,
@@ -312,6 +326,16 @@ class AlarmScheduler @Inject constructor(
                 )
                 true
             } catch (e: Exception) {
+                // Registration may have succeeded before Room persistence
+                // failed. Roll back ONLY that newly armed alarm; otherwise
+                // the service would report a rejected snooze while a phantom
+                // second ring remains in AlarmManager.
+                if (registeredInAlarmManager) {
+                    runCatching { cancelMainScheduledAlarm(sanitizedAlarm.id) }
+                        .onFailure { android.util.Log.e(
+                            "AlarmScheduler", "Could not roll back unpersisted snooze", it
+                        ) }
+                }
                 recordScheduleIncident(
                     alarmId = sanitizedAlarm.id,
                     fireId = fireId,
