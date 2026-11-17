@@ -40,6 +40,17 @@ internal enum class AlarmRegistrationResult {
     val registered: Boolean get() = this != FAILED
 }
 
+/**
+ * Outcome of registering the next occurrence, distinct from simply saving a
+ * Room row. SUPPRESSED is an intentional no-fire state (paused, disabled,
+ * holiday or expired one-shot); FAILED means the OS registration did not hold.
+ * EXACT/INEXACT acknowledge Android API acceptance, not audible delivery.
+ */
+enum class AlarmSchedulingOutcome {
+    EXACT, INEXACT, SUPPRESSED, FAILED;
+    val registered: Boolean get() = this == EXACT || this == INEXACT
+}
+
 @Singleton
 class AlarmScheduler @Inject constructor(
     @ApplicationContext private val context: Context,
@@ -77,17 +88,26 @@ class AlarmScheduler @Inject constructor(
         requestWidgetUpdate: Boolean = true,
         notBeforeMillis: Long = 0L
     ) {
+        scheduleWithResult(alarm, requestWidgetUpdate, notBeforeMillis)
+    }
+
+    /** Use this path for user-facing Save/Enable acknowledgements. */
+    suspend fun scheduleWithResult(
+        alarm: Alarm,
+        requestWidgetUpdate: Boolean = true,
+        notBeforeMillis: Long = 0L
+    ): AlarmSchedulingOutcome {
         val sanitizedAlarm = alarm.sanitized()
         if (!sanitizedAlarm.isEnabled) {
             cancel(sanitizedAlarm.id)
-            return
+            return AlarmSchedulingOutcome.SUPPRESSED
         }
 
         if (!canScheduleExactAlarms()) {
             cancelScheduledEntries(sanitizedAlarm.id)
             repository.updateNextTrigger(sanitizedAlarm.id, 0)
             requestWidgetUpdateIfNeeded(requestWidgetUpdate)
-            return
+            return AlarmSchedulingOutcome.FAILED
         }
 
         // v1.11.6 (roadmap N6): hard-suspend all alarms when the user has
@@ -100,7 +120,7 @@ class AlarmScheduler @Inject constructor(
             cancelScheduledEntries(sanitizedAlarm.id)
             repository.updateNextTrigger(sanitizedAlarm.id, 0)
             requestWidgetUpdateIfNeeded(requestWidgetUpdate)
-            return
+            return AlarmSchedulingOutcome.SUPPRESSED
         }
 
         var triggerTime = if (notBeforeMillis > System.currentTimeMillis()) {
@@ -119,7 +139,7 @@ class AlarmScheduler @Inject constructor(
                 repository.setEnabled(sanitizedAlarm.id, enabled = false, nextTrigger = 0)
             }
             requestWidgetUpdateIfNeeded(requestWidgetUpdate)
-            return
+            return AlarmSchedulingOutcome.SUPPRESSED
         }
         val settings = currentSettings  // already fetched for the pause-state check above
 
@@ -150,7 +170,7 @@ class AlarmScheduler @Inject constructor(
                     cancelScheduledEntries(sanitizedAlarm.id)
                     repository.updateNextTrigger(sanitizedAlarm.id, 0)
                     requestWidgetUpdateIfNeeded(requestWidgetUpdate)
-                    return
+                    return AlarmSchedulingOutcome.SUPPRESSED
                 }
             } else {
                 var advanced = advanceTriggerPastHolidays(sanitizedAlarm, triggerTime, holidayZone)
@@ -178,7 +198,7 @@ class AlarmScheduler @Inject constructor(
                     cancelScheduledEntries(sanitizedAlarm.id)
                     repository.updateNextTrigger(sanitizedAlarm.id, 0)
                     requestWidgetUpdateIfNeeded(requestWidgetUpdate)
-                    return
+                    return AlarmSchedulingOutcome.SUPPRESSED
                 }
                 triggerTime = advanced
             }
@@ -218,16 +238,53 @@ class AlarmScheduler @Inject constructor(
             }
         }
 
-        // A failed API call must not leave a persistent phantom next trigger.
-        if (scheduleAlarmClock(sanitizedAlarm.id, triggerTime).registered) {
+        // A persisted row is not a scheduling acknowledgement. Report the
+        // exact registration outcome to user-facing creation/toggle paths.
+        val registration = scheduleAlarmClock(sanitizedAlarm.id, triggerTime)
+        if (!registration.registered) {
+            repository.updateNextTrigger(sanitizedAlarm.id, 0)
+            requestWidgetUpdateIfNeeded(requestWidgetUpdate)
+            return AlarmSchedulingOutcome.FAILED
+        }
+        try {
             repository.updateNextTrigger(sanitizedAlarm.id, triggerTime)
+        } catch (error: Exception) {
+            // Android accepted the PendingIntent but Room failed. Cancel the
+            // orphan OS entry instead of reporting an armed alarm after reboot.
+            runCatching { cancelMainScheduledAlarm(sanitizedAlarm.id) }
+            runCatching { repository.updateNextTrigger(sanitizedAlarm.id, 0) }
+            recordScheduleIncident(
+                sanitizedAlarm.id,
+                AlarmIncidentEvent.fireIdFor(sanitizedAlarm.id, triggerTime),
+                triggerTime,
+                AlarmIncidentEvent.STATUS_FAILED,
+                "SCHEDULE_PERSIST_FAILED_${error.javaClass.simpleName}"
+            )
+            requestWidgetUpdateIfNeeded(requestWidgetUpdate)
+            return AlarmSchedulingOutcome.FAILED
+        }
+        // Supporting workers, DND and widgets cannot revoke an accepted
+        // alarm. Log auxiliary failure without changing the registered ACK.
+        try {
             DirectBootAlarmCache.saveIfEarlier(context, sanitizedAlarm, triggerTime)
             scheduleSupportingWork(sanitizedAlarm, triggerTime)
-        } else {
-            repository.updateNextTrigger(sanitizedAlarm.id, 0)
+            requestWidgetUpdateIfNeeded(requestWidgetUpdate)
+            syncBedtimeDndRule()
+        } catch (error: Exception) {
+            android.util.Log.e("AlarmScheduler", "Auxiliary scheduling failed", error)
+            recordScheduleIncident(
+                sanitizedAlarm.id,
+                AlarmIncidentEvent.fireIdFor(sanitizedAlarm.id, triggerTime),
+                triggerTime,
+                AlarmIncidentEvent.STATUS_FAILED,
+                "SCHEDULE_AUXILIARY_FAILED_${error.javaClass.simpleName}"
+            )
         }
-        requestWidgetUpdateIfNeeded(requestWidgetUpdate)
-        syncBedtimeDndRule()
+        return when (registration) {
+            AlarmRegistrationResult.EXACT -> AlarmSchedulingOutcome.EXACT
+            AlarmRegistrationResult.INEXACT -> AlarmSchedulingOutcome.INEXACT
+            AlarmRegistrationResult.FAILED -> AlarmSchedulingOutcome.FAILED
+        }
     }
 
     /**
