@@ -166,3 +166,34 @@
 - 本輪最後 App 修改：`a7a7a7bf26a87b807991a73804b716c310b0da8e`。
 - [CI Run 44017961918](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/44017961918) 在寫入本段時尚未完整驗證；**U1.2/U2/U3/U5 = T1；T2 待本 Run 完成；T3 仍非阻斷但未驗。**
 - 未合併 PR #9～#13、未動 main、未改 Room v28 或 CI 簽章。若 Run 失敗，先根據直接日誌修補，不依舊綠燈放行。
+
+
+## 2026-11-17 傍晚｜U 系列 T2 驗收與競態收斂（本次）
+
+### 先核對遠端證據再允許施工
+- 先前最後 App 變更 `a7a7a7bf26a87b807991a73804b716c310b0da8e` 的 [CI Run 44017961918](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/44017961918) 已於 2026-11-17 04:49:16 UTC **3/3 成功**：F-Droid debug APK 建置、完整單元測試 **833/833**（files=152、failures=0、errors=0、skipped=0）與第二 Runner v160 簽章／升級相容性檢查均成功。可核定 **U1.2/U2/U3/U5 上一切片 T2 PASS**。
+- PR #13 仍 open Draft、不合併 main。T3 特定手機曲庫／五秒操作／亮屏十分鐘貪睡仍未驗，且作者既已允許其作為非阻斷驗收欄位。
+- 本切片查出新的非同步與 Undo 接縫，繼續按既有 T1→新 T2 閘門進行；**不可拿 833/833 冒充本切片**。
+
+### U5-R2：確認快照與 Undo 對後續人工操作的尊重
+- `2f56b402`：`MusicLibraryDialog` 在使用者點開「可能的系統音候選」確認視窗**當下凍結候選 URI 及顯示名稱**，不再以可動的背景 pool 狀態即時增長確認對象。點確認只提交這份凍結清單；後端再以當前索引與候選標記取交集。
+- `772b4534`：`MusicLibraryDao.restoreSystemToneExclusion()` 在同一 Room transaction 只還原**當下仍處於 EXCLUDED 且仍在索引**中的 URI；若使用者在自動排除後重新 INCLUDE，其更晚的明示選擇優先，舊 Undo 不覆寫；不重新製造索引已刪除項目的成員列。
+- `67f3423d`：手動 pool membership 變更、整來源批次加歌在**協程派送前**清空先前的 system-tone Undo 快照並同步鎖定操作，避免反覆點擊與跨操作 Undo 污染。原 catalog 修改路徑的快照失效機制仍保留。
+- `0c46800c`：DAO Robolectric 新測試：已確認排除的數首音效中，後來被手動還原的歌曲不可被舊 Undo 改回先前狀態；未另行操作的項目才還原。
+- 承認 OEM 認定只能標「疑似」，不得憑這些邏輯把系統音辨識宣稱 100% 準確。T3 尚未驗。
+
+### U2-R2：舊非同步結果及雙擊 Save
+- `9b353a78`：音樂設定的 Save 以 `AtomicBoolean` 在 coroutine 派送之前單飛鎖定；避免雙擊 Save 排入兩筆可能逆序完成的持久化。若儲存開始後草稿改變，舊成功 ACK 不能標記新草稿已儲存；Cancel、錯誤與 finally 都會解鎖。
+- `45914008`：評估查詢的比對忽略不影響曲庫計算的 `snoozeMusicMode`；否則只有貪睡模式變更時，4,935 首背景查詢晚到卻被棄掉、畫面 `loading` 永遠不清。複製播放清單的結果如果在使用者另選清單後才返回，不再把選擇蓋回較舊來源。
+- `c17434e9`：追加只變更貪睡模式的查詢比對測試。
+- `17e647e8`：新增 `AlarmEditMusicSaveConcurrencyTest`：實際 ViewModel + Robolectric + 注入未完成的 Repository save，檢查雙擊只調用一次；儲存途中改模式，新草稿不獲得舊 ACK；再度儲存才回報已保存。
+- 維持 U2 來源唯一有效狀態，不重寫舊 backup/Room 結構。此切片仍需新 CI 驗證。
+
+### U1.2-R2：大型清單批次操作防連點
+- `07d74ec3`：`MusicPlaylistsWorkspace.addSelectionToPlaylist()` 在 click callback 中先設 `busy=true` 再啟動 suspend addTracks，防止同一 frame 連點令同一批 200+ URIs 被加入兩次（原 contract 允許清單重複 URI，不能用資料庫 Unique 消除錯誤雙擊）。
+- U3 沿用已通過 T2 的 monotonic tap-to-AlarmManager-ack 計時；並**沒有**新實機五秒達標證據。
+
+### 本輪新 CI 閘門
+- 本切片最新 App SHA `0c46800c385bce79e512df0d1aa5c52fe8bb5fe6`。
+- [Actions Run 44057827720](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/44057827720) 在記錄時 `pending`；等待完整 unit tests／APK／跨 runner sign 驗證，若編譯或測試失敗須修補後以新程式 SHA 重跑。
+- 繼續保持 PR Draft、不動 main、Room v28、既有 debug 簽章以及原音樂播放歷史資料。
