@@ -74,6 +74,54 @@ class ProductionTestReceiverDeliveryTest {
             ProductionTestSessionStore.read(context, System.currentTimeMillis())?.stage)
     }
 
+    @Test fun snoozedTestReceiverRequiresTheNewFireTimestampAfterRestart() {
+        val now = System.currentTimeMillis()
+        val priorStages = listOf(
+            ProductionTestStage.RECEIVER_DELIVERED,
+            ProductionTestStage.SERVICE_ACKNOWLEDGED,
+            ProductionTestStage.AUDIO_STARTED
+        )
+        priorStages.forEach { stage ->
+            assertTrue(ProductionTestSessionStore.advance(
+                context, session.sessionId, session.fireId(), stage, now
+            ))
+        }
+        val secondAt = now + 60_000L
+        assertTrue(ProductionTestSessionStore.advance(
+            context, session.sessionId, session.fireId(),
+            ProductionTestStage.SNOOZE_REGISTERED, now,
+            nextScheduledAtMs = secondAt
+        ))
+        val proof = ProductionTestSessionStore.read(context, System.currentTimeMillis())!!
+        assertEquals(1, proof.session.nextOccurrence)
+        assertEquals(secondAt, proof.session.scheduledAtMs)
+
+        // Replaying the first PendingIntent with the second fireId must not
+        // attest a second delivery, even though the session UUID is valid.
+        AlarmReceiver().onReceive(context, diagnosticIntent(
+            fireId = proof.session.fireId(),
+            triggerAt = session.scheduledAtMs
+        ))
+        assertNull(shadowOf(context).nextStartedService)
+        assertEquals(ProductionTestStage.SNOOZE_REGISTERED,
+            ProductionTestSessionStore.read(context, System.currentTimeMillis())?.stage)
+
+        AlarmReceiver().onReceive(context, diagnosticIntent(
+            fireId = proof.session.fireId(),
+            triggerAt = secondAt
+        ))
+        assertEquals(ProductionTestStage.SNOOZE_DELIVERED,
+            ProductionTestSessionStore.read(context, System.currentTimeMillis())?.stage)
+        val started = shadowOf(context).nextStartedService
+        assertEquals(AlarmService.ACTION_START_ALARM, started?.action)
+        assertEquals(secondAt, started?.getLongExtra(
+            com.sysadmindoc.alarmclock.domain.AlarmScheduler.EXTRA_SCHEDULED_AT, 0L
+        ))
+        assertEquals(proof.session.fireId(), started?.getStringExtra(
+            com.sysadmindoc.alarmclock.domain.AlarmScheduler.EXTRA_ALARM_FIRE_ID
+        ))
+    }
+
     @Test fun wrongTimeAndOldFireAreIgnoredBeforeServiceHandoff() {
         AlarmReceiver().onReceive(context, diagnosticIntent(
             triggerAt = session.scheduledAtMs + 13_000L
