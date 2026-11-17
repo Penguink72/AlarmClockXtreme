@@ -27,6 +27,43 @@ class ProductionTestSessionContractTest {
         assertFalse(one.copy(sourceAlarmId = -42).canAccept(one.sessionId, one.fireId(), fixedTime + 60_000L))
     }
 
+    @Test fun deliveryRequiresTheExactRegisteredOccurrenceTimestamp() {
+        val first = ProductionTestSession.new(42, fixedTime)
+        val fire0 = first.fireId()
+        assertTrue(first.matchesDelivery(
+            42, first.sessionId, fire0,
+            first.scheduledAtMs, fixedTime + 60_000L
+        ))
+        assertFalse(first.matchesDelivery(
+            42, first.sessionId, fire0,
+            first.scheduledAtMs + 1L, fixedTime + 60_000L
+        ))
+        assertFalse(first.matchesDelivery(
+            43, first.sessionId, fire0,
+            first.scheduledAtMs, fixedTime + 60_000L
+        ))
+        val second = first.copy(
+            nextOccurrence = 1,
+            scheduledAtMs = fixedTime + 120_000L
+        )
+        assertTrue(second.matchesDelivery(
+            42, second.sessionId, second.fireId(),
+            second.scheduledAtMs, fixedTime + 120_000L
+        ))
+        assertFalse(second.matchesDelivery(
+            42, second.sessionId, second.fireId(),
+            first.scheduledAtMs, fixedTime + 120_000L
+        ))
+        assertFalse(second.matchesDelivery(
+            42, second.sessionId, first.fireId(),
+            second.scheduledAtMs, fixedTime + 120_000L
+        ))
+        assertFalse(second.matchesDelivery(
+            42, second.sessionId, second.fireId(),
+            second.scheduledAtMs, second.expiresAtMs
+        ))
+    }
+
     @Test fun oneSnoozeRequiresDistinctOccurrenceAndSameSession() {
         val one = ProductionTestSession.new(42, fixedTime)
         val snoozed = one.copy(nextOccurrence = 1)
