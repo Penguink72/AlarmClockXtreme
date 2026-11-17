@@ -2639,4 +2639,5 @@
     <string name="u4_snooze_next_different">Switch to another song</string>
     <string name="u4_snooze_mode_note">Applies to alarm music. If a track cannot be accessed or seeked, the alarm uses a playable fallback.</string>
     <string name="music_playlist_apply_to_alarm">Apply this playlist to the alarm</string>
+    <string name="alarmlist_quick_alarm_elapsed_ms">Alarm registered in %1$d ms (tap to schedule)</string>
 </resources>
