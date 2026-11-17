@@ -1,6 +1,7 @@
 package com.sysadmindoc.alarmclock.ui.alarmlist
 
 import com.sysadmindoc.alarmclock.R
+import android.os.SystemClock
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sysadmindoc.alarmclock.data.local.entity.AlarmEvent
@@ -28,6 +29,18 @@ import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 enum class AlarmSortOrder { TIME, MANUAL, CREATED, ENABLED_FIRST }
+
+/** Monotonic tap-to-AlarmManager-ack measurement; never a wall-clock guess. */
+data class QuickAlarmCreationMetric(
+    val elapsedMs: Long,
+    val scheduled: Boolean
+) {
+    val withinFiveSeconds: Boolean get() = scheduled && elapsedMs <= GOAL_MS
+
+    companion object {
+        const val GOAL_MS = 5_000L
+    }
+}
 
 internal fun sortAlarmsForList(alarms: List<Alarm>, sort: AlarmSortOrder): List<Alarm> {
     return when (sort) {
@@ -115,6 +128,9 @@ class AlarmListViewModel @Inject constructor(
     private val _recentHistory = MutableStateFlow<List<PlaybackHistoryEntry>>(emptyList())
     val recentHistory: StateFlow<List<PlaybackHistoryEntry>> = _recentHistory.asStateFlow()
     val replayState: StateFlow<ReplayUiState> = replayActions.state
+
+    private val _quickAlarmMetric = MutableStateFlow<QuickAlarmCreationMetric?>(null)
+    val quickAlarmMetric: StateFlow<QuickAlarmCreationMetric?> = _quickAlarmMetric.asStateFlow()
 
     init {
         observeRecentHistory()
@@ -509,8 +525,11 @@ class AlarmListViewModel @Inject constructor(
 
     fun createQuickAlarm(minutesFromNow: Int) {
         if (minutesFromNow <= 0 || !quickAlarmInFlight.compareAndSet(false, true)) return
+        val startedAt = SystemClock.elapsedRealtime()
+        _quickAlarmMetric.value = null
         viewModelScope.launch {
             var persistedId: Long? = null
+            var scheduled = false
             try {
                 val triggerTime = System.currentTimeMillis() + minutesFromNow.toLong() * 60_000L
                 val instant = Instant.ofEpochMilli(triggerTime)
@@ -531,6 +550,7 @@ class AlarmListViewModel @Inject constructor(
                 // Writing the row is not proof that AlarmManager accepted the
                 // alarm. A failed schedule must not generate a success toast.
                 if (scheduler.scheduleAt(alarm.copy(id = id), triggerTime)) {
+                    scheduled = true
                     emitFeedback(
                         context.getString(
                             R.string.alarmlist_quick_alarm_created,
@@ -551,6 +571,10 @@ class AlarmListViewModel @Inject constructor(
                 }
                 emitFeedback(context.getString(R.string.alarmlist_quick_alarm_schedule_failed))
             } finally {
+                _quickAlarmMetric.value = QuickAlarmCreationMetric(
+                    elapsedMs = (SystemClock.elapsedRealtime() - startedAt).coerceAtLeast(0L),
+                    scheduled = scheduled
+                )
                 quickAlarmInFlight.set(false)
             }
         }
