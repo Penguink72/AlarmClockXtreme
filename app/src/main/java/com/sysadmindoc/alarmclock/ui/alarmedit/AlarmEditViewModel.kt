@@ -15,6 +15,7 @@ import com.sysadmindoc.alarmclock.domain.AlarmSnoozeMusicModeStore
 import com.sysadmindoc.alarmclock.domain.NextAlarmCalculator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -23,6 +24,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.util.concurrent.atomic.AtomicLong
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalTime
@@ -147,6 +149,24 @@ data class ForecastEntry(
     val skippedByVacation: Boolean = false
 )
 
+/**
+ * U2 single effective source authority: selecting a system/custom ringtone
+ * disables music-library playback; selecting any playlist enables it.
+ * Retain the inactive source preferences for later manual switching.
+ */
+internal fun AlarmEditUiState.withSelectedRingtone(uri: String): AlarmEditUiState =
+    copy(ringtoneUri = uri, randomMusicEnabled = false)
+
+internal fun AlarmEditUiState.withSelectedMusicSource(): AlarmEditUiState =
+    copy(randomMusicEnabled = true)
+
+internal fun shouldApplyMusicEvaluation(
+    requestId: Long,
+    latestRequestId: Long,
+    requested: AlarmMusicSettingsDraft,
+    current: AlarmMusicSettingsDraft
+): Boolean = requestId == latestRequestId && requested == current
+
 @HiltViewModel
 class AlarmEditViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
@@ -166,6 +186,7 @@ class AlarmEditViewModel @Inject constructor(
 
     private var loadedDraft: AlarmEditUiState? = null
     private val _uiState = MutableStateFlow(AlarmEditUiState())
+    private val musicEvaluationRequest = AtomicLong(0L)
     val uiState: StateFlow<AlarmEditUiState> = _uiState
         .map { state ->
             state.copy(
@@ -298,13 +319,19 @@ class AlarmEditViewModel @Inject constructor(
     }
 
     fun refreshMusicSettingsEvaluation() {
+        // Capture the draft before dispatch. A previous 4,935-track query may
+        // complete after a newer playlist choice, and must never roll back
+        // that selection or show a stale playable count as current.
+        val requestId = musicEvaluationRequest.incrementAndGet()
+        val requestedDraft = _alarmMusicSettingsState.value.draft
         viewModelScope.launch {
-            runCatching {
-                val currentDraft = _alarmMusicSettingsState.value.draft
-                val evaluated = musicLibraryRepository.evaluateAlarmMusicDraft(currentDraft)
-                _alarmMusicSettingsState.update { state ->
-                    state.copy(
-                        draft = currentDraft,
+            try {
+                val evaluated = musicLibraryRepository.evaluateAlarmMusicDraft(requestedDraft)
+                _alarmMusicSettingsState.update { current ->
+                    if (!shouldApplyMusicEvaluation(
+                            requestId, musicEvaluationRequest.get(),
+                            requestedDraft, current.draft
+                        )) current else current.copy(
                         playlists = evaluated.playlists,
                         artists = evaluated.artists,
                         folders = evaluated.folders,
@@ -315,11 +342,18 @@ class AlarmEditViewModel @Inject constructor(
                         integrationAvailable = true
                     )
                 }
-            }.onFailure { error ->
-                _alarmMusicSettingsState.update { state ->
-                    state.copy(
+            } catch (error: CancellationException) {
+                throw error
+            } catch (error: Exception) {
+                _alarmMusicSettingsState.update { current ->
+                    if (!shouldApplyMusicEvaluation(
+                            requestId, musicEvaluationRequest.get(),
+                            requestedDraft, current.draft
+                        )) current else current.copy(
                         loading = false,
-                        error = error.message ?: context.getString(R.string.alarm_edit_save_error_generic)
+                        error = error.message ?: context.getString(
+                            R.string.alarm_edit_save_error_generic
+                        )
                     )
                 }
             }
@@ -329,6 +363,7 @@ class AlarmEditViewModel @Inject constructor(
     fun onAlarmMusicSettingsAction(action: AlarmMusicSettingsAction) {
         when (action) {
             is AlarmMusicSettingsAction.SelectPlaylist -> {
+                _uiState.value = _uiState.value.withSelectedMusicSource()
                 val nextStrategy = if (
                     action.playlistId == null &&
                     _alarmMusicSettingsState.value.draft.playbackStrategy ==
@@ -450,8 +485,14 @@ class AlarmEditViewModel @Inject constructor(
                                 context, alarmId, draft.snoozeMusicMode
                             )) { "Failed to persist per-alarm snooze mode" }
                         }.onSuccess {
-                            _alarmMusicSettingsState.update {
-                                it.copy(saving = false, saved = true, error = null)
+                            _alarmMusicSettingsState.update { current ->
+                                // A newer draft cannot appear saved because an
+                                // older async disk write finished after it.
+                                current.copy(
+                                    saving = false,
+                                    saved = current.draft == draft,
+                                    error = null
+                                )
                             }
                         }.onFailure { error ->
                             _alarmMusicSettingsState.update {
@@ -567,7 +608,7 @@ class AlarmEditViewModel @Inject constructor(
     }
 
     fun updateRingtoneUri(uri: String) {
-        _uiState.value = _uiState.value.copy(ringtoneUri = uri)
+        _uiState.value = _uiState.value.withSelectedRingtone(uri)
     }
 
     fun updateRandomMusicEnabled(enabled: Boolean) {
