@@ -35,7 +35,7 @@
 ## CI 和接下來的 Gate
 - S0 確認 [Run 44112496531](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/44112496531) 3/3 SUCCESS。
 - S1/S2 初版確認 [Run 44114197333](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/44114197333) 3/3 SUCCESS、838/838，0 failures/errors/skipped。
-- S3、S4 的早期 Code SHA workflow 曾因同分支排隊／後續 push 被取消；取消不是 PASS 或 FAIL。**最新完整程式 SHA `f4c79188d8925e7b5543f2ba4a1f9ff33bb41548`** 應由其專屬 [Actions](https://github.com/Penguink72/AlarmClockXtreme/actions) 確認 3/3，並從 unit XML 核對 0 failures/errors/skipped。本文撰寫時最終 Gate **尚未確認**，不得拿早期綠燈替代。
+- S3、S4 的早期 Code SHA workflow 曾因同分支排隊／後續 push 被取消；取消不是 PASS 或 FAIL。**最新完整程式 SHA `2baaf0d5a287d3cea249eabbbe1609d244cee1e1`** 應由其專屬 [Actions](https://github.com/Penguink72/AlarmClockXtreme/actions) 確認 3/3，並從 unit XML 核對 0 failures/errors/skipped。本文撰寫時最終 Gate **尚未確認**，不得拿早期綠燈替代。
 - 若測試失敗，先讀直接 job 日誌，保存測試斷言並做最小修復；禁止 skip/delete 測試、忽略 compiler 錯誤或降安全檢核。
 - T3 未驗：亮屏 10 分鐘貪睡再響；多來源播放＋同曲續播/換曲；升級安裝；複製鬧鐘執行效果；跨機備份與 OEM 原廠音分類。T3 非目前作者設定的 Code-Go 阻斷，但**不是 T3 PASS**。
 
@@ -51,3 +51,9 @@
 - [`e554fcb4`](https://github.com/Penguink72/AlarmClockXtreme/commit/e554fcb42c2e5c5403bc44168ffd36d3b43f05dd) 改寫 `AlarmListViewModel.toggleAlarm/enableSelected`：統一呼叫 `enableWithAcknowledgement`，先暫時在 Room 標記 `enabled=true,nextTrigger=0`，再按 `scheduleWithResult` 區分 EXACT / INEXACT / SUPPRESSED / FAILED；FAILED 回復停用、不得顯示已登記；SUPPRESSED 保留啟用但下次不排程的明示。新增五個三語字串及三項測試：失敗不假成功、成功不誤停用、批次的成功與失敗數分開。
 - [`f4c79188`](https://github.com/Penguink72/AlarmClockXtreme/commit/f4c79188d8925e7b5543f2ba4a1f9ff33bb41548) 修復 S3 新測試 `BackupData` 建構漏傳必需的 nullable `settings` 參數。此前 [Run 44115858410](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/44115858410) 已能編譯正式 App，但單元測試原始碼於 `BackupManagerExportImportTest.kt:67` 編譯失敗；不應將此判定為全部 0 failures 的測試成功。
 - 修正後最新 Code SHA `f4c79188d8925e7b5543f2ba4a1f9ff33bb41548` 對應 [Run 44117243777](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/44117243777)：撰寫此節時**排隊中，T2 待驗**。只有最後版本完整單元測試及 2nd Runner 簽章工作均 PASS 才可結案。
+
+
+### 最終版 T2 測試匯入修補
+- [Run 44117243777](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/44117243777)：同一批正式 App 編譯階段沒有先前所見的備份參數錯誤，但 **Unit Test Kotlin source compile FAILED**，直接定位 `AlarmListQuickAlarmTest.kt:21`：`Unresolved reference 'firstArg'`。`firstArg<Alarm>()` 本來就是 MockK `coAnswers` 接收器方法，測試誤加獨立 `import io.mockk.firstArg`。
+- [`2baaf0d5`](https://github.com/Penguink72/AlarmClockXtreme/commit/2baaf0d5a287d3cea249eabbbe1609d244cee1e1)：**僅刪除錯誤 import，保留三項首頁啟用 ACK 測試及所有斷言**；未改動正式 App。
+- 最新程式 SHA `2baaf0d5a287d3cea249eabbbe1609d244cee1e1`，對應 [CI Run 44118596533](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/44118596533)。**此段寫入時仍排隊，完整 T2 不可宣稱 PASS。** 同分支舊的失敗 Run 會先完成自己的 Build／簽章，workflow `cancel-in-progress: false` 使後續 CI 依序執行。
