@@ -863,6 +863,38 @@ class MusicLibraryDatabaseTest {
     }
 
     @Test
+    fun systemToneUndoCannotOverwriteManualRestoresMadeAfterExclusion() = runBlocking {
+        val context = ApplicationProvider.getApplicationContext<Application>()
+        val database = Room.inMemoryDatabaseBuilder(context, AlarmDatabase::class.java)
+            .allowMainThreadQueries().build()
+        try {
+            val repository = MusicLibraryRepository(
+                database.musicLibraryDao(), database.playbackHistoryDao()
+            )
+            val tracks = (1..3).map { index ->
+                MusicTrack("content://media/tone-manual/$index", "Tone $index", "MEDIA_STORE")
+            }
+            repository.replaceTracks(tracks)
+            repository.setPoolMembership(listOf(tracks[0].uri), included = true)
+            val before = repository.excludeSystemToneCandidates(tracks.map { it.uri })
+            assertEquals(3, before.size)
+            // Manual actions happen after the bulk exclusion. They must be
+            // authoritative even when an old Undo callback arrives later.
+            repository.setPoolMembership(
+                listOf(tracks[0].uri, tracks[1].uri), included = true
+            )
+            repository.undoSystemToneCandidateExclusion(before)
+            val membership = database.musicLibraryDao().getAllPoolEntries()
+                .associate { it.uri to it.state }
+            assertEquals(MusicPoolEntry.INCLUDED, membership[tracks[0].uri])
+            assertEquals(MusicPoolEntry.INCLUDED, membership[tracks[1].uri])
+            assertFalse(membership.containsKey(tracks[2].uri))
+        } finally {
+            database.close()
+        }
+    }
+
+    @Test
     fun playlistSelectionSaveAndReadbackSurviveRepositoryRecreation() = runBlocking {
         val context = ApplicationProvider.getApplicationContext<Application>()
         val database = Room.inMemoryDatabaseBuilder(context, AlarmDatabase::class.java)
