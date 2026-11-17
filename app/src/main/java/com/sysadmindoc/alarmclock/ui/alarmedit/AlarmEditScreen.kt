@@ -409,7 +409,17 @@ fun AlarmEditScreen(
                 showMusicLibraryDialog = false
                 viewModel.refreshMusicSettingsEvaluation()
             },
-            initialShowPlaylists = openPlaylistsOnLibraryLaunch
+            initialShowPlaylists = openPlaylistsOnLibraryLaunch,
+            onPlaylistChosenForAlarm = { playlistId ->
+                // Shared canonical editor action: the playlist selection also
+                // activates music as the effective sound source. Open the
+                // settings screen to make the ensuing Save explicit.
+                viewModel.onAlarmMusicSettingsAction(
+                    AlarmMusicSettingsAction.SelectPlaylist(playlistId)
+                )
+                showMusicLibraryDialog = false
+                showAlarmMusicSettings = true
+            }
         )
     }
     if (showAlarmMusicSettings) {
