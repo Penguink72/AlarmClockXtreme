@@ -92,7 +92,9 @@ fun MusicLibraryDialog(
     previewController: MusicCatalogPreviewController? = viewModel.previewController,
     playlistRepository: MusicPlaylistRepository? = viewModel.playlistRepository,
     initialShowHistory: Boolean = false,
-    initialShowPlaylists: Boolean = false
+    initialShowPlaylists: Boolean = false,
+    /** Editor-only callback; other Music Center entry points remain read/write standalone. */
+    onPlaylistChosenForAlarm: ((String) -> Unit)? = null
 ) {
     val context = LocalContext.current
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -270,6 +272,7 @@ fun MusicLibraryDialog(
                                 viewModel.clearCatalogSelection()
                                 workspaceName = MusicLibraryWorkspace.MEDIA_LIBRARY.name
                             },
+                            onApplyToAlarm = onPlaylistChosenForAlarm,
                             modifier = Modifier.padding(padding)
                         )
                         browseMode == MusicLibraryBrowseMode.FOLDERS -> MusicFoldersContent(
