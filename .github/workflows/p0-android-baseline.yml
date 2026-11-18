@@ -161,7 +161,7 @@ jobs:
             cp "${SCHEMA_DIR}/28.json" /tmp/committed-28.json
             rm -f "${SCHEMA_DIR}/28.json"
           fi
-          bash ./gradlew --no-daemon --stacktrace :app:verifyLocalizedPrimaryScreens :app:assembleFdroidDebug -PciVersionCode=159
+          bash ./gradlew --no-daemon --stacktrace :app:verifyLocalizedPrimaryScreens :app:assembleFdroidDebug -PciVersionCode=161
           git diff --exit-code -- "${SCHEMA_DIR}/25.json" "${SCHEMA_DIR}/26.json" "${SCHEMA_DIR}/27.json"
           if [[ ! -s "${SCHEMA_DIR}/28.json" ]]; then
             echo "ERROR: KSP did not generate ${SCHEMA_DIR}/28.json"
@@ -193,8 +193,8 @@ jobs:
             echo "ERROR: Unexpected package name: $PKG_NAME"
             exit 1
           fi
-          if [[ "$VERSION_CODE" != "159" ]]; then
-            echo "ERROR: Expected P3.1-next versionCode=159 (must exceed installed L1 v158), got: $VERSION_CODE"
+          if [[ "$VERSION_CODE" != "161" ]]; then
+            echo "ERROR: Expected P3.1-next versionCode=161 (must exceed installed L1 v158), got: $VERSION_CODE"
             exit 1
           fi
           APKSIGNER_OUT="$("${BUILD_TOOLS_DIR}/apksigner" verify --verbose --print-certs "$APK_PATH")"
@@ -308,7 +308,7 @@ jobs:
           retention-days: 14
 
   verify-persistent-signing-second-runner:
-    name: Verify persistent signing on 2nd runner (v160 upgrade APK)
+    name: Verify persistent signing on 2nd runner (v162 upgrade APK)
     needs: build-fdroid-debug-apk
     runs-on: ubuntu-24.04
     timeout-minutes: 40
@@ -409,8 +409,8 @@ jobs:
           chmod 600 "${DEST_KEYSTORE}"
           echo "CI_DEBUG_KEYSTORE_PATH=${DEST_KEYSTORE}" >> "$GITHUB_ENV"
 
-      - name: Build 2nd F-Droid debug APK (versionCode=160) on 2nd runner
-        run: bash ./gradlew --no-daemon --stacktrace :app:assembleFdroidDebug -PciVersionCode=160
+      - name: Build 2nd F-Droid debug APK (versionCode=162) on 2nd runner
+        run: bash ./gradlew --no-daemon --stacktrace :app:assembleFdroidDebug -PciVersionCode=162
 
       - name: Compare signing certificates and package metadata between Runner 1 and Runner 2
         run: |
@@ -435,8 +435,8 @@ jobs:
             echo "ERROR: Package mismatch ($PKG1 vs $PKG2)"
             exit 1
           fi
-          if [[ "$VC1" != "159" || "$VC2" != "160" ]]; then
-            echo "ERROR: Unexpected versionCodes ($VC1 -> $VC2), expected (159 -> 160)"
+          if [[ "$VC1" != "161" || "$VC2" != "162" ]]; then
+            echo "ERROR: Unexpected versionCodes ($VC1 -> $VC2), expected (161 -> 162)"
             exit 1
           fi
           if [[ -z "$CERT1_COLON" || "$CERT1_COLON" != "$CERT2_COLON" ]]; then
@@ -454,26 +454,26 @@ jobs:
             echo "runner1_signing_cert_sha256=${CERT1_COLON}"
             echo "runner2_signing_cert_sha256=${CERT2_COLON}"
             echo "signing_cert_match=true"
-          } | tee app/build/outputs/apk/fdroid/debug/apk-v160-metadata.txt
+          } | tee app/build/outputs/apk/fdroid/debug/apk-v162-metadata.txt
           {
             echo "## B7 Cross-Runner Signing Consistency Verification"
             echo "- Runner 1 APK (\`versionCode=${VC1}\`) Cert SHA-256: \`${CERT1_COLON}\`"
             echo "- Runner 2 APK (\`versionCode=${VC2}\`) Cert SHA-256: \`${CERT2_COLON}\`"
             echo "- Certificate Match: **EXACT MATCH (PASS)**"
-            echo "- Upgrade APK SHA-256 (\`v160\`): \`${APK2_SHA256}\`"
+            echo "- Upgrade APK SHA-256 (\`v162\`): \`${APK2_SHA256}\`"
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Clean up temporary keystore on 2nd runner
         if: always()
         run: rm -f "${RUNNER_TEMP}/ci-debug-raw.p12" "${RUNNER_TEMP}/ci-debug-signing.p12"
 
-      - name: Upload 2nd runner upgrade APK (versionCode=160)
+      - name: Upload 2nd runner upgrade APK (versionCode=162)
         uses: actions/upload-artifact@v4
         with:
-          name: p0-fdroid-debug-apk-v160-upgrade-test
+          name: p0-fdroid-debug-apk-v162-upgrade-test
           path: |
             app/build/outputs/apk/fdroid/debug/app-fdroid-debug.apk
-            app/build/outputs/apk/fdroid/debug/apk-v160-metadata.txt
+            app/build/outputs/apk/fdroid/debug/apk-v162-metadata.txt
           if-no-files-found: error
           retention-days: 14
 
