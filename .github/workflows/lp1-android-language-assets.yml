@@ -1,0 +1,21 @@
+name: LP1 Node-only Android language asset parity
+on:
+  push:
+    branches:
+      - feature/p31-lp1-android-offline-pack-lab-20261118
+    paths:
+      - "experiments/lp0-200/**"
+      - "app/src/debug/**"
+      - ".github/workflows/lp1-android-language-assets.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  node-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+      - run: node experiments/lp0-200/verify-resources.test.js
+      - run: node experiments/lp0-200/probe-core.test.js
+      - run: node experiments/lp0-200/check-android-assets.test.js
