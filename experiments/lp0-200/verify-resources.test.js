@@ -47,7 +47,7 @@ for(const item of catalogue.entries) {
 for(const [locale,dir]of Object.entries(locales)){
   const pack = JSON.parse(fs.readFileSync(path.join(here,"packs",locale+".json"),"utf8"));
   const actual = stringsFromXml(dir);
-  const count=core.validatePack(pack,catalogue);
+  const count=Object.keys(core.validatePack(pack,catalogue).translations).length;
   assert.equal(count,locale==="en"?200:155,locale+" coverage drift");
   for(const [key,value]of Object.entries(pack.translations)){
     assert.equal(value,actual.get(key),locale+" value drift: "+key);
