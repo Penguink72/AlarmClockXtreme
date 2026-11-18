@@ -11,7 +11,7 @@ Contents:
 - packs/ja.json: 155/200 existing Japanese translations.
 - The 45 missing translations per localized pack deliberately use English fallback. Never pretend an untranslated string is fully localized.
 - web/index.html, web/catalog-data.js, web/probe.js: offline, self-contained interactive text preview, edit, pack import/export, new locale, single/dual mode.
-- verify.py: offline stdlib test suite with source matching, format checks, explicit fallback and negative tests.
+- verify-resources.test.js: Node.js built-in-only resource fidelity test (no dependencies); probe-core.test.js tests pack contract, fallback and invalid imports.
 
 ## Running
 
@@ -24,7 +24,7 @@ Contents:
 
 From repository root, run:
 
-    python3 experiments/lp0-200/verify.py
+    node experiments/lp0-200/verify-resources.test.js
     node --check experiments/lp0-200/web/probe.js
     node experiments/lp0-200/probe-core.test.js
 

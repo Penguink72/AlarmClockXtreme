@@ -15,8 +15,8 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
-      - name: Verify 200 source strings and language packs
-        run: python3 experiments/lp0-200/verify.py
+      - name: Verify 200 source strings and language packs (Node.js only)
+        run: node experiments/lp0-200/verify-resources.test.js
       - name: Validate browser prototype JavaScript
         run: |
           node --check experiments/lp0-200/web/probe-core.js
