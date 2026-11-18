@@ -14,37 +14,14 @@
   const sections = {alarm:"鬧鐘與響鈴",snooze:"貪睡",music:"音樂與鈴聲",history:"播放歷史",settings:"設定與導覽",diagnostics:"診斷及權限"};
   let selectedKey = entries[0].key;
   let primary = "zh-TW", secondary = "ja", mode = "dual";
-  const placeholderRegex = /%(?:(?:\d+\$)?[-+# 0,(]*\d*(?:\.\d+)?[bBhHsScCdoxXeEfgGaAtT%])/g;
-  const placeholders = (text) => (String(text).match(placeholderRegex) || []).filter((x) => x !== "%%").sort();
-  const same = (a,b) => JSON.stringify(a) === JSON.stringify(b);
-  const supportedLocale = (name) => /^[a-z]{2,3}(?:-[A-Za-z0-9]{2,8}){0,3}$/.test(name) && name.length <= 30;
-  function validatePack(candidate) {
-    if (!candidate || typeof candidate !== "object" || Array.isArray(candidate)) throw new Error("根目錄必須是 JSON 物件");
-    if (candidate.format !== "acx-language-pack-probe/1" || candidate.catalogRevision !== catalog.revision) throw new Error("語言包格式或目錄版本不相容");
-    if (typeof candidate.locale !== "string" || !supportedLocale(candidate.locale)) throw new Error("語言標籤必須是 BCP47 格式，例如 ko-KR");
-    if (!candidate.translations || typeof candidate.translations !== "object" || Array.isArray(candidate.translations)) throw new Error("translations 必須是 Key 到翻譯的物件");
-    const strings = Object.entries(candidate.translations);
-    if (strings.length > entries.length) throw new Error("翻譯數量超出字串目錄");
-    const clean = Object.create(null);
-    for (const [key, value] of strings) {
-      if (!known.has(key)) throw new Error("未知 Key：" + key);
-      if (typeof value !== "string" || value.length > 4096) throw new Error("翻譯必須是 4096 字元內的字串：" + key);
-      if (value.trim() === "") continue;
-      if (!same(placeholders(value), known.get(key).placeholders)) throw new Error("格式參數不匹配：" + key);
-      clean[key] = value;
-    }
-    return {format:"acx-language-pack-probe/1", locale:candidate.locale, catalogRevision:catalog.revision,
-      packVersion:typeof candidate.packVersion === "string" ? candidate.packVersion : "user-edit",
-      builtInSource:false, translations:clean};
-  }
-  function translate(locale, key) {
-    const own = packs[locale] && packs[locale].translations[key];
-    if (typeof own === "string" && own.trim()) return {value:own, fallback:false};
-    return {value:known.get(key).source, fallback:locale !== "en"};
-  }
-  function completion(locale) {
-    return Object.keys(packs[locale].translations).filter((key) => known.has(key) && packs[locale].translations[key].trim()).length;
-  }
+  const core = window.ACX_LP0_CORE;
+  if (!core) throw new Error("Missing pure LP0 locale pack core");
+  const placeholders = core.placeholders;
+  const same = core.same;
+  const supportedLocale = core.supportedLocale;
+  const validatePack = (candidate) => core.validatePack(candidate, catalog);
+  const translate = (locale, key) => core.translate(packs, known, locale, key);
+  const completion = (locale) => core.completion(packs, known, locale);
   function setMessage(msg, className) { $("message").textContent = msg; $("message").className = className || "muted"; }
   function refreshLocales() {
     const all = Object.keys(packs);
@@ -118,24 +95,29 @@
   $("category").addEventListener("change", renderList);
   $("search").addEventListener("input", renderList);
   $("missingOnly").addEventListener("change", renderList);
-  $("translation").addEventListener("input", (event) => {
-    const t = event.target.value;
+  let isComposing = false;
+  function applyTranslation(text) {
     const entry = known.get(selectedKey);
-    const ok = same(placeholders(t),entry.placeholders);
-    if (t.trim() && !ok) {
-      $("translationStatus").textContent = "格式參數不符合原文，暫不套用：" + entry.placeholders.join(", ");
+    const validPlaceholders = same(placeholders(text), entry.placeholders);
+    if (text.trim() && !validPlaceholders) {
+      $("translationStatus").textContent = "格式參數不符合原文，尚未寫入：" + entry.placeholders.join(", ");
       $("translationStatus").className = "error";
       return;
     }
-    $("translationStatus").className = "muted";
-    if (t.trim()) packs[primary].translations[selectedKey]=t;
+    if (text.trim()) packs[primary].translations[selectedKey] = text;
     else delete packs[primary].translations[selectedKey];
-    refreshLocales(); renderPreview(); renderList();
-    // Avoid replacing text area mid-input so cursor and IME composition remain stable.
-    $("translation").value = t;
-    $("translation").focus();
-    $("translation").setSelectionRange(t.length,t.length);
-  });
+    $("translationStatus").className = "muted";
+    const a = translate(primary, selectedKey), b = translate(secondary, selectedKey);
+    $("translationStatus").textContent = a.fallback ? "主要語言缺漏：使用英文備援。" : "主要語言已提供翻譯。";
+    $("previewPrimary").textContent = a.value;
+    $("previewSecondary").textContent = b.value;
+    // Preserve composition and caret position: never replace an active textarea on input.
+    refreshLocales();
+    renderList();
+  }
+  $("translation").addEventListener("compositionstart", () => { isComposing = true; });
+  $("translation").addEventListener("compositionend", (e) => { isComposing = false; applyTranslation(e.target.value); });
+  $("translation").addEventListener("input", (e) => { if (!isComposing) applyTranslation(e.target.value); });
   $("importButton").addEventListener("click", () => $("filePicker").click());
   $("filePicker").addEventListener("change", async (event) => {
     const file = event.target.files && event.target.files[0]; event.target.value = "";

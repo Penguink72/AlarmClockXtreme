@@ -26,6 +26,7 @@ From repository root, run:
 
     python3 experiments/lp0-200/verify.py
     node --check experiments/lp0-200/web/probe.js
+    node experiments/lp0-200/probe-core.test.js
 
 Imported files must be JSON smaller than 256 KiB and contain data only. The browser prototype does not send data to a network, and editing is ephemeral until explicit export.
 
