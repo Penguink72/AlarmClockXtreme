@@ -922,4 +922,7 @@
     <string name="alarmlist_enable_suppressed">鬧鐘已啟用，但因暫停或略過未排程。</string>
     <string name="alarmlist_enable_failed">未能登記鬧鐘，請檢查精準鬧鐘權限。</string>
     <string name="alarmlist_batch_enable_result">已登記 %1$d 個、暫不排程 %2$d 個、失敗 %3$d 個</string>
+    <string name="settings_lp1_lab_label">LP1 語言包實驗室</string>
+    <string name="settings_lp1_lab_open">開啟離線語言包實驗</string>
+    <string name="settings_lp1_lab_description">匯入、預覽及編輯 200 個字串，不影響正式鬧鐘介面。</string>
 </resources>

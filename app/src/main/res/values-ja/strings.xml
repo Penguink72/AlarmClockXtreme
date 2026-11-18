@@ -922,4 +922,7 @@
     <string name="alarmlist_enable_suppressed">アラームは有効ですが、一時停止またはスキップにより未登録です。</string>
     <string name="alarmlist_enable_failed">アラームを登録できませんでした。権限を確認してください。</string>
     <string name="alarmlist_batch_enable_result">登録 %1$d 件・保留 %2$d 件・失敗 %3$d 件</string>
+    <string name="settings_lp1_lab_label">LP1 言語パック実験室</string>
+    <string name="settings_lp1_lab_open">オフライン言語パック実験を開く</string>
+    <string name="settings_lp1_lab_description">200 件の文字列を読み込み・プレビュー・編集します。通常のアラーム画面には影響しません。</string>
 </resources>
