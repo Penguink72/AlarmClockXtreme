@@ -2653,4 +2653,7 @@
     <string name="alarmlist_enable_suppressed">Alarm enabled but not scheduled (paused or skipped).</string>
     <string name="alarmlist_enable_failed">Alarm could not be registered. Check alarm permissions.</string>
     <string name="alarmlist_batch_enable_result">%1$d registered, %2$d suppressed, %3$d failed</string>
+    <string name="settings_lp1_lab_label">LP1 Language Pack Lab</string>
+    <string name="settings_lp1_lab_open">Open offline language pack experiment</string>
+    <string name="settings_lp1_lab_description">Import, preview and edit 200 sample strings; does not change the active alarm interface.</string>
 </resources>
