@@ -1,0 +1,34 @@
+"use strict";
+const assert = require("node:assert/strict");
+const fs = require("node:fs");
+const path = require("node:path");
+const core = require("./web/probe-core.js");
+const here = __dirname;
+const cat = JSON.parse(fs.readFileSync(path.join(here,"catalog.json"),"utf8"));
+const packs = Object.fromEntries(["en","zh-TW","ja"].map(locale=>[locale,JSON.parse(fs.readFileSync(path.join(here,"packs",locale+".json"),"utf8"))]));
+const index = new Map(cat.entries.map(e=>[e.key,e]));
+function expectReject(candidate,label){
+  assert.throws(()=>core.validatePack(candidate,cat),undefined,label);
+}
+assert.equal(cat.entries.length,200);
+assert.equal(core.completion(packs,index,"en"),200);
+assert.equal(core.completion(packs,index,"zh-TW"),155);
+assert.equal(core.completion(packs,index,"ja"),155);
+const missing = cat.entries.find(e=>!(e.key in packs["zh-TW"].translations));
+const translated = cat.entries.find(e=>e.placeholders.length===0);
+assert.equal(core.translate(packs,index,"zh-TW",missing.key).value,missing.source);
+assert.equal(core.translate(packs,index,"zh-TW",missing.key).fallback,true);
+const imported=core.validatePack({format:"acx-language-pack-probe/1",catalogRevision:cat.revision,locale:"ko-KR",translations:{[translated.key]:"한국어 시험 문구"}},cat);
+packs["ko-KR"]=imported;
+assert.equal(core.translate(packs,index,"ko-KR",translated.key).value,"한국어 시험 문구");
+assert.equal(core.translate(packs,index,"ko-KR",translated.key).fallback,false);
+assert.equal(core.translate(packs,index,"ko-KR",missing.key).fallback,true);
+const secondary=core.translate(packs,index,"ja",translated.key).value;
+assert.equal(secondary,packs.ja.translations[translated.key]||translated.source);
+assert.equal(core.completion(packs,index,"ko-KR"),1);
+expectReject({format:"acx-language-pack-probe/1",catalogRevision:"wrong",locale:"ko-KR",translations:{}},"wrong revision");
+expectReject({format:"acx-language-pack-probe/1",catalogRevision:cat.revision,locale:"ko-KR",translations:{evil:"unknown"}},"unknown key");
+const withParam=cat.entries.find(e=>e.placeholders.length>0);
+expectReject({format:"acx-language-pack-probe/1",catalogRevision:cat.revision,locale:"ko-KR",translations:{[withParam.key]:"No argument included"}},"missing format parameter");
+assert.equal(core.completion(packs,index,"ko-KR"),1,"a failed import must not mutate current pack");
+console.log("LP0_NODE_TESTS PASS 200 keys, dynamic locale, bilingual lookup, fallback, wrong revision/key/placeholder rejection");

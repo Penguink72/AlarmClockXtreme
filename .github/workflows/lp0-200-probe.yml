@@ -1,0 +1,41 @@
+name: LP0-200 localization probe
+on:
+  push:
+    branches:
+      - feature/p31-lp0-200-language-pack-probe-20261118
+    paths:
+      - "experiments/lp0-200/**"
+      - ".github/workflows/lp0-200-probe.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  offline-language-pack-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify 200 source strings and language packs (Node.js only)
+        run: node experiments/lp0-200/verify-resources.test.js
+      - name: Validate browser prototype JavaScript
+        run: |
+          node --check experiments/lp0-200/web/probe-core.js
+          node --check experiments/lp0-200/web/probe.js
+          node experiments/lp0-200/probe-core.test.js
+      - name: Confirm experiment has no production Android changes
+        run: |
+          git diff --name-only HEAD^ HEAD | tee /tmp/lp0-changes.txt
+          if grep -E '^(app/|wear/|gradle/|settings\.gradle\.kts|build\.gradle\.kts)' /tmp/lp0-changes.txt; then
+            echo 'LP0 cannot alter production Android runtime'
+            exit 1
+          fi
+      - name: Package downloadable offline experiment
+        uses: actions/upload-artifact@v4
+        with:
+          name: acx-lp0-200-offline-demo
+          path: |
+            experiments/lp0-200/web/
+            experiments/lp0-200/catalog.json
+            experiments/lp0-200/packs/
+            experiments/lp0-200/README.md
+          retention-days: 14
