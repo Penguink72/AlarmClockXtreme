@@ -391,7 +391,7 @@ fun SettingsScreen(
                             SettingsGroup(title = stringResource(R.string.settings_lp1_lab_label)) {
                                 SettingsActionRow(
                                     label = stringResource(R.string.settings_lp1_lab_open),
-                                    value = "LP1 · 200",
+                                    value = stringResource(R.string.settings_lp1_lab_open),
                                     supportingText = stringResource(R.string.settings_lp1_lab_description),
                                     onClick = {
                                         runCatching {

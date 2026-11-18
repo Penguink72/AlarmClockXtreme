@@ -19,6 +19,7 @@ on:
       - hotfix/p31-s1-snooze-reliability
       - feature/p31-l1-trilingual-core-time-locale
       - feature/p31-b2-s1r-u12-l1b-u3-u4-u5-20261116
+      - feature/p31-lp1-android-offline-pack-lab-20261118
     paths:
       - ".github/workflows/p0-android-baseline.yml"
       - "app/**"
