@@ -48,7 +48,7 @@
     {
       "key": "alarm_edit_delete_digit",
       "conceptId": "ui.action.delete",
-      "reason": "刪除輸入字元，不是刪除持久資料",
+      "reason": "僅刪除目前輸入欄位中的單一數字，不代表刪除持久儲存的鬧鐘資料或紀錄。",
       "source": "G4_CONTENT_REVIEW_BATCH1",
       "humanApproval": false,
       "action": "EXCLUDE_FROM_EFFECTIVE_CONCEPT_IDS"
