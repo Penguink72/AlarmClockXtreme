@@ -1,0 +1,839 @@
+{
+  "schema": "acx-g4-legacy-high-priority-triage/1",
+  "catalogRevision": "lp0-200-20261118",
+  "baseTranslationPolicy": "DO_NOT_OVERWRITE_LEGACY_PACKS",
+  "reviewMethod": "Model preliminary bilingual reading plus selected verified Kotlin callsites; not independent linguistic approval",
+  "humanApproved": false,
+  "legacyTranslationsModified": false,
+  "scope": {
+    "flaggedKeys": 52,
+    "proposedRevisions": 6,
+    "missingBoth": 8,
+    "contextWarnings": 9,
+    "existingFullyApproved": 0
+  },
+  "records": [
+    {
+      "key": "nav_stopwatch",
+      "source": "Stopwatch",
+      "sourceHash": "sha256:8776544237726c5d2ce064af72ad1e1fc041be39879071b7b900c9e51ee782ad",
+      "existing": {
+        "zh-TW": "碼錶",
+        "ja": "ストップウォッチ"
+      },
+      "auditType": "MODEL_ONLY_PRELIMINARY_TRIAGE",
+      "humanApproved": false,
+      "outcome": "NO_CLEAR_SOURCE_TARGET_CONFLICT_IDENTIFIED",
+      "note": "來源與譯文字面沒有可直接判定的問題；仍非完整操作語義審核",
+      "suggestedReplacement": null,
+      "evidence": null
+    },
+    {
+      "key": "snooze_duration",
+      "source": "Snooze duration",
+      "sourceHash": "sha256:0883b448f0508f02c35a4308ffa0538cc3b1e9403286318f83db89be66e380a1",
+      "existing": {
+        "zh-TW": "貪睡間隔",
+        "ja": "スヌーズ間隔"
+      },
+      "auditType": "MODEL_ONLY_PRELIMINARY_TRIAGE",
+      "humanApproved": false,
+      "outcome": "NO_CLEAR_SOURCE_TARGET_CONFLICT_IDENTIFIED",
+      "note": "來源與譯文字面沒有可直接判定的問題；仍非完整操作語義審核",
+      "suggestedReplacement": null,
+      "evidence": null
+    },
+    {
+      "key": "notif_snooze_countdown_title",
+      "source": "Snoozed alarm",
+      "sourceHash": "sha256:a157280629c716f3713da767a4a83c40401d45ee997fe5d437f12e5331c34979",
+      "existing": {
+        "zh-TW": "已稍後提醒的鬧鐘",
+        "ja": "スヌーズ中のアラーム"
+      },
+      "auditType": "MODEL_ONLY_PRELIMINARY_TRIAGE",
+      "humanApproved": false,
+      "outcome": "NO_CLEAR_SOURCE_TARGET_CONFLICT_IDENTIFIED",
+      "note": "來源與譯文字面沒有可直接判定的問題；仍非完整操作語義審核",
+      "suggestedReplacement": null,
+      "evidence": null
+    },
+    {
+      "key": "notif_snooze_countdown_subtext",
+      "source": "Snooze countdown",
+      "sourceHash": "sha256:e05754cae8a0b7bc176b226f5e4665a25ea8db803ebb998b7bbd6bcac80b254f",
+      "existing": {
+        "zh-TW": "稍後提醒倒數",
+        "ja": "スヌーズの残り時間"
+      },
+      "auditType": "MODEL_ONLY_PRELIMINARY_TRIAGE",
+      "humanApproved": false,
+      "outcome": "NO_CLEAR_SOURCE_TARGET_CONFLICT_IDENTIFIED",
+      "note": "來源與譯文字面沒有可直接判定的問題；仍非完整操作語義審核",
+      "suggestedReplacement": null,
+      "evidence": null
+    },
+    {
+      "key": "firing_snooze_hint",
+      "source": "Long-press Snooze for exact minutes, or choose a clock time. Your saved default stays unchanged.",
+      "sourceHash": "sha256:41b02a081cc6269b3d03b7ad56d4b6a93a0ae7c9f6c58c7738c43de2f50227c0",
+      "existing": {
+        "zh-TW": "長按「貪睡」可指定分鐘數，或選擇貪睡到某個時間；已儲存的預設值不會改變。",
+        "ja": "「スヌーズ」を長押しすると分数や時刻を指定できます。保存済みの既定値は変更されません。"
+      },
+      "auditType": "MODEL_ONLY_PRELIMINARY_TRIAGE",
+      "humanApproved": false,
+      "outcome": "NO_CLEAR_SOURCE_TARGET_CONFLICT_IDENTIFIED",
+      "note": "來源與譯文字面沒有可直接判定的問題；仍非完整操作語義審核",
+      "suggestedReplacement": null,
+      "evidence": null
+    },
+    {
+      "key": "firing_flip_to_snooze",
+      "source": "Flip to snooze",
+      "sourceHash": "sha256:47d39402d827f5b6a12b1932b52f86e55303e10bdecdde7056b354ed6ccdff7b",
+      "existing": {
+        "zh-TW": "翻轉手機以稍後提醒",
+        "ja": "端末を裏返してスヌーズ"
+      },
+      "auditType": "MODEL_ONLY_PRELIMINARY_TRIAGE",
+      "humanApproved": false,
+      "outcome": "NO_CLEAR_SOURCE_TARGET_CONFLICT_IDENTIFIED",
+      "note": "來源與譯文字面沒有可直接判定的問題；仍非完整操作語義審核",
+      "suggestedReplacement": null,
+      "evidence": null
+    },
+    {
+      "key": "firing_status_swipe_or_snooze",
+      "source": "Wake-up steps are complete. Swipe left to dismiss, or right to snooze.",
+      "sourceHash": "sha256:0db9d003e57d755cee042e4af2352477cf212fdde89a09ff32c9cb9b197403ae",
+      "existing": {
+        "zh-TW": "已完成喚醒任務。向左滑動解除，或向右滑動貪睡。",
+        "ja": "起床タスクが完了しました。左にスワイプで停止、右にスワイプでスヌーズします。"
+      },
+      "auditType": "MODEL_ONLY_PRELIMINARY_TRIAGE",
+      "humanApproved": false,
+      "outcome": "CONTEXT_OR_SEMANTIC_RECHECK_REQUIRED",
+      "note": "左右滑動的字面譯文吻合，但尚未執行設備上的安全行為複核",
+      "suggestedReplacement": null,
+      "evidence": null
+    },
+    {
+      "key": "firing_swipe_protected",
+      "source": "Swipe-left is protected. Use Hold Dismiss.",
+      "sourceHash": "sha256:5785e907dea844c5d25175d8138ef28b6c1a344c7e97fd24b25a1806cbf8516e",
+      "existing": {
+        "zh-TW": "已保護向左滑動解除，請長按「解除」。",
+        "ja": "左スワイプによる停止は無効です。「停止」を長押ししてください。"
+      },
+      "auditType": "MODEL_ONLY_PRELIMINARY_TRIAGE",
+      "humanApproved": false,
+      "outcome": "CONTEXT_OR_SEMANTIC_RECHECK_REQUIRED",
+      "note": "Protected 可能指保護操作而非單純禁用，應與長按解除條件核對",
+      "suggestedReplacement": null,
+      "evidence": null
+    },
+    {
+      "key": "firing_swipe_right_snooze",
+      "source": "Swipe right to snooze",
+      "sourceHash": "sha256:c6389382da3cdd85d37c09866feca242f7cede65b269e88d3210a6386bcb5322",
+      "existing": {
+        "zh-TW": "向右滑動以稍後提醒",
+        "ja": "右にスワイプしてスヌーズ"
+      },
+      "auditType": "MODEL_ONLY_PRELIMINARY_TRIAGE",
+      "humanApproved": false,
+      "outcome": "CONTEXT_OR_SEMANTIC_RECHECK_REQUIRED",
+      "note": "稍後提醒／貪睡可能屬允許的說明文字變體，不能全域替換",
+      "suggestedReplacement": null,
+      "evidence": null
+    },
+    {
+      "key": "firing_location_snooze_hint",
+      "source": "Swipe right to snooze if you need a short reset. Dismiss unlocks after you leave the saved place.",
+      "sourceHash": "sha256:530efb250a2f083a659f0cdc98fdb8689af8ae4bce8d06eac573dbea5ae2ca4d",
+      "existing": {
+        "zh-TW": "需要再休息片刻可向右滑動貪睡；離開儲存地點後才能解除。",
+        "ja": "少し休むなら右にスワイプしてスヌーズします。保存場所から離れると停止できます。"
+      },
+      "auditType": "MODEL_ONLY_PRELIMINARY_TRIAGE",
+      "humanApproved": false,
+      "outcome": "CONTEXT_OR_SEMANTIC_RECHECK_REQUIRED",
+      "note": "涉及已保存地點才能解除的實際位置條件，需另做行為查核",
+      "suggestedReplacement": null,
+      "evidence": null
+    },
+    {
+      "key": "firing_controls_hold_description",
+      "source": "Hold to confirm dismissal. Snooze remains a quick action.",
+      "sourceHash": "sha256:dc20492c015711f45b1e513a318190b38ddce88a82780bebf6e14a026172d1fc",
+      "existing": {
+        "zh-TW": "長按以確認解除。貪睡仍可快速操作。",
+        "ja": "長押しして停止を確定します。スヌーズはすぐに使えます。"
+      },
+      "auditType": "MODEL_ONLY_PRELIMINARY_TRIAGE",
+      "humanApproved": false,
+      "outcome": "NO_CLEAR_SOURCE_TARGET_CONFLICT_IDENTIFIED",
+      "note": "來源與譯文字面沒有可直接判定的問題；仍非完整操作語義審核",
+      "suggestedReplacement": null,
+      "evidence": null
+    },
+    {
+      "key": "firing_tap_snooze",
+      "source": "Tap to snooze",
+      "sourceHash": "sha256:0a7da858f07dec54b4f19a4e145a4cc7e33f512de88cf93fb13824f46e64f480",
+      "existing": {
+        "zh-TW": "點選以貪睡",
+        "ja": "タップしてスヌーズ"
+      },
+      "auditType": "MODEL_ONLY_PRELIMINARY_TRIAGE",
+      "humanApproved": false,
+      "outcome": "NO_CLEAR_SOURCE_TARGET_CONFLICT_IDENTIFIED",
+      "note": "來源與譯文字面沒有可直接判定的問題；仍非完整操作語義審核",
+      "suggestedReplacement": null,
+      "evidence": null
+    },
+    {
+      "key": "firing_hide_snooze_choices",
+      "source": "Hide snooze choices",
+      "sourceHash": "sha256:2fbec47fd5ac83f4c092384f4251a0dcc1608f3da7991fe22916e1fef9d63198",
+      "existing": {
+        "zh-TW": "隱藏貪睡選項",
+        "ja": "スヌーズの選択肢を閉じる"
+      },
+      "auditType": "MODEL_ONLY_PRELIMINARY_TRIAGE",
+      "humanApproved": false,
+      "outcome": "NO_CLEAR_SOURCE_TARGET_CONFLICT_IDENTIFIED",
+      "note": "來源與譯文字面沒有可直接判定的問題；仍非完整操作語義審核",
+      "suggestedReplacement": null,
+      "evidence": null
+    },
+    {
+      "key": "firing_choose_snooze_until",
+      "source": "Snooze until a time",
+      "sourceHash": "sha256:21659615a7ec37c752462d49e9be7ce35ac1f7a4e4dcf30daae292708f7e508b",
+      "existing": {
+        "zh-TW": "貪睡到指定時間",
+        "ja": "指定時刻までスヌーズ"
+      },
+      "auditType": "MODEL_ONLY_PRELIMINARY_TRIAGE",
+      "humanApproved": false,
+      "outcome": "NO_CLEAR_SOURCE_TARGET_CONFLICT_IDENTIFIED",
+      "note": "來源與譯文字面沒有可直接判定的問題；仍非完整操作語義審核",
+      "suggestedReplacement": null,
+      "evidence": null
+    },
+    {
+      "key": "firing_challenge_before_dismiss",
+      "source": "Finish the wake-up challenge before dismissing",
+      "sourceHash": "sha256:22cdc8a0cd2870cd2906362c4f931df9de71cd7bf5e02f9a2e4bdc7a94365568",
+      "existing": {
+        "zh-TW": "解除前請先完成喚醒挑戰",
+        "ja": "停止する前に起床チャレンジを完了してください"
+      },
+      "auditType": "MODEL_ONLY_PRELIMINARY_TRIAGE",
+      "humanApproved": false,
+      "outcome": "NO_CLEAR_SOURCE_TARGET_CONFLICT_IDENTIFIED",
+      "note": "來源與譯文字面沒有可直接判定的問題；仍非完整操作語義審核",
+      "suggestedReplacement": null,
+      "evidence": null
+    },
+    {
+      "key": "firing_snooze_for_minutes",
+      "source": "Snooze for %1$d min",
+      "sourceHash": "sha256:91876afdf04ea207f47cb24dc7a293382c9ceada1a6d8c372dd26a3791681386",
+      "existing": {
+        "zh-TW": "貪睡 %1$d 分鐘",
+        "ja": "%1$d分スヌーズ"
+      },
+      "auditType": "MODEL_ONLY_PRELIMINARY_TRIAGE",
+      "humanApproved": false,
+      "outcome": "NO_CLEAR_SOURCE_TARGET_CONFLICT_IDENTIFIED",
+      "note": "來源與譯文字面沒有可直接判定的問題；仍非完整操作語義審核",
+      "suggestedReplacement": null,
+      "evidence": null
+    },
+    {
+      "key": "firing_increase_snooze",
+      "source": "Increase snooze minutes",
+      "sourceHash": "sha256:724a85fa4db7677e5b65156ea31145e948a42fc70c6dcdd415be28355e8fa448",
+      "existing": {
+        "zh-TW": "增加貪睡分鐘數",
+        "ja": "スヌーズの分数を増やす"
+      },
+      "auditType": "MODEL_ONLY_PRELIMINARY_TRIAGE",
+      "humanApproved": false,
+      "outcome": "NO_CLEAR_SOURCE_TARGET_CONFLICT_IDENTIFIED",
+      "note": "來源與譯文字面沒有可直接判定的問題；仍非完整操作語義審核",
+      "suggestedReplacement": null,
+      "evidence": null
+    },
+    {
+      "key": "firing_snooze_minutes",
+      "source": "Snooze %1$d min",
+      "sourceHash": "sha256:1a1201d1cf98303d2ba18344541cf6eff1e8bc1a35a51b92e9a69171b467268e",
+      "existing": {
+        "zh-TW": "貪睡 %1$d 分鐘",
+        "ja": "%1$d分スヌーズ"
+      },
+      "auditType": "MODEL_ONLY_PRELIMINARY_TRIAGE",
+      "humanApproved": false,
+      "outcome": "NO_CLEAR_SOURCE_TARGET_CONFLICT_IDENTIFIED",
+      "note": "來源與譯文字面沒有可直接判定的問題；仍非完整操作語義審核",
+      "suggestedReplacement": null,
+      "evidence": null
+    },
+    {
+      "key": "firing_challenge_none_status",
+      "source": "Swipe or tap dismiss when you\\’re ready.",
+      "sourceHash": "sha256:bef1c7244dc0aa0e84d8cd3b35ac4929137c753e6ad9e3f4f6c7813d962accef",
+      "existing": {
+        "zh-TW": "準備好時，滑動或點選即可解除。",
+        "ja": "準備ができたらスワイプまたはタップして停止します。"
+      },
+      "auditType": "MODEL_ONLY_PRELIMINARY_TRIAGE",
+      "humanApproved": false,
+      "outcome": "NO_CLEAR_SOURCE_TARGET_CONFLICT_IDENTIFIED",
+      "note": "來源與譯文字面沒有可直接判定的問題；仍非完整操作語義審核",
+      "suggestedReplacement": null,
+      "evidence": null
+    },
+    {
+      "key": "alarm_edit_anti_snooze",
+      "source": "Anti-snooze",
+      "sourceHash": "sha256:7b8dd13b9272fa49f2c763d39e914a1d202bbf947c99ed1eec854a32ef3994c2",
+      "existing": {
+        "zh-TW": "防止重複貪睡",
+        "ja": "スヌーズ防止"
+      },
+      "auditType": "MODEL_ONLY_PRELIMINARY_TRIAGE",
+      "humanApproved": false,
+      "outcome": "NO_CLEAR_SOURCE_TARGET_CONFLICT_IDENTIFIED",
+      "note": "來源與譯文字面沒有可直接判定的問題；仍非完整操作語義審核",
+      "suggestedReplacement": null,
+      "evidence": null
+    },
+    {
+      "key": "alarm_edit_section_group_description",
+      "source": "Organize alarms by context so related schedules stay easy to manage.",
+      "sourceHash": "sha256:68b340baf569a92d319037c7745a5e08256b17c87ff259f4633288b99e0a42cb",
+      "existing": {
+        "zh-TW": "依情境整理鬧鐘，讓相關排程更容易管理。",
+        "ja": "用途ごとにアラームを整理し、関連する予定を管理しやすくします。"
+      },
+      "auditType": "MODEL_ONLY_PRELIMINARY_TRIAGE",
+      "humanApproved": false,
+      "outcome": "NO_CLEAR_SOURCE_TARGET_CONFLICT_IDENTIFIED",
+      "note": "來源與譯文字面沒有可直接判定的問題；仍非完整操作語義審核",
+      "suggestedReplacement": null,
+      "evidence": null
+    },
+    {
+      "key": "alarm_edit_disabled",
+      "source": "Disabled",
+      "sourceHash": "sha256:7f82bcc0800df6cb54b6b83aaaedac4b4ccecb3ffa958f26d48602313bf09f4a",
+      "existing": {
+        "zh-TW": "已停用",
+        "ja": "無効"
+      },
+      "auditType": "MODEL_ONLY_PRELIMINARY_TRIAGE",
+      "humanApproved": false,
+      "outcome": "NO_CLEAR_SOURCE_TARGET_CONFLICT_IDENTIFIED",
+      "note": "來源與譯文字面沒有可直接判定的問題；仍非完整操作語義審核",
+      "suggestedReplacement": null,
+      "evidence": null
+    },
+    {
+      "key": "alarm_edit_challenge_default_description",
+      "source": "Dismissal requires this challenge before the alarm can stop.",
+      "sourceHash": "sha256:3e82909a78b4a8522f34a2afc2678dd1b1ae94caeb08df6484c067c0150100de",
+      "existing": {
+        "zh-TW": null,
+        "ja": null
+      },
+      "auditType": "MODEL_ONLY_PRELIMINARY_TRIAGE",
+      "humanApproved": false,
+      "outcome": "CONTEXT_OR_SEMANTIC_RECHECK_REQUIRED",
+      "note": "缺乏中日譯文，不能作已審核判斷",
+      "suggestedReplacement": null,
+      "evidence": null
+    },
+    {
+      "key": "alarm_edit_progressive_snooze",
+      "source": "Progressive snooze (shorter each time)",
+      "sourceHash": "sha256:0d2d7d67b3f5580cc24308859ef947fa6a4bf659005ce7734fdedc2d7140c93c",
+      "existing": {
+        "zh-TW": "逐次縮短貪睡間隔",
+        "ja": "スヌーズ間隔を毎回短縮"
+      },
+      "auditType": "MODEL_ONLY_PRELIMINARY_TRIAGE",
+      "humanApproved": false,
+      "outcome": "NO_CLEAR_SOURCE_TARGET_CONFLICT_IDENTIFIED",
+      "note": "來源與譯文字面沒有可直接判定的問題；仍非完整操作語義審核",
+      "suggestedReplacement": null,
+      "evidence": null
+    },
+    {
+      "key": "alarm_edit_progressive_snooze_hint",
+      "source": "Each snooze shortens by 1 minute, such as 10 → 9 → 8.",
+      "sourceHash": "sha256:91f744bb7e10441b689afc9a9eabc081f6414d19d1b8ccc83e0e89cc3702f7eb",
+      "existing": {
+        "zh-TW": "每次貪睡縮短 1 分鐘，例如 10 → 9 → 8 分鐘。",
+        "ja": "スヌーズのたびに1分短縮します（例：10 → 9 → 8分）。"
+      },
+      "auditType": "MODEL_ONLY_PRELIMINARY_TRIAGE",
+      "humanApproved": false,
+      "outcome": "NO_CLEAR_SOURCE_TARGET_CONFLICT_IDENTIFIED",
+      "note": "來源與譯文字面沒有可直接判定的問題；仍非完整操作語義審核",
+      "suggestedReplacement": null,
+      "evidence": null
+    },
+    {
+      "key": "settings_flip_snooze",
+      "source": "Flip phone to snooze",
+      "sourceHash": "sha256:7439f3e1ef5c362a543fc9692db8e36afabde95463e9ea850d100cabc3bd07d3",
+      "existing": {
+        "zh-TW": null,
+        "ja": null
+      },
+      "auditType": "MODEL_ONLY_PRELIMINARY_TRIAGE",
+      "humanApproved": false,
+      "outcome": "MISSING_NO_CONTENT_TO_REVIEW",
+      "note": "來源與譯文字面沒有可直接判定的問題；仍非完整操作語義審核",
+      "suggestedReplacement": null,
+      "evidence": null
+    },
+    {
+      "key": "settings_default_snooze_description",
+      "source": "Used whenever a new alarm doesn’t specify its own snooze length.",
+      "sourceHash": "sha256:9c8e6e8fa4da4c9af30bac2362e8b5babcf73f9708e0c4f0d5c5fcf13dd38f91",
+      "existing": {
+        "zh-TW": null,
+        "ja": null
+      },
+      "auditType": "MODEL_ONLY_PRELIMINARY_TRIAGE",
+      "humanApproved": false,
+      "outcome": "MISSING_NO_CONTENT_TO_REVIEW",
+      "note": "來源與譯文字面沒有可直接判定的問題；仍非完整操作語義審核",
+      "suggestedReplacement": null,
+      "evidence": null
+    },
+    {
+      "key": "settings_post_dismiss_summary_description",
+      "source": "After the final dismiss step, show cached weather and the next local calendar event. No network request is made.",
+      "sourceHash": "sha256:34ad7f05fdbb769e4e1f4e612bea0865dfa408bca797c4231fb70ab41be90b8f",
+      "existing": {
+        "zh-TW": null,
+        "ja": null
+      },
+      "auditType": "MODEL_ONLY_PRELIMINARY_TRIAGE",
+      "humanApproved": false,
+      "outcome": "MISSING_NO_CONTENT_TO_REVIEW",
+      "note": "來源與譯文字面沒有可直接判定的問題；仍非完整操作語義審核",
+      "suggestedReplacement": null,
+      "evidence": null
+    },
+    {
+      "key": "settings_cover_to_snooze_description",
+      "source": "Hold a hand over the proximity sensor for ~1.5 s during an alarm to snooze.",
+      "sourceHash": "sha256:d4011e2b69dc87ed165fb537cee5ae93a4155a3db2929c20d83929d7a69e4c34",
+      "existing": {
+        "zh-TW": null,
+        "ja": null
+      },
+      "auditType": "MODEL_ONLY_PRELIMINARY_TRIAGE",
+      "humanApproved": false,
+      "outcome": "CONTEXT_OR_SEMANTIC_RECHECK_REQUIRED",
+      "note": "涉及接近感測器約 1.5 秒的實際行為，翻譯不可遺漏",
+      "suggestedReplacement": null,
+      "evidence": null
+    },
+    {
+      "key": "settings_long_press_threshold_description",
+      "source": "Choose how long the firing-screen dismiss button must be held. 0.5–5 seconds.",
+      "sourceHash": "sha256:75ea5f3668ba6fadc4d21f1b036b47836529f300f0d092b4becbfaacab216b0a",
+      "existing": {
+        "zh-TW": null,
+        "ja": null
+      },
+      "auditType": "MODEL_ONLY_PRELIMINARY_TRIAGE",
+      "humanApproved": false,
+      "outcome": "MISSING_NO_CONTENT_TO_REVIEW",
+      "note": "來源與譯文字面沒有可直接判定的問題；仍非完整操作語義審核",
+      "suggestedReplacement": null,
+      "evidence": null
+    },
+    {
+      "key": "alarm_edit_delete_digit",
+      "source": "Delete digit",
+      "sourceHash": "sha256:740087eb97822ae97b8c50da721aed9d67debe21c6c6c906843d427ce5b84911",
+      "existing": {
+        "zh-TW": "刪除數字",
+        "ja": "数字を削除"
+      },
+      "auditType": "MODEL_ONLY_PRELIMINARY_TRIAGE",
+      "humanApproved": false,
+      "outcome": "NO_CLEAR_SOURCE_TARGET_CONFLICT_IDENTIFIED",
+      "note": "來源與譯文字面沒有可直接判定的問題；仍非完整操作語義審核",
+      "suggestedReplacement": null,
+      "evidence": null
+    },
+    {
+      "key": "alarm_list_delete",
+      "source": "Delete",
+      "sourceHash": "sha256:9bbeebda5a13d1088b3c593b68e924eb7c5d947d42fea708ac38a4da7688807c",
+      "existing": {
+        "zh-TW": "刪除",
+        "ja": "削除"
+      },
+      "auditType": "MODEL_ONLY_PRELIMINARY_TRIAGE",
+      "humanApproved": false,
+      "outcome": "NO_CLEAR_SOURCE_TARGET_CONFLICT_IDENTIFIED",
+      "note": "來源與譯文字面沒有可直接判定的問題；仍非完整操作語義審核",
+      "suggestedReplacement": null,
+      "evidence": null
+    },
+    {
+      "key": "stats_snoozed",
+      "source": "Snoozed",
+      "sourceHash": "sha256:056e3b17dd79d6bd9f3e69fbe95db1185c1c7cd7652b47283eb2fe3caf71f70b",
+      "existing": {
+        "zh-TW": null,
+        "ja": null
+      },
+      "auditType": "MODEL_ONLY_PRELIMINARY_TRIAGE",
+      "humanApproved": false,
+      "outcome": "MISSING_NO_CONTENT_TO_REVIEW",
+      "note": "來源與譯文字面沒有可直接判定的問題；仍非完整操作語義審核",
+      "suggestedReplacement": null,
+      "evidence": null
+    },
+    {
+      "key": "alarm_music_settings_remove_track",
+      "source": "Remove track",
+      "sourceHash": "sha256:3611ef2209b5e212522e757a13813fb3f7bb096c363c90626a84d3cc37d05fcd",
+      "existing": {
+        "zh-TW": "移除曲目",
+        "ja": "曲を削除"
+      },
+      "auditType": "MODEL_ONLY_PRELIMINARY_TRIAGE",
+      "humanApproved": false,
+      "outcome": "CONTEXT_OR_SEMANTIC_RECHECK_REQUIRED",
+      "note": "G2 無直接靜態呼叫點；日文『曲を削除』可能被誤解成刪檔，暫不可定案",
+      "suggestedReplacement": null,
+      "evidence": null
+    },
+    {
+      "key": "music_library_remove_source",
+      "source": "Remove source",
+      "sourceHash": "sha256:54d0920fe28f49b1bfc115b13dc5af415dc2b13ed884b89db0a8b1772f7ff361",
+      "existing": {
+        "zh-TW": "移除來源",
+        "ja": "ソースを削除"
+      },
+      "auditType": "MODEL_ONLY_PRELIMINARY_TRIAGE",
+      "humanApproved": false,
+      "outcome": "REVISION_SUGGESTED_LEGACY_UNCHANGED",
+      "note": "viewModel.removeSource 移除索引來源與關聯曲目索引，不是刪除手機媒體檔",
+      "suggestedReplacement": {
+        "locale": "ja",
+        "text": "音楽ソースの登録を解除"
+      },
+      "evidence": {
+        "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/ringtone/MusicLibrarySourcesDialog.kt",
+        "line": 176,
+        "kind": "EXACT_STATIC_CODE_CALLSITE"
+      }
+    },
+    {
+      "key": "music_library_scan_failed",
+      "source": "Music scan failed: %1$s",
+      "sourceHash": "sha256:f6fb0f1033c9efa90c49737038f53450e7c8bda896ab472ba1b2e7e0f69f024f",
+      "existing": {
+        "zh-TW": "音樂掃描失敗：%1$s",
+        "ja": "音楽のスキャンに失敗しました：%1$s"
+      },
+      "auditType": "MODEL_ONLY_PRELIMINARY_TRIAGE",
+      "humanApproved": false,
+      "outcome": "NO_CLEAR_SOURCE_TARGET_CONFLICT_IDENTIFIED",
+      "note": "來源與譯文字面沒有可直接判定的問題；仍非完整操作語義審核",
+      "suggestedReplacement": null,
+      "evidence": null
+    },
+    {
+      "key": "permissions_context_permissions",
+      "source": "Context permissions",
+      "sourceHash": "sha256:e7904f5efcbedb3843a9e380e94cc835fa4c9be7f09d63b0575a54d147d77dad",
+      "existing": {
+        "zh-TW": null,
+        "ja": null
+      },
+      "auditType": "MODEL_ONLY_PRELIMINARY_TRIAGE",
+      "humanApproved": false,
+      "outcome": "MISSING_NO_CONTENT_TO_REVIEW",
+      "note": "來源與譯文字面沒有可直接判定的問題；仍非完整操作語義審核",
+      "suggestedReplacement": null,
+      "evidence": null
+    },
+    {
+      "key": "stats_track_consistency_snooze_behavior_and_which",
+      "source": "Track consistency, snooze behavior, and which mornings are easiest to handle.",
+      "sourceHash": "sha256:fdc6f002ce3b526be3edb2534881cf18f7fa22816881fee6dbcc3261375a79fe",
+      "existing": {
+        "zh-TW": null,
+        "ja": null
+      },
+      "auditType": "MODEL_ONLY_PRELIMINARY_TRIAGE",
+      "humanApproved": false,
+      "outcome": "MISSING_NO_CONTENT_TO_REVIEW",
+      "note": "來源與譯文字面沒有可直接判定的問題；仍非完整操作語義審核",
+      "suggestedReplacement": null,
+      "evidence": null
+    },
+    {
+      "key": "stats_compares_recent_sleep_duration_with_dismiss",
+      "source": "Compares recent sleep duration with dismiss speed, snoozes, and challenge retries on this device.",
+      "sourceHash": "sha256:b6e23d54981fdf690061346c07144f341fac273a09f526dbed4d83f8b29f9094",
+      "existing": {
+        "zh-TW": null,
+        "ja": null
+      },
+      "auditType": "MODEL_ONLY_PRELIMINARY_TRIAGE",
+      "humanApproved": false,
+      "outcome": "MISSING_NO_CONTENT_TO_REVIEW",
+      "note": "來源與譯文字面沒有可直接判定的問題；仍非完整操作語義審核",
+      "suggestedReplacement": null,
+      "evidence": null
+    },
+    {
+      "key": "music_playlist_remove",
+      "source": "Remove",
+      "sourceHash": "sha256:158bbd5ac2e46b32b4da58ac8447709e6ca96acde61aee247f8f45571ebb83dd",
+      "existing": {
+        "zh-TW": "移除",
+        "ja": "削除"
+      },
+      "auditType": "MODEL_ONLY_PRELIMINARY_TRIAGE",
+      "humanApproved": false,
+      "outcome": "REVISION_SUGGESTED_LEGACY_UNCHANGED",
+      "note": "實際 onRemove 呼叫 repository.removeItem；是從播放清單移除，不是刪除原始檔",
+      "suggestedReplacement": {
+        "locale": "ja",
+        "text": "プレイリストから外す"
+      },
+      "evidence": {
+        "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/ringtone/MusicPlaylistsWorkspace.kt",
+        "line": 841,
+        "kind": "EXACT_STATIC_CODE_CALLSITE"
+      }
+    },
+    {
+      "key": "replay_action_stop",
+      "source": "Stop",
+      "sourceHash": "sha256:bffc4a860b25284579483a3ca3c51b4592abc86932ae685f3599bef2f1160b95",
+      "existing": {
+        "zh-TW": "停止",
+        "ja": "停止"
+      },
+      "auditType": "MODEL_ONLY_PRELIMINARY_TRIAGE",
+      "humanApproved": false,
+      "outcome": "NO_CLEAR_SOURCE_TARGET_CONFLICT_IDENTIFIED",
+      "note": "來源與譯文字面沒有可直接判定的問題；仍非完整操作語義審核",
+      "suggestedReplacement": null,
+      "evidence": null
+    },
+    {
+      "key": "replay_error_alarm_active",
+      "source": "Alarm is ringing. Replay stopped to prioritize alarm.",
+      "sourceHash": "sha256:f6b49d3d0a7409067550ec1bb30ed0daa36c6564136f7e45b55ee211d2124d1a",
+      "existing": {
+        "zh-TW": "鬧鐘響鈴中，為確保鬧鐘優先已停止回播",
+        "ja": "アラーム鳴動中のため、アラームを優先して再生を停止しました"
+      },
+      "auditType": "MODEL_ONLY_PRELIMINARY_TRIAGE",
+      "humanApproved": false,
+      "outcome": "NO_CLEAR_SOURCE_TARGET_CONFLICT_IDENTIFIED",
+      "note": "來源與譯文字面沒有可直接判定的問題；仍非完整操作語義審核",
+      "suggestedReplacement": null,
+      "evidence": null
+    },
+    {
+      "key": "replay_error_playback_failed",
+      "source": "Cannot play this audio. File may be missing or permission revoked.",
+      "sourceHash": "sha256:15875d912247ec43fe57f77fcbe2072c703d970efff2c0d20741e309542437e5",
+      "existing": {
+        "zh-TW": "無法播放此音訊（檔案可能已移除或權限已失效）",
+        "ja": "この音声を再生できません（ファイルが見つからないか権限が無効です）"
+      },
+      "auditType": "MODEL_ONLY_PRELIMINARY_TRIAGE",
+      "humanApproved": false,
+      "outcome": "NO_CLEAR_SOURCE_TARGET_CONFLICT_IDENTIFIED",
+      "note": "來源與譯文字面沒有可直接判定的問題；仍非完整操作語義審核",
+      "suggestedReplacement": null,
+      "evidence": null
+    },
+    {
+      "key": "settings_return_to_app_after_dismiss_description",
+      "source": "Show the Alarms screen after the alarm is confirmed stopped. When off, return to your previous screen. Keep the lock screen protected.",
+      "sourceHash": "sha256:0649cbe6cdac228da2952955e75cd5cbe5825749d20e1c8b6c262c5b2b1d8f2a",
+      "existing": {
+        "zh-TW": "確認鬧鐘停止後返回鬧鐘 App；關閉則返回原本的手機畫面。鎖定畫面仍保持保護。",
+        "ja": "停止を確認した後、アラーム一覧に戻ります。オフの場合は元の画面に戻ります。ロック画面は保護されます。"
+      },
+      "auditType": "MODEL_ONLY_PRELIMINARY_TRIAGE",
+      "humanApproved": false,
+      "outcome": "REVISION_SUGGESTED_LEGACY_UNCHANGED",
+      "note": "原文是 Alarms screen 和 previous screen，不是籠統 App 與手機畫面",
+      "suggestedReplacement": {
+        "locale": "zh-TW",
+        "text": "確認鬧鐘已停止後顯示「鬧鐘」畫面；關閉此選項則返回先前畫面，並維持鎖定畫面保護。"
+      },
+      "evidence": {
+        "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/settings/SettingsScreen.kt",
+        "line": 469,
+        "kind": "EXACT_STATIC_CODE_CALLSITE"
+      }
+    },
+    {
+      "key": "firing_snooze_schedule_failed",
+      "source": "Snooze could not be scheduled. Alarm is still ringing. Try again or dismiss it.",
+      "sourceHash": "sha256:d61b302c080d4b892ef4f30d03c5bbc5ce65d7928cb6f613e14bcff1d686b3d6",
+      "existing": {
+        "zh-TW": "貪睡排程失敗，鬧鐘應仍在響鈴。請重新貪睡或直接解除。",
+        "ja": "スヌーズを予約できませんでした。アラームは鳴り続けます。再試行するか停止してください。"
+      },
+      "auditType": "MODEL_ONLY_PRELIMINARY_TRIAGE",
+      "humanApproved": false,
+      "outcome": "REVISION_SUGGESTED_LEGACY_UNCHANGED",
+      "note": "英文肯定鬧鐘仍在響鈴，原繁中『應』降低故障訊息確定性",
+      "suggestedReplacement": {
+        "locale": "zh-TW",
+        "text": "貪睡排程失敗，鬧鐘仍在響鈴。請重試貪睡或直接解除鬧鐘。"
+      },
+      "evidence": {
+        "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/alarmfiring/AlarmFiringActivity.kt",
+        "line": 738,
+        "kind": "EXACT_STATIC_CODE_CALLSITE"
+      }
+    },
+    {
+      "key": "music_library_system_tones_cancel",
+      "source": "Cancel",
+      "sourceHash": "sha256:00cb1921fe119d6503c7282be134f328baf601f690b85153bf85d6e0a3cf8879",
+      "existing": {
+        "zh-TW": "取消",
+        "ja": "キャンセル"
+      },
+      "auditType": "MODEL_ONLY_PRELIMINARY_TRIAGE",
+      "humanApproved": false,
+      "outcome": "NO_CLEAR_SOURCE_TARGET_CONFLICT_IDENTIFIED",
+      "note": "來源與譯文字面沒有可直接判定的問題；仍非完整操作語義審核",
+      "suggestedReplacement": null,
+      "evidence": null
+    },
+    {
+      "key": "alarm_edit_delivery_test_limitation",
+      "source": "Uses an isolated default-tone test to check Android scheduling, notifications and wake screen. It does not test this alarm’s music playlist, production playback, or snooze chain.",
+      "sourceHash": "sha256:1117e3f1e49a3ee73ffa7ec7270eaf2ed2d7e22d50aa6961cadb02f30aac12a0",
+      "existing": {
+        "zh-TW": "獨立使用系統預設鈴聲測試 Android 排程、通知與喚醒畫面；不會測試此鬧鐘的音樂清單、正式播放或貪睡流程。",
+        "ja": "システム標準音を使った独立テストで、Androidの予約・通知・画面起動を確認します。このアラームのプレイリスト、通常の再生、スヌーズは検証しません。"
+      },
+      "auditType": "MODEL_ONLY_PRELIMINARY_TRIAGE",
+      "humanApproved": false,
+      "outcome": "CONTEXT_OR_SEMANTIC_RECHECK_REQUIRED",
+      "note": "測試用 default-tone 音源是否就是系統預設仍須明確核對",
+      "suggestedReplacement": null,
+      "evidence": null
+    },
+    {
+      "key": "b2_test_description",
+      "source": "This diagnostic uses the saved music source and real alarm player, without changing alarm schedules or playback history.",
+      "sourceHash": "sha256:b388b07530dbcf21dc5665a17ad553e93f61c823b6668d9207f0317a20cb459f",
+      "existing": {
+        "zh-TW": "使用已儲存的音樂來源及正式響鈴播放器進行診斷，不改動原鬧鐘排程或播放歷史。",
+        "ja": "保存済みの音源とアラーム再生経路を使用します。通常の予定と再生履歴は変更しません。"
+      },
+      "auditType": "MODEL_ONLY_PRELIMINARY_TRIAGE",
+      "humanApproved": false,
+      "outcome": "NO_CLEAR_SOURCE_TARGET_CONFLICT_IDENTIFIED",
+      "note": "來源與譯文字面沒有可直接判定的問題；仍非完整操作語義審核",
+      "suggestedReplacement": null,
+      "evidence": null
+    },
+    {
+      "key": "b2_test_cancel",
+      "source": "Cancel music test",
+      "sourceHash": "sha256:22dd44088abde685ffcb0cf9ff160b31545cedf20002c77296ff0efa4c83a1b7",
+      "existing": {
+        "zh-TW": "取消音樂測試",
+        "ja": "音楽テストを中止"
+      },
+      "auditType": "MODEL_ONLY_PRELIMINARY_TRIAGE",
+      "humanApproved": false,
+      "outcome": "NO_CLEAR_SOURCE_TARGET_CONFLICT_IDENTIFIED",
+      "note": "來源與譯文字面沒有可直接判定的問題；仍非完整操作語義審核",
+      "suggestedReplacement": null,
+      "evidence": null
+    },
+    {
+      "key": "b2_test_snooze",
+      "source": "Test snooze: ring again in 1 min",
+      "sourceHash": "sha256:0aa9f2516b0d7b778db0d545c40a1da5b3a3d801254c2aa39785c52ff7c072e3",
+      "existing": {
+        "zh-TW": "測試貪睡：1 分鐘後再響",
+        "ja": "スヌーズテスト：1 分後に再通知"
+      },
+      "auditType": "MODEL_ONLY_PRELIMINARY_TRIAGE",
+      "humanApproved": false,
+      "outcome": "REVISION_SUGGESTED_LEGACY_UNCHANGED",
+      "note": "英文 ring again = 再次響鈴，既有日文『再通知』把鬧鐘鈴聲事件誤作通知",
+      "suggestedReplacement": {
+        "locale": "ja",
+        "text": "スヌーズテスト：1分後に再び鳴ります"
+      },
+      "evidence": {
+        "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/onboarding/ProductionTestAlarmActivity.kt",
+        "line": 94,
+        "kind": "EXACT_STATIC_CODE_CALLSITE"
+      }
+    },
+    {
+      "key": "b2_test_scheduled",
+      "source": "Real music test scheduled for about one minute from now.",
+      "sourceHash": "sha256:98459fbb614f49ad7bf8fdf4fb2abca32e295b999d0d33715e19d57f702e82ef",
+      "existing": {
+        "zh-TW": "已安排約一分鐘後進行正式音樂測試。",
+        "ja": "約 1 分後に音楽アラームのテストを設定しました。"
+      },
+      "auditType": "MODEL_ONLY_PRELIMINARY_TRIAGE",
+      "humanApproved": false,
+      "outcome": "CONTEXT_OR_SEMANTIC_RECHECK_REQUIRED",
+      "note": "Real music test 可能與正式生產響鈴用語混淆，需看具體測試契約",
+      "suggestedReplacement": null,
+      "evidence": null
+    },
+    {
+      "key": "alarm_edit_schedule_failed_new",
+      "source": "Alarm was not created because Android did not accept its schedule. Check alarm permissions and retry.",
+      "sourceHash": "sha256:2dc0dc8e7b4cb46a3899da4b2bfc4acddc353d60709d2e8d8a2305b3107c23e0",
+      "existing": {
+        "zh-TW": "Android 未接受響鈴排程，因此沒有建立新的鬧鐘。請檢查鬧鐘權限後重試。",
+        "ja": "Android が通知予定を受け付けなかったため、新しいアラームは作成されませんでした。権限を確認して再試行してください。"
+      },
+      "auditType": "MODEL_ONLY_PRELIMINARY_TRIAGE",
+      "humanApproved": false,
+      "outcome": "REVISION_SUGGESTED_LEGACY_UNCHANGED",
+      "note": "原文 Alarm schedule；原日文『通知予定』不是鬧鐘排程",
+      "suggestedReplacement": {
+        "locale": "ja",
+        "text": "Android がアラームのスケジュールを受け付けなかったため、新しいアラームは作成されませんでした。アラームの権限を確認して再試行してください。"
+      },
+      "evidence": {
+        "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/alarmedit/AlarmEditViewModel.kt",
+        "line": 1052,
+        "kind": "EXACT_STATIC_CODE_CALLSITE"
+      }
+    }
+  ]
+}
