@@ -51,6 +51,9 @@ export function buildCandidates(source,glossary,seeds,contexts){
   assert.equal(context.sourceHash,r.sourceHash);
   for(const locale of ["zh-TW","ja"]){
    const legacy=r.translations[locale];
+   assert((legacy.state==="MISSING" && legacy.text===null) ||
+     (legacy.state==="UNREVIEWED_EXISTING" && typeof legacy.text==="string" && legacy.text.trim()),
+     "Baseline translation state/text mismatch: "+locale+" "+r.key);
    const seed=prepared.get(r.key);
    const text=legacy.text ?? seed?.[locale] ?? null;
    const origin=legacy.text!==null?"LEGACY_UNREVIEWED":(seed?"LLM_DRAFT_UNREVIEWED":"MISSING");
