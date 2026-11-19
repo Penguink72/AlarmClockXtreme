@@ -9,6 +9,35 @@ import { loadJson } from "./lp0-audit.mjs";
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 const matrix = loadJson("localization/governance/lp0/source-matrix.json");
 const terms = loadJson("localization/governance/g1/glossary-contract.json");
+const exclusionContract = loadJson("localization/governance/g2/concept-exclusions.json");
+
+export function compileConceptExclusions(matrix,terms,contract){
+  assert.equal(contract.schema,"acx-g2-concept-exclusions/1");
+  assert.equal(contract.catalogRevision,matrix.baselineRevision);
+  assert.equal(contract.approval,"NOT_A_TRANSLATION_APPROVAL");
+  const byKey=new Map(matrix.records.map(r=>[r.key,r]));
+  const byConcept=new Map(terms.concepts.map(t=>[t.id,t]));
+  assert.equal(byKey.size,200,"Duplicate source key in exclusion baseline");
+  const seen=new Set(),result=new Map();
+  for(const excluded of contract.exclusions){
+    assert.equal(excluded.action,"EXCLUDE_FROM_EFFECTIVE_CONCEPT_IDS");
+    assert.equal(excluded.humanApproval,false);
+    const source=byKey.get(excluded.key),term=byConcept.get(excluded.conceptId);
+    assert(source && term,"Exclusion points at missing key or concept");
+    assert(source.candidateConceptIds.includes(excluded.conceptId),
+      "Exclusion must refer to a real LP0 heuristic link");
+    assert(term.matchedKeys.includes(excluded.key),
+      "Exclusion must refer to a source glossary candidate link");
+    const id=excluded.key+"\\u0000"+excluded.conceptId;
+    assert(!seen.has(id),"Duplicate exclusion "+id);
+    seen.add(id);
+    assert(excluded.reason.length>15,"Every override needs a semantic rationale");
+    if(!result.has(excluded.key))result.set(excluded.key,[]);
+    result.get(excluded.key).push(excluded.conceptId);
+  }
+  return result;
+}
+const excludedByKey=compileConceptExclusions(matrix,terms,exclusionContract);
 const byKey = new Map(matrix.records.map(r => [r.key,r]));
 const uses = new Map(matrix.records.map(r => [r.key,[]]));
 const scanned=[];
@@ -61,7 +90,10 @@ const wear=join(root,"wear/src/main");
 try { walk(wear); } catch (e) { if(e.code!=="ENOENT")throw e; }
 const rows=matrix.records.map(r => ({
   key:r.key,sourceHash:r.sourceHash,section:r.section,source:r.source,
-  conceptIds:r.candidateConceptIds,
+  rawHeuristicConceptIds:r.candidateConceptIds,
+  conceptIds:r.candidateConceptIds.filter(c=>!excludedByKey.get(r.key)?.includes(c)),
+  excludedConceptIds:excludedByKey.get(r.key)||[],
+  conceptBindingRevision:exclusionContract.revision,
   sourceCallsites:uses.get(r.key).sort((a,b)=>a.path.localeCompare(b.path,"en")||a.line-b.line),
   callsiteStatus:uses.get(r.key).length?"STATIC_SOURCE_REFERENCE_FOUND":"NO_STATIC_REFERENCE_FOUND",
   semanticReview:"NOT_REVIEWED",
@@ -74,9 +106,11 @@ const rows=matrix.records.map(r => ({
 const stats={total:rows.length,withStaticReference:rows.filter(x=>x.sourceCallsites.length>0).length,
  noStaticReference:rows.filter(x=>!x.sourceCallsites.length).length,
  totalStaticReferences:rows.reduce((n,x)=>n+x.sourceCallsites.length,0),
- filesScanned:scanned.length,semanticallyApproved:0};
+ filesScanned:scanned.length,semanticallyApproved:0,
+ modelRefutedConceptLinks:exclusionContract.exclusions.length};
 const out={schema:"acx-g2-context-evidence/1",catalogRevision:matrix.baselineRevision,
  sourceCommit:matrix.sourceCommit,glossaryRevision:terms.glossaryRevision,
+ conceptBindingRevision:exclusionContract.revision,
  method:"STATIC_SOURCE_REFERENCE_R.string_OR_XML_@string_ONLY",stats,records:rows};
 assert.equal(rows.length,200);
 if(stats.filesScanned===0)throw Error("No real Android source files scanned");

@@ -62,7 +62,10 @@ export function buildCandidates(source,glossary,seeds,contexts){
     text,origin,status,sourceSection:r.section,
     glossaryRevision:glossary.glossaryRevision,contextEvidenceStatus:context.callsiteStatus,
     contextSemanticStatus:context.semanticReview,
-    conceptIds:r.candidateConceptIds,
+    conceptIds:context.conceptIds,
+    rawHeuristicConceptIds:r.candidateConceptIds,
+    excludedConceptIds:context.excludedConceptIds,
+    conceptBindingRevision:context.conceptBindingRevision,
     placeholders:r.placeholders,
     humanApproval:null});
   }

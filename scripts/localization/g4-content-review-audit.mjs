@@ -94,6 +94,8 @@ export function verifyContentReview({review,glossary,matrix,drafts,contexts,appr
    assert(sources.get(r.key)?.candidateConceptIds.includes(r.conceptId),
     "Review evidence must refer to actual LP0 heuristic");
    assert(r.reason.length>=12);
+   assert(!contextsByKey.get(r.key)?.conceptIds.includes(r.conceptId),
+     "Refuted LP0 concept must not leak into effective G2 binding");
    const id=r.conceptId+"/"+r.key;
    assert(!refuted.has(id),"Duplicate link rejection "+id);
    refuted.add(id);
