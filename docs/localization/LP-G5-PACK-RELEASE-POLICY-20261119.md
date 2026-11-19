@@ -1,0 +1,17 @@
+# LP-G5｜經治理驗證的語言包生成
+
+兩種**嚴格隔離的輸出模式**：
+
+1. `--mode preview`：導出 Android LP1 Debug 可以匯入的 JSON 範例，保留原有 155 條和模型新增 21 條，合計繁中/日文各 176/200。**每條都沒有取得正式語義核准**，包外另附 `manifest.json` 的 `UNREVIEWED_PREVIEW_NOT_RELEASE` 警語。它是試算資料，不是可發布語言包。
+2. `--mode release`：只允許真實具備獨立人工作業審核、與原文和術語版本綁定的譯文。當 G1 術語庫尚未獲核准或 G4 沒有批准條目時，**故意失敗而不是產生假的正式包**。
+
+機械檢查連結 `Source Catalog → G1 Glossary → G2 Callsite Evidence → G3 Candidate Queue → G4 Independent Review Ledger → G5 Pack`。更新任一來源都會使舊審核失效。
+
+```sh
+node scripts/localization/g5-build-language-packs.mjs --mode preview --out-dir build/localization/UNREVIEWED_PREVIEW_NOT_RELEASE
+node scripts/localization/g5-build-language-packs.test.mjs
+# Expected to fail safely until explicit approvals exist:
+node scripts/localization/g5-build-language-packs.mjs --mode release
+```
+
+目前不允許正式發行，也未更動任何原本的 app/src/main/res 字串。
