@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - feature/p31-lpg1-g5-governed-language-pipeline-20261119
+      - feature/p31-lpg-content-review-b1-20261119
     paths:
       - "scripts/localization/**"
       - "localization/governance/**"
@@ -39,6 +40,10 @@ jobs:
         run: |
           node scripts/localization/g4-review-gate.mjs --out localization/governance/g4/qa-report.generated.json
           node scripts/localization/g4-review-gate.test.mjs
+      - name: G4b - Verify content findings against actual Android callsites
+        run: |
+          node scripts/localization/g4-content-review-audit.mjs
+          node scripts/localization/g4-content-review-audit.test.mjs
       - name: G5 - Generate conspicuously unreviewed preview packs
         run: |
           node scripts/localization/g5-build-language-packs.mjs --mode preview --out-dir build/localization/UNREVIEWED_PREVIEW_NOT_RELEASE
@@ -59,6 +64,7 @@ jobs:
             localization/governance/g2/context-evidence.json
             localization/governance/g3/
             localization/governance/g4/
+            docs/localization/LP-G4-CONTENT-REVIEW-BATCH1-20261119.md
             build/localization/UNREVIEWED_PREVIEW_NOT_RELEASE/
             docs/localization/LP-G1-GLOSSARY-CONTRACT-20261119.md
             docs/localization/LP-G2-CONTEXT-EVIDENCE-20261119.md
