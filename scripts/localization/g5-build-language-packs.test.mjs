@@ -2,6 +2,7 @@
 import assert from "node:assert/strict";
 import { buildPacks } from "./g5-build-language-packs.mjs";
 import { loadJson } from "./lp0-audit.mjs";
+import core from "../../experiments/lp0-200/web/probe-core.js";
 const catalog=loadJson("experiments/lp0-200/catalog.json");
 const glossary=loadJson("localization/governance/g1/glossary-contract.json");
 const queue=loadJson("localization/governance/g3/review-queue.generated.json");
@@ -11,6 +12,12 @@ assert.equal(preview.manifest.releaseChannel,"UNREVIEWED_PREVIEW_NOT_RELEASE");
 assert.equal(preview.manifest.mayDistributeAsOfficial,false);
 for(const locale of ["zh-TW","ja"]){
  assert.equal(Object.keys(preview.packs[locale].translations).length,176);
+ // Contract fidelity: a G5 preview JSON must be accepted by the existing
+ // LP0/LP1 runtime data-only importer without upgrading its format.
+ const runtimeValidated = core.validatePack(preview.packs[locale],catalog);
+ assert.equal(Object.keys(runtimeValidated.translations).length,176);
+ assert(Buffer.byteLength(JSON.stringify(preview.packs[locale]),"utf8") < 256*1024);
+
  assert.equal(preview.manifest.totals[locale].unreviewedLegacy,155);
  assert.equal(preview.manifest.totals[locale].unreviewedModelDrafts,21);
  assert.equal(preview.manifest.totals[locale].approved,0);
