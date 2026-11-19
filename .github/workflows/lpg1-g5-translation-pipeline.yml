@@ -44,6 +44,10 @@ jobs:
         run: |
           node scripts/localization/g4-content-review-audit.mjs
           node scripts/localization/g4-content-review-audit.test.mjs
+      - name: G4c - Triage high-priority existing strings without rewriting source
+        run: |
+          node scripts/localization/g4-legacy-priority-audit.mjs
+          node scripts/localization/g4-legacy-priority-audit.test.mjs
       - name: G5 - Generate conspicuously unreviewed preview packs
         run: |
           node scripts/localization/g5-build-language-packs.mjs --mode preview --out-dir build/localization/UNREVIEWED_PREVIEW_NOT_RELEASE
@@ -65,6 +69,7 @@ jobs:
             localization/governance/g3/
             localization/governance/g4/
             docs/localization/LP-G4-CONTENT-REVIEW-BATCH1-20261119.md
+            docs/localization/LP-G4-LEGACY-HIGH-PRIORITY-REVIEW-20261119.md
             build/localization/UNREVIEWED_PREVIEW_NOT_RELEASE/
             docs/localization/LP-G1-GLOSSARY-CONTRACT-20261119.md
             docs/localization/LP-G2-CONTEXT-EVIDENCE-20261119.md
