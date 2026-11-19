@@ -1,0 +1,478 @@
+{
+  "schema": "acx-lp0-terminology-candidates/1",
+  "catalogRevision": "lp0-200-20261118",
+  "status": "DRAFT_PROPOSALS_ONLY",
+  "source": "Existing 200 source strings, local existing translations and key heuristics; definitions and preferred terms NOT approved",
+  "concepts": [
+    {
+      "conceptId": "alarm.action.snooze",
+      "sourceTerm": "Snooze",
+      "definitionDraft": "Pause a currently ringing alarm and set another firing time.",
+      "preferredCandidate": {
+        "zh-TW": "貪睡",
+        "ja": "スヌーズ"
+      },
+      "reviewState": "PROPOSED_NOT_APPROVED",
+      "matchingMethod": "SOURCE_OR_KEY_HEURISTIC",
+      "matchedKeys": [
+        "snooze_duration",
+        "notif_snooze_countdown_title",
+        "notif_snooze_countdown_subtext",
+        "firing_snooze_hint",
+        "firing_exact_snooze_hint",
+        "firing_flip_to_snooze",
+        "firing_status_swipe_or_snooze",
+        "firing_swipe_right_snooze",
+        "firing_location_snooze_hint",
+        "firing_controls_hold_description",
+        "firing_tap_snooze",
+        "firing_hide_snooze_choices",
+        "firing_choose_snooze_until",
+        "firing_snooze_until_hint",
+        "firing_snooze_for_minutes",
+        "firing_increase_snooze",
+        "firing_snooze_minutes",
+        "alarm_edit_anti_snooze",
+        "alarm_edit_section_anti_snooze_description",
+        "alarm_edit_snooze_limit_unlimited",
+        "alarm_edit_progressive_snooze",
+        "alarm_edit_progressive_snooze_hint",
+        "settings_flip_snooze",
+        "settings_default_snooze_description",
+        "settings_cover_to_snooze_description",
+        "stats_snoozed",
+        "stats_track_consistency_snooze_behavior_and_which",
+        "firing_snooze_schedule_failed",
+        "alarm_edit_delivery_test_limitation",
+        "b2_test_snooze",
+        "u4_snooze_resume_position",
+        "u4_snooze_mode_note"
+      ],
+      "notes": "Terminology variants may occur in notifications; not automatically wrong."
+    },
+    {
+      "conceptId": "alarm.action.dismiss",
+      "sourceTerm": "Dismiss",
+      "definitionDraft": "End the current ringing instance without snoozing.",
+      "preferredCandidate": {
+        "zh-TW": "解除",
+        "ja": "停止"
+      },
+      "reviewState": "PROPOSED_NOT_APPROVED",
+      "matchingMethod": "SOURCE_OR_KEY_HEURISTIC",
+      "matchedKeys": [
+        "firing_status_swipe_or_snooze",
+        "firing_swipe_protected",
+        "firing_location_snooze_hint",
+        "firing_controls_hold_description",
+        "firing_challenge_before_dismiss",
+        "firing_challenge_none_status",
+        "alarm_edit_challenge_default_description",
+        "settings_post_dismiss_summary_description",
+        "settings_long_press_threshold_description",
+        "stats_compares_recent_sleep_duration_with_dismiss",
+        "settings_return_to_app_after_dismiss_description",
+        "firing_snooze_schedule_failed"
+      ],
+      "notes": "Verify distinction from closing a dialog."
+    },
+    {
+      "conceptId": "alarm.object.alarm",
+      "sourceTerm": "Alarm",
+      "definitionDraft": "The scheduled alarm record or ringing alarm, depending on context.",
+      "preferredCandidate": {
+        "zh-TW": "鬧鐘",
+        "ja": "アラーム"
+      },
+      "reviewState": "PROPOSED_NOT_APPROVED",
+      "matchingMethod": "SOURCE_OR_KEY_HEURISTIC",
+      "matchedKeys": [
+        "notif_snooze_countdown_title",
+        "firing_controls_title",
+        "firing_exact_snooze_hint",
+        "firing_snooze_until_hint",
+        "firing_challenge_none_support",
+        "alarm_edit_page_integrations",
+        "alarm_edit_smart_alarm",
+        "alarm_edit_anti_snooze",
+        "alarm_edit_section_group_description",
+        "alarm_edit_section_hue_description",
+        "alarm_edit_section_anti_snooze_description",
+        "alarm_edit_background_selected",
+        "alarm_edit_background_permission_warning",
+        "alarm_edit_saving",
+        "alarm_edit_disabled",
+        "alarm_edit_minutes_seconds_short",
+        "alarm_edit_group_custom_name",
+        "alarm_edit_heartbeat",
+        "alarm_edit_immediately_default",
+        "alarm_edit_feature_wifi",
+        "alarm_edit_repeat_weekends",
+        "alarm_edit_squats_required",
+        "alarm_edit_capture_photo_hint",
+        "alarm_edit_challenge_chain",
+        "alarm_edit_challenge_shake",
+        "alarm_edit_challenge_pushup",
+        "alarm_edit_challenge_pvt",
+        "alarm_edit_challenge_voice_description",
+        "alarm_edit_challenge_default_description",
+        "alarm_edit_holidays_hint",
+        "alarm_edit_default_ringtone_placeholder",
+        "alarm_edit_snooze_limit_unlimited",
+        "alarm_edit_progressive_snooze",
+        "alarm_edit_progressive_snooze_hint",
+        "alarm_edit_emergency_phone",
+        "alarm_edit_shift_pattern",
+        "alarm_edit_add_ringtone",
+        "alarm_edit_add_ringtone_accessibility",
+        "alarm_edit_add_ringtone_title",
+        "alarm_edit_ringtone_uri_hint",
+        "alarm_edit_ringtone_duplicate",
+        "alarm_edit_24_hour",
+        "settings_pane_defaults_description",
+        "settings_alarm_defaults_description",
+        "settings_default_snooze_description",
+        "settings_alarm_statistics",
+        "settings_language_description",
+        "settings_on_call_mode_description",
+        "settings_webhook_description",
+        "settings_cover_to_snooze_description",
+        "settings_readiness_exact_alarms",
+        "alarm_edit_delete_digit",
+        "settings_fossify_import_failed_no_alarms",
+        "alarm_edit_challenge_ref_generic",
+        "alarm_list_clear_filters",
+        "alarm_list_delete",
+        "alarm_list_pause",
+        "stats_alarm_history_optional_health_connect",
+        "onboarding_see_weather_calendar_next_alarm",
+        "alarm_music_settings_mode_shared",
+        "alarm_music_settings_strategy_order",
+        "alarm_music_settings_artists",
+        "alarm_music_settings_save",
+        "alarm_music_settings_remove_track",
+        "alarmlist_alarm",
+        "stats_recent_health_connect_sessions_stay_local",
+        "alarmlist_share_alarm",
+        "ringtone_saved_to_alarms",
+        "alarm_list_quick_alarm_for",
+        "alarm_music_settings_playlist_smart_all",
+        "recent_playback_empty",
+        "replay_error_alarm_active",
+        "settings_return_to_app_after_dismiss_description",
+        "firing_snooze_schedule_failed",
+        "alarm_edit_remaining_days_hours_minutes",
+        "alarm_edit_delivery_test_limitation",
+        "b2_test_description",
+        "b2_test_requires_saved",
+        "b2_test_saved_only",
+        "u4_snooze_mode_note",
+        "music_playlist_apply_to_alarm",
+        "alarm_edit_schedule_failed_new"
+      ],
+      "notes": "Must be disambiguated from timer."
+    },
+    {
+      "conceptId": "music.object.ringtone",
+      "sourceTerm": "Ringtone",
+      "definitionDraft": "An alarm sound resource distinct from the general music library.",
+      "preferredCandidate": {
+        "zh-TW": "鈴聲",
+        "ja": "着信音"
+      },
+      "reviewState": "PROPOSED_NOT_APPROVED",
+      "matchingMethod": "SOURCE_OR_KEY_HEURISTIC",
+      "matchedKeys": [
+        "alarm_edit_default_ringtone_placeholder",
+        "alarm_edit_add_ringtone",
+        "alarm_edit_add_ringtone_accessibility",
+        "alarm_edit_add_ringtone_title",
+        "alarm_edit_ringtone_uri_hint",
+        "alarm_edit_ringtone_duplicate",
+        "ringtone_folder",
+        "ringtone_preview_unavailable",
+        "ringtone_nothing_matches",
+        "ringtone_folder_item",
+        "ringtone_saved_to_alarms"
+      ],
+      "notes": "Confirm actual sound picker semantics."
+    },
+    {
+      "conceptId": "music.library",
+      "sourceTerm": "Music library",
+      "definitionDraft": "Library of accessible indexed music.",
+      "preferredCandidate": {
+        "zh-TW": "音樂庫",
+        "ja": "音楽ライブラリ"
+      },
+      "reviewState": "PROPOSED_NOT_APPROVED",
+      "matchingMethod": "SOURCE_OR_KEY_HEURISTIC",
+      "matchedKeys": [
+        "music_library_title",
+        "music_library_history_title",
+        "music_library_catalog_empty",
+        "music_library_tab_videos",
+        "music_library_video_audio_track_detected",
+        "music_library_source_scope_all",
+        "music_library_preview",
+        "music_library_add_folder",
+        "music_library_source_origin",
+        "music_library_source_unknown_origin",
+        "music_library_remove_source",
+        "music_library_sources_read_failed",
+        "music_library_no_history",
+        "music_library_close",
+        "music_library_scan_failed",
+        "music_library_history_row",
+        "music_library_pool_all_candidates",
+        "music_library_pool_clear_selection",
+        "music_library_pool_status_included",
+        "music_library_pool_source_label",
+        "music_library_pool_type_audio",
+        "music_library_category_music",
+        "music_library_history_filter_recent",
+        "music_library_system_tones_cancel"
+      ],
+      "notes": "MediaStore and SAF sources may require distinct labels."
+    },
+    {
+      "conceptId": "music.playback_history",
+      "sourceTerm": "Playback history",
+      "definitionDraft": "History of music playback; distinct from alarm event logs.",
+      "preferredCandidate": {
+        "zh-TW": "播放歷史",
+        "ja": "再生履歴"
+      },
+      "reviewState": "PROPOSED_NOT_APPROVED",
+      "matchingMethod": "SOURCE_OR_KEY_HEURISTIC",
+      "matchedKeys": [
+        "music_library_title",
+        "music_library_history_title",
+        "music_library_no_history",
+        "recent_playback_empty",
+        "b2_test_description"
+      ],
+      "notes": "History should reflect started tracks, not merely selected tracks."
+    },
+    {
+      "conceptId": "music.playlist",
+      "sourceTerm": "Playlist",
+      "definitionDraft": "User-defined or imported ordered list of tracks.",
+      "preferredCandidate": {
+        "zh-TW": "播放清單",
+        "ja": "プレイリスト"
+      },
+      "reviewState": "PROPOSED_NOT_APPROVED",
+      "matchingMethod": "SOURCE_OR_KEY_HEURISTIC",
+      "matchedKeys": [
+        "alarm_music_settings_strategy_order",
+        "music_playlist_integration_pending",
+        "music_playlist_add_selected",
+        "music_playlist_rename",
+        "music_playlist_empty",
+        "music_playlist_remove",
+        "music_playlist_unavailable_count",
+        "alarm_music_settings_playlist_smart_all",
+        "music_playlist_selected_items",
+        "music_playlist_partial_add",
+        "alarm_edit_delivery_test_limitation",
+        "music_playlist_apply_to_alarm"
+      ],
+      "notes": "Distinguish from randomly selected pool."
+    },
+    {
+      "conceptId": "music.track",
+      "sourceTerm": "Track",
+      "definitionDraft": "A playable audio item in the music library.",
+      "preferredCandidate": {
+        "zh-TW": "曲目",
+        "ja": "曲"
+      },
+      "reviewState": "PROPOSED_NOT_APPROVED",
+      "matchingMethod": "SOURCE_OR_KEY_HEURISTIC",
+      "matchedKeys": [
+        "settings_stopwatch_description",
+        "music_library_catalog_empty",
+        "music_library_video_audio_track_detected",
+        "music_library_preview",
+        "alarm_music_settings_remove_track",
+        "stats_track_consistency_snooze_behavior_and_which",
+        "music_playlist_unavailable_count",
+        "music_playlist_partial_add",
+        "u4_snooze_mode_note"
+      ],
+      "notes": "May require song/track distinction."
+    },
+    {
+      "conceptId": "music.random",
+      "sourceTerm": "Random / Shuffle",
+      "definitionDraft": "Selection/playback in randomized order.",
+      "preferredCandidate": {
+        "zh-TW": "隨機",
+        "ja": "ランダム"
+      },
+      "reviewState": "PROPOSED_NOT_APPROVED",
+      "matchingMethod": "SOURCE_OR_KEY_HEURISTIC",
+      "matchedKeys": [],
+      "notes": "Random selection and shuffle order might differ."
+    },
+    {
+      "conceptId": "music.repeat",
+      "sourceTerm": "Repeat",
+      "definitionDraft": "A repeated action or playback behavior; screen context required.",
+      "preferredCandidate": {
+        "zh-TW": "重複",
+        "ja": "繰り返し"
+      },
+      "reviewState": "PROPOSED_NOT_APPROVED",
+      "matchingMethod": "SOURCE_OR_KEY_HEURISTIC",
+      "matchedKeys": [
+        "alarm_edit_section_anti_snooze_description",
+        "alarm_edit_repeat_weekends"
+      ],
+      "notes": "Avoid treating recurring alarms as looped music."
+    },
+    {
+      "conceptId": "ui.action.save",
+      "sourceTerm": "Save",
+      "definitionDraft": "Commit the configuration or change to persistent storage.",
+      "preferredCandidate": {
+        "zh-TW": "儲存",
+        "ja": "保存"
+      },
+      "reviewState": "PROPOSED_NOT_APPROVED",
+      "matchingMethod": "SOURCE_OR_KEY_HEURISTIC",
+      "matchedKeys": [
+        "firing_snooze_hint",
+        "firing_left_saved_place",
+        "firing_location_snooze_hint",
+        "firing_challenge_photo_support",
+        "alarm_edit_saving",
+        "alarm_music_settings_save",
+        "readiness_needs_photo",
+        "ringtone_saved_to_alarms",
+        "music_playlist_integration_pending",
+        "b2_test_description",
+        "b2_test_requires_saved",
+        "b2_test_saved_only"
+      ],
+      "notes": "Saved alarm versus saved file requires contextual check."
+    },
+    {
+      "conceptId": "ui.action.delete",
+      "sourceTerm": "Delete / Remove",
+      "definitionDraft": "Remove a stored item or record.",
+      "preferredCandidate": {
+        "zh-TW": "刪除",
+        "ja": "削除"
+      },
+      "reviewState": "PROPOSED_NOT_APPROVED",
+      "matchingMethod": "SOURCE_OR_KEY_HEURISTIC",
+      "matchedKeys": [
+        "alarm_edit_delete_digit",
+        "alarm_list_delete",
+        "alarm_music_settings_remove_track",
+        "music_library_remove_source",
+        "music_playlist_remove"
+      ],
+      "notes": "Verify destructive consequences and confirmation."
+    },
+    {
+      "conceptId": "ui.action.disable",
+      "sourceTerm": "Disable",
+      "definitionDraft": "Make a feature or alarm inactive without deleting it.",
+      "preferredCandidate": {
+        "zh-TW": "停用",
+        "ja": "無効"
+      },
+      "reviewState": "PROPOSED_NOT_APPROVED",
+      "matchingMethod": "SOURCE_OR_KEY_HEURISTIC",
+      "matchedKeys": [
+        "alarm_edit_disabled"
+      ],
+      "notes": "Do not conflate with dismiss."
+    },
+    {
+      "conceptId": "alarm.action.schedule",
+      "sourceTerm": "Schedule",
+      "definitionDraft": "Set the future alarm triggering time or rule.",
+      "preferredCandidate": {
+        "zh-TW": "排程",
+        "ja": "スケジュール"
+      },
+      "reviewState": "PROPOSED_NOT_APPROVED",
+      "matchingMethod": "SOURCE_OR_KEY_HEURISTIC",
+      "matchedKeys": [
+        "firing_snooze_schedule_failed",
+        "alarm_edit_delivery_test_limitation",
+        "b2_test_scheduled",
+        "alarm_edit_schedule_failed_new"
+      ],
+      "notes": "Do not conflate schedule failure with save failure."
+    },
+    {
+      "conceptId": "music.action.resume",
+      "sourceTerm": "Resume",
+      "definitionDraft": "Continue paused playback from the previous position.",
+      "preferredCandidate": {
+        "zh-TW": "繼續播放",
+        "ja": "再開"
+      },
+      "reviewState": "PROPOSED_NOT_APPROVED",
+      "matchingMethod": "SOURCE_OR_KEY_HEURISTIC",
+      "matchedKeys": [
+        "u4_snooze_resume_position"
+      ],
+      "notes": "Distinguish restart from resume."
+    },
+    {
+      "conceptId": "music.action.stop",
+      "sourceTerm": "Stop",
+      "definitionDraft": "Stop an active operation; screen context required.",
+      "preferredCandidate": {
+        "zh-TW": "停止",
+        "ja": "停止"
+      },
+      "reviewState": "PROPOSED_NOT_APPROVED",
+      "matchingMethod": "SOURCE_OR_KEY_HEURISTIC",
+      "matchedKeys": [
+        "alarm_edit_challenge_default_description",
+        "replay_action_stop",
+        "replay_error_alarm_active",
+        "settings_return_to_app_after_dismiss_description"
+      ],
+      "notes": "Distinguish music stop from alarm dismiss."
+    },
+    {
+      "conceptId": "app.permission",
+      "sourceTerm": "Permission",
+      "definitionDraft": "Operating system access permission associated with an App operation.",
+      "preferredCandidate": {
+        "zh-TW": "權限",
+        "ja": "権限"
+      },
+      "reviewState": "PROPOSED_NOT_APPROVED",
+      "matchingMethod": "SOURCE_OR_KEY_HEURISTIC",
+      "matchedKeys": [
+        "alarm_edit_background_permission_warning",
+        "permissions_context_permissions",
+        "replay_error_playback_failed",
+        "alarm_edit_schedule_failed_new"
+      ],
+      "notes": "Avoid implying permission granted when merely requested."
+    },
+    {
+      "conceptId": "alarm.action.test",
+      "sourceTerm": "Test alarm",
+      "definitionDraft": "Diagnostic or user-launched alarm test separate from a scheduled alarm.",
+      "preferredCandidate": {
+        "zh-TW": "測試鬧鐘",
+        "ja": "テストアラーム"
+      },
+      "reviewState": "PROPOSED_NOT_APPROVED",
+      "matchingMethod": "SOURCE_OR_KEY_HEURISTIC",
+      "matchedKeys": [],
+      "notes": "Do not conflate debug diagnostic with normal alarm."
+    }
+  ]
+}
