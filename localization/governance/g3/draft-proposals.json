@@ -1,0 +1,178 @@
+{
+  "schema": "acx-g3-proposals/1",
+  "catalogRevision": "lp0-200-20261118",
+  "glossaryRevision": "lpg1-20261119-draft-1",
+  "producer": "GPT-6 translation candidate proposals",
+  "approval": "NONE",
+  "note": "21 previously missing keys, two locales; model-authored unreviewed drafts, NOT source-of-truth or a release-ready pack",
+  "translations": [
+    {
+      "key": "alarm_edit_feature_wifi",
+      "zh-TW": "Wi-Fi 規則",
+      "ja": "Wi-Fi ルール",
+      "reviewState": "DRAFT_LLM_UNREVIEWED",
+      "provenance": "model-generated-candidate",
+      "semanticReviewRequired": true
+    },
+    {
+      "key": "alarm_edit_default_ringtone_placeholder",
+      "zh-TW": "留空則使用預設鈴聲",
+      "ja": "空欄の場合は既定のアラーム音を使用",
+      "reviewState": "DRAFT_LLM_UNREVIEWED",
+      "provenance": "model-generated-candidate",
+      "semanticReviewRequired": true
+    },
+    {
+      "key": "alarm_edit_emergency_phone",
+      "zh-TW": "緊急聯絡電話號碼",
+      "ja": "緊急連絡先の電話番号",
+      "reviewState": "DRAFT_LLM_UNREVIEWED",
+      "provenance": "model-generated-candidate",
+      "semanticReviewRequired": true
+    },
+    {
+      "key": "alarm_edit_shift_pattern",
+      "zh-TW": "輪班模式",
+      "ja": "シフトパターン",
+      "reviewState": "DRAFT_LLM_UNREVIEWED",
+      "provenance": "model-generated-candidate",
+      "semanticReviewRequired": true
+    },
+    {
+      "key": "alarm_edit_add_ringtone",
+      "zh-TW": "新增鬧鐘鈴聲",
+      "ja": "アラーム音を追加",
+      "reviewState": "DRAFT_LLM_UNREVIEWED",
+      "provenance": "model-generated-candidate",
+      "semanticReviewRequired": true
+    },
+    {
+      "key": "alarm_edit_add_ringtone_accessibility",
+      "zh-TW": "將鈴聲加入候選池",
+      "ja": "アラーム音を候補に追加",
+      "reviewState": "DRAFT_LLM_UNREVIEWED",
+      "provenance": "model-generated-candidate",
+      "semanticReviewRequired": true
+    },
+    {
+      "key": "alarm_edit_add_ringtone_title",
+      "zh-TW": "將鈴聲加入候選池",
+      "ja": "アラーム音を候補に追加",
+      "reviewState": "DRAFT_LLM_UNREVIEWED",
+      "provenance": "model-generated-candidate",
+      "semanticReviewRequired": true
+    },
+    {
+      "key": "alarm_edit_ringtone_duplicate",
+      "zh-TW": "這個鈴聲已在候選池中。",
+      "ja": "このアラーム音は既に候補にあります。",
+      "reviewState": "DRAFT_LLM_UNREVIEWED",
+      "provenance": "model-generated-candidate",
+      "semanticReviewRequired": true
+    },
+    {
+      "key": "settings_flip_snooze",
+      "zh-TW": "翻轉手機以貪睡",
+      "ja": "端末を裏返してスヌーズ",
+      "reviewState": "DRAFT_LLM_UNREVIEWED",
+      "provenance": "model-generated-candidate",
+      "semanticReviewRequired": true
+    },
+    {
+      "key": "settings_show_today_tab",
+      "zh-TW": "顯示「今日」分頁",
+      "ja": "「今日」タブを表示",
+      "reviewState": "DRAFT_LLM_UNREVIEWED",
+      "provenance": "model-generated-candidate",
+      "semanticReviewRequired": true
+    },
+    {
+      "key": "settings_license",
+      "zh-TW": "授權條款",
+      "ja": "ライセンス",
+      "reviewState": "DRAFT_LLM_UNREVIEWED",
+      "provenance": "model-generated-candidate",
+      "semanticReviewRequired": true
+    },
+    {
+      "key": "settings_hue_api_placeholder",
+      "zh-TW": "請先按下 Hue 橋接器按鈕",
+      "ja": "先に Hue ブリッジのボタンを押してください",
+      "reviewState": "DRAFT_LLM_UNREVIEWED",
+      "provenance": "model-generated-candidate",
+      "semanticReviewRequired": true
+    },
+    {
+      "key": "settings_health_no_session",
+      "zh-TW": "沒有工作階段",
+      "ja": "セッションがありません",
+      "reviewState": "DRAFT_LLM_UNREVIEWED",
+      "provenance": "model-generated-candidate",
+      "semanticReviewRequired": true
+    },
+    {
+      "key": "settings_connection_sunrise_skipped",
+      "zh-TW": "已略過日出模擬",
+      "ja": "日の出シミュレーションをスキップしました",
+      "reviewState": "DRAFT_LLM_UNREVIEWED",
+      "provenance": "model-generated-candidate",
+      "semanticReviewRequired": true
+    },
+    {
+      "key": "settings_accent_violet",
+      "zh-TW": "紫羅蘭色",
+      "ja": "バイオレット",
+      "reviewState": "DRAFT_LLM_UNREVIEWED",
+      "provenance": "model-generated-candidate",
+      "semanticReviewRequired": true
+    },
+    {
+      "key": "settings_readiness_exact_alarms",
+      "zh-TW": "精確鬧鐘",
+      "ja": "正確なアラーム",
+      "reviewState": "DRAFT_LLM_UNREVIEWED",
+      "provenance": "model-generated-candidate",
+      "semanticReviewRequired": true
+    },
+    {
+      "key": "stats_snoozed",
+      "zh-TW": "已貪睡",
+      "ja": "スヌーズ済み",
+      "reviewState": "DRAFT_LLM_UNREVIEWED",
+      "provenance": "model-generated-candidate",
+      "semanticReviewRequired": true
+    },
+    {
+      "key": "stats_recent_history",
+      "zh-TW": "最近的歷史紀錄",
+      "ja": "最近の履歴",
+      "reviewState": "DRAFT_LLM_UNREVIEWED",
+      "provenance": "model-generated-candidate",
+      "semanticReviewRequired": true
+    },
+    {
+      "key": "settings_backup_support_bundle_failed",
+      "zh-TW": "無法建立支援資料包。",
+      "ja": "サポート用データを作成できませんでした。",
+      "reviewState": "DRAFT_LLM_UNREVIEWED",
+      "provenance": "model-generated-candidate",
+      "semanticReviewRequired": true
+    },
+    {
+      "key": "readiness_ready",
+      "zh-TW": "可供使用。",
+      "ja": "使用できます。",
+      "reviewState": "DRAFT_LLM_UNREVIEWED",
+      "provenance": "model-generated-candidate",
+      "semanticReviewRequired": true
+    },
+    {
+      "key": "readiness_needs_photo",
+      "zh-TW": "儲存前請拍攝參考照片。",
+      "ja": "保存前に参照写真を撮影してください。",
+      "reviewState": "DRAFT_LLM_UNREVIEWED",
+      "provenance": "model-generated-candidate",
+      "semanticReviewRequired": true
+    }
+  ]
+}
