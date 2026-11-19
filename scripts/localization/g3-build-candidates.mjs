@@ -5,7 +5,8 @@ import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import assert from "node:assert/strict";
 import { loadJson } from "./lp0-audit.mjs";
-import { placeholders } from "../../experiments/lp0-200/web/probe-core.js";
+import core from "../../experiments/lp0-200/web/probe-core.js";
+const { placeholders } = core;
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 const source=loadJson("localization/governance/lp0/source-matrix.json");
