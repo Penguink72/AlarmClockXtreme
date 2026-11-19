@@ -1,0 +1,9 @@
+{
+  "schema": "acx-g4-review-ledger/1",
+  "catalogRevision": "lp0-200-20261118",
+  "glossaryRevision": "lpg1-20261119-draft-1",
+  "policy": "HUMAN_REVIEW_AND_SOURCE_CONTEXT_REQUIRED",
+  "approvals": [],
+  "rejections": [],
+  "note": "No human reviewed any candidate. Empty by design; never automatically populated by model or heuristic."
+}
