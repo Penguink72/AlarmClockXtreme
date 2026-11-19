@@ -1,0 +1,891 @@
+{
+  "schema": "acx-g4-model-assisted-content-review/1",
+  "basedOnCommit": "f90c089b31fde0fe7f18c6bb06854912864fb4bc",
+  "catalogRevision": "lp0-200-20261118",
+  "glossaryRevision": "lpg1-20261119-draft-2",
+  "authority": "MODEL_ASSISTED_REVIEW_ONLY",
+  "humanApproved": false,
+  "method": "Source-key/translation comparison, actual Android Kotlin callsites, code behavior summary, bilingual localization review; no independent reviewer sign-off",
+  "scope": {
+    "concepts": 18,
+    "missingKeysReviewed": 21,
+    "localeDraftsReviewed": 42,
+    "preExistingTranslationsFullyReviewed": false,
+    "semanticHumanApprovals": 0
+  },
+  "termFindings": [
+    {
+      "conceptId": "alarm.action.snooze",
+      "sourceTerm": "Snooze",
+      "preferredCandidates": {
+        "en": "Snooze",
+        "zh-TW": "貪睡",
+        "ja": "スヌーズ"
+      },
+      "assessment": "保留貪睡／スヌーズ為操作候選；稍後提醒只作長句變體待確認，絕不能等同解除",
+      "decision": "KEEP_UNAPPROVED_CANDIDATE",
+      "approved": false
+    },
+    {
+      "conceptId": "alarm.action.dismiss",
+      "sourceTerm": "Dismiss",
+      "preferredCandidates": {
+        "en": "Dismiss",
+        "zh-TW": "解除",
+        "ja": "停止"
+      },
+      "assessment": "保留解除／停止候選，但停止一詞在日文可能與音樂播放停止混淆，需由畫面區分",
+      "decision": "KEEP_UNAPPROVED_CANDIDATE",
+      "approved": false
+    },
+    {
+      "conceptId": "alarm.object.alarm",
+      "sourceTerm": "Alarm",
+      "preferredCandidates": {
+        "en": "Alarm",
+        "zh-TW": "鬧鐘",
+        "ja": "アラーム"
+      },
+      "assessment": "保留鬧鐘／アラーム；注意前綴 alarm_edit_ 的非鬧鐘名詞也被啟發式關聯",
+      "decision": "KEEP_UNAPPROVED_CANDIDATE",
+      "approved": false
+    },
+    {
+      "conceptId": "music.object.ringtone",
+      "sourceTerm": "Ringtone",
+      "preferredCandidates": {
+        "en": "Ringtone",
+        "zh-TW": "鈴聲",
+        "ja": "アラーム音"
+      },
+      "assessment": "日文着信音是來電音的常見詞；本 App 的鬧鐘聲響較適合アラーム音，修訂候選詞",
+      "decision": "CANDIDATE_LABEL_REVISION_APPLIED",
+      "approved": false
+    },
+    {
+      "conceptId": "music.library",
+      "sourceTerm": "Music library",
+      "preferredCandidates": {
+        "en": "Music library",
+        "zh-TW": "音樂庫",
+        "ja": "音楽ライブラリ"
+      },
+      "assessment": "音樂庫／音楽ライブラリ保留，來源可能含 SAF、MediaStore，不等同播放清單",
+      "decision": "KEEP_UNAPPROVED_CANDIDATE",
+      "approved": false
+    },
+    {
+      "conceptId": "music.playback_history",
+      "sourceTerm": "Playback history",
+      "preferredCandidates": {
+        "en": "Playback history",
+        "zh-TW": "播放歷史",
+        "ja": "再生履歴"
+      },
+      "assessment": "播放歷史／再生履歴保留，依已開始播放的曲目與鬧鐘事件記錄區分",
+      "decision": "KEEP_UNAPPROVED_CANDIDATE",
+      "approved": false
+    },
+    {
+      "conceptId": "music.playlist",
+      "sourceTerm": "Playlist",
+      "preferredCandidates": {
+        "en": "Playlist",
+        "zh-TW": "播放清單",
+        "ja": "プレイリスト"
+      },
+      "assessment": "播放清單／プレイリスト保留，不等同索引的整座音樂庫",
+      "decision": "KEEP_UNAPPROVED_CANDIDATE",
+      "approved": false
+    },
+    {
+      "conceptId": "music.track",
+      "sourceTerm": "Track",
+      "preferredCandidates": {
+        "en": "Track",
+        "zh-TW": "曲目",
+        "ja": "曲"
+      },
+      "assessment": "在影音容器中的 audio track 不必然是曲目，啟發式關聯不應強迫使用曲／曲目",
+      "decision": "KEEP_UNAPPROVED_CANDIDATE",
+      "approved": false
+    },
+    {
+      "conceptId": "music.random",
+      "sourceTerm": "Random / Shuffle",
+      "preferredCandidates": {
+        "en": "Random / Shuffle",
+        "zh-TW": "隨機",
+        "ja": "ランダム"
+      },
+      "assessment": "隨機／ランダム保留候選，但本 200 Key 沒有有效詞彙匹配，不宣稱已驗證",
+      "decision": "KEEP_UNAPPROVED_CANDIDATE",
+      "approved": false
+    },
+    {
+      "conceptId": "music.repeat",
+      "sourceTerm": "Repeat",
+      "preferredCandidates": {
+        "en": "Repeat",
+        "zh-TW": "重複",
+        "ja": "繰り返し"
+      },
+      "assessment": "現有兩個啟發式命中分別指重複延遲和週末重複，不是音樂重播，必須排除連結",
+      "decision": "KEEP_UNAPPROVED_CANDIDATE",
+      "approved": false
+    },
+    {
+      "conceptId": "ui.action.save",
+      "sourceTerm": "Save",
+      "preferredCandidates": {
+        "en": "Save",
+        "zh-TW": "儲存",
+        "ja": "保存"
+      },
+      "assessment": "saved place、saved reference 是形容詞，不代表使用者正執行儲存操作，必須排除",
+      "decision": "KEEP_UNAPPROVED_CANDIDATE",
+      "approved": false
+    },
+    {
+      "conceptId": "ui.action.delete",
+      "sourceTerm": "Delete / Remove",
+      "preferredCandidates": {
+        "en": "Delete / Remove",
+        "zh-TW": "刪除",
+        "ja": "削除"
+      },
+      "assessment": "delete digit 只刪除輸入的字元，不代表刪除持久鬧鐘記錄",
+      "decision": "KEEP_UNAPPROVED_CANDIDATE",
+      "approved": false
+    },
+    {
+      "conceptId": "ui.action.disable",
+      "sourceTerm": "Disable",
+      "preferredCandidates": {
+        "en": "Disable",
+        "zh-TW": "停用",
+        "ja": "無効"
+      },
+      "assessment": "停用／無効保留，不能等同刪除或解除當次響鈴",
+      "decision": "KEEP_UNAPPROVED_CANDIDATE",
+      "approved": false
+    },
+    {
+      "conceptId": "alarm.action.schedule",
+      "sourceTerm": "Schedule",
+      "preferredCandidates": {
+        "en": "Schedule",
+        "zh-TW": "排程",
+        "ja": "スケジュール"
+      },
+      "assessment": "排程／スケジュール保留；與儲存設定成功分別看待",
+      "decision": "KEEP_UNAPPROVED_CANDIDATE",
+      "approved": false
+    },
+    {
+      "conceptId": "music.action.resume",
+      "sourceTerm": "Resume",
+      "preferredCandidates": {
+        "en": "Resume",
+        "zh-TW": "繼續播放",
+        "ja": "再開"
+      },
+      "assessment": "繼續播放／再開保留，但真正操作要核對恢復到音樂中斷點的邏輯",
+      "decision": "KEEP_UNAPPROVED_CANDIDATE",
+      "approved": false
+    },
+    {
+      "conceptId": "music.action.stop",
+      "sourceTerm": "Stop",
+      "preferredCandidates": {
+        "en": "Stop",
+        "zh-TW": "停止",
+        "ja": "停止"
+      },
+      "assessment": "Stop 命中『鬧鐘停止』並不是『音樂停止』，部分連結需排除",
+      "decision": "KEEP_UNAPPROVED_CANDIDATE",
+      "approved": false
+    },
+    {
+      "conceptId": "app.permission",
+      "sourceTerm": "Permission",
+      "preferredCandidates": {
+        "en": "Permission",
+        "zh-TW": "權限",
+        "ja": "権限"
+      },
+      "assessment": "權限／権限保留，但需要區分請求、已允許、拒絕、撤回",
+      "decision": "KEEP_UNAPPROVED_CANDIDATE",
+      "approved": false
+    },
+    {
+      "conceptId": "alarm.action.test",
+      "sourceTerm": "Test alarm",
+      "preferredCandidates": {
+        "en": "Test alarm",
+        "zh-TW": "測試鬧鐘",
+        "ja": "テストアラーム"
+      },
+      "assessment": "測試鬧鐘／テストアラーム保留概念候選；現有 200 Key 無命中不能視為已驗證",
+      "decision": "KEEP_UNAPPROVED_CANDIDATE",
+      "approved": false
+    }
+  ],
+  "refutedHeuristicLinks": [
+    {
+      "conceptId": "music.repeat",
+      "key": "alarm_edit_repeat_weekends",
+      "decision": "REFUTE_AUTOMATIC_CONCEPT_LINK",
+      "reason": "週末重複指鬧鐘重複日，非播放音訊的 Repeat",
+      "manualSemanticApproval": false
+    },
+    {
+      "conceptId": "music.repeat",
+      "key": "alarm_edit_section_anti_snooze_description",
+      "decision": "REFUTE_AUTOMATIC_CONCEPT_LINK",
+      "reason": "repeated delay 指一再延後起床，非重播音樂",
+      "manualSemanticApproval": false
+    },
+    {
+      "conceptId": "ui.action.save",
+      "key": "firing_left_saved_place",
+      "decision": "REFUTE_AUTOMATIC_CONCEPT_LINK",
+      "reason": "saved place 為已存地點的形容詞，不是儲存按鈕",
+      "manualSemanticApproval": false
+    },
+    {
+      "conceptId": "ui.action.save",
+      "key": "firing_location_snooze_hint",
+      "decision": "REFUTE_AUTOMATIC_CONCEPT_LINK",
+      "reason": "saved place 描述既有儲存位置，非進行儲存",
+      "manualSemanticApproval": false
+    },
+    {
+      "conceptId": "ui.action.save",
+      "key": "firing_challenge_photo_support",
+      "decision": "REFUTE_AUTOMATIC_CONCEPT_LINK",
+      "reason": "saved reference 為已存參考照，非儲存動作",
+      "manualSemanticApproval": false
+    },
+    {
+      "conceptId": "ui.action.delete",
+      "key": "alarm_edit_delete_digit",
+      "decision": "REFUTE_AUTOMATIC_CONCEPT_LINK",
+      "reason": "刪除輸入字元，不是刪除持久資料",
+      "manualSemanticApproval": false
+    },
+    {
+      "conceptId": "music.action.stop",
+      "key": "alarm_edit_challenge_default_description",
+      "decision": "REFUTE_AUTOMATIC_CONCEPT_LINK",
+      "reason": "文字說的是鬧鐘結束響鈴，不是媒體重播停止",
+      "manualSemanticApproval": false
+    },
+    {
+      "conceptId": "music.action.stop",
+      "key": "settings_return_to_app_after_dismiss_description",
+      "decision": "REFUTE_AUTOMATIC_CONCEPT_LINK",
+      "reason": "文字說的是解除鬧鐘後停止，非播放清單操作",
+      "manualSemanticApproval": false
+    },
+    {
+      "conceptId": "music.track",
+      "key": "music_library_video_audio_track_detected",
+      "decision": "REFUTE_AUTOMATIC_CONCEPT_LINK",
+      "reason": "音訊軌指影音容器 track，不一定是歌曲曲目",
+      "manualSemanticApproval": false
+    }
+  ],
+  "newCandidateReview": [
+    {
+      "key": "alarm_edit_feature_wifi",
+      "source": "Wi-Fi rule",
+      "sourceHash": "sha256:026af7a4e1ae632af633bca3d42ac46c65ddc9d670e3ec931f1df537a31c145a",
+      "locales": [
+        "zh-TW",
+        "ja"
+      ],
+      "originalDraft": {
+        "zh-TW": "Wi-Fi 規則",
+        "ja": "Wi-Fi ルール"
+      },
+      "currentDraft": {
+        "zh-TW": "Wi-Fi 規則",
+        "ja": "Wi-Fi ルール"
+      },
+      "decision": "RETAIN_UNREVIEWED_DRAFT",
+      "sourceEvidence": {
+        "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/alarmedit/AlarmEditSupport.kt",
+        "line": 285,
+        "kind": "STATIC_CODE_CALLSITE_PLUS_READ_CODE_CONTEXT"
+      },
+      "rationale": "摘要顯示 Wi-Fi 解除規則，現有直譯沒有明顯錯誤；功能效果仍須進一步核對",
+      "reviewedByType": "model",
+      "humanApproval": null,
+      "reviewStatus": "MODEL_CONTEXT_CHECK_DONE_HUMAN_PENDING"
+    },
+    {
+      "key": "alarm_edit_default_ringtone_placeholder",
+      "source": "Leave blank to use default ringtone",
+      "sourceHash": "sha256:f1f286706b90bb370781603987fba513b17cf4289bc485a84f6af2ea535dc2b2",
+      "locales": [
+        "zh-TW",
+        "ja"
+      ],
+      "originalDraft": {
+        "zh-TW": "留空則使用預設鈴聲",
+        "ja": "空欄の場合は既定のアラーム音を使用"
+      },
+      "currentDraft": {
+        "zh-TW": "留空則使用預設鈴聲",
+        "ja": "空欄の場合は既定のアラーム音を使用"
+      },
+      "decision": "RETAIN_UNREVIEWED_DRAFT",
+      "sourceEvidence": {
+        "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/alarmedit/AlarmEditIntegrationSections.kt",
+        "line": 93,
+        "kind": "STATIC_CODE_CALLSITE_PLUS_READ_CODE_CONTEXT"
+      },
+      "rationale": "Spotify 與網路電台欄位的空值備援提示；預設鈴聲由既有來源決定",
+      "reviewedByType": "model",
+      "humanApproval": null,
+      "reviewStatus": "MODEL_CONTEXT_CHECK_DONE_HUMAN_PENDING"
+    },
+    {
+      "key": "alarm_edit_emergency_phone",
+      "source": "Emergency phone number",
+      "sourceHash": "sha256:983d857ac2123bb5ca977f162bc490b961c3721eb8bddb9833eccea086257fb7",
+      "locales": [
+        "zh-TW",
+        "ja"
+      ],
+      "originalDraft": {
+        "zh-TW": "緊急聯絡電話號碼",
+        "ja": "緊急連絡先の電話番号"
+      },
+      "currentDraft": {
+        "zh-TW": "緊急聯絡電話號碼",
+        "ja": "緊急連絡先の電話番号"
+      },
+      "decision": "RETAIN_UNREVIEWED_DRAFT",
+      "sourceEvidence": {
+        "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/alarmedit/AlarmEditIntegrationSections.kt",
+        "line": 280,
+        "kind": "STATIC_CODE_CALLSITE_PLUS_READ_CODE_CONTEXT"
+      },
+      "rationale": "Guardian emergency alert 開啟後輸入緊急電話；現有譯文符合欄位語意",
+      "reviewedByType": "model",
+      "humanApproval": null,
+      "reviewStatus": "MODEL_CONTEXT_CHECK_DONE_HUMAN_PENDING"
+    },
+    {
+      "key": "alarm_edit_shift_pattern",
+      "source": "Shift pattern",
+      "sourceHash": "sha256:ec34a0de888cba868d950152e727b315bf34e43c9601108fa0fd5f2517c48fb5",
+      "locales": [
+        "zh-TW",
+        "ja"
+      ],
+      "originalDraft": {
+        "zh-TW": "輪班模式",
+        "ja": "シフトパターン"
+      },
+      "currentDraft": {
+        "zh-TW": "輪班模式",
+        "ja": "シフトパターン"
+      },
+      "decision": "RETAIN_UNREVIEWED_DRAFT",
+      "sourceEvidence": {
+        "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/alarmedit/AlarmEditAdvancedSection.kt",
+        "line": 169,
+        "kind": "STATIC_CODE_CALLSITE_PLUS_READ_CODE_CONTEXT"
+      },
+      "rationale": "設定輪班模式欄位；需與排程規則確認字義，但不需先改譯文",
+      "reviewedByType": "model",
+      "humanApproval": null,
+      "reviewStatus": "MODEL_CONTEXT_CHECK_DONE_HUMAN_PENDING"
+    },
+    {
+      "key": "alarm_edit_add_ringtone",
+      "source": "Add ringtone",
+      "sourceHash": "sha256:d0f2f8550f4145e490affd7b08f5e707f3efe0b14e3f3e356b28ceb3cab20435",
+      "locales": [
+        "zh-TW",
+        "ja"
+      ],
+      "originalDraft": {
+        "zh-TW": "新增鬧鐘鈴聲",
+        "ja": "アラーム音を追加"
+      },
+      "currentDraft": {
+        "zh-TW": "新增鬧鐘鈴聲",
+        "ja": "アラーム音を追加"
+      },
+      "decision": "RETAIN_UNREVIEWED_DRAFT",
+      "sourceEvidence": {
+        "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/alarmedit/AlarmEditAdvancedSection.kt",
+        "line": 404,
+        "kind": "STATIC_CODE_CALLSITE_PLUS_READ_CODE_CONTEXT"
+      },
+      "rationale": "在鈴聲池新增項目按鈕，直接指向開啟新增 URI 對話框",
+      "reviewedByType": "model",
+      "humanApproval": null,
+      "reviewStatus": "MODEL_CONTEXT_CHECK_DONE_HUMAN_PENDING"
+    },
+    {
+      "key": "alarm_edit_add_ringtone_accessibility",
+      "source": "Add ringtone to pool",
+      "sourceHash": "sha256:04e5963065afa7e6584fe99cb7b4840e7e5ccf66a44a699cc109b62be8700688",
+      "locales": [
+        "zh-TW",
+        "ja"
+      ],
+      "originalDraft": {
+        "zh-TW": "將鈴聲加入候選池",
+        "ja": "アラーム音を候補に追加"
+      },
+      "currentDraft": {
+        "zh-TW": "將鈴聲加入鈴聲池",
+        "ja": "アラーム音を再生候補に追加"
+      },
+      "decision": "REVISED_UNREVIEWED_DRAFT",
+      "sourceEvidence": {
+        "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/alarmedit/AlarmEditAdvancedSection.kt",
+        "line": 406,
+        "kind": "STATIC_CODE_CALLSITE_PLUS_READ_CODE_CONTEXT"
+      },
+      "rationale": "協助工具描述為加入 pool；將含糊的候選池改成與畫面概念一致的鈴聲池",
+      "reviewedByType": "model",
+      "humanApproval": null,
+      "reviewStatus": "MODEL_CONTEXT_CHECK_DONE_HUMAN_PENDING"
+    },
+    {
+      "key": "alarm_edit_add_ringtone_title",
+      "source": "Add ringtone to pool",
+      "sourceHash": "sha256:c4f934c876587fc8bb66272a2653792f1ccfc98e9313e6e6bf67bca4e1c9c9c4",
+      "locales": [
+        "zh-TW",
+        "ja"
+      ],
+      "originalDraft": {
+        "zh-TW": "將鈴聲加入候選池",
+        "ja": "アラーム音を候補に追加"
+      },
+      "currentDraft": {
+        "zh-TW": "將鈴聲加入鈴聲池",
+        "ja": "アラーム音を再生候補に追加"
+      },
+      "decision": "REVISED_UNREVIEWED_DRAFT",
+      "sourceEvidence": {
+        "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/alarmedit/AlarmEditAdvancedSection.kt",
+        "line": 422,
+        "kind": "STATIC_CODE_CALLSITE_PLUS_READ_CODE_CONTEXT"
+      },
+      "rationale": "鈴聲池新增對話框標題；與協助工具文字保持同一候選池概念",
+      "reviewedByType": "model",
+      "humanApproval": null,
+      "reviewStatus": "MODEL_CONTEXT_CHECK_DONE_HUMAN_PENDING"
+    },
+    {
+      "key": "alarm_edit_ringtone_duplicate",
+      "source": "That ringtone is already in the pool.",
+      "sourceHash": "sha256:f7180f1ff3f893d8c3bc4221efbf3f8117c1b4c3c860bcab4522228a023aa7af",
+      "locales": [
+        "zh-TW",
+        "ja"
+      ],
+      "originalDraft": {
+        "zh-TW": "這個鈴聲已在候選池中。",
+        "ja": "このアラーム音は既に候補にあります。"
+      },
+      "currentDraft": {
+        "zh-TW": "這個鈴聲已在鈴聲池中。",
+        "ja": "このアラーム音は既に再生候補にあります。"
+      },
+      "decision": "REVISED_UNREVIEWED_DRAFT",
+      "sourceEvidence": {
+        "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/alarmedit/AlarmEditAdvancedSection.kt",
+        "line": 442,
+        "kind": "STATIC_CODE_CALLSITE_PLUS_READ_CODE_CONTEXT"
+      },
+      "rationale": "當輸入 URI 已在 ringtonePoolEntries 中，顯示重複提示；採鈴聲池名稱",
+      "reviewedByType": "model",
+      "humanApproval": null,
+      "reviewStatus": "MODEL_CONTEXT_CHECK_DONE_HUMAN_PENDING"
+    },
+    {
+      "key": "settings_flip_snooze",
+      "source": "Flip phone to snooze",
+      "sourceHash": "sha256:7439f3e1ef5c362a543fc9692db8e36afabde95463e9ea850d100cabc3bd07d3",
+      "locales": [
+        "zh-TW",
+        "ja"
+      ],
+      "originalDraft": {
+        "zh-TW": "翻轉手機以貪睡",
+        "ja": "端末を裏返してスヌーズ"
+      },
+      "currentDraft": {
+        "zh-TW": "翻轉手機以貪睡",
+        "ja": "端末を裏返してスヌーズ"
+      },
+      "decision": "RETAIN_UNREVIEWED_DRAFT",
+      "sourceEvidence": {
+        "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/settings/SettingsScreen.kt",
+        "line": 497,
+        "kind": "STATIC_CODE_CALLSITE_PLUS_READ_CODE_CONTEXT"
+      },
+      "rationale": "設定 flipToSnoozeEnabled 開關；翻轉手機啟用貪睡，不是直接解除",
+      "reviewedByType": "model",
+      "humanApproval": null,
+      "reviewStatus": "MODEL_CONTEXT_CHECK_DONE_HUMAN_PENDING"
+    },
+    {
+      "key": "settings_show_today_tab",
+      "source": "Show Today tab",
+      "sourceHash": "sha256:1456f600ac8d59737e44532eb969bd2916dc3d4c498b7c9f1b53a7c935d6ac11",
+      "locales": [
+        "zh-TW",
+        "ja"
+      ],
+      "originalDraft": {
+        "zh-TW": "顯示「今日」分頁",
+        "ja": "「今日」タブを表示"
+      },
+      "currentDraft": {
+        "zh-TW": "顯示「今日」分頁",
+        "ja": "「今日」タブを表示"
+      },
+      "decision": "RETAIN_UNREVIEWED_DRAFT",
+      "sourceEvidence": {
+        "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/settings/SettingsScreen.kt",
+        "line": 786,
+        "kind": "STATIC_CODE_CALLSITE_PLUS_READ_CODE_CONTEXT"
+      },
+      "rationale": "底部導覽 showDashboardTab 開關；候選譯文可保留",
+      "reviewedByType": "model",
+      "humanApproval": null,
+      "reviewStatus": "MODEL_CONTEXT_CHECK_DONE_HUMAN_PENDING"
+    },
+    {
+      "key": "settings_license",
+      "source": "License",
+      "sourceHash": "sha256:57715b304d33b2c570cf4593add885671515ba4be48f10f133831f379959e4f1",
+      "locales": [
+        "zh-TW",
+        "ja"
+      ],
+      "originalDraft": {
+        "zh-TW": "授權條款",
+        "ja": "ライセンス"
+      },
+      "currentDraft": {
+        "zh-TW": "授權條款",
+        "ja": "ライセンス"
+      },
+      "decision": "RETAIN_UNREVIEWED_DRAFT",
+      "sourceEvidence": {
+        "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/settings/SettingsScreen.kt",
+        "line": 966,
+        "kind": "STATIC_CODE_CALLSITE_PLUS_READ_CODE_CONTEXT"
+      },
+      "rationale": "關於頁面以 License 欄位顯示 Apache License 2.0；授權條款為可理解用語",
+      "reviewedByType": "model",
+      "humanApproval": null,
+      "reviewStatus": "MODEL_CONTEXT_CHECK_DONE_HUMAN_PENDING"
+    },
+    {
+      "key": "settings_hue_api_placeholder",
+      "source": "Press the Hue bridge button first",
+      "sourceHash": "sha256:fa3ab876f36069a3bb327430761c8f06ac4d759c23a8d1e0adddbd80d5f87be0",
+      "locales": [
+        "zh-TW",
+        "ja"
+      ],
+      "originalDraft": {
+        "zh-TW": "請先按下 Hue 橋接器按鈕",
+        "ja": "先に Hue ブリッジのボタンを押してください"
+      },
+      "currentDraft": {
+        "zh-TW": "請先按下 Hue 橋接器按鈕",
+        "ja": "先に Hue ブリッジのボタンを押してください"
+      },
+      "decision": "RETAIN_UNREVIEWED_DRAFT",
+      "sourceEvidence": {
+        "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/settings/SettingsIntegrationSections.kt",
+        "line": 432,
+        "kind": "STATIC_CODE_CALLSITE_PLUS_READ_CODE_CONTEXT"
+      },
+      "rationale": "Hue API Key 欄位的 placeholder；按橋接器實體按鈕提示",
+      "reviewedByType": "model",
+      "humanApproval": null,
+      "reviewStatus": "MODEL_CONTEXT_CHECK_DONE_HUMAN_PENDING"
+    },
+    {
+      "key": "settings_health_no_session",
+      "source": "No session",
+      "sourceHash": "sha256:fc6ff2f8386bad934212df646c6e779aba13f43f39749be2d9dc24c7fa918b33",
+      "locales": [
+        "zh-TW",
+        "ja"
+      ],
+      "originalDraft": {
+        "zh-TW": "沒有工作階段",
+        "ja": "セッションがありません"
+      },
+      "currentDraft": {
+        "zh-TW": "尚無睡眠紀錄",
+        "ja": "睡眠セッションがありません"
+      },
+      "decision": "REVISED_UNREVIEWED_DRAFT",
+      "sourceEvidence": {
+        "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/settings/SettingsIntegrationSections.kt",
+        "line": 684,
+        "kind": "STATIC_CODE_CALLSITE_PLUS_READ_CODE_CONTEXT"
+      },
+      "rationale": "formatSleepMinutes 的 null 回退；不是工作階段，而是沒有睡眠時段資料",
+      "reviewedByType": "model",
+      "humanApproval": null,
+      "reviewStatus": "MODEL_CONTEXT_CHECK_DONE_HUMAN_PENDING"
+    },
+    {
+      "key": "settings_connection_sunrise_skipped",
+      "source": "Sunrise simulation skipped",
+      "sourceHash": "sha256:46194027f8ad18034ce95ee41276f255996a723e4d5dd3eb8042faff3b5b78ce",
+      "locales": [
+        "zh-TW",
+        "ja"
+      ],
+      "originalDraft": {
+        "zh-TW": "已略過日出模擬",
+        "ja": "日の出シミュレーションをスキップしました"
+      },
+      "currentDraft": {
+        "zh-TW": "已略過日出模擬",
+        "ja": "日の出シミュレーションをスキップしました"
+      },
+      "decision": "RETAIN_UNREVIEWED_DRAFT",
+      "sourceEvidence": {
+        "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/settings/SettingsIntegrationSections.kt",
+        "line": 772,
+        "kind": "STATIC_CODE_CALLSITE_PLUS_READ_CODE_CONTEXT"
+      },
+      "rationale": "Hue 連線資訊在離線情況下的 fallback 提示",
+      "reviewedByType": "model",
+      "humanApproval": null,
+      "reviewStatus": "MODEL_CONTEXT_CHECK_DONE_HUMAN_PENDING"
+    },
+    {
+      "key": "settings_accent_violet",
+      "source": "Violet",
+      "sourceHash": "sha256:7a8131af71d844935ece797f080b3c6f7b9472b82e08ea93c62ffa5a6407eda3",
+      "locales": [
+        "zh-TW",
+        "ja"
+      ],
+      "originalDraft": {
+        "zh-TW": "紫羅蘭色",
+        "ja": "バイオレット"
+      },
+      "currentDraft": {
+        "zh-TW": "紫羅蘭色",
+        "ja": "バイオレット"
+      },
+      "decision": "RETAIN_UNREVIEWED_DRAFT",
+      "sourceEvidence": {
+        "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/settings/SettingsPersonalizationSection.kt",
+        "line": 467,
+        "kind": "STATIC_CODE_CALLSITE_PLUS_READ_CODE_CONTEXT"
+      },
+      "rationale": "顯示色彩十六進位 #8F73FF 的選項名稱",
+      "reviewedByType": "model",
+      "humanApproval": null,
+      "reviewStatus": "MODEL_CONTEXT_CHECK_DONE_HUMAN_PENDING"
+    },
+    {
+      "key": "settings_readiness_exact_alarms",
+      "source": "exact alarms",
+      "sourceHash": "sha256:0b2d2a8abdb7241e7a927a730badec5a7ed65300bd779cd3b162c6d41b8a18e7",
+      "locales": [
+        "zh-TW",
+        "ja"
+      ],
+      "originalDraft": {
+        "zh-TW": "精確鬧鐘",
+        "ja": "正確なアラーム"
+      },
+      "currentDraft": {
+        "zh-TW": "精確鬧鐘權限",
+        "ja": "正確なアラームの許可"
+      },
+      "decision": "REVISED_UNREVIEWED_DRAFT",
+      "sourceEvidence": {
+        "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/settings/SettingsScreen.kt",
+        "line": 1622,
+        "kind": "STATIC_CODE_CALLSITE_PLUS_READ_CODE_CONTEXT"
+      },
+      "rationale": "當 canScheduleExactAlarms 為 false，字串被加入缺少權限摘要，單寫精確鬧鐘容易誤讀成鬧鐘模式",
+      "reviewedByType": "model",
+      "humanApproval": null,
+      "reviewStatus": "MODEL_CONTEXT_CHECK_DONE_HUMAN_PENDING"
+    },
+    {
+      "key": "stats_snoozed",
+      "source": "Snoozed",
+      "sourceHash": "sha256:056e3b17dd79d6bd9f3e69fbe95db1185c1c7cd7652b47283eb2fe3caf71f70b",
+      "locales": [
+        "zh-TW",
+        "ja"
+      ],
+      "originalDraft": {
+        "zh-TW": "已貪睡",
+        "ja": "スヌーズ済み"
+      },
+      "currentDraft": {
+        "zh-TW": "貪睡率",
+        "ja": "スヌーズ率"
+      },
+      "decision": "REVISED_UNREVIEWED_DRAFT",
+      "sourceEvidence": {
+        "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/stats/StatsScreen.kt",
+        "line": 217,
+        "kind": "STATIC_CODE_CALLSITE_PLUS_READ_CODE_CONTEXT"
+      },
+      "rationale": "緊鄰欄位值 stats.snoozeRate 加百分比；應標為貪睡率，不是已貪睡狀態",
+      "reviewedByType": "model",
+      "humanApproval": null,
+      "reviewStatus": "MODEL_CONTEXT_CHECK_DONE_HUMAN_PENDING"
+    },
+    {
+      "key": "stats_recent_history",
+      "source": "Recent history",
+      "sourceHash": "sha256:e5c11b98192dab9b7e0ed0724cc1967cf793b8c74d09b42b6cee3a50130f2b95",
+      "locales": [
+        "zh-TW",
+        "ja"
+      ],
+      "originalDraft": {
+        "zh-TW": "最近的歷史紀錄",
+        "ja": "最近の履歴"
+      },
+      "currentDraft": {
+        "zh-TW": "最近鬧鐘紀錄",
+        "ja": "最近のアラーム履歴"
+      },
+      "decision": "REVISED_UNREVIEWED_DRAFT",
+      "sourceEvidence": {
+        "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/stats/StatsScreen.kt",
+        "line": 390,
+        "kind": "STATIC_CODE_CALLSITE_PLUS_READ_CODE_CONTEXT"
+      },
+      "rationale": "該區顯示 state.recentEvents 與鬧鐘結果，不是 Music Playback History",
+      "reviewedByType": "model",
+      "humanApproval": null,
+      "reviewStatus": "MODEL_CONTEXT_CHECK_DONE_HUMAN_PENDING"
+    },
+    {
+      "key": "settings_backup_support_bundle_failed",
+      "source": "Couldn’t create support bundle.",
+      "sourceHash": "sha256:77c5d109fc734ce9d1a52e25f339d6163b0db14b5c20a486f72089f4f449d7d0",
+      "locales": [
+        "zh-TW",
+        "ja"
+      ],
+      "originalDraft": {
+        "zh-TW": "無法建立支援資料包。",
+        "ja": "サポート用データを作成できませんでした。"
+      },
+      "currentDraft": {
+        "zh-TW": "無法建立支援用診斷資料包。",
+        "ja": "サポート用診断データを作成できませんでした。"
+      },
+      "decision": "REVISED_UNREVIEWED_DRAFT",
+      "sourceEvidence": {
+        "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/settings/BackupStatusCopy.kt",
+        "line": 66,
+        "kind": "STATIC_CODE_CALLSITE_PLUS_READ_CODE_CONTEXT"
+      },
+      "rationale": "SupportExport 失敗時，出現在診斷支援包匯出錯誤訊息；建議譯文指出診斷用途",
+      "reviewedByType": "model",
+      "humanApproval": null,
+      "reviewStatus": "MODEL_CONTEXT_CHECK_DONE_HUMAN_PENDING"
+    },
+    {
+      "key": "readiness_ready",
+      "source": "Ready to use.",
+      "sourceHash": "sha256:dd3bebf8d2bdcc28faa65d16ea5993323f7cdb29152867ef1995cbaa188f6b3d",
+      "locales": [
+        "zh-TW",
+        "ja"
+      ],
+      "originalDraft": {
+        "zh-TW": "可供使用。",
+        "ja": "使用できます。"
+      },
+      "currentDraft": {
+        "zh-TW": "已準備就緒。",
+        "ja": "準備ができています。"
+      },
+      "decision": "REVISED_UNREVIEWED_DRAFT",
+      "sourceEvidence": {
+        "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/alarmedit/ChallengeReadiness.kt",
+        "line": 186,
+        "kind": "STATIC_CODE_CALLSITE_PLUS_READ_CODE_CONTEXT"
+      },
+      "rationale": "對應 ChallengeReadinessStatus.READY；預備狀態提示，不表示所有 App 功能已啟用",
+      "reviewedByType": "model",
+      "humanApproval": null,
+      "reviewStatus": "MODEL_CONTEXT_CHECK_DONE_HUMAN_PENDING"
+    },
+    {
+      "key": "readiness_needs_photo",
+      "source": "Capture a reference photo before saving.",
+      "sourceHash": "sha256:c1f41b6f7e83e07b02195478db5ae990ad3fe2a411374678e503d832df2d234e",
+      "locales": [
+        "zh-TW",
+        "ja"
+      ],
+      "originalDraft": {
+        "zh-TW": "儲存前請拍攝參考照片。",
+        "ja": "保存前に参照写真を撮影してください。"
+      },
+      "currentDraft": {
+        "zh-TW": "儲存前請拍攝參考照片。",
+        "ja": "保存前に参照写真を撮影してください。"
+      },
+      "decision": "RETAIN_UNREVIEWED_DRAFT",
+      "sourceEvidence": {
+        "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/alarmedit/ChallengeReadiness.kt",
+        "line": 133,
+        "kind": "STATIC_CODE_CALLSITE_PLUS_READ_CODE_CONTEXT"
+      },
+      "rationale": "PHOTO_MATCH 缺 photoMatchUri 時需先拍參考照片；既有候選符合",
+      "reviewedByType": "model",
+      "humanApproval": null,
+      "reviewStatus": "MODEL_CONTEXT_CHECK_DONE_HUMAN_PENDING"
+    }
+  ],
+  "additionalRisks": [
+    {
+      "key": "firing_status_swipe_or_snooze",
+      "type": "HIGH_RISK_ACTION_PAIR",
+      "finding": "Existing zh-TW uses 向左滑動解除 / 向右滑動貪睡; ja uses 左停止 / 右スヌーズ. Matches source direction at this literal; physical UI behavior not yet independently device-verified.",
+      "decision": "NO_AUTOMATIC_REWRITE",
+      "humanApproved": false
+    },
+    {
+      "key": "firing_swipe_right_snooze",
+      "type": "TERM_VARIATION",
+      "finding": "Existing zh-TW 向右滑動以稍後提醒 versus adjacent 貪睡; candidate explanatory variant, not automatically a semantic error.",
+      "decision": "NO_GLOBAL_REPLACE",
+      "humanApproved": false
+    },
+    {
+      "key": "music_library_history_title",
+      "type": "HISTORY_DISAMBIGUATION",
+      "finding": "Music playback history is distinct from StatsScreen recent alarm events. Do not merge their terminology or data semantics.",
+      "decision": "KEEP_SEPARATE_DOMAINS",
+      "humanApproved": false
+    }
+  ]
+}

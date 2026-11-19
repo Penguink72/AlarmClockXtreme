@@ -9,7 +9,7 @@
 | `alarm.action.snooze` | Snooze | 貪睡 | スヌーズ | critical |
 | `alarm.action.dismiss` | Dismiss | 解除 | 停止 | critical |
 | `alarm.object.alarm` | Alarm | 鬧鐘 | アラーム | normal |
-| `music.object.ringtone` | Ringtone | 鈴聲 | 着信音 | high |
+| `music.object.ringtone` | Ringtone | 鈴聲 | アラーム音 | high |
 | `music.library` | Music library | 音樂庫 | 音楽ライブラリ | high |
 | `music.playback_history` | Playback history | 播放歷史 | 再生履歴 | high |
 | `music.playlist` | Playlist | 播放清單 | プレイリスト | high |
@@ -35,3 +35,5 @@
 - Test alarm 不作為正式鬧鐘可靠性的語義證據。
 
 **此檔只建立候選用語及審核規則。** G2 未能追溯的 UI 位置仍視為未知，禁止 LLM 因候選詞典而自行核准原有翻譯。
+
+> 2026-11-19 model content review: revised Ringtone ja candidate from 着信音 to アラーム音 for alarm sound use. Not yet approved by an independent reviewer; contract revision `lpg1-20261119-draft-2`.
