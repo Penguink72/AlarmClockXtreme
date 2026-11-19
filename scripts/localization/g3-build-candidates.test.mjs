@@ -29,7 +29,7 @@ assert.equal(result.stats.ja.approved,0);
 {
  const bad=structuredClone(source);const key=seeds.translations[0].key;
  bad.records.find(r=>r.key===key).translations.ja.text="existing";
- assert.throws(()=>build(bad,glossary,seeds,contexts),/silently overwrite/);
+ assert.throws(()=>build(bad,glossary,seeds,contexts),/Baseline translation state\/text mismatch|silently overwrite/);
 }
 {
  const bad=structuredClone(contexts);
