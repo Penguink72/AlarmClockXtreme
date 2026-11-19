@@ -1,7 +1,7 @@
 {
   "schema": "acx-g4-review-ledger/1",
   "catalogRevision": "lp0-200-20261118",
-  "glossaryRevision": "lpg1-20261119-draft-1",
+  "glossaryRevision": "lpg1-20261119-draft-2",
   "policy": "HUMAN_REVIEW_AND_SOURCE_CONTEXT_REQUIRED",
   "approvals": [],
   "rejections": [],

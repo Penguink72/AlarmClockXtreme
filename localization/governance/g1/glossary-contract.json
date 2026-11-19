@@ -1,7 +1,7 @@
 {
   "schema": "acx-glossary-contract/1",
   "catalogRevision": "lp0-200-20261118",
-  "glossaryRevision": "lpg1-20261119-draft-1",
+  "glossaryRevision": "lpg1-20261119-draft-2",
   "authority": "project-candidate-policy",
   "approval": "UNAPPROVED_FOR_RELEASE",
   "source": "LP0 terminology-candidates.json; additions are engineering proposals only",
@@ -274,7 +274,7 @@
       "labels": {
         "en": "Ringtone",
         "zh-TW": "鈴聲",
-        "ja": "着信音"
+        "ja": "アラーム音"
       },
       "labelState": "CANDIDATE_NOT_APPROVED",
       "permittedExplanatoryVariants": {

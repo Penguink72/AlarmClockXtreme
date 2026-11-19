@@ -1,7 +1,7 @@
 {
   "schema": "acx-g3-proposals/1",
   "catalogRevision": "lp0-200-20261118",
-  "glossaryRevision": "lpg1-20261119-draft-1",
+  "glossaryRevision": "lpg1-20261119-draft-2",
   "producer": "GPT-6 translation candidate proposals",
   "approval": "NONE",
   "note": "21 previously missing keys, two locales; model-authored unreviewed drafts, NOT source-of-truth or a release-ready pack",
@@ -48,24 +48,24 @@
     },
     {
       "key": "alarm_edit_add_ringtone_accessibility",
-      "zh-TW": "將鈴聲加入候選池",
-      "ja": "アラーム音を候補に追加",
+      "zh-TW": "將鈴聲加入鈴聲池",
+      "ja": "アラーム音を再生候補に追加",
       "reviewState": "DRAFT_LLM_UNREVIEWED",
       "provenance": "model-generated-candidate",
       "semanticReviewRequired": true
     },
     {
       "key": "alarm_edit_add_ringtone_title",
-      "zh-TW": "將鈴聲加入候選池",
-      "ja": "アラーム音を候補に追加",
+      "zh-TW": "將鈴聲加入鈴聲池",
+      "ja": "アラーム音を再生候補に追加",
       "reviewState": "DRAFT_LLM_UNREVIEWED",
       "provenance": "model-generated-candidate",
       "semanticReviewRequired": true
     },
     {
       "key": "alarm_edit_ringtone_duplicate",
-      "zh-TW": "這個鈴聲已在候選池中。",
-      "ja": "このアラーム音は既に候補にあります。",
+      "zh-TW": "這個鈴聲已在鈴聲池中。",
+      "ja": "このアラーム音は既に再生候補にあります。",
       "reviewState": "DRAFT_LLM_UNREVIEWED",
       "provenance": "model-generated-candidate",
       "semanticReviewRequired": true
@@ -104,8 +104,8 @@
     },
     {
       "key": "settings_health_no_session",
-      "zh-TW": "沒有工作階段",
-      "ja": "セッションがありません",
+      "zh-TW": "尚無睡眠紀錄",
+      "ja": "睡眠セッションがありません",
       "reviewState": "DRAFT_LLM_UNREVIEWED",
       "provenance": "model-generated-candidate",
       "semanticReviewRequired": true
@@ -128,40 +128,40 @@
     },
     {
       "key": "settings_readiness_exact_alarms",
-      "zh-TW": "精確鬧鐘",
-      "ja": "正確なアラーム",
+      "zh-TW": "精確鬧鐘權限",
+      "ja": "正確なアラームの許可",
       "reviewState": "DRAFT_LLM_UNREVIEWED",
       "provenance": "model-generated-candidate",
       "semanticReviewRequired": true
     },
     {
       "key": "stats_snoozed",
-      "zh-TW": "已貪睡",
-      "ja": "スヌーズ済み",
+      "zh-TW": "貪睡率",
+      "ja": "スヌーズ率",
       "reviewState": "DRAFT_LLM_UNREVIEWED",
       "provenance": "model-generated-candidate",
       "semanticReviewRequired": true
     },
     {
       "key": "stats_recent_history",
-      "zh-TW": "最近的歷史紀錄",
-      "ja": "最近の履歴",
+      "zh-TW": "最近鬧鐘紀錄",
+      "ja": "最近のアラーム履歴",
       "reviewState": "DRAFT_LLM_UNREVIEWED",
       "provenance": "model-generated-candidate",
       "semanticReviewRequired": true
     },
     {
       "key": "settings_backup_support_bundle_failed",
-      "zh-TW": "無法建立支援資料包。",
-      "ja": "サポート用データを作成できませんでした。",
+      "zh-TW": "無法建立支援用診斷資料包。",
+      "ja": "サポート用診断データを作成できませんでした。",
       "reviewState": "DRAFT_LLM_UNREVIEWED",
       "provenance": "model-generated-candidate",
       "semanticReviewRequired": true
     },
     {
       "key": "readiness_ready",
-      "zh-TW": "可供使用。",
-      "ja": "使用できます。",
+      "zh-TW": "已準備就緒。",
+      "ja": "準備ができています。",
       "reviewState": "DRAFT_LLM_UNREVIEWED",
       "provenance": "model-generated-candidate",
       "semanticReviewRequired": true
