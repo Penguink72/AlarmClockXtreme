@@ -40,7 +40,7 @@ export function verifyContentReview({review,glossary,matrix,drafts,contexts,appr
  const contextsByKey=new Map(contexts.records.map(r=>[r.key,r]));
  const draftsByKey=new Map(drafts.translations.map(r=>[r.key,r]));
  assert.equal(terms.size,18);
- assert.equal(draftsByKey.size,21);
+ assert(draftsByKey.size>=21,"Batch 1 remains a subset of extended drafts");
  const seenConcept=new Set();
  for(const entry of review.termFindings){
    const t=terms.get(entry.conceptId);

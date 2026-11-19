@@ -14,3 +14,9 @@ LP0 既有 155/200 譯文不是 LLM 新翻譯，但也**未經品質審核**；G
 node scripts/localization/g3-build-candidates.mjs --out localization/governance/g3/review-queue.generated.json
 node scripts/localization/g3-build-candidates.test.mjs
 ```
+
+## Batch 2（2026-11-20）
+
+補上剩餘 24 個缺漏 Key，各提供繁中與日文候選，共 48 條新增模型草稿。現在各語言共有 **155 條既有未審譯文 + 45 條模型草稿 = 200/200 有文字**；獨立核准數仍是 **0**。G3 不更動 LP0 原始 packs，且不把這些草稿當作正式譯文。
+
+注意 `stats_recent_events` 的 `%1$s` 必須原樣保留；`bedtime_update_health_connect_before_recent_sleep` 對應 PROVIDER_UPDATE_REQUIRED，不是要求同步睡眠資料。

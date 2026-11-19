@@ -15,3 +15,7 @@ node scripts/localization/g5-build-language-packs.mjs --mode release
 ```
 
 目前不允許正式發行，也未更動任何原本的 app/src/main/res 字串。
+
+## 2026-11-20 預覽覆蓋率
+
+G3 的兩批草稿共 45 Key、兩語共 90 條，G5 preview 各語言可輸出 200/200 Key；其中原有 155 條與模型候選 45 條仍均**未經獨立語義核准**。這是字串覆蓋，不是翻譯完成品質。G5 `--mode release` 仍需拒絕。

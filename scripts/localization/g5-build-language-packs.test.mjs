@@ -11,15 +11,15 @@ const preview=buildPacks("preview",catalog,glossary,queue,qa);
 assert.equal(preview.manifest.releaseChannel,"UNREVIEWED_PREVIEW_NOT_RELEASE");
 assert.equal(preview.manifest.mayDistributeAsOfficial,false);
 for(const locale of ["zh-TW","ja"]){
- assert.equal(Object.keys(preview.packs[locale].translations).length,176);
+ assert.equal(Object.keys(preview.packs[locale].translations).length,200);
  // Contract fidelity: a G5 preview JSON must be accepted by the existing
  // LP0/LP1 runtime data-only importer without upgrading its format.
  const runtimeValidated = core.validatePack(preview.packs[locale],catalog);
- assert.equal(Object.keys(runtimeValidated.translations).length,176);
+ assert.equal(Object.keys(runtimeValidated.translations).length,200);
  assert(Buffer.byteLength(JSON.stringify(preview.packs[locale]),"utf8") < 256*1024);
 
  assert.equal(preview.manifest.totals[locale].unreviewedLegacy,155);
- assert.equal(preview.manifest.totals[locale].unreviewedModelDrafts,21);
+ assert.equal(preview.manifest.totals[locale].unreviewedModelDrafts,45);
  assert.equal(preview.manifest.totals[locale].approved,0);
 }
 assert.throws(()=>buildPacks("release",catalog,glossary,queue,qa),/Release blocked/);
@@ -32,4 +32,4 @@ assert.throws(()=>buildPacks("release",catalog,glossary,queue,qa),/Release block
  const changed=structuredClone(qa);changed.rows[0].sourceHash="forged";
  assert.throws(()=>buildPacks("preview",catalog,glossary,queue,changed));
 }
-console.log("G5_TESTS PASS 176 preview strings per locale, release denied without approvals, provenance enforced");
+console.log("G5_TESTS PASS 200 preview strings per locale, release denied without approvals, provenance enforced");

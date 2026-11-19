@@ -1,0 +1,454 @@
+{
+  "schema": "acx-g4-model-assisted-content-review-batch2/1",
+  "catalogRevision": "lp0-200-20261118",
+  "glossaryRevision": "lpg1-20261119-draft-2",
+  "modelReview": true,
+  "humanApproval": false,
+  "scope": {
+    "keys": 24,
+    "locales": [
+      "zh-TW",
+      "ja"
+    ],
+    "modelReviewedDrafts": 48,
+    "independentApprovals": 0,
+    "remainingMissingAfterDrafts": 0
+  },
+  "method": "Model-proposed translations checked against 24 actual Android static callsites; no independent reviewer certification",
+  "rows": [
+    {
+      "key": "alarm_edit_challenge_voice_description",
+      "source": "Say a wake-up phrase with Android speech recognition, with typed fallback.",
+      "sourceHash": "sha256:637f67384f6aa4e8a6d56180c4e13dea58613703517bfa568594edf33cdf57fd",
+      "proposals": {
+        "zh-TW": "使用 Android 語音辨識說出喚醒短句，也可改用文字輸入。",
+        "ja": "Android の音声認識で起床用フレーズを話します。代わりに文字入力もできます。"
+      },
+      "contextRationale": "語音辨識與文字輸入備援，不暗示必須連網。",
+      "sourceEvidence": {
+        "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/alarmedit/AlarmEditSupport.kt",
+        "line": 839,
+        "kind": "EXACT_STATIC_SOURCE_CALLSITE"
+      },
+      "formatPlaceholders": [],
+      "reviewStatus": "MODEL_CONTEXT_CHECK_DONE_HUMAN_PENDING",
+      "humanApproval": null
+    },
+    {
+      "key": "alarm_edit_challenge_default_description",
+      "source": "Dismissal requires this challenge before the alarm can stop.",
+      "sourceHash": "sha256:3e82909a78b4a8522f34a2afc2678dd1b1ae94caeb08df6484c067c0150100de",
+      "proposals": {
+        "zh-TW": "解除鬧鐘並停止響鈴前，必須先完成此挑戰。",
+        "ja": "このチャレンジを完了するまで、アラームを解除して鳴動を止めることはできません。"
+      },
+      "contextRationale": "預設挑戰之解除條件，非音樂重播停止。",
+      "sourceEvidence": {
+        "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/alarmedit/AlarmEditSupport.kt",
+        "line": 862,
+        "kind": "EXACT_STATIC_SOURCE_CALLSITE"
+      },
+      "formatPlaceholders": [],
+      "reviewStatus": "MODEL_CONTEXT_CHECK_DONE_HUMAN_PENDING",
+      "humanApproval": null
+    },
+    {
+      "key": "alarm_edit_holidays_hint",
+      "source": "Requires holiday auto-skip and country code configured in Settings → Integrations.",
+      "sourceHash": "sha256:74d82fe112436f971e371b5f05430c86351692f69e799017cdb283fc59769349",
+      "proposals": {
+        "zh-TW": "需先在「設定」→「整合」中啟用假日自動略過，並設定國家代碼。",
+        "ja": "「設定」→「連携」で祝日の自動スキップを有効にし、国コードを設定する必要があります。"
+      },
+      "contextRationale": "保留假日自動略過、國家代碼與整合設定入口。",
+      "sourceEvidence": {
+        "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/alarmedit/AlarmEditScheduleSections.kt",
+        "line": 167,
+        "kind": "EXACT_STATIC_SOURCE_CALLSITE"
+      },
+      "formatPlaceholders": [],
+      "reviewStatus": "MODEL_CONTEXT_CHECK_DONE_HUMAN_PENDING",
+      "humanApproval": null
+    },
+    {
+      "key": "alarm_edit_ringtone_uri_hint",
+      "source": "Paste a link to a sound file on this device. One entry from the pool plays each time this alarm fires.",
+      "sourceHash": "sha256:f7bc2e4ec4041e43a0f9d531b8712b3b711c100cd50aff38f46b3e59d5e7a002",
+      "proposals": {
+        "zh-TW": "貼上此裝置中音效檔案的連結。每次鬧鐘響起時，會從鈴聲池選取一項播放。",
+        "ja": "この端末内の音声ファイルへのリンクを貼り付けます。アラームが鳴るたびに、アラーム音の候補から1件を再生します。"
+      },
+      "contextRationale": "本機音效檔連結、候選池與逐次選擇，不捏造不重複保證。",
+      "sourceEvidence": {
+        "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/alarmedit/AlarmEditAdvancedSection.kt",
+        "line": 426,
+        "kind": "EXACT_STATIC_SOURCE_CALLSITE"
+      },
+      "formatPlaceholders": [],
+      "reviewStatus": "MODEL_CONTEXT_CHECK_DONE_HUMAN_PENDING",
+      "humanApproval": null
+    },
+    {
+      "key": "settings_default_snooze_description",
+      "source": "Used whenever a new alarm doesn’t specify its own snooze length.",
+      "sourceHash": "sha256:9c8e6e8fa4da4c9af30bac2362e8b5babcf73f9708e0c4f0d5c5fcf13dd38f91",
+      "proposals": {
+        "zh-TW": "新增鬧鐘未指定自己的貪睡時間時，會使用此預設值。",
+        "ja": "新しいアラームでスヌーズ時間を個別に指定しない場合、この設定を使います。"
+      },
+      "contextRationale": "個別鬧鐘不指定時，才採用預設貪睡時間。",
+      "sourceEvidence": {
+        "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/settings/SettingsScreen.kt",
+        "line": 506,
+        "kind": "EXACT_STATIC_SOURCE_CALLSITE"
+      },
+      "formatPlaceholders": [],
+      "reviewStatus": "MODEL_CONTEXT_CHECK_DONE_HUMAN_PENDING",
+      "humanApproval": null
+    },
+    {
+      "key": "settings_post_dismiss_summary_description",
+      "source": "After the final dismiss step, show cached weather and the next local calendar event. No network request is made.",
+      "sourceHash": "sha256:34ad7f05fdbb769e4e1f4e612bea0865dfa408bca797c4231fb70ab41be90b8f",
+      "proposals": {
+        "zh-TW": "完成最後一步解除鬧鐘後，顯示已快取的天氣和下一筆本機行事曆事件；不會發出網路請求。",
+        "ja": "最後のアラーム解除操作の後、キャッシュ済みの天気と次の端末内カレンダーの予定を表示します。ネットワーク通信は行いません。"
+      },
+      "contextRationale": "明確保留快取天氣、本機行事曆、無網路請求。",
+      "sourceEvidence": {
+        "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/settings/SettingsScreen.kt",
+        "line": 599,
+        "kind": "EXACT_STATIC_SOURCE_CALLSITE"
+      },
+      "formatPlaceholders": [],
+      "reviewStatus": "MODEL_CONTEXT_CHECK_DONE_HUMAN_PENDING",
+      "humanApproval": null
+    },
+    {
+      "key": "settings_commute_history_description",
+      "source": "Stores only hashed route keys and up to eight recent durations per route on this device; locations are excluded from support bundles.",
+      "sourceHash": "sha256:0e34c6ce4b2a81a31fa0cc70ed4de2bd94c117971cb9f682d83c38c5aedddf63",
+      "proposals": {
+        "zh-TW": "此裝置只儲存路線鍵的雜湊值，以及每條路線最近最多 8 筆行程時間；支援用診斷資料包不包含位置資訊。",
+        "ja": "この端末に保存するのは経路キーのハッシュ値と、経路ごとに直近最大8件の所要時間だけです。サポート用データには位置情報を含めません。"
+      },
+      "contextRationale": "保留雜湊、最多八筆時長、診斷包排除位置三個條件。",
+      "sourceEvidence": {
+        "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/settings/SettingsScreen.kt",
+        "line": 726,
+        "kind": "EXACT_STATIC_SOURCE_CALLSITE"
+      },
+      "formatPlaceholders": [],
+      "reviewStatus": "MODEL_CONTEXT_CHECK_DONE_HUMAN_PENDING",
+      "humanApproval": null
+    },
+    {
+      "key": "settings_on_call_mode_description",
+      "source": "Use this with a rotating shift pattern when an on-call alarm must break total-silence Do Not Disturb.",
+      "sourceHash": "sha256:13fc1f98a986b2003809df79f051f78a56188568ec2b59019359f63d556ed2c3",
+      "proposals": {
+        "zh-TW": "值班鬧鐘需要在「勿擾」完全靜音時仍能響鈴，請搭配輪班模式使用。",
+        "ja": "オンコール用アラームを「おやすみモード」の完全消音中にも鳴らす必要がある場合、交代勤務のシフトパターンと併用してください。"
+      },
+      "contextRationale": "輪班值班鬧鐘的 Do Not Disturb 完全靜音例外。",
+      "sourceEvidence": {
+        "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/settings/SettingsReadinessSections.kt",
+        "line": 479,
+        "kind": "EXACT_STATIC_SOURCE_CALLSITE"
+      },
+      "formatPlaceholders": [],
+      "reviewStatus": "MODEL_CONTEXT_CHECK_DONE_HUMAN_PENDING",
+      "humanApproval": null
+    },
+    {
+      "key": "settings_webhook_description",
+      "source": "Connect alarm events to automations, home setups, or debugging endpoints.",
+      "sourceHash": "sha256:f25d0bdb6332bf5e7f0f2853d7090e2591bcd8a746716aaa12f9dacaddbffad5",
+      "proposals": {
+        "zh-TW": "將鬧鐘事件連接到自動化流程、智慧家庭系統或偵錯端點。",
+        "ja": "アラームイベントを自動化処理、スマートホームの環境、またはデバッグ用エンドポイントに連携します。"
+      },
+      "contextRationale": "Webhook 功能說明，不保證網路送達成功。",
+      "sourceEvidence": {
+        "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/settings/SettingsIntegrationSections.kt",
+        "line": 174,
+        "kind": "EXACT_STATIC_SOURCE_CALLSITE"
+      },
+      "formatPlaceholders": [],
+      "reviewStatus": "MODEL_CONTEXT_CHECK_DONE_HUMAN_PENDING",
+      "humanApproval": null
+    },
+    {
+      "key": "settings_recent_deliveries",
+      "source": "Recent deliveries",
+      "sourceHash": "sha256:2cab9a876f462acca550948d76a6e6c7729deda62da696475209968557cae36e",
+      "proposals": {
+        "zh-TW": "最近的 Webhook 傳送紀錄",
+        "ja": "最近のWebhook配信履歴"
+      },
+      "contextRationale": "顯示 webhookDeliveryLog，非物流配送或鬧鐘事件列表。",
+      "sourceEvidence": {
+        "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/settings/SettingsIntegrationSections.kt",
+        "line": 294,
+        "kind": "EXACT_STATIC_SOURCE_CALLSITE"
+      },
+      "formatPlaceholders": [],
+      "reviewStatus": "MODEL_CONTEXT_CHECK_DONE_HUMAN_PENDING",
+      "humanApproval": null
+    },
+    {
+      "key": "settings_cover_to_snooze_description",
+      "source": "Hold a hand over the proximity sensor for ~1.5 s during an alarm to snooze.",
+      "sourceHash": "sha256:d4011e2b69dc87ed165fb537cee5ae93a4155a3db2929c20d83929d7a69e4c34",
+      "proposals": {
+        "zh-TW": "鬧鐘響鈴時，用手覆蓋接近感測器約 1.5 秒即可啟動貪睡。",
+        "ja": "アラーム鳴動中に近接センサーの上へ約1.5秒間手をかざすと、スヌーズします。"
+      },
+      "contextRationale": "保留響鈴中、近接感測器及約 1.5 秒。",
+      "sourceEvidence": {
+        "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/settings/SettingsPersonalizationSection.kt",
+        "line": 220,
+        "kind": "EXACT_STATIC_SOURCE_CALLSITE"
+      },
+      "formatPlaceholders": [],
+      "reviewStatus": "MODEL_CONTEXT_CHECK_DONE_HUMAN_PENDING",
+      "humanApproval": null
+    },
+    {
+      "key": "settings_long_press_threshold_description",
+      "source": "Choose how long the firing-screen dismiss button must be held. 0.5–5 seconds.",
+      "sourceHash": "sha256:75ea5f3668ba6fadc4d21f1b036b47836529f300f0d092b4becbfaacab216b0a",
+      "proposals": {
+        "zh-TW": "設定響鈴畫面上「解除」按鈕須長按多久，可選 0.5～5 秒。",
+        "ja": "アラーム鳴動画面の「停止」ボタンを押し続ける時間を0.5～5秒から選びます。"
+      },
+      "contextRationale": "解除按鈕長按時間 0.5～5 秒，非貪睡時間。",
+      "sourceEvidence": {
+        "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/settings/SettingsPersonalizationSection.kt",
+        "line": 288,
+        "kind": "EXACT_STATIC_SOURCE_CALLSITE"
+      },
+      "formatPlaceholders": [],
+      "reviewStatus": "MODEL_CONTEXT_CHECK_DONE_HUMAN_PENDING",
+      "humanApproval": null
+    },
+    {
+      "key": "settings_backup_locked_description",
+      "source": "Backup buttons stay locked until the result appears.",
+      "sourceHash": "sha256:4d5f86ec3790618af3dff7248bceb3d124c789bd6a911dbca1623128e87de883",
+      "proposals": {
+        "zh-TW": "備份按鈕會維持鎖定，直到顯示操作結果。",
+        "ja": "処理結果が表示されるまで、バックアップボタンは操作できません。"
+      },
+      "contextRationale": "備份操作結果出現前，相關按鈕保持不可用。",
+      "sourceEvidence": {
+        "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/settings/SettingsBackupSections.kt",
+        "line": 536,
+        "kind": "EXACT_STATIC_SOURCE_CALLSITE"
+      },
+      "formatPlaceholders": [],
+      "reviewStatus": "MODEL_CONTEXT_CHECK_DONE_HUMAN_PENDING",
+      "humanApproval": null
+    },
+    {
+      "key": "settings_encrypted_backup_private",
+      "source": "Encrypted backup includes private values",
+      "sourceHash": "sha256:0dbf9d8c47592095b74d1eeedf99759292a6c6b873d3e1f7d28cd5692a7e7009",
+      "proposals": {
+        "zh-TW": "加密備份包含私人設定值",
+        "ja": "暗号化バックアップには非公開の設定値が含まれます"
+      },
+      "contextRationale": "加密備份仍含非公開設定值的警語。",
+      "sourceEvidence": {
+        "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/settings/SettingsBackupSections.kt",
+        "line": 914,
+        "kind": "EXACT_STATIC_SOURCE_CALLSITE"
+      },
+      "formatPlaceholders": [],
+      "reviewStatus": "MODEL_CONTEXT_CHECK_DONE_HUMAN_PENDING",
+      "humanApproval": null
+    },
+    {
+      "key": "settings_fossify_import_failed_no_alarms",
+      "source": "Couldn\\’t import Fossify alarms. The file has no valid alarms.",
+      "sourceHash": "sha256:21e8a52f5ee1c46cc4eea1718d00346ce3ddb1a459af40cea29fd549aad4cf87",
+      "proposals": {
+        "zh-TW": "無法匯入 Fossify 鬧鐘：檔案中沒有有效的鬧鐘資料。",
+        "ja": "Fossify のアラームをインポートできませんでした。ファイルに有効なアラームがありません。"
+      },
+      "contextRationale": "Fossify 匯入器 NO_ALARMS 分支，非排程失敗。",
+      "sourceEvidence": {
+        "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/settings/SettingsViewModel.kt",
+        "line": 757,
+        "kind": "EXACT_STATIC_SOURCE_CALLSITE"
+      },
+      "formatPlaceholders": [],
+      "reviewStatus": "MODEL_CONTEXT_CHECK_DONE_HUMAN_PENDING",
+      "humanApproval": null
+    },
+    {
+      "key": "alarm_edit_challenge_ref_generic",
+      "source": "challenge details",
+      "sourceHash": "sha256:6e3da9e47e8a023a23163093bfe5cc1127a46c0895adb76776a6fdf7b6ef2e47",
+      "proposals": {
+        "zh-TW": "挑戰詳細資訊",
+        "ja": "チャレンジの詳細"
+      },
+      "contextRationale": "挑戰參考資訊 fallback，並非挑戰已完成狀態。",
+      "sourceEvidence": {
+        "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/alarmedit/AlarmEditViewModel.kt",
+        "line": 851,
+        "kind": "EXACT_STATIC_SOURCE_CALLSITE"
+      },
+      "formatPlaceholders": [],
+      "reviewStatus": "MODEL_CONTEXT_CHECK_DONE_HUMAN_PENDING",
+      "humanApproval": null
+    },
+    {
+      "key": "stats_alarm_history_optional_health_connect",
+      "source": "Alarm history and optional Health Connect sleep sessions will build this view locally.",
+      "sourceHash": "sha256:951cec0248dd315b4b34c247c19d8fc8aee357accb7b25524dc28779e6bc7e8d",
+      "proposals": {
+        "zh-TW": "鬧鐘歷史紀錄與選用的 Health Connect 睡眠紀錄，會在本機構成此檢視畫面。",
+        "ja": "アラーム履歴と、必要に応じて利用する Health Connect の睡眠セッションを端末内で組み合わせて、この画面を表示します。"
+      },
+      "contextRationale": "統計空狀態，區分鬧鐘紀錄與可選睡眠資料。",
+      "sourceEvidence": {
+        "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/stats/StatsScreen.kt",
+        "line": 900,
+        "kind": "EXACT_STATIC_SOURCE_CALLSITE"
+      },
+      "formatPlaceholders": [],
+      "reviewStatus": "MODEL_CONTEXT_CHECK_DONE_HUMAN_PENDING",
+      "humanApproval": null
+    },
+    {
+      "key": "onboarding_see_weather_calendar_next_alarm",
+      "source": "See weather, calendar, and your next alarm in one place so the morning feels calmer from the first glance.",
+      "sourceHash": "sha256:c6a16504de119f38ff94873ac35830ad923552531b15b7203debcf9e385910ce",
+      "proposals": {
+        "zh-TW": "在同一處查看天氣、行事曆與下一個鬧鐘，讓早晨從第一眼開始更從容。",
+        "ja": "天気、カレンダー、次のアラームを1か所で確認でき、朝の始まりを穏やかにします。"
+      },
+      "contextRationale": "新手介紹，包含天氣、行事曆、下一個鬧鐘。",
+      "sourceEvidence": {
+        "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/onboarding/OnboardingScreen.kt",
+        "line": 125,
+        "kind": "EXACT_STATIC_SOURCE_CALLSITE"
+      },
+      "formatPlaceholders": [],
+      "reviewStatus": "MODEL_CONTEXT_CHECK_DONE_HUMAN_PENDING",
+      "humanApproval": null
+    },
+    {
+      "key": "permissions_context_permissions",
+      "source": "Context permissions",
+      "sourceHash": "sha256:e7904f5efcbedb3843a9e380e94cc835fa4c9be7f09d63b0575a54d147d77dad",
+      "proposals": {
+        "zh-TW": "情境相關權限",
+        "ja": "状況に応じた権限"
+      },
+      "contextRationale": "權限群標題，不表示權限已授與。",
+      "sourceEvidence": {
+        "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/permissions/PermissionHelper.kt",
+        "line": 142,
+        "kind": "EXACT_STATIC_SOURCE_CALLSITE"
+      },
+      "formatPlaceholders": [],
+      "reviewStatus": "MODEL_CONTEXT_CHECK_DONE_HUMAN_PENDING",
+      "humanApproval": null
+    },
+    {
+      "key": "bedtime_update_health_connect_before_recent_sleep",
+      "source": "Update Health Connect before recent sleep sessions can appear here.",
+      "sourceHash": "sha256:14113b7ce4ab2a0f49437ceac216446cbe92c6d5066a83cbc2b17aaeec7424d3",
+      "proposals": {
+        "zh-TW": "請先更新 Health Connect，才能在此顯示最近的睡眠紀錄。",
+        "ja": "最近の睡眠セッションをここに表示するには、Health Connect を更新してください。"
+      },
+      "contextRationale": "對應 PROVIDER_UPDATE_REQUIRED，不能誤作睡眠資料同步。",
+      "sourceEvidence": {
+        "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/bedtime/BedtimeSleepTrackingSections.kt",
+        "line": 310,
+        "kind": "EXACT_STATIC_SOURCE_CALLSITE"
+      },
+      "formatPlaceholders": [],
+      "reviewStatus": "MODEL_CONTEXT_CHECK_DONE_HUMAN_PENDING",
+      "humanApproval": null
+    },
+    {
+      "key": "stats_track_consistency_snooze_behavior_and_which",
+      "source": "Track consistency, snooze behavior, and which mornings are easiest to handle.",
+      "sourceHash": "sha256:fdc6f002ce3b526be3edb2534881cf18f7fa22816881fee6dbcc3261375a79fe",
+      "proposals": {
+        "zh-TW": "追蹤起床規律、貪睡行為，以及哪些早晨最容易順利起床。",
+        "ja": "起床の安定性やスヌーズの傾向、無理なく起きられた朝を確認します。"
+      },
+      "contextRationale": "Track 是追蹤動詞，不是曲目，G2 概念綁定須排除 music.track。",
+      "sourceEvidence": {
+        "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/stats/StatsScreen.kt",
+        "line": 129,
+        "kind": "EXACT_STATIC_SOURCE_CALLSITE"
+      },
+      "formatPlaceholders": [],
+      "reviewStatus": "MODEL_CONTEXT_CHECK_DONE_HUMAN_PENDING",
+      "humanApproval": null
+    },
+    {
+      "key": "stats_recent_events",
+      "source": "%1$s recent events",
+      "sourceHash": "sha256:07c2f5fb2dec8816809f7355aed0fabf89e743384443cb5a32522d5eb3d78ca4",
+      "proposals": {
+        "zh-TW": "最近 %1$s 筆事件",
+        "ja": "最近のイベント %1$s 件"
+      },
+      "contextRationale": "保留 %1$s；實際以 recentEvents.size 做引數。",
+      "sourceEvidence": {
+        "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/stats/StatsScreen.kt",
+        "line": 166,
+        "kind": "EXACT_STATIC_SOURCE_CALLSITE"
+      },
+      "formatPlaceholders": [
+        "%1$s"
+      ],
+      "reviewStatus": "MODEL_CONTEXT_CHECK_DONE_HUMAN_PENDING",
+      "humanApproval": null
+    },
+    {
+      "key": "stats_recent_health_connect_sessions_stay_local",
+      "source": "Recent Health Connect sessions stay local and are shown beside alarm history.",
+      "sourceHash": "sha256:014a4f81a3855d49879dfda1bd59ca96a4a481ff04b3399dc254c3b56ceb2ac9",
+      "proposals": {
+        "zh-TW": "最近的 Health Connect 睡眠紀錄保留在本機，並與鬧鐘歷史並列顯示。",
+        "ja": "直近の Health Connect 睡眠セッションは端末内に保存され、アラーム履歴と並べて表示されます。"
+      },
+      "contextRationale": "資料僅保存在本機並與鬧鐘紀錄並列。",
+      "sourceEvidence": {
+        "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/stats/StatsScreen.kt",
+        "line": 767,
+        "kind": "EXACT_STATIC_SOURCE_CALLSITE"
+      },
+      "formatPlaceholders": [],
+      "reviewStatus": "MODEL_CONTEXT_CHECK_DONE_HUMAN_PENDING",
+      "humanApproval": null
+    },
+    {
+      "key": "stats_compares_recent_sleep_duration_with_dismiss",
+      "source": "Compares recent sleep duration with dismiss speed, snoozes, and challenge retries on this device.",
+      "sourceHash": "sha256:b6e23d54981fdf690061346c07144f341fac273a09f526dbed4d83f8b29f9094",
+      "proposals": {
+        "zh-TW": "在本機比較最近的睡眠時長、解除鬧鐘的速度、貪睡情況及挑戰重試次數。",
+        "ja": "この端末上で、最近の睡眠時間とアラーム解除までの時間、スヌーズの傾向、チャレンジの再試行回数を比較します。"
+      },
+      "contextRationale": "比較睡眠時長、解除速度、貪睡及挑戰重試。",
+      "sourceEvidence": {
+        "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/stats/StatsScreen.kt",
+        "line": 1522,
+        "kind": "EXACT_STATIC_SOURCE_CALLSITE"
+      },
+      "formatPlaceholders": [],
+      "reviewStatus": "MODEL_CONTEXT_CHECK_DONE_HUMAN_PENDING",
+      "humanApproval": null
+    }
+  ]
+}
