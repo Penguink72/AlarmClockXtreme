@@ -1,0 +1,39 @@
+name: LP0 translation governance preflight (Node only)
+on:
+  push:
+    branches:
+      - feature/p31-lp0-governance-200-baseline-20261119
+    paths:
+      - "localization/governance/lp0/**"
+      - "scripts/localization/lp0-audit*"
+      - "experiments/lp0-200/**"
+      - ".github/workflows/lp0-governance-preflight.yml"
+  pull_request:
+    paths:
+      - "localization/governance/lp0/**"
+      - "scripts/localization/lp0-audit*"
+      - "experiments/lp0-200/**"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  lp0-source-governance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Confirm source strings and current resource packs
+        run: node experiments/lp0-200/verify-resources.test.js
+      - name: Confirm LP0 browser language-pack contract
+        run: node experiments/lp0-200/probe-core.test.js
+      - name: Audit 200 sources and review states
+        run: node scripts/localization/lp0-audit.mjs
+      - name: Reject fabricated approvals and source drift
+        run: node scripts/localization/lp0-audit.test.mjs
+      - name: Confirm only governance assets modified
+        run: |
+          git diff --name-only HEAD^ HEAD | tee /tmp/lp0-governance.txt
+          if grep -E '^(app/|wear/|gradle/|settings\.gradle\.kts|build\.gradle\.kts)' /tmp/lp0-governance.txt; then
+            echo 'LP0 governance must not change Android execution paths'
+            exit 1
+          fi
