@@ -37,13 +37,6 @@ class MainActivity : ComponentActivity() {
     private var pendingSharedAlarmToken: String? = null
     private var pendingSharedAlarmDraft by mutableStateOf<Alarm?>(null)
 
-    override fun onResume() {
-        super.onResume()
-        // Restore the opted-in Debug text preview before navigating across screens.
-        // Release builds never read experimental language-pack assets.
-        if (BuildConfig.DEBUG) Lp2PreviewText.refresh(this)
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
@@ -106,7 +99,13 @@ class MainActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
-        val snapshot = AlarmService.activeAlarm.get() ?: return
+        val snapshot = AlarmService.activeAlarm.get()
+        if (snapshot == null) {
+            // Only inspect experimental locale data when no alarm has firing priority.
+            // Release builds never load Debug-only language-pack assets.
+            if (BuildConfig.DEBUG) Lp2PreviewText.refresh(this)
+            return
+        }
         val intent = Intent(this, AlarmFiringActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
             putExtra(AlarmScheduler.EXTRA_ALARM_ID, snapshot.alarmId)
