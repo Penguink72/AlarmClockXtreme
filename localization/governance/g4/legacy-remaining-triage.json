@@ -698,7 +698,7 @@
       "reason": "保留原文 faster and more predictable 的目的。",
       "sourceEvidence": {
         "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/settings/SettingsScreen.kt",
-        "line": 486,
+        "line": 489,
         "kind": "STATIC_ANDROID_CALLSITE"
       }
     },
@@ -750,7 +750,7 @@
       "reason": "原文只說快速開啟輔助工具，舊譯文多加具體功能類型。",
       "sourceEvidence": {
         "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/settings/SettingsScreen.kt",
-        "line": 877,
+        "line": 880,
         "kind": "STATIC_ANDROID_CALLSITE"
       }
     },
@@ -787,7 +787,7 @@
       "reason": "舊中日譯文只說開啟碼錶，漏譯記錄圈數、最佳與最差分段。",
       "sourceEvidence": {
         "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/settings/SettingsScreen.kt",
-        "line": 898,
+        "line": 901,
         "kind": "STATIC_ANDROID_CALLSITE"
       }
     },

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="lp2a_header">LP2-A Settings preview</string>
+    <string name="lp2a_back">Back</string>
+    <string name="lp2a_warning">Debug-only experimental text preview. Does not alter alarms, notifications or normal system app language.</string>
+    <string name="lp2a_revision">Current G6 200-key catalog. No translation has independent semantic approval.</string>
+    <string name="lp2a_import">Import G6 JSON</string>
+    <string name="lp2a_disable">Disable preview</string>
+    <string name="lp2a_enabled">Preview Settings text</string>
+    <string name="lp2a_primary">Primary language</string>
+    <string name="lp2a_secondary">Reference language</string>
+    <string name="lp2a_dual">Show two languages</string>
+    <string name="lp2a_count">Live Settings keys: %1$d</string>
+    <string name="lp2a_imported">Imported and applied the language pack.</string>
+    <string name="lp2a_saved">Preview selection saved.</string>
+    <string name="lp2a_error">Cannot apply preview:</string>
+    <string name="lp2a_intro">Select a language and return to Settings to see real screen labels change.</string>
+    <string name="lp2a_sample_label">Sample translations</string>
+    <string name="lp2a_return_to_settings">Return to Settings</string>
+    <string name="lp2a_open_legacy">Open historical LP1 language lab</string>
+</resources>

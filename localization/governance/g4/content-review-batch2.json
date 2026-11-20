@@ -99,7 +99,7 @@
       "contextRationale": "個別鬧鐘不指定時，才採用預設貪睡時間。",
       "sourceEvidence": {
         "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/settings/SettingsScreen.kt",
-        "line": 528,
+        "line": 531,
         "kind": "EXACT_STATIC_SOURCE_CALLSITE"
       },
       "formatPlaceholders": [],
@@ -117,7 +117,7 @@
       "contextRationale": "明確保留快取天氣、本機行事曆、無網路請求。",
       "sourceEvidence": {
         "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/settings/SettingsScreen.kt",
-        "line": 621,
+        "line": 624,
         "kind": "EXACT_STATIC_SOURCE_CALLSITE"
       },
       "formatPlaceholders": [],
@@ -135,7 +135,7 @@
       "contextRationale": "保留雜湊、最多八筆時長、診斷包排除位置三個條件。",
       "sourceEvidence": {
         "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/settings/SettingsScreen.kt",
-        "line": 748,
+        "line": 751,
         "kind": "EXACT_STATIC_SOURCE_CALLSITE"
       },
       "formatPlaceholders": [],

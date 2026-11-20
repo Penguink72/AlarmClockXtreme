@@ -690,7 +690,7 @@
       },
       "evidence": {
         "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/settings/SettingsScreen.kt",
-        "line": 491,
+        "line": 494,
         "kind": "EXACT_STATIC_CODE_CALLSITE"
       }
     },

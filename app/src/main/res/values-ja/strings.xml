@@ -925,4 +925,7 @@
     <string name="settings_lp1_lab_label">LP1 言語パック実験室</string>
     <string name="settings_lp1_lab_open">オフライン言語パック実験を開く</string>
     <string name="settings_lp1_lab_description">200 件の文字列を読み込み・プレビュー・編集します。通常のアラーム画面には影響しません。</string>
+    <string name="settings_lp2a_lab_label">LP2-A 設定画面の言語プレビュー</string>
+    <string name="settings_lp2a_lab_open">言語プレビューを開く</string>
+    <string name="settings_lp2a_lab_description">現行 G6 言語パックを読み込み、設定画面の一部を切り替えます。デバッグ専用です。</string>
 </resources>

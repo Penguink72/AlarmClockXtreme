@@ -5,5 +5,9 @@
             android:name=".ui.languagelab.Lp1LanguageLabActivity"
             android:exported="false"
             android:label="LP1 Language Pack Lab" />
+        <activity
+            android:name=".ui.languagelab.Lp2SettingsPreviewActivity"
+            android:exported="false"
+            android:label="LP2 Settings Preview" />
     </application>
 </manifest>
