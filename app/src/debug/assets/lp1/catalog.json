@@ -1,0 +1,1317 @@
+{
+  "format": "acx-language-catalog-probe/1",
+  "revision": "lp0-200-20261118",
+  "baseCommit": "c4dd6353f3ae5f95c9a2667599f294920eaa9619",
+  "sourceLocale": "en",
+  "sourcePath": "app/src/main/res/values/strings.xml",
+  "count": 200,
+  "sections": {
+    "alarm": {
+      "total": 50,
+      "translated": 42,
+      "fallback": 8,
+      "available": {
+        "shared": 474,
+        "fallback": 180
+      }
+    },
+    "snooze": {
+      "total": 30,
+      "translated": 25,
+      "fallback": 5,
+      "available": {
+        "shared": 45,
+        "fallback": 15
+      }
+    },
+    "music": {
+      "total": 45,
+      "translated": 40,
+      "fallback": 5,
+      "available": {
+        "shared": 226,
+        "fallback": 8
+      }
+    },
+    "history": {
+      "total": 20,
+      "translated": 12,
+      "fallback": 8,
+      "available": {
+        "shared": 25,
+        "fallback": 23
+      }
+    },
+    "settings": {
+      "total": 40,
+      "translated": 26,
+      "fallback": 14,
+      "available": {
+        "shared": 49,
+        "fallback": 380
+      }
+    },
+    "diagnostics": {
+      "total": 15,
+      "translated": 10,
+      "fallback": 5,
+      "available": {
+        "shared": 20,
+        "fallback": 85
+      }
+    }
+  },
+  "entries": [
+    {
+      "key": "nav_stopwatch",
+      "section": "settings",
+      "source": "Stopwatch",
+      "placeholders": []
+    },
+    {
+      "key": "snooze_duration",
+      "section": "snooze",
+      "source": "Snooze duration",
+      "placeholders": []
+    },
+    {
+      "key": "settings_title",
+      "section": "settings",
+      "source": "Settings",
+      "placeholders": []
+    },
+    {
+      "key": "notif_snooze_countdown_title",
+      "section": "snooze",
+      "source": "Snoozed alarm",
+      "placeholders": []
+    },
+    {
+      "key": "notif_snooze_countdown_subtext",
+      "section": "snooze",
+      "source": "Snooze countdown",
+      "placeholders": []
+    },
+    {
+      "key": "firing_controls_title",
+      "section": "alarm",
+      "source": "Alarm controls",
+      "placeholders": []
+    },
+    {
+      "key": "firing_snooze_hint",
+      "section": "snooze",
+      "source": "Long-press Snooze for exact minutes, or choose a clock time. Your saved default stays unchanged.",
+      "placeholders": []
+    },
+    {
+      "key": "firing_exact_snooze_hint",
+      "section": "snooze",
+      "source": "Applies once to this alarm.",
+      "placeholders": []
+    },
+    {
+      "key": "firing_flip_to_snooze",
+      "section": "snooze",
+      "source": "Flip to snooze",
+      "placeholders": []
+    },
+    {
+      "key": "firing_status_swipe_or_snooze",
+      "section": "snooze",
+      "source": "Wake-up steps are complete. Swipe left to dismiss, or right to snooze.",
+      "placeholders": []
+    },
+    {
+      "key": "firing_swipe_protected",
+      "section": "alarm",
+      "source": "Swipe-left is protected. Use Hold Dismiss.",
+      "placeholders": []
+    },
+    {
+      "key": "firing_swipe_right_snooze",
+      "section": "snooze",
+      "source": "Swipe right to snooze",
+      "placeholders": []
+    },
+    {
+      "key": "firing_left_saved_place",
+      "section": "alarm",
+      "source": "Left saved place",
+      "placeholders": []
+    },
+    {
+      "key": "firing_location_snooze_hint",
+      "section": "snooze",
+      "source": "Swipe right to snooze if you need a short reset. Dismiss unlocks after you leave the saved place.",
+      "placeholders": []
+    },
+    {
+      "key": "firing_controls_hold_description",
+      "section": "alarm",
+      "source": "Hold to confirm dismissal. Snooze remains a quick action.",
+      "placeholders": []
+    },
+    {
+      "key": "firing_tap_snooze",
+      "section": "snooze",
+      "source": "Tap to snooze",
+      "placeholders": []
+    },
+    {
+      "key": "firing_hide_snooze_choices",
+      "section": "snooze",
+      "source": "Hide snooze choices",
+      "placeholders": []
+    },
+    {
+      "key": "firing_choose_snooze_until",
+      "section": "snooze",
+      "source": "Snooze until a time",
+      "placeholders": []
+    },
+    {
+      "key": "firing_snooze_until_hint",
+      "section": "snooze",
+      "source": "The alarm will fire at the next occurrence of this time.",
+      "placeholders": []
+    },
+    {
+      "key": "firing_challenge_before_dismiss",
+      "section": "alarm",
+      "source": "Finish the wake-up challenge before dismissing",
+      "placeholders": []
+    },
+    {
+      "key": "firing_snooze_for_minutes",
+      "section": "snooze",
+      "source": "Snooze for %1$d min",
+      "placeholders": [
+        "%1$d"
+      ]
+    },
+    {
+      "key": "firing_increase_snooze",
+      "section": "snooze",
+      "source": "Increase snooze minutes",
+      "placeholders": []
+    },
+    {
+      "key": "firing_snooze_minutes",
+      "section": "snooze",
+      "source": "Snooze %1$d min",
+      "placeholders": [
+        "%1$d"
+      ]
+    },
+    {
+      "key": "firing_challenge_handwriting_title",
+      "section": "alarm",
+      "source": "Draw the wake-up word",
+      "placeholders": []
+    },
+    {
+      "key": "firing_challenge_simon_title",
+      "section": "alarm",
+      "source": "Play back the pattern",
+      "placeholders": []
+    },
+    {
+      "key": "firing_challenge_none_support",
+      "section": "alarm",
+      "source": "No extra challenge is required for this alarm.",
+      "placeholders": []
+    },
+    {
+      "key": "firing_challenge_photo_support",
+      "section": "alarm",
+      "source": "Take a fresh photo that closely matches the saved reference.",
+      "placeholders": []
+    },
+    {
+      "key": "firing_challenge_speed_support",
+      "section": "alarm",
+      "source": "Groggy fingers slow you down, so prove you can type at speed.",
+      "placeholders": []
+    },
+    {
+      "key": "firing_challenge_voice_status",
+      "section": "alarm",
+      "source": "Say the phrase shown below, or use the typed fallback.",
+      "placeholders": []
+    },
+    {
+      "key": "firing_challenge_sheep_status",
+      "section": "alarm",
+      "source": "Tap every sheep; avoid the goats.",
+      "placeholders": []
+    },
+    {
+      "key": "firing_challenge_none_status",
+      "section": "alarm",
+      "source": "Swipe or tap dismiss when you\\’re ready.",
+      "placeholders": []
+    },
+    {
+      "key": "alarm_edit_page_integrations",
+      "section": "alarm",
+      "source": "Integrations & safety",
+      "placeholders": []
+    },
+    {
+      "key": "alarm_edit_smart_alarm",
+      "section": "alarm",
+      "source": "Smart alarm",
+      "placeholders": []
+    },
+    {
+      "key": "alarm_edit_anti_snooze",
+      "section": "snooze",
+      "source": "Anti-snooze",
+      "placeholders": []
+    },
+    {
+      "key": "alarm_edit_section_group_description",
+      "section": "alarm",
+      "source": "Organize alarms by context so related schedules stay easy to manage.",
+      "placeholders": []
+    },
+    {
+      "key": "alarm_edit_section_hue_description",
+      "section": "alarm",
+      "source": "Coordinate bedside lighting with the alarm for a gentler rise.",
+      "placeholders": []
+    },
+    {
+      "key": "alarm_edit_section_anti_snooze_description",
+      "section": "snooze",
+      "source": "Add guardrails that make repeated delay harder.",
+      "placeholders": []
+    },
+    {
+      "key": "alarm_edit_background_selected",
+      "section": "alarm",
+      "source": "Background image selected.",
+      "placeholders": []
+    },
+    {
+      "key": "alarm_edit_background_permission_warning",
+      "section": "diagnostics",
+      "source": "Background image selected. Re-select it if Android revokes access.",
+      "placeholders": []
+    },
+    {
+      "key": "alarm_edit_saving",
+      "section": "alarm",
+      "source": "Saving alarm…",
+      "placeholders": []
+    },
+    {
+      "key": "alarm_edit_disabled",
+      "section": "alarm",
+      "source": "Disabled",
+      "placeholders": []
+    },
+    {
+      "key": "alarm_edit_minutes_seconds_short",
+      "section": "alarm",
+      "source": "%1$dm %2$ds",
+      "placeholders": [
+        "%1$d",
+        "%2$d"
+      ]
+    },
+    {
+      "key": "alarm_edit_group_custom_name",
+      "section": "alarm",
+      "source": "Custom group name",
+      "placeholders": []
+    },
+    {
+      "key": "alarm_edit_heartbeat",
+      "section": "alarm",
+      "source": "Heartbeat",
+      "placeholders": []
+    },
+    {
+      "key": "alarm_edit_immediately_default",
+      "section": "alarm",
+      "source": "Immediately (default)",
+      "placeholders": []
+    },
+    {
+      "key": "alarm_edit_feature_wifi",
+      "section": "alarm",
+      "source": "Wi-Fi rule",
+      "placeholders": []
+    },
+    {
+      "key": "alarm_edit_repeat_weekends",
+      "section": "alarm",
+      "source": "Weekends",
+      "placeholders": []
+    },
+    {
+      "key": "alarm_edit_squats_required",
+      "section": "alarm",
+      "source": "Squats required",
+      "placeholders": []
+    },
+    {
+      "key": "alarm_edit_capture_photo_hint",
+      "section": "alarm",
+      "source": "Capture a reference photo from the place or angle the alarm should require.",
+      "placeholders": []
+    },
+    {
+      "key": "alarm_edit_challenge_chain",
+      "section": "alarm",
+      "source": "Challenge chain",
+      "placeholders": []
+    },
+    {
+      "key": "alarm_edit_challenge_shake",
+      "section": "alarm",
+      "source": "Shake phone",
+      "placeholders": []
+    },
+    {
+      "key": "alarm_edit_challenge_pushup",
+      "section": "alarm",
+      "source": "Push-ups",
+      "placeholders": []
+    },
+    {
+      "key": "alarm_edit_challenge_pvt",
+      "section": "alarm",
+      "source": "Reaction test",
+      "placeholders": []
+    },
+    {
+      "key": "alarm_edit_challenge_voice_description",
+      "section": "alarm",
+      "source": "Say a wake-up phrase with Android speech recognition, with typed fallback.",
+      "placeholders": []
+    },
+    {
+      "key": "alarm_edit_challenge_default_description",
+      "section": "alarm",
+      "source": "Dismissal requires this challenge before the alarm can stop.",
+      "placeholders": []
+    },
+    {
+      "key": "alarm_edit_holidays_hint",
+      "section": "alarm",
+      "source": "Requires holiday auto-skip and country code configured in Settings → Integrations.",
+      "placeholders": []
+    },
+    {
+      "key": "alarm_edit_default_ringtone_placeholder",
+      "section": "music",
+      "source": "Leave blank to use default ringtone",
+      "placeholders": []
+    },
+    {
+      "key": "alarm_edit_snooze_limit_unlimited",
+      "section": "snooze",
+      "source": "Unlimited",
+      "placeholders": []
+    },
+    {
+      "key": "alarm_edit_progressive_snooze",
+      "section": "snooze",
+      "source": "Progressive snooze (shorter each time)",
+      "placeholders": []
+    },
+    {
+      "key": "alarm_edit_progressive_snooze_hint",
+      "section": "snooze",
+      "source": "Each snooze shortens by 1 minute, such as 10 → 9 → 8.",
+      "placeholders": []
+    },
+    {
+      "key": "alarm_edit_emergency_phone",
+      "section": "alarm",
+      "source": "Emergency phone number",
+      "placeholders": []
+    },
+    {
+      "key": "alarm_edit_shift_pattern",
+      "section": "alarm",
+      "source": "Shift pattern",
+      "placeholders": []
+    },
+    {
+      "key": "alarm_edit_add_ringtone",
+      "section": "alarm",
+      "source": "Add ringtone",
+      "placeholders": []
+    },
+    {
+      "key": "alarm_edit_add_ringtone_accessibility",
+      "section": "music",
+      "source": "Add ringtone to pool",
+      "placeholders": []
+    },
+    {
+      "key": "alarm_edit_add_ringtone_title",
+      "section": "music",
+      "source": "Add ringtone to pool",
+      "placeholders": []
+    },
+    {
+      "key": "alarm_edit_ringtone_uri_hint",
+      "section": "music",
+      "source": "Paste a link to a sound file on this device. One entry from the pool plays each time this alarm fires.",
+      "placeholders": []
+    },
+    {
+      "key": "alarm_edit_ringtone_duplicate",
+      "section": "music",
+      "source": "That ringtone is already in the pool.",
+      "placeholders": []
+    },
+    {
+      "key": "alarm_edit_24_hour",
+      "section": "alarm",
+      "source": "24-hour time",
+      "placeholders": []
+    },
+    {
+      "key": "settings_pane_readiness",
+      "section": "diagnostics",
+      "source": "Readiness",
+      "placeholders": []
+    },
+    {
+      "key": "settings_pane_defaults_description",
+      "section": "settings",
+      "source": "New-alarm behavior, dashboard content, and navigation tabs.",
+      "placeholders": []
+    },
+    {
+      "key": "settings_pane_integrations_description",
+      "section": "settings",
+      "source": "Webhook, holidays, Hue, Health Connect, and connection status.",
+      "placeholders": []
+    },
+    {
+      "key": "settings_pane_personalization_description",
+      "section": "settings",
+      "source": "Theme, challenge difficulty, privacy, and firing-screen behavior.",
+      "placeholders": []
+    },
+    {
+      "key": "settings_pane_backup_description",
+      "section": "settings",
+      "source": "Encrypted export, restore preview, and conflict-safe import.",
+      "placeholders": []
+    },
+    {
+      "key": "settings_pane_utilities_description",
+      "section": "settings",
+      "source": "Companion tools, support bundle export, app version, and license.",
+      "placeholders": []
+    },
+    {
+      "key": "settings_share_support_bundle",
+      "section": "settings",
+      "source": "Share support bundle",
+      "placeholders": []
+    },
+    {
+      "key": "settings_battery_protected",
+      "section": "settings",
+      "source": "Battery protected",
+      "placeholders": []
+    },
+    {
+      "key": "settings_battery_setup_needed",
+      "section": "settings",
+      "source": "Needs battery setup",
+      "placeholders": []
+    },
+    {
+      "key": "settings_choose_group_hint",
+      "section": "settings",
+      "source": "Choose a group to keep wide screens focused.",
+      "placeholders": []
+    },
+    {
+      "key": "settings_setup_needed",
+      "section": "settings",
+      "source": "Setup needed",
+      "placeholders": []
+    },
+    {
+      "key": "settings_not_selected",
+      "section": "settings",
+      "source": "Not selected",
+      "placeholders": []
+    },
+    {
+      "key": "settings_alarm_defaults_description",
+      "section": "settings",
+      "source": "Set the behavior new alarms start with so setup feels faster and more predictable.",
+      "placeholders": []
+    },
+    {
+      "key": "settings_flip_snooze",
+      "section": "snooze",
+      "source": "Flip phone to snooze",
+      "placeholders": []
+    },
+    {
+      "key": "settings_default_snooze_description",
+      "section": "snooze",
+      "source": "Used whenever a new alarm doesn’t specify its own snooze length.",
+      "placeholders": []
+    },
+    {
+      "key": "settings_minutes_short",
+      "section": "settings",
+      "source": "%1$d min",
+      "placeholders": [
+        "%1$d"
+      ]
+    },
+    {
+      "key": "settings_dashboard_description",
+      "section": "settings",
+      "source": "Control what appears on the My Day screen so it stays useful without feeling busy.",
+      "placeholders": []
+    },
+    {
+      "key": "settings_post_dismiss_summary_description",
+      "section": "settings",
+      "source": "After the final dismiss step, show cached weather and the next local calendar event. No network request is made.",
+      "placeholders": []
+    },
+    {
+      "key": "settings_commute_history_description",
+      "section": "history",
+      "source": "Stores only hashed route keys and up to eight recent durations per route on this device; locations are excluded from support bundles.",
+      "placeholders": []
+    },
+    {
+      "key": "settings_show_today_tab",
+      "section": "settings",
+      "source": "Show Today tab",
+      "placeholders": []
+    },
+    {
+      "key": "settings_utilities_description",
+      "section": "settings",
+      "source": "Quick access to companion tools that round out the app.",
+      "placeholders": []
+    },
+    {
+      "key": "settings_alarm_statistics",
+      "section": "settings",
+      "source": "Alarm statistics",
+      "placeholders": []
+    },
+    {
+      "key": "settings_stopwatch_description",
+      "section": "settings",
+      "source": "Track laps with best and worst splits highlighted.",
+      "placeholders": []
+    },
+    {
+      "key": "settings_language_description",
+      "section": "settings",
+      "source": "Choose the app language. Core alarm, sound, and music screens are available in English, Traditional Chinese, and Japanese; other screens may remain in English.",
+      "placeholders": []
+    },
+    {
+      "key": "settings_language_dialog_title",
+      "section": "settings",
+      "source": "Choose app language",
+      "placeholders": []
+    },
+    {
+      "key": "settings_language_english",
+      "section": "settings",
+      "source": "English",
+      "placeholders": []
+    },
+    {
+      "key": "settings_language_japanese",
+      "section": "settings",
+      "source": "Japanese",
+      "placeholders": []
+    },
+    {
+      "key": "settings_license",
+      "section": "settings",
+      "source": "License",
+      "placeholders": []
+    },
+    {
+      "key": "settings_ready",
+      "section": "settings",
+      "source": "Ready",
+      "placeholders": []
+    },
+    {
+      "key": "settings_on_call_mode_description",
+      "section": "settings",
+      "source": "Use this with a rotating shift pattern when an on-call alarm must break total-silence Do Not Disturb.",
+      "placeholders": []
+    },
+    {
+      "key": "settings_webhook_description",
+      "section": "settings",
+      "source": "Connect alarm events to automations, home setups, or debugging endpoints.",
+      "placeholders": []
+    },
+    {
+      "key": "settings_recent_deliveries",
+      "section": "history",
+      "source": "Recent deliveries",
+      "placeholders": []
+    },
+    {
+      "key": "settings_hue_api_placeholder",
+      "section": "settings",
+      "source": "Press the Hue bridge button first",
+      "placeholders": []
+    },
+    {
+      "key": "settings_health_no_session",
+      "section": "settings",
+      "source": "No session",
+      "placeholders": []
+    },
+    {
+      "key": "settings_connection_sunrise_skipped",
+      "section": "settings",
+      "source": "Sunrise simulation skipped",
+      "placeholders": []
+    },
+    {
+      "key": "settings_cover_to_snooze_description",
+      "section": "snooze",
+      "source": "Hold a hand over the proximity sensor for ~1.5 s during an alarm to snooze.",
+      "placeholders": []
+    },
+    {
+      "key": "settings_long_press_threshold_description",
+      "section": "settings",
+      "source": "Choose how long the firing-screen dismiss button must be held. 0.5–5 seconds.",
+      "placeholders": []
+    },
+    {
+      "key": "settings_accent_violet",
+      "section": "settings",
+      "source": "Violet",
+      "placeholders": []
+    },
+    {
+      "key": "settings_backup_locked_description",
+      "section": "settings",
+      "source": "Backup buttons stay locked until the result appears.",
+      "placeholders": []
+    },
+    {
+      "key": "settings_close",
+      "section": "settings",
+      "source": "Close",
+      "placeholders": []
+    },
+    {
+      "key": "settings_encrypted_backup_private",
+      "section": "settings",
+      "source": "Encrypted backup includes private values",
+      "placeholders": []
+    },
+    {
+      "key": "settings_readiness_exact_alarms",
+      "section": "diagnostics",
+      "source": "exact alarms",
+      "placeholders": []
+    },
+    {
+      "key": "alarm_edit_delete_digit",
+      "section": "alarm",
+      "source": "Delete digit",
+      "placeholders": []
+    },
+    {
+      "key": "settings_fossify_import_failed_no_alarms",
+      "section": "settings",
+      "source": "Couldn\\’t import Fossify alarms. The file has no valid alarms.",
+      "placeholders": []
+    },
+    {
+      "key": "alarm_edit_challenge_ref_generic",
+      "section": "alarm",
+      "source": "challenge details",
+      "placeholders": []
+    },
+    {
+      "key": "alarm_list_clear_filters",
+      "section": "alarm",
+      "source": "Clear filters",
+      "placeholders": []
+    },
+    {
+      "key": "alarm_list_delete",
+      "section": "alarm",
+      "source": "Delete",
+      "placeholders": []
+    },
+    {
+      "key": "alarm_list_pause",
+      "section": "alarm",
+      "source": "Pause",
+      "placeholders": []
+    },
+    {
+      "key": "stats_snoozed",
+      "section": "snooze",
+      "source": "Snoozed",
+      "placeholders": []
+    },
+    {
+      "key": "stats_recent_history",
+      "section": "history",
+      "source": "Recent history",
+      "placeholders": []
+    },
+    {
+      "key": "stats_alarm_history_optional_health_connect",
+      "section": "history",
+      "source": "Alarm history and optional Health Connect sleep sessions will build this view locally.",
+      "placeholders": []
+    },
+    {
+      "key": "onboarding_see_weather_calendar_next_alarm",
+      "section": "diagnostics",
+      "source": "See weather, calendar, and your next alarm in one place so the morning feels calmer from the first glance.",
+      "placeholders": []
+    },
+    {
+      "key": "ringtone_folder",
+      "section": "music",
+      "source": "From folder",
+      "placeholders": []
+    },
+    {
+      "key": "music_library_title",
+      "section": "music",
+      "source": "Music library and playback history",
+      "placeholders": []
+    },
+    {
+      "key": "music_library_history_title",
+      "section": "history",
+      "source": "Playback history",
+      "placeholders": []
+    },
+    {
+      "key": "music_library_catalog_empty",
+      "section": "music",
+      "source": "No indexed tracks yet. Allow audio access or scan an authorized music folder.",
+      "placeholders": []
+    },
+    {
+      "key": "music_library_tab_videos",
+      "section": "music",
+      "source": "Videos",
+      "placeholders": []
+    },
+    {
+      "key": "music_library_video_audio_track_detected",
+      "section": "music",
+      "source": "%1$s · audio track found during folder scan; decoder support is not verified · %2$s",
+      "placeholders": [
+        "%1$s",
+        "%2$s"
+      ]
+    },
+    {
+      "key": "music_library_source_scope_all",
+      "section": "music",
+      "source": "All sources",
+      "placeholders": []
+    },
+    {
+      "key": "music_library_preview",
+      "section": "music",
+      "source": "Preview track",
+      "placeholders": []
+    },
+    {
+      "key": "alarm_music_settings_mode_shared",
+      "section": "music",
+      "source": "Use the shared music pool",
+      "placeholders": []
+    },
+    {
+      "key": "alarm_music_settings_strategy_order",
+      "section": "music",
+      "source": "Playlist order",
+      "placeholders": []
+    },
+    {
+      "key": "alarm_music_settings_artists",
+      "section": "music",
+      "source": "Artists",
+      "placeholders": []
+    },
+    {
+      "key": "alarm_music_settings_save",
+      "section": "music",
+      "source": "Save",
+      "placeholders": []
+    },
+    {
+      "key": "alarm_music_settings_remove_track",
+      "section": "music",
+      "source": "Remove track",
+      "placeholders": []
+    },
+    {
+      "key": "music_library_add_folder",
+      "section": "music",
+      "source": "Add folder",
+      "placeholders": []
+    },
+    {
+      "key": "music_library_source_origin",
+      "section": "music",
+      "source": "%1$s · %2$s",
+      "placeholders": [
+        "%1$s",
+        "%2$s"
+      ]
+    },
+    {
+      "key": "music_library_source_unknown_origin",
+      "section": "music",
+      "source": "Storage provider",
+      "placeholders": []
+    },
+    {
+      "key": "music_library_remove_source",
+      "section": "music",
+      "source": "Remove source",
+      "placeholders": []
+    },
+    {
+      "key": "music_library_sources_read_failed",
+      "section": "music",
+      "source": "Could not read music sources: %1$s",
+      "placeholders": [
+        "%1$s"
+      ]
+    },
+    {
+      "key": "music_library_no_history",
+      "section": "history",
+      "source": "No playback history for this date.",
+      "placeholders": []
+    },
+    {
+      "key": "music_library_close",
+      "section": "music",
+      "source": "Close",
+      "placeholders": []
+    },
+    {
+      "key": "music_library_scan_failed",
+      "section": "music",
+      "source": "Music scan failed: %1$s",
+      "placeholders": [
+        "%1$s"
+      ]
+    },
+    {
+      "key": "music_library_history_row",
+      "section": "history",
+      "source": "%1$d. %2$s — %3$s",
+      "placeholders": [
+        "%1$d",
+        "%2$s",
+        "%3$s"
+      ]
+    },
+    {
+      "key": "music_library_pool_all_candidates",
+      "section": "music",
+      "source": "All candidates",
+      "placeholders": []
+    },
+    {
+      "key": "music_library_pool_clear_selection",
+      "section": "music",
+      "source": "Clear selection",
+      "placeholders": []
+    },
+    {
+      "key": "music_library_pool_status_included",
+      "section": "music",
+      "source": "Added to music pool",
+      "placeholders": []
+    },
+    {
+      "key": "music_library_pool_source_label",
+      "section": "music",
+      "source": "Source",
+      "placeholders": []
+    },
+    {
+      "key": "music_library_pool_type_audio",
+      "section": "music",
+      "source": "Audio file",
+      "placeholders": []
+    },
+    {
+      "key": "ringtone_preview_unavailable",
+      "section": "music",
+      "source": "Preview unavailable",
+      "placeholders": []
+    },
+    {
+      "key": "ringtone_nothing_matches",
+      "section": "music",
+      "source": "Nothing matches “%1$s”. Try a shorter or different term.",
+      "placeholders": [
+        "%1$s"
+      ]
+    },
+    {
+      "key": "permissions_context_permissions",
+      "section": "diagnostics",
+      "source": "Context permissions",
+      "placeholders": []
+    },
+    {
+      "key": "alarmlist_alarm",
+      "section": "alarm",
+      "source": "%1$s alarm",
+      "placeholders": [
+        "%1$s"
+      ]
+    },
+    {
+      "key": "bedtime_update_health_connect_before_recent_sleep",
+      "section": "history",
+      "source": "Update Health Connect before recent sleep sessions can appear here.",
+      "placeholders": []
+    },
+    {
+      "key": "stats_track_consistency_snooze_behavior_and_which",
+      "section": "snooze",
+      "source": "Track consistency, snooze behavior, and which mornings are easiest to handle.",
+      "placeholders": []
+    },
+    {
+      "key": "stats_recent_events",
+      "section": "history",
+      "source": "%1$s recent events",
+      "placeholders": [
+        "%1$s"
+      ]
+    },
+    {
+      "key": "stats_recent_health_connect_sessions_stay_local",
+      "section": "history",
+      "source": "Recent Health Connect sessions stay local and are shown beside alarm history.",
+      "placeholders": []
+    },
+    {
+      "key": "settings_backup_support_bundle_failed",
+      "section": "settings",
+      "source": "Couldn’t create support bundle.",
+      "placeholders": []
+    },
+    {
+      "key": "ringtone_folder_item",
+      "section": "music",
+      "source": "%1$s (folder)",
+      "placeholders": [
+        "%1$s"
+      ]
+    },
+    {
+      "key": "stats_compares_recent_sleep_duration_with_dismiss",
+      "section": "history",
+      "source": "Compares recent sleep duration with dismiss speed, snoozes, and challenge retries on this device.",
+      "placeholders": []
+    },
+    {
+      "key": "alarmlist_share_alarm",
+      "section": "alarm",
+      "source": "Share alarm",
+      "placeholders": []
+    },
+    {
+      "key": "readiness_ready",
+      "section": "diagnostics",
+      "source": "Ready to use.",
+      "placeholders": []
+    },
+    {
+      "key": "readiness_needs_photo",
+      "section": "diagnostics",
+      "source": "Capture a reference photo before saving.",
+      "placeholders": []
+    },
+    {
+      "key": "ringtone_saved_to_alarms",
+      "section": "music",
+      "source": "Saved “%1$s” to your alarms.",
+      "placeholders": [
+        "%1$s"
+      ]
+    },
+    {
+      "key": "alarm_list_quick_alarm_for",
+      "section": "alarm",
+      "source": "Set quick alarm for %1$s",
+      "placeholders": [
+        "%1$s"
+      ]
+    },
+    {
+      "key": "music_library_category_music",
+      "section": "music",
+      "source": "Music",
+      "placeholders": []
+    },
+    {
+      "key": "music_playlist_integration_pending",
+      "section": "music",
+      "source": "Playlist storage is waiting for the Room v28 integration. Existing Room v27 search and music-pool actions remain available; playlist changes are not saved yet.",
+      "placeholders": []
+    },
+    {
+      "key": "music_playlist_add_selected",
+      "section": "music",
+      "source": "Add %1$d selected",
+      "placeholders": [
+        "%1$d"
+      ]
+    },
+    {
+      "key": "music_playlist_rename",
+      "section": "music",
+      "source": "Rename",
+      "placeholders": []
+    },
+    {
+      "key": "music_playlist_empty",
+      "section": "music",
+      "source": "This playlist is empty.",
+      "placeholders": []
+    },
+    {
+      "key": "music_playlist_remove",
+      "section": "music",
+      "source": "Remove",
+      "placeholders": []
+    },
+    {
+      "key": "music_playlist_unavailable_count",
+      "section": "music",
+      "source": "%1$d tracks could not be added because they are unavailable.",
+      "placeholders": [
+        "%1$d"
+      ]
+    },
+    {
+      "key": "alarm_music_settings_playlist_smart_all",
+      "section": "music",
+      "source": "All available music",
+      "placeholders": []
+    },
+    {
+      "key": "music_playlist_selected_items",
+      "section": "music",
+      "source": "%1$d selected items",
+      "placeholders": [
+        "%1$d"
+      ]
+    },
+    {
+      "key": "music_playlist_partial_add",
+      "section": "music",
+      "source": "Added %1$d tracks; %2$d unavailable tracks were skipped.",
+      "placeholders": [
+        "%1$d",
+        "%2$d"
+      ]
+    },
+    {
+      "key": "recent_playback_title",
+      "section": "history",
+      "source": "Recently played",
+      "placeholders": []
+    },
+    {
+      "key": "recent_playback_empty",
+      "section": "history",
+      "source": "No alarm playback history yet",
+      "placeholders": []
+    },
+    {
+      "key": "replay_action_pause",
+      "section": "history",
+      "source": "Pause",
+      "placeholders": []
+    },
+    {
+      "key": "replay_action_stop",
+      "section": "history",
+      "source": "Stop",
+      "placeholders": []
+    },
+    {
+      "key": "replay_status_playing",
+      "section": "history",
+      "source": "Playing",
+      "placeholders": []
+    },
+    {
+      "key": "replay_open_in_external",
+      "section": "history",
+      "source": "Open with other app",
+      "placeholders": []
+    },
+    {
+      "key": "replay_error_alarm_active",
+      "section": "history",
+      "source": "Alarm is ringing. Replay stopped to prioritize alarm.",
+      "placeholders": []
+    },
+    {
+      "key": "replay_error_playback_failed",
+      "section": "history",
+      "source": "Cannot play this audio. File may be missing or permission revoked.",
+      "placeholders": []
+    },
+    {
+      "key": "music_library_history_filter_recent",
+      "section": "history",
+      "source": "Recent",
+      "placeholders": []
+    },
+    {
+      "key": "settings_return_to_app_after_dismiss_description",
+      "section": "settings",
+      "source": "Show the Alarms screen after the alarm is confirmed stopped. When off, return to your previous screen. Keep the lock screen protected.",
+      "placeholders": []
+    },
+    {
+      "key": "firing_snooze_schedule_failed",
+      "section": "snooze",
+      "source": "Snooze could not be scheduled. Alarm is still ringing. Try again or dismiss it.",
+      "placeholders": []
+    },
+    {
+      "key": "alarm_edit_remaining_days_hours_minutes",
+      "section": "alarm",
+      "source": "%1$d d %2$d h %3$d min",
+      "placeholders": [
+        "%1$d",
+        "%2$d",
+        "%3$d"
+      ]
+    },
+    {
+      "key": "music_library_system_tones_cancel",
+      "section": "music",
+      "source": "Cancel",
+      "placeholders": []
+    },
+    {
+      "key": "alarm_edit_delivery_test_limitation",
+      "section": "alarm",
+      "source": "Uses an isolated default-tone test to check Android scheduling, notifications and wake screen. It does not test this alarm’s music playlist, production playback, or snooze chain.",
+      "placeholders": []
+    },
+    {
+      "key": "settings_show_incident_events",
+      "section": "diagnostics",
+      "source": "Show recent event chain",
+      "placeholders": []
+    },
+    {
+      "key": "settings_export_incident_diagnostics",
+      "section": "diagnostics",
+      "source": "Share diagnostic bundle",
+      "placeholders": []
+    },
+    {
+      "key": "settings_incident_row_reason",
+      "section": "diagnostics",
+      "source": "Source: %1$s · Code: %2$s",
+      "placeholders": [
+        "%1$s",
+        "%2$s"
+      ]
+    },
+    {
+      "key": "b2_test_description",
+      "section": "diagnostics",
+      "source": "This diagnostic uses the saved music source and real alarm player, without changing alarm schedules or playback history.",
+      "placeholders": []
+    },
+    {
+      "key": "b2_test_cancel",
+      "section": "diagnostics",
+      "source": "Cancel music test",
+      "placeholders": []
+    },
+    {
+      "key": "b2_test_snooze",
+      "section": "snooze",
+      "source": "Test snooze: ring again in 1 min",
+      "placeholders": []
+    },
+    {
+      "key": "b2_test_scheduled",
+      "section": "diagnostics",
+      "source": "Real music test scheduled for about one minute from now.",
+      "placeholders": []
+    },
+    {
+      "key": "b2_test_requires_saved",
+      "section": "diagnostics",
+      "source": "Save this alarm before running the real music test.",
+      "placeholders": []
+    },
+    {
+      "key": "b2_test_saved_only",
+      "section": "diagnostics",
+      "source": "The test uses the last saved alarm and music settings. Unsaved edits are not included.",
+      "placeholders": []
+    },
+    {
+      "key": "u4_snooze_resume_position",
+      "section": "snooze",
+      "source": "Continue the interrupted song at its last position",
+      "placeholders": []
+    },
+    {
+      "key": "u4_snooze_mode_note",
+      "section": "snooze",
+      "source": "Applies to alarm music. If a track cannot be accessed or seeked, the alarm uses a playable fallback.",
+      "placeholders": []
+    },
+    {
+      "key": "music_playlist_apply_to_alarm",
+      "section": "music",
+      "source": "Apply this playlist to the alarm",
+      "placeholders": []
+    },
+    {
+      "key": "alarm_edit_schedule_failed_new",
+      "section": "alarm",
+      "source": "Alarm was not created because Android did not accept its schedule. Check alarm permissions and retry.",
+      "placeholders": []
+    }
+  ]
+}
