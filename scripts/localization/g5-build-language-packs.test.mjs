@@ -8,7 +8,9 @@ const catalog=loadJson("experiments/lp0-200/catalog.json");
 const glossary=loadJson("localization/governance/g1/glossary-contract.json");
 const queue=loadJson("localization/governance/g3/review-queue.generated.json");
 const qa=loadJson("localization/governance/g4/qa-report.generated.json");
-const preview=buildPacks("preview",catalog,glossary,queue,qa);
+const preview=buildPacks("preview",catalog,glossary,queue,qa,sourceDefects);
+assert.deepEqual(preview.manifest.staleCanonicalSourceKeys,["music_playlist_integration_pending"]);
+assert.equal(preview.manifest.frozenBaselinePreview,true);
 assert.equal(preview.manifest.releaseChannel,"UNREVIEWED_PREVIEW_NOT_RELEASE");
 assert.equal(preview.manifest.mayDistributeAsOfficial,false);
 for(const locale of ["zh-TW","ja"]){
@@ -74,6 +76,11 @@ console.log("G5_TESTS PASS 200 preview strings per locale, release denied withou
  const resolved=structuredClone(sourceDefects);
  resolved.items[0].status="RESOLVED";
  resolved.items[0].releaseBlocking=false;
+ assert.throws(()=>buildPacks("release",catalog,approvedGlossary,queue,fully,resolved),
+   /source amendments have stale locale translations/);
+ // Synthetic approval is a test-only artifact, never written to the repo.
+ resolved.items[0].correction.translationReviewStatus="APPROVED";
+ resolved.items[0].correction.localeReviews={"zh-TW":"APPROVED","ja":"APPROVED"};
  const syntheticRelease=buildPacks("release",catalog,approvedGlossary,queue,fully,resolved);
  assert.equal(syntheticRelease.manifest.mayDistributeAsOfficial,true);
  assert.equal(syntheticRelease.manifest.totals["zh-TW"].approved,200);

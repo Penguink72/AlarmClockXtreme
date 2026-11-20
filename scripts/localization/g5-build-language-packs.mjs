@@ -35,6 +35,12 @@ export function buildPacks(mode,catalog,glossary,queue,qa,sourceDefects=null){
    const unresolved=sourceDefects.items.filter(d=>d.releaseBlocking && d.status!=="RESOLVED");
    assert.equal(unresolved.length,0,
      "Release blocked: unresolved canonical English source defects: "+unresolved.map(d=>d.key).join(", "));
+   const staleCorrections=sourceDefects.items.filter(d=>d.correction && (
+     d.correction.translationReviewStatus!=="APPROVED" ||
+     Object.values(d.correction.localeReviews||{}).some(s=>s!=="APPROVED")
+   ));
+   assert.equal(staleCorrections.length,0,
+     "Release blocked: source amendments have stale locale translations: "+staleCorrections.map(d=>d.key).join(", "));
 
  }else{
    assert.equal(queue.approval,"NONE","Preview must remain unapproved");
@@ -105,6 +111,8 @@ export function buildPacks(mode,catalog,glossary,queue,qa,sourceDefects=null){
    provenance:{catalogDigest:jsonHash(catalog),glossaryDigest:jsonHash(glossary),
      queueDigest:jsonHash(queue),qaDigest:jsonHash(qa)},
    reviewStatus:production?"approved-only":"no-human-approval",
+   frozenBaselinePreview:!production,
+   staleCanonicalSourceKeys:(sourceDefects?.items||[]).filter(d=>d.correction&&d.correction.baselineCatalogStillFrozen).map(d=>d.key),
    totals
  };
  return {manifest,packs};
@@ -132,7 +140,7 @@ if(outIdx>=0){
  for(const [locale,pack]of Object.entries(result.packs))
    writeFileSync(join(dir,locale+".json"),JSON.stringify(pack,null,2)+"\n");
  writeFileSync(join(dir,"README.txt"),mode==="preview"?
-   "UNREVIEWED PREVIEW - NOT AN OFFICIAL LANGUAGE PACK.\nNo semantic human approvals have been granted.\nUse only in LP0/LP1 debug experiments.\n":
+   "UNREVIEWED PREVIEW - NOT AN OFFICIAL LANGUAGE PACK.\nNo semantic human approvals have been granted.\nS0: this frozen LP0/LP1 sample contains stale translations; see manifest.staleCanonicalSourceKeys.\nUse only in LP0/LP1 debug experiments.\n":
    "APPROVED-ONLY RELEASE - See manifest and reviewer ledger.\n");
 }
 console.log("G5_PACK_BUILDER "+mode.toUpperCase()+" "+JSON.stringify(result.manifest.totals));
