@@ -5,6 +5,7 @@ on:
       - feature/p31-lpg1-g5-governed-language-pipeline-20261119
       - feature/p31-lpg-content-review-b1-20261119
       - feature/p31-lpg-content-review-b2-completion-20261120
+      - integration/p31-i0-lp1-lpg-20261120
     paths:
       - "scripts/localization/**"
       - "localization/governance/**"
@@ -68,6 +69,8 @@ jobs:
             exit 1
           fi
           echo "EXPECTED: official pack rejected without semantic approvals."
+      - name: I0 - Verify G5 unreviewed preview can be imported by LP1 Debug language lab
+        run: node scripts/localization/i0-bridge-contract.test.mjs build/localization/UNREVIEWED_PREVIEW_NOT_RELEASE
       - name: Publish review bundle for human auditing
         uses: actions/upload-artifact@v4
         with:

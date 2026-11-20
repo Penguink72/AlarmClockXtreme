@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - feature/p31-lp1-android-offline-pack-lab-20261118
+      - integration/p31-i0-lp1-lpg-20261120
     paths:
       - "experiments/lp0-200/**"
       - "app/src/debug/**"
