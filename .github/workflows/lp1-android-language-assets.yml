@@ -8,6 +8,8 @@ on:
       - "experiments/lp0-200/**"
       - "app/src/debug/**"
       - ".github/workflows/lp1-android-language-assets.yml"
+      - "localization/governance/**"
+      - "scripts/localization/**"
   workflow_dispatch:
 permissions:
   contents: read

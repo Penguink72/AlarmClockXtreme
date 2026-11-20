@@ -23,6 +23,8 @@ on:
       - integration/p31-i0-lp1-lpg-20261120
     paths:
       - ".github/workflows/p0-android-baseline.yml"
+      - "localization/governance/**"
+      - "scripts/localization/**"
       - "app/**"
       - "wear/**"
       - "gradle/**"

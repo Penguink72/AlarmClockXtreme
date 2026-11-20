@@ -22,3 +22,7 @@
 - Semantic approvals: 0. Source defect: music_playlist_integration_pending OPEN, release-blocking. Official G5 release must remain denied.
 - G5 preview import data compatibility in Node and existing LP1 Kotlin parser unit tests are mechanical evidence, not proof of device import.
 - Excluded from I0: Room changes, AlarmManager, AlarmService, Media3, playback history, normal runtime stringResource/UI replacement.
+
+## I0 merge-source evidence line rebase
+The LP1 Settings home entry adds 22 lines within SettingsScreen.kt. The first LP-G run on merged SHA a03b942e failed at G4b because static sourceEvidence.line references pointed to pre-LP1 code positions. Each changed reference is rebased ONLY if the current SettingsScreen.kt line contains the exact original R.string.<key> token at oldLine+22; 11 references across four G4 review JSON files satisfy this condition. One other line in the same file (line 204) is unchanged and must not be shifted.
+No source strings, translations, terminology, human approval counts, or source hashes are changed. Re-run G2→G5 on the integrated SHA; record fresh CI status. The opening failure is evidence-location drift, not evidence of semantic translation approval.
