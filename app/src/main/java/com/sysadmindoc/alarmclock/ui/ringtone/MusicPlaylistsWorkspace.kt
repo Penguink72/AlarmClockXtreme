@@ -1,5 +1,6 @@
 package com.sysadmindoc.alarmclock.ui.ringtone
 
+import com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -177,7 +178,7 @@ internal fun MusicPlaylistsWorkspace(
     ) {
         if (repository == null) {
             Text(
-                stringResource(R.string.music_playlist_integration_pending),
+                Lp2PreviewText.text(R.string.music_playlist_integration_pending, "music_playlist_integration_pending"),
                 color = MaterialTheme.colorScheme.error,
                 style = MaterialTheme.typography.bodyMedium
             )
@@ -252,7 +253,7 @@ internal fun MusicPlaylistsWorkspace(
                     enabled = !busy && playlist.playableTrackCount > 0,
                     onClick = { onApplyToAlarm(playlist.playlistId) }
                 ) {
-                    Text(stringResource(R.string.music_playlist_apply_to_alarm))
+                    Text(Lp2PreviewText.text(R.string.music_playlist_apply_to_alarm, "music_playlist_apply_to_alarm"))
                 }
             }
             if (selectedPlaylistItemIds.isNotEmpty()) {
@@ -323,7 +324,7 @@ internal fun MusicPlaylistsWorkspace(
             if (items == null) {
                 CircularProgressIndicator()
             } else if (items.orEmpty().isEmpty()) {
-                Text(stringResource(R.string.music_playlist_empty))
+                Text(Lp2PreviewText.text(R.string.music_playlist_empty, "music_playlist_empty"))
             } else {
                 LazyColumn(
                     modifier = Modifier.weight(1f),
@@ -753,7 +754,7 @@ private fun PlaylistSummaryRow(
                     onDismissRequest = { menuExpanded = false }
                 ) {
                     DropdownMenuItem(
-                        text = { Text(stringResource(R.string.music_playlist_rename)) },
+                        text = { Text(Lp2PreviewText.text(R.string.music_playlist_rename, "music_playlist_rename")) },
                         onClick = {
                             menuExpanded = false
                             onRename()
@@ -838,7 +839,7 @@ private fun PlaylistItemRow(
                 modifier = Modifier.testTag("playlist-remove-${item.playlistItemId}"),
                 onClick = onRemove
             ) {
-                Text(stringResource(R.string.music_playlist_remove))
+                Text(Lp2PreviewText.text(R.string.music_playlist_remove, "music_playlist_remove"))
             }
         }
     }

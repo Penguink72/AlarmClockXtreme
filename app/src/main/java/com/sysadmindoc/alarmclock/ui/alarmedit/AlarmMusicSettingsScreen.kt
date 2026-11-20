@@ -1,5 +1,6 @@
 package com.sysadmindoc.alarmclock.ui.alarmedit
 
+import com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText
 import androidx.annotation.StringRes
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -123,7 +124,7 @@ fun AlarmMusicSettingsScreen(
                                     onAction(AlarmMusicSettingsAction.SelectPlaylist(null))
                                 },
                                 label = {
-                                    Text(stringResource(R.string.alarm_music_settings_playlist_smart_all))
+                                    Text(Lp2PreviewText.text(R.string.alarm_music_settings_playlist_smart_all, "alarm_music_settings_playlist_smart_all"))
                                 }
                             )
                             state.playlists.forEach { playlist ->
@@ -303,7 +304,7 @@ private fun SnoozeMusicModeRow(
         }
     }
     Text(
-        stringResource(R.string.u4_snooze_mode_note),
+        Lp2PreviewText.text(R.string.u4_snooze_mode_note, "u4_snooze_mode_note"),
         style = MaterialTheme.typography.bodySmall
     )
 }

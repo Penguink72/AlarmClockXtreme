@@ -1,5 +1,6 @@
 package com.sysadmindoc.alarmclock.ui.alarmedit
 
+import com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -267,8 +268,8 @@ fun AlarmEditScreen(
     val referencePhotoSaveFailedMessage = stringResource(R.string.alarm_edit_photo_save_failed)
     val cameraPermissionMessage = stringResource(R.string.alarm_edit_camera_permission_required)
     val noBackgroundMessage = stringResource(R.string.alarm_edit_background_none_selected)
-    val backgroundSelectedMessage = stringResource(R.string.alarm_edit_background_selected)
-    val backgroundPermissionMessage = stringResource(R.string.alarm_edit_background_permission_warning)
+    val backgroundSelectedMessage = Lp2PreviewText.text(R.string.alarm_edit_background_selected, "alarm_edit_background_selected")
+    val backgroundPermissionMessage = Lp2PreviewText.text(R.string.alarm_edit_background_permission_warning, "alarm_edit_background_permission_warning")
     val locationSavedMessage = stringResource(R.string.alarm_edit_location_saved)
     val locationFixFailedMessage = stringResource(R.string.alarm_edit_location_fix_failed)
     val locationPermissionMessage = stringResource(R.string.alarm_edit_location_permission_required)
@@ -555,7 +556,7 @@ fun AlarmEditScreen(
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
                             text = when {
-                                state.isSaving -> stringResource(R.string.alarm_edit_saving)
+                                state.isSaving -> Lp2PreviewText.text(R.string.alarm_edit_saving, "alarm_edit_saving")
                                 state.isEditing -> stringResource(R.string.alarm_edit_save_changes)
                                 else -> stringResource(R.string.alarm_edit_create)
                             },

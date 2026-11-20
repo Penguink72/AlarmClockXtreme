@@ -1,5 +1,6 @@
 package com.sysadmindoc.alarmclock.ui.components
 
+import com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText
 import android.content.ClipData
 import android.content.Context
 import android.content.Intent
@@ -158,7 +159,7 @@ fun RecentPlaybackCard(
                         modifier = Modifier.size(20.dp)
                     )
                     Text(
-                        text = stringResource(R.string.recent_playback_title),
+                        text = Lp2PreviewText.text(R.string.recent_playback_title, "recent_playback_title"),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.SemiBold,
                         color = TextPrimary
@@ -178,7 +179,7 @@ fun RecentPlaybackCard(
 
             if (recentHistory.isEmpty()) {
                 Text(
-                    text = stringResource(R.string.recent_playback_empty),
+                    text = Lp2PreviewText.text(R.string.recent_playback_empty, "recent_playback_empty"),
                     style = MaterialTheme.typography.bodyMedium,
                     color = TextSecondary,
                     modifier = Modifier.padding(vertical = 4.dp)
@@ -316,7 +317,7 @@ private fun RecentTrackPrimaryItem(
                         }
                         is ReplayUiState.Playing -> {
                             Text(
-                                text = stringResource(R.string.replay_status_playing),
+                                text = Lp2PreviewText.text(R.string.replay_status_playing, "replay_status_playing"),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = DismissGreen
                             )
@@ -356,7 +357,7 @@ private fun RecentTrackPrimaryItem(
                 } else if (isActive && currentReplayState is ReplayUiState.Playing) {
                     Icon(
                         imageVector = Icons.Default.Pause,
-                        contentDescription = stringResource(R.string.replay_action_pause),
+                        contentDescription = Lp2PreviewText.text(R.string.replay_action_pause, "replay_action_pause"),
                         tint = DismissGreen
                     )
                 } else {
@@ -389,7 +390,7 @@ private fun RecentTrackPrimaryItem(
                     onDismissRequest = { menuExpanded = false }
                 ) {
                     DropdownMenuItem(
-                        text = { Text(stringResource(R.string.replay_open_in_external)) },
+                        text = { Text(Lp2PreviewText.text(R.string.replay_open_in_external, "replay_open_in_external")) },
                         onClick = {
                             menuExpanded = false
                             val result = openInExternalApp(context, entry.uri, entry.title)
@@ -463,7 +464,7 @@ private fun RecentTrackSubItem(
                         }
                         is ReplayUiState.Playing -> {
                             Text(
-                                text = stringResource(R.string.replay_status_playing),
+                                text = Lp2PreviewText.text(R.string.replay_status_playing, "replay_status_playing"),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = DismissGreen
                             )
@@ -503,7 +504,7 @@ private fun RecentTrackSubItem(
                 } else if (isActive && currentReplayState is ReplayUiState.Playing) {
                     Icon(
                         imageVector = Icons.Default.Pause,
-                        contentDescription = stringResource(R.string.replay_action_pause),
+                        contentDescription = Lp2PreviewText.text(R.string.replay_action_pause, "replay_action_pause"),
                         tint = DismissGreen
                     )
                 } else {
@@ -536,7 +537,7 @@ private fun RecentTrackSubItem(
                     onDismissRequest = { menuExpanded = false }
                 ) {
                     DropdownMenuItem(
-                        text = { Text(stringResource(R.string.replay_open_in_external)) },
+                        text = { Text(Lp2PreviewText.text(R.string.replay_open_in_external, "replay_open_in_external")) },
                         onClick = {
                             menuExpanded = false
                             val result = openInExternalApp(context, entry.uri, entry.title)
@@ -626,7 +627,7 @@ fun HistoryTrackRow(
                             }
                             is ReplayUiState.Playing -> {
                                 Text(
-                                    text = stringResource(R.string.replay_status_playing),
+                                    text = Lp2PreviewText.text(R.string.replay_status_playing, "replay_status_playing"),
                                     style = MaterialTheme.typography.labelSmall,
                                     color = DismissGreen
                                 )
@@ -673,7 +674,7 @@ fun HistoryTrackRow(
                     } else if (isActive && currentReplayState is ReplayUiState.Playing) {
                         Icon(
                             imageVector = Icons.Default.Pause,
-                            contentDescription = stringResource(R.string.replay_action_pause),
+                            contentDescription = Lp2PreviewText.text(R.string.replay_action_pause, "replay_action_pause"),
                             tint = DismissGreen
                         )
                     } else {
@@ -706,7 +707,7 @@ fun HistoryTrackRow(
                         onDismissRequest = { menuExpanded = false }
                     ) {
                         DropdownMenuItem(
-                            text = { Text(stringResource(R.string.replay_open_in_external)) },
+                            text = { Text(Lp2PreviewText.text(R.string.replay_open_in_external, "replay_open_in_external")) },
                             onClick = {
                                 menuExpanded = false
                                 val result = openInExternalApp(context, entry.uri, entry.title)
