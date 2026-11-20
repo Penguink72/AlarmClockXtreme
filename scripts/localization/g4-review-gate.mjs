@@ -11,7 +11,9 @@ const { placeholders } = core;
 const root=resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 export const digest = text => "sha256:"+createHash("sha256").update(text,"utf8").digest("hex");
 export const evidenceHash = evidence => digest(JSON.stringify({
- key:evidence.key,sourceHash:evidence.sourceHash,sourceCallsites:evidence.sourceCallsites
+ key:evidence.key,sourceHash:evidence.sourceHash,sourceCallsites:evidence.sourceCallsites,
+ conceptIds:evidence.conceptIds,excludedConceptIds:evidence.excludedConceptIds,
+ conceptBindingRevision:evidence.conceptBindingRevision
 }));
 
 export function checkReviewQueue(queue,glossary,contexts,ledger){

@@ -4,7 +4,7 @@
   "glossaryRevision": "lpg1-20261119-draft-2",
   "producer": "GPT-6 translation candidate proposals",
   "approval": "NONE",
-  "note": "21 previously missing keys, two locales; model-authored unreviewed drafts, NOT source-of-truth or a release-ready pack",
+  "note": "45 source-missing keys now have bilingual model-authored proposals in two batches (21 + 24). All 90 proposed translations remain UNREVIEWED, distinct from 155 existing values per locale.",
   "translations": [
     {
       "key": "alarm_edit_feature_wifi",
@@ -173,6 +173,222 @@
       "reviewState": "DRAFT_LLM_UNREVIEWED",
       "provenance": "model-generated-candidate",
       "semanticReviewRequired": true
+    },
+    {
+      "key": "alarm_edit_challenge_voice_description",
+      "zh-TW": "使用 Android 語音辨識說出喚醒短句，也可改用文字輸入。",
+      "ja": "Android の音声認識で起床用フレーズを話します。代わりに文字入力もできます。",
+      "reviewState": "DRAFT_LLM_UNREVIEWED",
+      "provenance": "model-generated-candidate",
+      "semanticReviewRequired": true,
+      "draftBatch": "B2_20261120"
+    },
+    {
+      "key": "alarm_edit_challenge_default_description",
+      "zh-TW": "解除鬧鐘並停止響鈴前，必須先完成此挑戰。",
+      "ja": "このチャレンジを完了するまで、アラームを解除して鳴動を止めることはできません。",
+      "reviewState": "DRAFT_LLM_UNREVIEWED",
+      "provenance": "model-generated-candidate",
+      "semanticReviewRequired": true,
+      "draftBatch": "B2_20261120"
+    },
+    {
+      "key": "alarm_edit_holidays_hint",
+      "zh-TW": "需先在「設定」→「整合」中啟用假日自動略過，並設定國家代碼。",
+      "ja": "「設定」→「連携」で祝日の自動スキップを有効にし、国コードを設定する必要があります。",
+      "reviewState": "DRAFT_LLM_UNREVIEWED",
+      "provenance": "model-generated-candidate",
+      "semanticReviewRequired": true,
+      "draftBatch": "B2_20261120"
+    },
+    {
+      "key": "alarm_edit_ringtone_uri_hint",
+      "zh-TW": "貼上此裝置中音效檔案的連結。每次鬧鐘響起時，會從鈴聲池選取一項播放。",
+      "ja": "この端末内の音声ファイルへのリンクを貼り付けます。アラームが鳴るたびに、アラーム音の候補から1件を再生します。",
+      "reviewState": "DRAFT_LLM_UNREVIEWED",
+      "provenance": "model-generated-candidate",
+      "semanticReviewRequired": true,
+      "draftBatch": "B2_20261120"
+    },
+    {
+      "key": "settings_default_snooze_description",
+      "zh-TW": "新增鬧鐘未指定自己的貪睡時間時，會使用此預設值。",
+      "ja": "新しいアラームでスヌーズ時間を個別に指定しない場合、この設定を使います。",
+      "reviewState": "DRAFT_LLM_UNREVIEWED",
+      "provenance": "model-generated-candidate",
+      "semanticReviewRequired": true,
+      "draftBatch": "B2_20261120"
+    },
+    {
+      "key": "settings_post_dismiss_summary_description",
+      "zh-TW": "完成最後一步解除鬧鐘後，顯示已快取的天氣和下一筆本機行事曆事件；不會發出網路請求。",
+      "ja": "最後のアラーム解除操作の後、キャッシュ済みの天気と次の端末内カレンダーの予定を表示します。ネットワーク通信は行いません。",
+      "reviewState": "DRAFT_LLM_UNREVIEWED",
+      "provenance": "model-generated-candidate",
+      "semanticReviewRequired": true,
+      "draftBatch": "B2_20261120"
+    },
+    {
+      "key": "settings_commute_history_description",
+      "zh-TW": "此裝置只儲存路線鍵的雜湊值，以及每條路線最近最多 8 筆行程時間；支援用診斷資料包不包含位置資訊。",
+      "ja": "この端末に保存するのは経路キーのハッシュ値と、経路ごとに直近最大8件の所要時間だけです。サポート用データには位置情報を含めません。",
+      "reviewState": "DRAFT_LLM_UNREVIEWED",
+      "provenance": "model-generated-candidate",
+      "semanticReviewRequired": true,
+      "draftBatch": "B2_20261120"
+    },
+    {
+      "key": "settings_on_call_mode_description",
+      "zh-TW": "值班鬧鐘需要在「勿擾」完全靜音時仍能響鈴，請搭配輪班模式使用。",
+      "ja": "オンコール用アラームを「おやすみモード」の完全消音中にも鳴らす必要がある場合、交代勤務のシフトパターンと併用してください。",
+      "reviewState": "DRAFT_LLM_UNREVIEWED",
+      "provenance": "model-generated-candidate",
+      "semanticReviewRequired": true,
+      "draftBatch": "B2_20261120"
+    },
+    {
+      "key": "settings_webhook_description",
+      "zh-TW": "將鬧鐘事件連接到自動化流程、智慧家庭系統或偵錯端點。",
+      "ja": "アラームイベントを自動化処理、スマートホームの環境、またはデバッグ用エンドポイントに連携します。",
+      "reviewState": "DRAFT_LLM_UNREVIEWED",
+      "provenance": "model-generated-candidate",
+      "semanticReviewRequired": true,
+      "draftBatch": "B2_20261120"
+    },
+    {
+      "key": "settings_recent_deliveries",
+      "zh-TW": "最近的 Webhook 傳送紀錄",
+      "ja": "最近のWebhook配信履歴",
+      "reviewState": "DRAFT_LLM_UNREVIEWED",
+      "provenance": "model-generated-candidate",
+      "semanticReviewRequired": true,
+      "draftBatch": "B2_20261120"
+    },
+    {
+      "key": "settings_cover_to_snooze_description",
+      "zh-TW": "鬧鐘響鈴時，用手覆蓋接近感測器約 1.5 秒即可啟動貪睡。",
+      "ja": "アラーム鳴動中に近接センサーの上へ約1.5秒間手をかざすと、スヌーズします。",
+      "reviewState": "DRAFT_LLM_UNREVIEWED",
+      "provenance": "model-generated-candidate",
+      "semanticReviewRequired": true,
+      "draftBatch": "B2_20261120"
+    },
+    {
+      "key": "settings_long_press_threshold_description",
+      "zh-TW": "設定響鈴畫面上「解除」按鈕須長按多久，可選 0.5～5 秒。",
+      "ja": "アラーム鳴動画面の「停止」ボタンを押し続ける時間を0.5～5秒から選びます。",
+      "reviewState": "DRAFT_LLM_UNREVIEWED",
+      "provenance": "model-generated-candidate",
+      "semanticReviewRequired": true,
+      "draftBatch": "B2_20261120"
+    },
+    {
+      "key": "settings_backup_locked_description",
+      "zh-TW": "備份按鈕會維持鎖定，直到顯示操作結果。",
+      "ja": "処理結果が表示されるまで、バックアップボタンは操作できません。",
+      "reviewState": "DRAFT_LLM_UNREVIEWED",
+      "provenance": "model-generated-candidate",
+      "semanticReviewRequired": true,
+      "draftBatch": "B2_20261120"
+    },
+    {
+      "key": "settings_encrypted_backup_private",
+      "zh-TW": "加密備份包含私人設定值",
+      "ja": "暗号化バックアップには非公開の設定値が含まれます",
+      "reviewState": "DRAFT_LLM_UNREVIEWED",
+      "provenance": "model-generated-candidate",
+      "semanticReviewRequired": true,
+      "draftBatch": "B2_20261120"
+    },
+    {
+      "key": "settings_fossify_import_failed_no_alarms",
+      "zh-TW": "無法匯入 Fossify 鬧鐘：檔案中沒有有效的鬧鐘資料。",
+      "ja": "Fossify のアラームをインポートできませんでした。ファイルに有効なアラームがありません。",
+      "reviewState": "DRAFT_LLM_UNREVIEWED",
+      "provenance": "model-generated-candidate",
+      "semanticReviewRequired": true,
+      "draftBatch": "B2_20261120"
+    },
+    {
+      "key": "alarm_edit_challenge_ref_generic",
+      "zh-TW": "挑戰詳細資訊",
+      "ja": "チャレンジの詳細",
+      "reviewState": "DRAFT_LLM_UNREVIEWED",
+      "provenance": "model-generated-candidate",
+      "semanticReviewRequired": true,
+      "draftBatch": "B2_20261120"
+    },
+    {
+      "key": "stats_alarm_history_optional_health_connect",
+      "zh-TW": "鬧鐘歷史紀錄與選用的 Health Connect 睡眠紀錄，會在本機構成此檢視畫面。",
+      "ja": "アラーム履歴と、必要に応じて利用する Health Connect の睡眠セッションを端末内で組み合わせて、この画面を表示します。",
+      "reviewState": "DRAFT_LLM_UNREVIEWED",
+      "provenance": "model-generated-candidate",
+      "semanticReviewRequired": true,
+      "draftBatch": "B2_20261120"
+    },
+    {
+      "key": "onboarding_see_weather_calendar_next_alarm",
+      "zh-TW": "在同一處查看天氣、行事曆與下一個鬧鐘，讓早晨從第一眼開始更從容。",
+      "ja": "天気、カレンダー、次のアラームを1か所で確認でき、朝の始まりを穏やかにします。",
+      "reviewState": "DRAFT_LLM_UNREVIEWED",
+      "provenance": "model-generated-candidate",
+      "semanticReviewRequired": true,
+      "draftBatch": "B2_20261120"
+    },
+    {
+      "key": "permissions_context_permissions",
+      "zh-TW": "情境相關權限",
+      "ja": "状況に応じた権限",
+      "reviewState": "DRAFT_LLM_UNREVIEWED",
+      "provenance": "model-generated-candidate",
+      "semanticReviewRequired": true,
+      "draftBatch": "B2_20261120"
+    },
+    {
+      "key": "bedtime_update_health_connect_before_recent_sleep",
+      "zh-TW": "請先更新 Health Connect，才能在此顯示最近的睡眠紀錄。",
+      "ja": "最近の睡眠セッションをここに表示するには、Health Connect を更新してください。",
+      "reviewState": "DRAFT_LLM_UNREVIEWED",
+      "provenance": "model-generated-candidate",
+      "semanticReviewRequired": true,
+      "draftBatch": "B2_20261120"
+    },
+    {
+      "key": "stats_track_consistency_snooze_behavior_and_which",
+      "zh-TW": "追蹤起床規律、貪睡行為，以及哪些早晨最容易順利起床。",
+      "ja": "起床の安定性やスヌーズの傾向、無理なく起きられた朝を確認します。",
+      "reviewState": "DRAFT_LLM_UNREVIEWED",
+      "provenance": "model-generated-candidate",
+      "semanticReviewRequired": true,
+      "draftBatch": "B2_20261120"
+    },
+    {
+      "key": "stats_recent_events",
+      "zh-TW": "最近 %1$s 筆事件",
+      "ja": "最近のイベント %1$s 件",
+      "reviewState": "DRAFT_LLM_UNREVIEWED",
+      "provenance": "model-generated-candidate",
+      "semanticReviewRequired": true,
+      "draftBatch": "B2_20261120"
+    },
+    {
+      "key": "stats_recent_health_connect_sessions_stay_local",
+      "zh-TW": "最近的 Health Connect 睡眠紀錄保留在本機，並與鬧鐘歷史並列顯示。",
+      "ja": "直近の Health Connect 睡眠セッションは端末内に保存され、アラーム履歴と並べて表示されます。",
+      "reviewState": "DRAFT_LLM_UNREVIEWED",
+      "provenance": "model-generated-candidate",
+      "semanticReviewRequired": true,
+      "draftBatch": "B2_20261120"
+    },
+    {
+      "key": "stats_compares_recent_sleep_duration_with_dismiss",
+      "zh-TW": "在本機比較最近的睡眠時長、解除鬧鐘的速度、貪睡情況及挑戰重試次數。",
+      "ja": "この端末上で、最近の睡眠時間とアラーム解除までの時間、スヌーズの傾向、チャレンジの再試行回数を比較します。",
+      "reviewState": "DRAFT_LLM_UNREVIEWED",
+      "provenance": "model-generated-candidate",
+      "semanticReviewRequired": true,
+      "draftBatch": "B2_20261120"
     }
   ]
 }

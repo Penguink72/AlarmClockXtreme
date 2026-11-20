@@ -40,7 +40,7 @@ export function verifyContentReview({review,glossary,matrix,drafts,contexts,appr
  const contextsByKey=new Map(contexts.records.map(r=>[r.key,r]));
  const draftsByKey=new Map(drafts.translations.map(r=>[r.key,r]));
  assert.equal(terms.size,18);
- assert.equal(draftsByKey.size,21);
+ assert(draftsByKey.size>=21,"Batch 1 remains a subset of extended drafts");
  const seenConcept=new Set();
  for(const entry of review.termFindings){
    const t=terms.get(entry.conceptId);
@@ -94,6 +94,8 @@ export function verifyContentReview({review,glossary,matrix,drafts,contexts,appr
    assert(sources.get(r.key)?.candidateConceptIds.includes(r.conceptId),
     "Review evidence must refer to actual LP0 heuristic");
    assert(r.reason.length>=12);
+   assert(!contextsByKey.get(r.key)?.conceptIds.includes(r.conceptId),
+     "Refuted LP0 concept must not leak into effective G2 binding");
    const id=r.conceptId+"/"+r.key;
    assert(!refuted.has(id),"Duplicate link rejection "+id);
    refuted.add(id);

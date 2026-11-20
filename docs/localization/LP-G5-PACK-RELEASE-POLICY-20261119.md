@@ -15,3 +15,19 @@ node scripts/localization/g5-build-language-packs.mjs --mode release
 ```
 
 目前不允許正式發行，也未更動任何原本的 app/src/main/res 字串。
+
+## 2026-11-20 預覽覆蓋率
+
+G3 的兩批草稿共 45 Key、兩語共 90 條，G5 preview 各語言可輸出 200/200 Key；其中原有 155 條與模型候選 45 條仍均**未經獨立語義核准**。這是字串覆蓋，不是翻譯完成品質。G5 `--mode release` 仍需拒絕。
+
+## 正式發布契約加嚴（2026-11-20）
+
+先前只要求「至少一條翻譯核准」，理論上允許剩餘缺譯使用英文備援，與本 App 的完整單語目標矛盾。本次已修正：LP0 **兩種目標語言各 200/200 都要具備獨立、未過期、對應原文與術語版本的核准紀錄**，否則 `--mode release` 整體失敗。預覽模式不受影響。
+
+G5 最終 CLI 會重新以真實 `review-ledger.json`、G2 實際程式參照及 G3 候選計算 G4 品質報告，並比對已生成的 QA JSON，防止只修改報告中的 `releaseAllowed` 偽造核准。測試裡的全核准資料僅存在記憶體，不會寫回 Repo，也不構成真實審核。
+
+## 來源文字本身也可阻斷正式包（2026-11-20）
+
+G4 在 `music_playlist_integration_pending` 發現英文仍宣稱等待 Room v28，然而現有倉庫的 `AlarmDatabase` 已是 v28，訊息只在播放清單 Repository 為空時顯示。未更正權威英文前，將這個 Key 記入 `localization/governance/g4/source-defects.json`，狀態 `OPEN`、`releaseBlocking:true`。
+
+G5 正式包還須檢查來源缺陷清單，任何開啟中的阻斷性來源缺陷都拒絕發布；模型不能藉由只改翻譯、QA 報告或捏造批准繞過此規則。預覽包仍可顯示舊資料，必須明確標為未核准。

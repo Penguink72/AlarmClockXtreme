@@ -1,0 +1,105 @@
+{
+  "schema": "acx-g2-concept-exclusions/1",
+  "catalogRevision": "lp0-200-20261118",
+  "revision": "lpg2-concept-exclusions-20261120-r2",
+  "basis": "Model-checked source/context mismatch; preserves LP0 heuristic evidence",
+  "approval": "NOT_A_TRANSLATION_APPROVAL",
+  "exclusions": [
+    {
+      "key": "alarm_edit_repeat_weekends",
+      "conceptId": "music.repeat",
+      "reason": "週末重複指鬧鐘重複日，非播放音訊的 Repeat",
+      "source": "G4_CONTENT_REVIEW_BATCH1",
+      "humanApproval": false,
+      "action": "EXCLUDE_FROM_EFFECTIVE_CONCEPT_IDS"
+    },
+    {
+      "key": "alarm_edit_section_anti_snooze_description",
+      "conceptId": "music.repeat",
+      "reason": "repeated delay 指一再延後起床，非重播音樂",
+      "source": "G4_CONTENT_REVIEW_BATCH1",
+      "humanApproval": false,
+      "action": "EXCLUDE_FROM_EFFECTIVE_CONCEPT_IDS"
+    },
+    {
+      "key": "firing_left_saved_place",
+      "conceptId": "ui.action.save",
+      "reason": "saved place 為已存地點的形容詞，不是儲存按鈕",
+      "source": "G4_CONTENT_REVIEW_BATCH1",
+      "humanApproval": false,
+      "action": "EXCLUDE_FROM_EFFECTIVE_CONCEPT_IDS"
+    },
+    {
+      "key": "firing_location_snooze_hint",
+      "conceptId": "ui.action.save",
+      "reason": "saved place 描述既有儲存位置，非進行儲存",
+      "source": "G4_CONTENT_REVIEW_BATCH1",
+      "humanApproval": false,
+      "action": "EXCLUDE_FROM_EFFECTIVE_CONCEPT_IDS"
+    },
+    {
+      "key": "firing_challenge_photo_support",
+      "conceptId": "ui.action.save",
+      "reason": "saved reference 為已存參考照，非儲存動作",
+      "source": "G4_CONTENT_REVIEW_BATCH1",
+      "humanApproval": false,
+      "action": "EXCLUDE_FROM_EFFECTIVE_CONCEPT_IDS"
+    },
+    {
+      "key": "alarm_edit_delete_digit",
+      "conceptId": "ui.action.delete",
+      "reason": "僅刪除目前輸入欄位中的單一數字，不代表刪除持久儲存的鬧鐘資料或紀錄。",
+      "source": "G4_CONTENT_REVIEW_BATCH1",
+      "humanApproval": false,
+      "action": "EXCLUDE_FROM_EFFECTIVE_CONCEPT_IDS"
+    },
+    {
+      "key": "alarm_edit_challenge_default_description",
+      "conceptId": "music.action.stop",
+      "reason": "文字說的是鬧鐘結束響鈴，不是媒體重播停止",
+      "source": "G4_CONTENT_REVIEW_BATCH1",
+      "humanApproval": false,
+      "action": "EXCLUDE_FROM_EFFECTIVE_CONCEPT_IDS"
+    },
+    {
+      "key": "settings_return_to_app_after_dismiss_description",
+      "conceptId": "music.action.stop",
+      "reason": "文字說的是解除鬧鐘後停止，非播放清單操作",
+      "source": "G4_CONTENT_REVIEW_BATCH1",
+      "humanApproval": false,
+      "action": "EXCLUDE_FROM_EFFECTIVE_CONCEPT_IDS"
+    },
+    {
+      "key": "music_library_video_audio_track_detected",
+      "conceptId": "music.track",
+      "reason": "音訊軌指影音容器 track，不一定是歌曲曲目",
+      "source": "G4_CONTENT_REVIEW_BATCH1",
+      "humanApproval": false,
+      "action": "EXCLUDE_FROM_EFFECTIVE_CONCEPT_IDS"
+    },
+    {
+      "key": "stats_track_consistency_snooze_behavior_and_which",
+      "conceptId": "music.track",
+      "reason": "Track consistency here is a verb about consistency; it is not an indexed musical track or song.",
+      "source": "G4_CONTENT_REVIEW_BATCH2",
+      "humanApproval": false,
+      "action": "EXCLUDE_FROM_EFFECTIVE_CONCEPT_IDS"
+    },
+    {
+      "key": "settings_stopwatch_description",
+      "conceptId": "music.track",
+      "reason": "Track laps 是記錄碼錶圈數的動詞，並非音樂曲目 Track；此處不應套用音樂曲目術語。",
+      "source": "G4_REMAINING_LEGACY_TRIAGE",
+      "action": "EXCLUDE_FROM_EFFECTIVE_CONCEPT_IDS",
+      "humanApproval": false
+    },
+    {
+      "key": "music_playlist_integration_pending",
+      "conceptId": "ui.action.save",
+      "reason": "Playlist changes not saved 是儲存狀態描述，並非 Save 按鈕或動作提示。",
+      "source": "G4_REMAINING_LEGACY_TRIAGE",
+      "action": "EXCLUDE_FROM_EFFECTIVE_CONCEPT_IDS",
+      "humanApproval": false
+    }
+  ]
+}

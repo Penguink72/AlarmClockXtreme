@@ -4,6 +4,7 @@ on:
     branches:
       - feature/p31-lpg1-g5-governed-language-pipeline-20261119
       - feature/p31-lpg-content-review-b1-20261119
+      - feature/p31-lpg-content-review-b2-completion-20261120
     paths:
       - "scripts/localization/**"
       - "localization/governance/**"
@@ -48,6 +49,14 @@ jobs:
         run: |
           node scripts/localization/g4-legacy-priority-audit.mjs
           node scripts/localization/g4-legacy-priority-audit.test.mjs
+      - name: G4d - Audit final 24 bilingual drafts and corrected concept bindings
+        run: |
+          node scripts/localization/g4-batch2-audit.mjs
+          node scripts/localization/g4-batch2-audit.test.mjs
+      - name: G4e - Detect stale canonical source and screen remaining legacy translations
+        run: |
+          node scripts/localization/g4-remaining-legacy-audit.mjs
+          node scripts/localization/g4-remaining-legacy-audit.test.mjs
       - name: G5 - Generate conspicuously unreviewed preview packs
         run: |
           node scripts/localization/g5-build-language-packs.mjs --mode preview --out-dir build/localization/UNREVIEWED_PREVIEW_NOT_RELEASE
@@ -66,10 +75,14 @@ jobs:
           path: |
             localization/governance/g1/
             localization/governance/g2/context-evidence.json
+            localization/governance/g2/concept-exclusions.json
+            localization/governance/g2/unresolved-static-refs.json
             localization/governance/g3/
             localization/governance/g4/
             docs/localization/LP-G4-CONTENT-REVIEW-BATCH1-20261119.md
             docs/localization/LP-G4-LEGACY-HIGH-PRIORITY-REVIEW-20261119.md
+            docs/localization/LP-G4-CONTENT-REVIEW-BATCH2-20261120.md
+            docs/localization/LP-G4-LEGACY-REMAINING-REVIEW-20261120.md
             build/localization/UNREVIEWED_PREVIEW_NOT_RELEASE/
             docs/localization/LP-G1-GLOSSARY-CONTRACT-20261119.md
             docs/localization/LP-G2-CONTEXT-EVIDENCE-20261119.md

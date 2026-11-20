@@ -1,0 +1,1753 @@
+{
+  "schema": "acx-g4-legacy-remaining-triage/1",
+  "catalogRevision": "lp0-200-20261118",
+  "reviewAuthority": "MODEL_PRELIMINARY_ONLY",
+  "humanApproved": false,
+  "legacyResourceChanges": 0,
+  "stats": {
+    "total": 113,
+    "suggestedKeys": 6,
+    "suggestedLocaleTranslations": 10,
+    "staleSources": 1,
+    "noStaticInThisBatch": 4,
+    "contextWarnings": 3,
+    "humanApprovals": 0
+  },
+  "records": [
+    {
+      "key": "settings_title",
+      "source": "Settings",
+      "sourceHash": "sha256:8692283f359194cfaf375c97616686405fef36b956cc9a9099ae0ad5e8482557",
+      "existing": {
+        "zh-TW": "設定",
+        "ja": "設定"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "firing_controls_title",
+      "source": "Alarm controls",
+      "sourceHash": "sha256:a1d5e4ff7f3771e76128448209c769d82958bacc84ffcc379b453b03d98d9844",
+      "existing": {
+        "zh-TW": "鬧鐘控制",
+        "ja": "アラーム操作"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "firing_exact_snooze_hint",
+      "source": "Applies once to this alarm.",
+      "sourceHash": "sha256:4f0188f289a7eb5dba2cd021fac5abbe4b88d3a963565a3afd80e37dca081db5",
+      "existing": {
+        "zh-TW": "只對本次鬧鐘生效。",
+        "ja": "今回のアラームにのみ適用されます。"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "firing_left_saved_place",
+      "source": "Left saved place",
+      "sourceHash": "sha256:06d22714e97ba5b846cf99fabc68287493854caba3cdd05ebc80806ea4f1de4f",
+      "existing": {
+        "zh-TW": "已離開儲存地點",
+        "ja": "保存場所から離れました"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "firing_snooze_until_hint",
+      "source": "The alarm will fire at the next occurrence of this time.",
+      "sourceHash": "sha256:f8282807ad2c83f15780a90f6587fd88faf75dd525770a481c3ba89c4268d85e",
+      "existing": {
+        "zh-TW": "鬧鐘會在下一次到達此時刻時響鈴。",
+        "ja": "次に指定時刻になったときにアラームが鳴ります。"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "firing_challenge_handwriting_title",
+      "source": "Draw the wake-up word",
+      "sourceHash": "sha256:2f835a6677e70d4fa10d607774f9ea4f87b7e01939093331aea181f8d2664e29",
+      "existing": {
+        "zh-TW": "手寫指定文字",
+        "ja": "指定された語句を手書き"
+      },
+      "status": "CONTEXT_FOLLOWUP",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "Wake-up word 是否為限定字詞，需確認此挑戰資料契約。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "firing_challenge_simon_title",
+      "source": "Play back the pattern",
+      "sourceHash": "sha256:70be9cc3fa3e3d067287eab5a509b058481bb3d699a15d136399dc5a9fc73b7a",
+      "existing": {
+        "zh-TW": "重現顏色順序",
+        "ja": "色の順番を再現"
+      },
+      "status": "CONTEXT_FOLLOWUP",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "顏色順序是否涵蓋所有 pattern 類型，需核對實際挑戰。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "firing_challenge_none_support",
+      "source": "No extra challenge is required for this alarm.",
+      "sourceHash": "sha256:ed9f03a13073812f31ac60602d36de6b51606b3a61eb7b7edd640e5196ca1850",
+      "existing": {
+        "zh-TW": "此鬧鐘不需額外解除挑戰。",
+        "ja": "このアラームには追加のチャレンジはありません。"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "firing_challenge_photo_support",
+      "source": "Take a fresh photo that closely matches the saved reference.",
+      "sourceHash": "sha256:56bf3336acfbedd21c72abea15904103ef189a3200b7ef2ba0cccc52aaf0dd6b",
+      "existing": {
+        "zh-TW": "重新拍照，並盡量符合參考照片。",
+        "ja": "保存した参照写真に近い写真を撮影します。"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "firing_challenge_speed_support",
+      "source": "Groggy fingers slow you down, so prove you can type at speed.",
+      "sourceHash": "sha256:37a5463d4c60b249407417e6568b407f3285d122ac8ad3ef2833ddfc9cd975a7",
+      "existing": {
+        "zh-TW": "以一定速度正確打字，確認手指已清醒。",
+        "ja": "素早く正確に入力できるか確認します。"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "firing_challenge_voice_status",
+      "source": "Say the phrase shown below, or use the typed fallback.",
+      "sourceHash": "sha256:ff0482d043b31d34fddf633a64ec9ebfb06b1cc7b3b290b47def05de955ae461",
+      "existing": {
+        "zh-TW": "說出下方短句，或使用文字輸入備援。",
+        "ja": "下のフレーズを話すか、文字入力に切り替えます。"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "firing_challenge_sheep_status",
+      "source": "Tap every sheep; avoid the goats.",
+      "sourceHash": "sha256:95559145c8fbb06f75581122dfe44e4784359eb5ab65c9342cf0d6c5ebf1f0f8",
+      "existing": {
+        "zh-TW": "點選每隻羊，避開山羊。",
+        "ja": "羊だけをタップし、ヤギを避けます。"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "alarm_edit_page_integrations",
+      "source": "Integrations & safety",
+      "sourceHash": "sha256:0f040ce01d6617220220b7c297b4e4c65ce3faf7183feb2f2f65b74a04628f64",
+      "existing": {
+        "zh-TW": "整合與安全",
+        "ja": "連携と安全"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "alarm_edit_smart_alarm",
+      "source": "Smart alarm",
+      "sourceHash": "sha256:5076a84d293c37a4d8ed090ab7d75735f583b608bc6924c83c7747196af17769",
+      "existing": {
+        "zh-TW": "智慧鬧鐘",
+        "ja": "スマートアラーム"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "alarm_edit_section_hue_description",
+      "source": "Coordinate bedside lighting with the alarm for a gentler rise.",
+      "sourceHash": "sha256:eedab11131300d00ee9128b943168df232711d2615b520e8ea1fa344cf0f0988",
+      "existing": {
+        "zh-TW": "配合床邊燈光，讓起床過程更平緩。",
+        "ja": "ベッドサイドの照明と連携し、穏やかに目覚められます。"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "alarm_edit_section_anti_snooze_description",
+      "source": "Add guardrails that make repeated delay harder.",
+      "sourceHash": "sha256:ab0286b23846a9b4edc2c5fbcdaa1a80f60e240b7afaae2f9bcf081b2b5b6a24",
+      "existing": {
+        "zh-TW": "增加限制，避免一再延後起床。",
+        "ja": "スヌーズの繰り返しを抑える制限を追加します。"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "alarm_edit_background_selected",
+      "source": "Background image selected.",
+      "sourceHash": "sha256:5af1d01e55db5a9b2165a82adfdc5ea1373747f30f28cfa5691a04a0043ad6a3",
+      "existing": {
+        "zh-TW": "已選取背景圖片。",
+        "ja": "背景画像を選択しました。"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "alarm_edit_background_permission_warning",
+      "source": "Background image selected. Re-select it if Android revokes access.",
+      "sourceHash": "sha256:bc470df8b2be4320b3ac5a4bde6569d9cf28c742fda1009e220acb445b7d7607",
+      "existing": {
+        "zh-TW": "已選取背景圖片。若 Android 撤銷存取權，請重新選取。",
+        "ja": "背景画像を選択しました。Android がアクセス権を取り消した場合は選び直してください。"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "alarm_edit_saving",
+      "source": "Saving alarm…",
+      "sourceHash": "sha256:6d5c10a863a9df39f80fc35b80c06b035adf1d26f92692031801205f92e39fe9",
+      "existing": {
+        "zh-TW": "正在儲存鬧鐘…",
+        "ja": "アラームを保存中…"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "alarm_edit_minutes_seconds_short",
+      "source": "%1$dm %2$ds",
+      "sourceHash": "sha256:be8b78ace9940a60bc511222a8c83638c304ffebc804739ecf735fe687ee4917",
+      "existing": {
+        "zh-TW": "%1$d 分 %2$d 秒",
+        "ja": "%1$d 分 %2$d 秒"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "alarm_edit_group_custom_name",
+      "source": "Custom group name",
+      "sourceHash": "sha256:29c732e174fef653802aa3e0d4e3da8b06381609eec24d2a5d09e0ef3eb38e3b",
+      "existing": {
+        "zh-TW": "自訂群組名稱",
+        "ja": "カスタムグループ名"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "alarm_edit_heartbeat",
+      "source": "Heartbeat",
+      "sourceHash": "sha256:ab0c7ec87dd30793d4e52bf965b620e2c0a8fee8ae2231fb858763ef02ab4d56",
+      "existing": {
+        "zh-TW": "心跳",
+        "ja": "心拍"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "alarm_edit_immediately_default",
+      "source": "Immediately (default)",
+      "sourceHash": "sha256:e58b40ad8620d6147a024edb9715cafbb92226a02706737ca5565e9c4cf6ae74",
+      "existing": {
+        "zh-TW": "立即（預設）",
+        "ja": "すぐに（デフォルト）"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "alarm_edit_repeat_weekends",
+      "source": "Weekends",
+      "sourceHash": "sha256:5e20ea406a35f48308abe46b31ff8c4ac3a90f9d14eb96d0496682999b968161",
+      "existing": {
+        "zh-TW": "週末",
+        "ja": "週末"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "alarm_edit_squats_required",
+      "source": "Squats required",
+      "sourceHash": "sha256:4104a6c0c01cdc64c1a5167a13c8e2e709468cfb15bb55f33f30aa10c5f2b7d9",
+      "existing": {
+        "zh-TW": "所需深蹲次數",
+        "ja": "必要なスクワット回数"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "alarm_edit_capture_photo_hint",
+      "source": "Capture a reference photo from the place or angle the alarm should require.",
+      "sourceHash": "sha256:cd94908892414bf8ab1c1ce17b95a6d14c42f7ca78beec616e58394fc5e3da79",
+      "existing": {
+        "zh-TW": "請在要作為解鈴條件的地點或角度拍攝參考照片。",
+        "ja": "解除条件にする場所や角度で参照写真を撮影してください。"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "alarm_edit_challenge_chain",
+      "source": "Challenge chain",
+      "sourceHash": "sha256:46dc21ef149c3a54600bcd68bf146861033844a5f0a70aa0352a0845749e8a83",
+      "existing": {
+        "zh-TW": "連續解除挑戰",
+        "ja": "連続解除チャレンジ"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "alarm_edit_challenge_shake",
+      "source": "Shake phone",
+      "sourceHash": "sha256:661dae6b475345e8e7128716763460708bc0e1e966a9ad2bf360b4a27c8bc0c8",
+      "existing": {
+        "zh-TW": "搖晃手機",
+        "ja": "端末を振る"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "alarm_edit_challenge_pushup",
+      "source": "Push-ups",
+      "sourceHash": "sha256:ecf3e5bd3998e3871640457a040b9cd6d30db24670e66d1871a1c2c98a8c3089",
+      "existing": {
+        "zh-TW": "伏地挺身",
+        "ja": "腕立て伏せ"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "alarm_edit_challenge_pvt",
+      "source": "Reaction test",
+      "sourceHash": "sha256:6e89c62908cd03b6a62250a1c057fc0f2cbd66a30010b6d2f05a7a493f88203c",
+      "existing": {
+        "zh-TW": "反應時間測驗",
+        "ja": "反応速度テスト"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "alarm_edit_snooze_limit_unlimited",
+      "source": "Unlimited",
+      "sourceHash": "sha256:8f2d97249477d3bcbc91353331909737fc0cb3c6cf57c79b515eb27138d959df",
+      "existing": {
+        "zh-TW": "不限次數",
+        "ja": "無制限"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "alarm_edit_24_hour",
+      "source": "24-hour time",
+      "sourceHash": "sha256:fe0bcbae0ea6910205ca7f674043c96af62be4a0f033a66fa3c8be4822f8842e",
+      "existing": {
+        "zh-TW": "24 小時制",
+        "ja": "24時間表示"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "settings_pane_readiness",
+      "source": "Readiness",
+      "sourceHash": "sha256:2b523aa383dff741ab22e35fba475d73c6f87029a25c0479d9768f4d45e3c9c8",
+      "existing": {
+        "zh-TW": "使用準備",
+        "ja": "使用準備"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "settings_pane_defaults_description",
+      "source": "New-alarm behavior, dashboard content, and navigation tabs.",
+      "sourceHash": "sha256:a73b205b0c18c9349b51f02e31d67c8aeaeab136a76ef72b8da4c64fd6b710fb",
+      "existing": {
+        "zh-TW": "新鬧鐘行為、首頁內容及導覽分頁。",
+        "ja": "新規アラーム、ホーム画面、ナビゲーションタブの設定。"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "settings_pane_integrations_description",
+      "source": "Webhook, holidays, Hue, Health Connect, and connection status.",
+      "sourceHash": "sha256:8e473a3e894d935e5bccadb9b50f55a47584fa690650c881de27406eeb38cffc",
+      "existing": {
+        "zh-TW": "Webhook、假日、Hue、Health Connect 與連線狀態。",
+        "ja": "Webhook、休日、Hue、Health Connect、接続状態。"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "settings_pane_personalization_description",
+      "source": "Theme, challenge difficulty, privacy, and firing-screen behavior.",
+      "sourceHash": "sha256:41b4e2bc8c3fd117c190f9df488025a10eb0daea183e14c1a774cdd47708de4a",
+      "existing": {
+        "zh-TW": "主題、解除難度、隱私及響鈴畫面行為。",
+        "ja": "テーマ、解除の難易度、プライバシー、アラーム画面の設定。"
+      },
+      "status": "REVISION_SUGGESTED_SOURCE_UNCHANGED",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {
+        "ja": "テーマ、起床チャレンジの難易度、プライバシー、アラーム鳴動画面の動作。"
+      },
+      "reason": "日文舊譯文缺少 firing-screen behavior 的特定響鈴畫面語境。",
+      "sourceEvidence": {
+        "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/settings/SettingsScreen.kt",
+        "line": 204,
+        "kind": "STATIC_ANDROID_CALLSITE"
+      }
+    },
+    {
+      "key": "settings_pane_backup_description",
+      "source": "Encrypted export, restore preview, and conflict-safe import.",
+      "sourceHash": "sha256:c45b762298e37cd662a462afddd3b428813ea681df75e0e8209a7d2639966d8b",
+      "existing": {
+        "zh-TW": "加密匯出、還原預覽及避免衝突的匯入。",
+        "ja": "暗号化エクスポート、復元プレビュー、安全なインポート。"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "settings_pane_utilities_description",
+      "source": "Companion tools, support bundle export, app version, and license.",
+      "sourceHash": "sha256:3b6a8375d23d900ad96594c67aa4de17d3dd008a3ae7b30a249e339d6d55b339",
+      "existing": {
+        "zh-TW": "附屬工具、支援資料匯出、版本及授權。",
+        "ja": "関連ツール、サポートデータ、アプリのバージョンとライセンス。"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "settings_share_support_bundle",
+      "source": "Share support bundle",
+      "sourceHash": "sha256:521aa70ed5f04bcda8ed57dbecbb3271402ccc1e19a28d68b24be32690aa4fba",
+      "existing": {
+        "zh-TW": "分享支援資料",
+        "ja": "サポートデータを共有"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "settings_battery_protected",
+      "source": "Battery protected",
+      "sourceHash": "sha256:396b4726bb9e0cbf190b5525536775012bef2d7e4c3c66ce7c6e10c8e417a62d",
+      "existing": {
+        "zh-TW": "電池設定已保護",
+        "ja": "バッテリー設定は保護済み"
+      },
+      "status": "CONTEXT_FOLLOWUP",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "Protected 可能指省電限制豁免或排程保護，須確認狀態來源。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "settings_battery_setup_needed",
+      "source": "Needs battery setup",
+      "sourceHash": "sha256:54b7b834aa8a81f4a8bbbeee4e54acc4ce2657cce643832ec8315066911b644a",
+      "existing": {
+        "zh-TW": "需要設定電池權限",
+        "ja": "バッテリー設定が必要"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "settings_choose_group_hint",
+      "source": "Choose a group to keep wide screens focused.",
+      "sourceHash": "sha256:bd87f4bf68a4db05a3fc415448228fe8bd4ae8ec2d63c7ccf52da4601c53a02f",
+      "existing": {
+        "zh-TW": "選擇分類以聚焦顯示內容。",
+        "ja": "カテゴリーを選択して表示内容を絞り込みます。"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "settings_setup_needed",
+      "source": "Setup needed",
+      "sourceHash": "sha256:6b3c97fd558dfce9fd2b31e8a1817677463b967642673af678eb2ad7a5373b80",
+      "existing": {
+        "zh-TW": "需要設定",
+        "ja": "設定が必要"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "settings_not_selected",
+      "source": "Not selected",
+      "sourceHash": "sha256:027ff88d2c137a11afd8cdc633ced22617e9e1bc7d979e433ef367fd7b676de9",
+      "existing": {
+        "zh-TW": "未選取",
+        "ja": "未選択"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "settings_alarm_defaults_description",
+      "source": "Set the behavior new alarms start with so setup feels faster and more predictable.",
+      "sourceHash": "sha256:22bbb850697da7a382b6777f4008104e994eeb33313c6141e074a38e480bccf6",
+      "existing": {
+        "zh-TW": "設定新鬧鐘的初始行為，減少重複設定。",
+        "ja": "新しいアラームの初期動作を設定します。"
+      },
+      "status": "REVISION_SUGGESTED_SOURCE_UNCHANGED",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {
+        "zh-TW": "設定新鬧鐘的預設行為，讓設定更快速、結果更容易預期。",
+        "ja": "新しいアラームの初期動作を設定し、素早く一貫した設定ができるようにします。"
+      },
+      "reason": "保留原文 faster and more predictable 的目的。",
+      "sourceEvidence": {
+        "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/settings/SettingsScreen.kt",
+        "line": 464,
+        "kind": "STATIC_ANDROID_CALLSITE"
+      }
+    },
+    {
+      "key": "settings_minutes_short",
+      "source": "%1$d min",
+      "sourceHash": "sha256:5e2087a2b4f16ab70df85d9ffd8b8993cc8b3342ca4b1bbcc8678bcb9ac6ac22",
+      "existing": {
+        "zh-TW": "%1$d 分鐘",
+        "ja": "%1$d 分"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "settings_dashboard_description",
+      "source": "Control what appears on the My Day screen so it stays useful without feeling busy.",
+      "sourceHash": "sha256:7d781958be1fffab67ed5d90f6d98abff480494b4027ddcf46b430e81d2ac4e2",
+      "existing": {
+        "zh-TW": "控制每日資訊畫面顯示哪些內容。",
+        "ja": "今日の情報画面に表示する項目を選択します。"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "settings_utilities_description",
+      "source": "Quick access to companion tools that round out the app.",
+      "sourceHash": "sha256:c979844c7f7e8ff77810224efcfc81c6c96afe346599eb3ea8555a2c6ee1176b",
+      "existing": {
+        "zh-TW": "計時、統計及其他輔助工具。",
+        "ja": "タイマー、統計、その他のツール。"
+      },
+      "status": "REVISION_SUGGESTED_SOURCE_UNCHANGED",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {
+        "zh-TW": "快速開啟 App 的其他輔助工具。",
+        "ja": "アプリの便利な補助ツールへすばやくアクセスできます。"
+      },
+      "reason": "原文只說快速開啟輔助工具，舊譯文多加具體功能類型。",
+      "sourceEvidence": {
+        "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/settings/SettingsScreen.kt",
+        "line": 855,
+        "kind": "STATIC_ANDROID_CALLSITE"
+      }
+    },
+    {
+      "key": "settings_alarm_statistics",
+      "source": "Alarm statistics",
+      "sourceHash": "sha256:7e797f4a3b46c42ac1115c270deebcabefb9fc4b4640382c8ebf1569a04b05c1",
+      "existing": {
+        "zh-TW": "鬧鐘統計",
+        "ja": "アラーム統計"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "settings_stopwatch_description",
+      "source": "Track laps with best and worst splits highlighted.",
+      "sourceHash": "sha256:0101e1b00935671b76f5de06f06cdec97c052c75ebaac03820afbaf10a2f6ebd",
+      "existing": {
+        "zh-TW": "開啟碼錶。",
+        "ja": "ストップウォッチを開きます。"
+      },
+      "status": "REVISION_SUGGESTED_SOURCE_UNCHANGED",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {
+        "zh-TW": "記錄每圈時間，並特別標出最佳與最差分段成績。",
+        "ja": "ラップを記録し、最速と最遅の区間タイムを強調表示します。"
+      },
+      "reason": "舊中日譯文只說開啟碼錶，漏譯記錄圈數、最佳與最差分段。",
+      "sourceEvidence": {
+        "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/settings/SettingsScreen.kt",
+        "line": 876,
+        "kind": "STATIC_ANDROID_CALLSITE"
+      }
+    },
+    {
+      "key": "settings_language_description",
+      "source": "Choose the app language. Core alarm, sound, and music screens are available in English, Traditional Chinese, and Japanese; other screens may remain in English.",
+      "sourceHash": "sha256:4dedb340104465464b1a61208cb6df223e6d4070a885a976049e5b94a6221fae",
+      "existing": {
+        "zh-TW": "選擇 App 語言。鬧鐘、音效與音樂核心畫面支援英文、繁體中文及日文；其他畫面可能仍顯示英文。",
+        "ja": "アプリの言語を選択します。アラーム、サウンド、音楽の主要画面は英語、繁体字中国語、日本語に対応しています。他の画面は英語のままの場合があります。"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "settings_language_dialog_title",
+      "source": "Choose app language",
+      "sourceHash": "sha256:5c43f945dddb1883e25f72be6f26c795e3fc75ab9114275fd14b96c40acb85c9",
+      "existing": {
+        "zh-TW": "選擇 App 語言",
+        "ja": "アプリの言語を選択"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "settings_language_english",
+      "source": "English",
+      "sourceHash": "sha256:f600b92dbf4f999b890c878533ecaea5e80a204a9e3adff09a7dd50d62d46478",
+      "existing": {
+        "zh-TW": "英文",
+        "ja": "英語"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "settings_language_japanese",
+      "source": "Japanese",
+      "sourceHash": "sha256:3b298d43aa3f792858a658f3dda5fa903ca54a01e5c417bd3d4c6ce81f537567",
+      "existing": {
+        "zh-TW": "日文",
+        "ja": "日本語"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "settings_ready",
+      "source": "Ready",
+      "sourceHash": "sha256:b1dfbd0ec1b960199163d7d77e77874d31488880e5a8492f1a4ed938c9f56a13",
+      "existing": {
+        "zh-TW": "就緒",
+        "ja": "準備完了"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "settings_close",
+      "source": "Close",
+      "sourceHash": "sha256:be57c1c864dbb9c6f2d5cf8f88ef871b0d95b3099967043121a8e04f090973a6",
+      "existing": {
+        "zh-TW": "關閉",
+        "ja": "閉じる"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "alarm_list_clear_filters",
+      "source": "Clear filters",
+      "sourceHash": "sha256:a04f17e32be01001842189e7f39798d1f6c4402a4c15459a4d4560e595555796",
+      "existing": {
+        "zh-TW": "清除篩選條件",
+        "ja": "フィルターを解除"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "alarm_list_pause",
+      "source": "Pause",
+      "sourceHash": "sha256:6a6a1da468919a310f1bdab04354fc5a024c8613b0bdbb3f93f1592db11318c0",
+      "existing": {
+        "zh-TW": "暫停",
+        "ja": "一時停止"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "ringtone_folder",
+      "source": "From folder",
+      "sourceHash": "sha256:50635ece6e134570a7b946e46cb286c04d4d1f9caaa4614c3a0e975d80d871a9",
+      "existing": {
+        "zh-TW": "資料夾",
+        "ja": "フォルダー"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "music_library_title",
+      "source": "Music library and playback history",
+      "sourceHash": "sha256:2cb3914d0de25feac42fc2d563906fe1e50f559ce7cfdb1c0e5346c46aa34b52",
+      "existing": {
+        "zh-TW": "音樂庫與播放歷史",
+        "ja": "音楽ライブラリと再生履歴"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "music_library_history_title",
+      "source": "Playback history",
+      "sourceHash": "sha256:5541d7b0ca063e1c1bb67c5f5cb4c7a9c177e8860dcd5baccc5f86d4fcf4ecb3",
+      "existing": {
+        "zh-TW": "播放歷史",
+        "ja": "再生履歴"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "music_library_catalog_empty",
+      "source": "No indexed tracks yet. Allow audio access or scan an authorized music folder.",
+      "sourceHash": "sha256:f15982be97351ce1bcde01534d489cc6f201902ba6e20342ecd68f3e52f72fbf",
+      "existing": {
+        "zh-TW": "尚無已索引曲目。請允許音訊存取權或掃描已授權的音樂資料夾。",
+        "ja": "索引済みの曲はありません。音声アクセスを許可するか、許可済みフォルダーをスキャンしてください。"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "music_library_tab_videos",
+      "source": "Videos",
+      "sourceHash": "sha256:44d46f799920b33824cbe65c9eccacace9221eb9e13acf176e53adb863d0fafb",
+      "existing": {
+        "zh-TW": "影片",
+        "ja": "動画"
+      },
+      "status": "NO_DIRECT_STATIC_REFERENCE",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "找不到直接原始碼參照，不能由此判定已廢棄。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "music_library_video_audio_track_detected",
+      "source": "%1$s · audio track found during folder scan; decoder support is not verified · %2$s",
+      "sourceHash": "sha256:299c65af8ba2e0f7cdc308ba19da77028238e7bfa6f4c0221bf301c61c3cafcb",
+      "existing": {
+        "zh-TW": "%1$s · 資料夾掃描已偵測到音軌；尚未驗證解碼支援 · %2$s",
+        "ja": "%1$s · フォルダーのスキャンで音声トラックを検出（デコーダー対応は未検証） · %2$s"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "music_library_source_scope_all",
+      "source": "All sources",
+      "sourceHash": "sha256:84dd1b8614867c21b216f89fb6f7c4b7e08c3e4997e12c087493fab5c8a1a67d",
+      "existing": {
+        "zh-TW": "所有來源",
+        "ja": "すべてのソース"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "music_library_preview",
+      "source": "Preview track",
+      "sourceHash": "sha256:f74f87fc808c555608a4c020ea9f783bc9a39cc95c9a11eee4d2eccc1897c4f3",
+      "existing": {
+        "zh-TW": "試聽曲目",
+        "ja": "曲を試聴"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "alarm_music_settings_mode_shared",
+      "source": "Use the shared music pool",
+      "sourceHash": "sha256:2a23500a7bf48169aad323574853e04520f3751e51e44fdc469cf7493f6c288f",
+      "existing": {
+        "zh-TW": "使用共用音樂池",
+        "ja": "共有音楽プールを使う"
+      },
+      "status": "NO_DIRECT_STATIC_REFERENCE",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "找不到直接原始碼參照，不能由此判定已廢棄。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "alarm_music_settings_strategy_order",
+      "source": "Playlist order",
+      "sourceHash": "sha256:5fdb887adef1dcfde8c9e505728c90507c3009efd770e9b7b90bf0def577d03b",
+      "existing": {
+        "zh-TW": "依播放清單順序",
+        "ja": "プレイリスト順"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "alarm_music_settings_artists",
+      "source": "Artists",
+      "sourceHash": "sha256:ff2f4361188845be1eec2f7e3c158f855321b496d2a35e3ac33790ac09b9605e",
+      "existing": {
+        "zh-TW": "歌手",
+        "ja": "アーティスト"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "alarm_music_settings_save",
+      "source": "Save",
+      "sourceHash": "sha256:81e303e60b6abd21062f8b9be89c6f6007f13717d70231d9e25a5e9b0523f7ee",
+      "existing": {
+        "zh-TW": "儲存",
+        "ja": "保存"
+      },
+      "status": "NO_DIRECT_STATIC_REFERENCE",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "找不到直接原始碼參照，不能由此判定已廢棄。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "music_library_add_folder",
+      "source": "Add folder",
+      "sourceHash": "sha256:8a869af17189b91a249e6b661ae39ec3eb0f2aa197dcd0690836696a8c649bac",
+      "existing": {
+        "zh-TW": "新增資料夾",
+        "ja": "フォルダーを追加"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "music_library_source_origin",
+      "source": "%1$s · %2$s",
+      "sourceHash": "sha256:b53f6b85b3694281c1698ad85891747ed4737ce3fd5d43e802cedbb4251340b3",
+      "existing": {
+        "zh-TW": "%1$s · %2$s",
+        "ja": "%1$s · %2$s"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "music_library_source_unknown_origin",
+      "source": "Storage provider",
+      "sourceHash": "sha256:932b0a6619ee398ca79761e611f22013b757807a3dce6f6fa418b183c2d07d0a",
+      "existing": {
+        "zh-TW": "儲存空間提供者",
+        "ja": "ストレージプロバイダー"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "music_library_sources_read_failed",
+      "source": "Could not read music sources: %1$s",
+      "sourceHash": "sha256:958daf61d432ebc795ab9a03bd225e5dbd143dd42527e59c544b15e9f42a87b3",
+      "existing": {
+        "zh-TW": "無法讀取音樂來源：%1$s",
+        "ja": "音楽ソースを読み取れませんでした：%1$s"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "music_library_no_history",
+      "source": "No playback history for this date.",
+      "sourceHash": "sha256:e8c964aa7d82104b8a1566edece26c4681cd72c8e12b8009048639e666fe4d3a",
+      "existing": {
+        "zh-TW": "這一天沒有播放紀錄。",
+        "ja": "この日の再生履歴はありません。"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "music_library_close",
+      "source": "Close",
+      "sourceHash": "sha256:ebba8638858a53a793d471448eecfe2091a6ad11f4dad94318756edffe9f5f2f",
+      "existing": {
+        "zh-TW": "關閉",
+        "ja": "閉じる"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "music_library_history_row",
+      "source": "%1$d. %2$s — %3$s",
+      "sourceHash": "sha256:53d50c2294680a4c5d17d6a958db26ad126f19ae1a2d19290ea2f954e09b0c4a",
+      "existing": {
+        "zh-TW": "%1$d. %2$s — %3$s",
+        "ja": "%1$d. %2$s — %3$s"
+      },
+      "status": "NO_DIRECT_STATIC_REFERENCE",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "找不到直接原始碼參照，不能由此判定已廢棄。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "music_library_pool_all_candidates",
+      "source": "All candidates",
+      "sourceHash": "sha256:93d7911bc279a98bba5f40573b98ca5be821536d94270cbd734a66b9fb871494",
+      "existing": {
+        "zh-TW": "全部候選",
+        "ja": "すべての候補"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "music_library_pool_clear_selection",
+      "source": "Clear selection",
+      "sourceHash": "sha256:370ef61812812dd804328aa72746f07103be8990493857c84ee8bd671495c6f3",
+      "existing": {
+        "zh-TW": "清除選取",
+        "ja": "選択を解除"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "music_library_pool_status_included",
+      "source": "Added to music pool",
+      "sourceHash": "sha256:e90f2f95c3d31a9da328cc4ffbca47d4a2bcd30441a7504322c24af124085324",
+      "existing": {
+        "zh-TW": "已加入音樂池",
+        "ja": "音楽プールに追加済み"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "music_library_pool_source_label",
+      "source": "Source",
+      "sourceHash": "sha256:96bfe18d8ae8b682289186a9124c04ef243b867ad6825898eb04d45374249b30",
+      "existing": {
+        "zh-TW": "來源",
+        "ja": "ソース"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "music_library_pool_type_audio",
+      "source": "Audio file",
+      "sourceHash": "sha256:c5b76280aa74089427fc999c8333124a2eee70d83bd89975eb351aab4d964628",
+      "existing": {
+        "zh-TW": "音訊檔",
+        "ja": "音声ファイル"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "ringtone_preview_unavailable",
+      "source": "Preview unavailable",
+      "sourceHash": "sha256:01f26a3c127e2efc13506fc049b103f3f3519c9af85734b9d4285e2dd20ee154",
+      "existing": {
+        "zh-TW": "無法試聽",
+        "ja": "試聴できません"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "ringtone_nothing_matches",
+      "source": "Nothing matches “%1$s”. Try a shorter or different term.",
+      "sourceHash": "sha256:998e366bdbf12f12c7b35e28bfc5c3640e7d3e715522adb6c8831971748ac1ec",
+      "existing": {
+        "zh-TW": "找不到符合「%1$s」的項目。請縮短或更換搜尋詞。",
+        "ja": "「%1$s」に一致する項目はありません。検索語を短くするか変更してください。"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "alarmlist_alarm",
+      "source": "%1$s alarm",
+      "sourceHash": "sha256:35dd145fd5b4a8169c6c3789bcd793df4c29f302a4cebc762b55c06b763e5c0b",
+      "existing": {
+        "zh-TW": "%1$s 個鬧鐘",
+        "ja": "%1$s 件のアラーム"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "ringtone_folder_item",
+      "source": "%1$s (folder)",
+      "sourceHash": "sha256:15ae8a3b297885366d220b67a01441d6adaad118e730ee12b78a2c4bd8340d33",
+      "existing": {
+        "zh-TW": "%1$s（資料夾）",
+        "ja": "%1$s（フォルダー）"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "alarmlist_share_alarm",
+      "source": "Share alarm",
+      "sourceHash": "sha256:a6f8ddc59769e5398824873ce26d9cdbce7d1a1e2ec32bf3079ce8c4fc1f6896",
+      "existing": {
+        "zh-TW": "分享鬧鐘",
+        "ja": "アラームを共有"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "ringtone_saved_to_alarms",
+      "source": "Saved “%1$s” to your alarms.",
+      "sourceHash": "sha256:8716768dbaf08f3a36e45062cd318e58a31cea3adad79eb764e84d36523bca47",
+      "existing": {
+        "zh-TW": "已將「%1$s」儲存至鬧鐘。",
+        "ja": "「%1$s」をアラームに保存しました。"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "alarm_list_quick_alarm_for",
+      "source": "Set quick alarm for %1$s",
+      "sourceHash": "sha256:af6dbb8ca17f4ad52618a70e0a88e2d617c1e9cd8764adcf7ff28eb406614298",
+      "existing": {
+        "zh-TW": "設定於 %1$s 的快速鬧鐘",
+        "ja": "%1$s にクイックアラームを設定"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "music_library_category_music",
+      "source": "Music",
+      "sourceHash": "sha256:4a836fbb5870d7b782d20c6f1910149253abac72e52998f03655593d51aaa69a",
+      "existing": {
+        "zh-TW": "音樂",
+        "ja": "音楽"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "music_playlist_integration_pending",
+      "source": "Playlist storage is waiting for the Room v28 integration. Existing Room v27 search and music-pool actions remain available; playlist changes are not saved yet.",
+      "sourceHash": "sha256:93808f158152ec3e5592054d367e4c93ff848ad3ede93c9c79efd5f51330575d",
+      "existing": {
+        "zh-TW": "播放清單儲存仍待 Room v28 整合；現有 Room v27 搜尋與音樂池操作仍可使用，目前不會儲存播放清單變更。",
+        "ja": "プレイリスト保存は Room v28 の統合待ちです。既存の Room v27 検索と音楽プール操作は引き続き利用できますが、プレイリストの変更はまだ保存されません。"
+      },
+      "status": "STALE_ENGLISH_SOURCE_BLOCKS_APPROVAL",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "英文宣稱等待 Room v28 整合，但資料庫已 v28；訊息只在播放清單 Repository 為 null 時顯示。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "music_playlist_add_selected",
+      "source": "Add %1$d selected",
+      "sourceHash": "sha256:1c781049cb93b22ac67430aa0c742fe2221b0b0d9771e5ae414b3edce51764c5",
+      "existing": {
+        "zh-TW": "加入已選的 %1$d 項",
+        "ja": "選択した %1$d 件を追加"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "music_playlist_rename",
+      "source": "Rename",
+      "sourceHash": "sha256:1c4061c7eae71d00e52afd96ded6bb4f0030b0243f1cb994aca8c603fec37f53",
+      "existing": {
+        "zh-TW": "重新命名",
+        "ja": "名前を変更"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "music_playlist_empty",
+      "source": "This playlist is empty.",
+      "sourceHash": "sha256:81a3667c33adb429d9274b87518db0a220592bd180378bc8aaa2490ed0c47de8",
+      "existing": {
+        "zh-TW": "此播放清單目前沒有曲目。",
+        "ja": "このプレイリストには曲がありません。"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "music_playlist_unavailable_count",
+      "source": "%1$d tracks could not be added because they are unavailable.",
+      "sourceHash": "sha256:ae4452d8b1e849112275232223574995954fec2871451249e7a3ee60c14b13ac",
+      "existing": {
+        "zh-TW": "%1$d 首曲目無法存取，因此未能加入。",
+        "ja": "%1$d 件は利用できないため追加できませんでした。"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "alarm_music_settings_playlist_smart_all",
+      "source": "All available music",
+      "sourceHash": "sha256:f2c353048332d3eeb70236e2ca40cdd39eccc6f234bb886f411e27ef0f5fa0df",
+      "existing": {
+        "zh-TW": "所有可用音樂",
+        "ja": "利用可能なすべての音楽"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "music_playlist_selected_items",
+      "source": "%1$d selected items",
+      "sourceHash": "sha256:0ff310672053e509df004fcad8ac4c9d7e502a0d94df16f05fb0b45e36609d7e",
+      "existing": {
+        "zh-TW": "已選取 %1$d 個項目",
+        "ja": "%1$d 件選択中"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "music_playlist_partial_add",
+      "source": "Added %1$d tracks; %2$d unavailable tracks were skipped.",
+      "sourceHash": "sha256:66efae28f5ea3d56870aba203da2caa4faf6bf9be7ddb2aba0d82fcc9edc3c60",
+      "existing": {
+        "zh-TW": "已加入 %1$d 首曲目；略過 %2$d 首無法存取的曲目。",
+        "ja": "%1$d 件を追加し、利用できない %2$d 件はスキップしました。"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "recent_playback_title",
+      "source": "Recently played",
+      "sourceHash": "sha256:30ae57518d4788e222569c2be66caf09a667250f6ce1b62966666237f9a8aa15",
+      "existing": {
+        "zh-TW": "最近播放",
+        "ja": "最近の再生"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "recent_playback_empty",
+      "source": "No alarm playback history yet",
+      "sourceHash": "sha256:adc8e6422205a9434a908b096e79b77e65f31869b86296392b062afb94a16989",
+      "existing": {
+        "zh-TW": "尚無音樂鬧鐘播放紀錄",
+        "ja": "アラーム再生履歴はありません"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "replay_action_pause",
+      "source": "Pause",
+      "sourceHash": "sha256:59b9027009d9b3089f405d928e4154a3232299c268ef87bc1d3e7ec87a9cf0e9",
+      "existing": {
+        "zh-TW": "暫停",
+        "ja": "一時停止"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "replay_status_playing",
+      "source": "Playing",
+      "sourceHash": "sha256:25799d709dddcf0e67b874714b2d115dc67193a1510c6be79fb91bc05797a665",
+      "existing": {
+        "zh-TW": "播放中",
+        "ja": "再生中"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "replay_open_in_external",
+      "source": "Open with other app",
+      "sourceHash": "sha256:79948acab4b1ad3e6fda6c1c20a13d7b1108050e854a1cd0324c3d23e3c676d4",
+      "existing": {
+        "zh-TW": "以其他 App 開啟",
+        "ja": "他のアプリで開く"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "music_library_history_filter_recent",
+      "source": "Recent",
+      "sourceHash": "sha256:39b5542f50aa8ccbb5ffd48a96359b8158d17a70e1539c2ab7038fb2d94a0a9b",
+      "existing": {
+        "zh-TW": "最近播放",
+        "ja": "最近の再生"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "alarm_edit_remaining_days_hours_minutes",
+      "source": "%1$d d %2$d h %3$d min",
+      "sourceHash": "sha256:b814768e37e94039782651cd1daa547ee244a8b9f1ba624964f4bd0ce79f5172",
+      "existing": {
+        "zh-TW": "%1$d 天 %2$d 小時 %3$d 分鐘",
+        "ja": "%1$d日 %2$d時間 %3$d分"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "settings_show_incident_events",
+      "source": "Show recent event chain",
+      "sourceHash": "sha256:885024a79970dbcf64279679bc06d4550542e0769495bdc65385d0ae4f27beeb",
+      "existing": {
+        "zh-TW": "查看近期事件時間線",
+        "ja": "直近のイベント履歴を表示"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "settings_export_incident_diagnostics",
+      "source": "Share diagnostic bundle",
+      "sourceHash": "sha256:e00a06b31923a53f448bf73ed1476775ab58e8bf4bc9575a0530c02187e5be91",
+      "existing": {
+        "zh-TW": "分享診斷資料",
+        "ja": "診断データを共有"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "settings_incident_row_reason",
+      "source": "Source: %1$s · Code: %2$s",
+      "sourceHash": "sha256:a3048fc82854b0a1820319ad0b228b72adde61bf4aea6819e5babf52bab6c621",
+      "existing": {
+        "zh-TW": "來源：%1$s · 代碼：%2$s",
+        "ja": "発生元：%1$s · コード：%2$s"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "b2_test_requires_saved",
+      "source": "Save this alarm before running the real music test.",
+      "sourceHash": "sha256:c562414fb3c5723a66ff947995cc04dce1b1833cb7c02338442ebd63d4768f7e",
+      "existing": {
+        "zh-TW": "請先儲存此鬧鐘，再執行正式音樂測試。",
+        "ja": "このアラームを保存してから音楽テストを実行してください。"
+      },
+      "status": "REVISION_SUGGESTED_SOURCE_UNCHANGED",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {
+        "zh-TW": "執行實際音樂響鈴測試前，請先儲存此鬧鐘。",
+        "ja": "実際の音楽アラームテストを行う前に、このアラームを保存してください。"
+      },
+      "reason": "Real music test 不應被理解成一般正式鬧鐘排程。",
+      "sourceEvidence": {
+        "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/alarmedit/AlarmEditScreen.kt",
+        "line": 694,
+        "kind": "STATIC_ANDROID_CALLSITE"
+      }
+    },
+    {
+      "key": "b2_test_saved_only",
+      "source": "The test uses the last saved alarm and music settings. Unsaved edits are not included.",
+      "sourceHash": "sha256:24c3d344879aae700ae6d1d6ac806db3fd97271f2abca8e968f8f9631f94ad04",
+      "existing": {
+        "zh-TW": "測試採用上次儲存的鬧鐘與音樂設定，不含尚未儲存的修改。",
+        "ja": "テストには保存済みのアラームと音楽設定を使用します。未保存の変更は含まれません。"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "u4_snooze_resume_position",
+      "source": "Continue the interrupted song at its last position",
+      "sourceHash": "sha256:667059ea04714af54d904c8e3e70ec5c03d643ac5f25b9cee7fcbf2351414603",
+      "existing": {
+        "zh-TW": "從同一首音樂的中斷位置續播",
+        "ja": "同じ曲の中断位置から再開"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    },
+    {
+      "key": "u4_snooze_mode_note",
+      "source": "Applies to alarm music. If a track cannot be accessed or seeked, the alarm uses a playable fallback.",
+      "sourceHash": "sha256:be2bb1faedee558a9e41f6d6113b0d5c9f231a2d0d6a710edd6f11fda00c4532",
+      "existing": {
+        "zh-TW": "適用於音樂鬧鐘。若音樂失效或無法定位播放位置，會改用可播放的備援。",
+        "ja": "音源が利用できない場合やシークできない場合は、再生可能な代替音を使用します。"
+      },
+      "status": "REVISION_SUGGESTED_SOURCE_UNCHANGED",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {
+        "ja": "アラームの音楽に適用されます。曲を利用できない場合やシークできない場合は、再生可能な代替音を使用します。"
+      },
+      "reason": "舊日文省略本規則適用鬧鐘音樂的首句。",
+      "sourceEvidence": {
+        "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/alarmedit/AlarmMusicSettingsScreen.kt",
+        "line": 306,
+        "kind": "STATIC_ANDROID_CALLSITE"
+      }
+    },
+    {
+      "key": "music_playlist_apply_to_alarm",
+      "source": "Apply this playlist to the alarm",
+      "sourceHash": "sha256:a0c78f24560e09638b2214028af6460b669ec5be5c219f59de919f84b1318e0e",
+      "existing": {
+        "zh-TW": "將此播放清單套用到鬧鐘",
+        "ja": "このプレイリストをアラームに適用"
+      },
+      "status": "NO_CLEAR_CONFLICT_IN_MODEL_SURFACE_CHECK",
+      "humanApproved": false,
+      "reviewType": "MODEL_SURFACE_CHECK_NOT_INDEPENDENT_APPROVAL",
+      "suggestions": {},
+      "reason": "來源與現有譯文字面未見可確定的重大矛盾；仍須獨立情境與母語品質核准。",
+      "sourceEvidence": null
+    }
+  ]
+}
