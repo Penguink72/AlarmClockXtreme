@@ -388,19 +388,19 @@ fun SettingsScreen(
                             )
                         }
                     }
-                    // LP1 debug-only Android lab. Never visible in production release builds.
+                    // LP2-A Debug live Settings preview. Historical LP1 remains accessible inside the Lab.
                     if (com.sysadmindoc.alarmclock.BuildConfig.DEBUG) {
-                        settingsItem("settings-home-lp1-debug") {
-                            SettingsGroup(title = stringResource(R.string.settings_lp1_lab_label)) {
+                        settingsItem("settings-home-lp2-debug") {
+                            SettingsGroup(title = stringResource(R.string.settings_lp2a_lab_label)) {
                                 SettingsActionRow(
-                                    label = stringResource(R.string.settings_lp1_lab_open),
-                                    value = stringResource(R.string.settings_lp1_lab_open),
-                                    supportingText = stringResource(R.string.settings_lp1_lab_description),
+                                    label = stringResource(R.string.settings_lp2a_lab_open),
+                                    value = stringResource(R.string.settings_lp2a_lab_open),
+                                    supportingText = stringResource(R.string.settings_lp2a_lab_description),
                                     onClick = {
                                         runCatching {
                                             context.startActivity(Intent().setClassName(
                                                 context.packageName,
-                                                "com.sysadmindoc.alarmclock.ui.languagelab.Lp1LanguageLabActivity"
+                                                "com.sysadmindoc.alarmclock.ui.languagelab.Lp2SettingsPreviewActivity"
                                             ))
                                         }.onFailure {
                                             Toast.makeText(context, it.message.orEmpty(), Toast.LENGTH_SHORT).show()

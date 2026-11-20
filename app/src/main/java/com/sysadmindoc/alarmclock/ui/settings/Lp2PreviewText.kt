@@ -157,6 +157,9 @@ internal object Lp2PreviewText {
         }.toMap()
     }
 
+    fun importFromStream(context: Context, stream: InputStream): Pack =
+        stream.use { importPack(context, readBounded(it)) }
+
     fun importPack(context: Context, raw: String): Pack {
         require(BuildConfig.DEBUG) { "LP2 preview is Debug-only" }
         val catalog = catalog(context)

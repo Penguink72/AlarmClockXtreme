@@ -1,5 +1,6 @@
 package com.sysadmindoc.alarmclock.ui.languagelab
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -166,6 +167,11 @@ private fun Lp2SettingsPreviewScreen(onClose: () -> Unit) {
                 if (first != null) Text(first.value + if (first.fallback) " [EN fallback]" else "")
                 if (second != null) Text(second.value + if (second.fallback) " [EN fallback]" else "",
                     color = MaterialTheme.colorScheme.secondary)
+            }
+            OutlinedButton(onClick = {
+                context.startActivity(Intent(context, Lp1LanguageLabActivity::class.java))
+            }, modifier = Modifier.fillMaxWidth()) {
+                Text(stringResource(R.string.lp2a_open_legacy))
             }
             Button(onClick = onClose, modifier = Modifier.fillMaxWidth()) {
                 Text(stringResource(R.string.lp2a_return_to_settings))
