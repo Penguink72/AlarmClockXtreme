@@ -6,6 +6,7 @@ on:
     paths:
       - ".github/workflows/p31-kotlin-pom-provenance.yml"
       - "scripts/ci/gradle-kotlin-pom-provenance.mjs"
+      - "scripts/ci/gradle-compose-pom-provenance.mjs"
   workflow_dispatch:
 permissions:
   contents: read
