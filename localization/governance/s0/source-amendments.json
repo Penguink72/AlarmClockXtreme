@@ -1,0 +1,37 @@
+{
+  "schema": "acx-s0-canonical-source-amendments/1",
+  "baselineCatalogRevision": "lp0-200-20261118",
+  "amendmentRevision": "s0-20261120",
+  "policy": "LP0/LP1 historical 200-key sample is immutable. Canonical Android strings may differ only through hash-verified amendments. Old locale translations are stale until independent review.",
+  "items": [
+    {
+      "key": "music_playlist_integration_pending",
+      "baselineSource": "Playlist storage is waiting for the Room v28 integration. Existing Room v27 search and music-pool actions remain available; playlist changes are not saved yet.",
+      "baselineSourceHash": "sha256:93808f158152ec3e5592054d367e4c93ff848ad3ede93c9c79efd5f51330575d",
+      "currentSource": "Playlist storage is unavailable right now. You can still browse your music library, but playlist changes cannot be saved until storage becomes available.",
+      "currentSourceHash": "sha256:332b74a082326a3979132d74cf4d00f0632c09f6f98381392a4d4c8308bf3ed2",
+      "canonicalFixState": "APPLIED_TO_ANDROID_RESOURCES",
+      "existingTranslations": "STALE_REVIEW_REQUIRED",
+      "humanApproved": false,
+      "reason": "Room v28 exists; repository == null implies unavailable storage, not pending schema integration.",
+      "locales": {
+        "zh-TW": {
+          "baseline": "播放清單儲存仍待 Room v28 整合；現有 Room v27 搜尋與音樂池操作仍可使用，目前不會儲存播放清單變更。",
+          "currentCandidate": "目前無法使用播放清單儲存功能。仍可瀏覽音樂庫，但在儲存功能恢復前無法保存播放清單變更。",
+          "originalBasedOnSourceHash": "sha256:93808f158152ec3e5592054d367e4c93ff848ad3ede93c9c79efd5f51330575d",
+          "newCandidateBasedOnSourceHash": "sha256:332b74a082326a3979132d74cf4d00f0632c09f6f98381392a4d4c8308bf3ed2",
+          "reviewState": "STALE_REVIEW_REQUIRED",
+          "humanApproved": false
+        },
+        "ja": {
+          "baseline": "プレイリスト保存は Room v28 の統合待ちです。既存の Room v27 検索と音楽プール操作は引き続き利用できますが、プレイリストの変更はまだ保存されません。",
+          "currentCandidate": "現在、プレイリストを保存できません。音楽ライブラリは引き続き閲覧できますが、保存機能が利用可能になるまで変更内容は保存されません。",
+          "originalBasedOnSourceHash": "sha256:93808f158152ec3e5592054d367e4c93ff848ad3ede93c9c79efd5f51330575d",
+          "newCandidateBasedOnSourceHash": "sha256:332b74a082326a3979132d74cf4d00f0632c09f6f98381392a4d4c8308bf3ed2",
+          "reviewState": "STALE_REVIEW_REQUIRED",
+          "humanApproved": false
+        }
+      }
+    }
+  ]
+}

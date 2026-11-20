@@ -2511,7 +2511,7 @@
     <string name="music_library_browse_folders">Browse folders</string>
     <string name="music_library_browse_artists_albums">Artists &amp; albums</string>
     <string name="music_library_add_to_playlist">Add %1$d selected to a playlist</string>
-    <string name="music_playlist_integration_pending">Playlist storage is waiting for the Room v28 integration. Existing Room v27 search and music-pool actions remain available; playlist changes are not saved yet.</string>
+    <string name="music_playlist_integration_pending">Playlist storage is unavailable right now. You can still browse your music library, but playlist changes cannot be saved until storage becomes available.</string>
     <string name="music_playlist_title">Your playlists</string>
     <string name="music_playlist_create">New playlist</string>
     <string name="music_playlist_none">No playlists are available yet.</string>

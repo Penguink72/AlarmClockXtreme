@@ -6,6 +6,11 @@ const path = require("node:path");
 const here = __dirname;
 const root = path.resolve(here,"../..");
 const catalogue = require("./catalog.json");
+const s0 = require("../../localization/governance/s0/source-amendments.json");
+assert.equal(s0.schema, "acx-s0-canonical-source-amendments/1");
+assert.equal(s0.baselineCatalogRevision, catalogue.revision);
+const changes = new Map(s0.items.map(item => [item.key,item]));
+assert.equal(changes.size,1,"S0 allows one canonical correction");
 const locales = {
   "en":"values",
   "zh-TW":"values-b+zh+Hant+TW",
@@ -41,7 +46,11 @@ assert.deepEqual(Object.fromEntries(Object.keys(expectedSections).map(section=>[
 ])),expectedSections);
 const source = stringsFromXml("values");
 for(const item of catalogue.entries) {
-  assert.equal(item.source,source.get(item.key),"English source drift: "+item.key);
+  const s0Item = changes.get(item.key);
+  if(s0Item) {
+    assert.equal(item.source,s0Item.baselineSource,"Frozen English source changed");
+    assert.equal(source.get(item.key),s0Item.currentSource,"Canonical English S0 drift");
+  } else assert.equal(item.source,source.get(item.key),"English source drift: "+item.key);
   assert.deepEqual(item.placeholders,core.placeholders(item.source),"Source parameter drift: "+item.key);
 }
 for(const [locale,dir]of Object.entries(locales)){
@@ -50,7 +59,14 @@ for(const [locale,dir]of Object.entries(locales)){
   const count=Object.keys(core.validatePack(pack,catalogue).translations).length;
   assert.equal(count,locale==="en"?200:155,locale+" coverage drift");
   for(const [key,value]of Object.entries(pack.translations)){
-    assert.equal(value,actual.get(key),locale+" value drift: "+key);
+    const s0Item=changes.get(key);
+    if(s0Item && locale==="en") {
+      assert.equal(value,s0Item.baselineSource,"Frozen English pack drift");
+      assert.equal(actual.get(key),s0Item.currentSource,"Canonical English drift");
+    } else if(s0Item) {
+      assert.equal(value,s0Item.locales[locale].baseline,"Frozen locale pack drift");
+      assert.equal(actual.get(key),s0Item.locales[locale].currentCandidate,"Canonical locale drift");
+    } else assert.equal(value,actual.get(key),locale+" value drift: "+key);
   }
   for(const entry of catalogue.entries){
     if(!(entry.key in pack.translations)){
@@ -66,4 +82,4 @@ assert.deepEqual(embedded.catalog,catalogue);
 for(const locale of Object.keys(locales)){
   assert.deepEqual(embedded.packs[locale],JSON.parse(fs.readFileSync(path.join(here,"packs",locale+".json"),"utf8")));
 }
-console.log("LP0_RESOURCE_CHECKS PASS 200 real strings, 155 localized strings per locale, 45 fallback entries, placeholders and embedded browser data");
+console.log("LP0_RESOURCE_CHECKS PASS 200 frozen snapshot keys, 1 explicit S0 canonical amendment, 155 historic localized keys per locale");

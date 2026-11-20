@@ -10,7 +10,7 @@
       "status": "OPEN",
       "releaseBlocking": true,
       "severity": "HIGH",
-      "category": "STALE_ENGLISH_SOURCE",
+      "category": "CANONICAL_ENGLISH_FIXED_TRANSLATIONS_STALE",
       "evidence": [
         {
           "path": "app/src/main/java/com/sysadmindoc/alarmclock/data/local/AlarmDatabase.kt",
@@ -32,8 +32,22 @@
       "proposedSource": "Playlist storage is unavailable right now. You can still browse your music library, but playlist changes cannot be saved until storage becomes available.",
       "suggestedZhTW": "目前無法使用播放清單儲存功能。仍可瀏覽音樂庫，但在儲存功能恢復前無法保存播放清單變更。",
       "suggestedJa": "現在、プレイリストを保存できません。音楽ライブラリは引き続き閲覧できますが、保存機能が利用可能になるまで変更内容は保存されません。",
-      "disposition": "DO_NOT_TRANSLATE_OUTDATED_SOURCE_FOR_RELEASE; fix canonical English and re-review each locale",
-      "humanApproved": false
+      "disposition": "CANONICAL_SOURCE_FIXED; HISTORICAL_BASELINE_FROZEN; TRANSLATIONS_STALE; RELEASE_STILL_BLOCKED",
+      "humanApproved": false,
+      "correction": {
+        "amendmentRevision": "s0-20261120",
+        "canonicalEnglishFixed": true,
+        "currentSource": "Playlist storage is unavailable right now. You can still browse your music library, but playlist changes cannot be saved until storage becomes available.",
+        "currentSourceHash": "sha256:332b74a082326a3979132d74cf4d00f0632c09f6f98381392a4d4c8308bf3ed2",
+        "translationReviewStatus": "STALE_REVIEW_REQUIRED",
+        "localeReviews": {
+          "zh-TW": "STALE_REVIEW_REQUIRED",
+          "ja": "STALE_REVIEW_REQUIRED"
+        },
+        "humanApproved": false,
+        "baselineCatalogStillFrozen": true,
+        "reason": "Canonical Android resource corrected; old LP0/LP1 Debug 200-key packs remain historical until reviewed migration."
+      }
     }
   ]
 }

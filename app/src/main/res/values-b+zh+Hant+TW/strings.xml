@@ -499,7 +499,7 @@
     <string name="music_library_browse_folders">依資料夾瀏覽</string>
     <string name="music_library_browse_artists_albums">歌手與專輯</string>
     <string name="music_library_add_to_playlist">將已選的 %1$d 項加入播放清單</string>
-    <string name="music_playlist_integration_pending">播放清單儲存仍待 Room v28 整合；現有 Room v27 搜尋與音樂池操作仍可使用，目前不會儲存播放清單變更。</string>
+    <string name="music_playlist_integration_pending">目前無法使用播放清單儲存功能。仍可瀏覽音樂庫，但在儲存功能恢復前無法保存播放清單變更。</string>
     <string name="music_playlist_title">我的播放清單</string>
     <string name="music_playlist_create">新增播放清單</string>
     <string name="music_playlist_none">目前沒有可用的播放清單。</string>
