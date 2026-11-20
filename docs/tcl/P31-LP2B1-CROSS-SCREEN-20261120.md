@@ -29,3 +29,11 @@
 - 修補後保留唯一 onResume，先取得 active alarm；若存在則維持原響鈴畫面轉導與 fireId，僅在沒有活躍鬧鐘時載入 Debug 預覽；正式 Release 不讀入預覽檔。
 - 加入 Node 反向靜態護欄：onResume 僅能宣告一次、活躍鬧鐘檢查必須先於預覽載入、響鈴必要 extra 不可消失。
 - Android T2 必須重新以修補後的最新提交驗證，不能沿用先前失敗或取消的工作流。
+
+## CI Kotlin 插件 POM 短期阻斷與嚴格修補（2026-11-20）
+- PR #24 於 `acafcf77` 的單元測試 Runner 兩次在 Gradle 檢查 POM 時失敗，並非 Kotlin 測試斷言失敗；該 SHA 的 APK 建置與兩 Runner 簽章通過。
+- [診斷 Run 44759332185](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/44759332185)：Maven Central POM 1411 bytes，SHA-256 `0b1d7e9b...`，與原鎖定相符；Gradle Plugin Portal POM 679 bytes，SHA-256 `96e007b3...`，與測試 Runner 失敗時所取檔相同。
+- [內容比對 Run 44759646691](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/44759646691)：兩份原始 XML 的 dependency 清單均僅有 `org.jetbrains.kotlin:kotlin-gradle-plugin:2.1.0`。未聲稱兩份 POM 位元相同或具簽章；僅確認兩個官方儲存庫的 POM 都指向同一個 Gradle plugin 依賴。
+- 依 Gradle 官方 `Trusting Multiple Checksums` 規則，只在 `gradle/verification-metadata.xml` 這一個 2.1.0 POM 的 sha256 項下加入 `also-trust` 值 `96e007b3ecb22cc6d9617e414484539fe5b77b28e6659c8c916b4fddf8961ced`；原主 checksum 原封不動，其他依賴與版本不受影響。
+- 新增 `scripts/ci/guard-kotlin-plugin-pom-verification.mjs`，在 APK 和單元測試兩個獨立 Runner 上都檢查只容許這兩個精確雜湊、沒有額外批准、不得關閉 Gradle 相依套件驗證。
+- 修補後仍必須等待完整精確 SHA 的 Android CI 通過後才能將 LP2-B1 標為 T2 完成。
