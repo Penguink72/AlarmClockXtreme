@@ -12,3 +12,10 @@
 ## 後續
 - 對 113 個尚未直接接上本實驗的 Key（包含 21 個格式參數 Key），先補可辨識的實際 UI 呼叫清單，再做可追蹤的解析器適配。
 - 對所有多行與無障礙顯示進行真機 T3；Debug 實驗不能聲稱正式版全 App 多語系已完成。
+
+## 2026-11-20 最終 T2 驗收結論（附錄；原始施工說明保留）
+
+- [LP2-B2 P0 Android Run 44762900025](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/44762900025) 對 `6a0223e119f2d9b62e57f655bac5c98ed61bdeb2` **SUCCESS**；APK 建置、`859/859` 單元測試（0 失敗、0 錯誤、0 略過）和第二 Runner 升級簽章均已通過。
+- [LP2-B2 Node 治理 44762900020](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/44762900020)、[LP1 資產相容 44762900179](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/44762900179) 於相同 SHA 成功。
+- 程式切片已通過 **T2**，但 **T3 實機未驗證、G6 正式內容核准仍為 0/400、PR #25 仍是 Draft，沒有合併 main**。
+- 本討論串索引：[TCL 增量與交付總索引](P31-DISCUSSION-DELTA-AND-DELIVERY-INDEX-20261120.md)。
