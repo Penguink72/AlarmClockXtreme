@@ -39,15 +39,24 @@ for(const entry of targets){
      sidecar=new TextDecoder().decode(external.bytes).trim().split(/\s+/)[0].toLowerCase();
      if(!/^[0-9a-f]{64}$/.test(sidecar))sidecar="UNRECOGNIZED";
    }catch(e){sidecar="UNAVAILABLE: "+String(e.message).slice(0,90);}
+   const dependencies=[...text.matchAll(/<dependency>([\s\S]*?)<\/dependency>/g)].map(match=>{
+     const block=match[1],field=name=>block.match(new RegExp("<"+name+">([^<]+)</"+name+">"))?.[1]||"";
+     return {groupId:field("groupId"),artifactId:field("artifactId"),version:field("version")};
+   }).sort((a,b)=>JSON.stringify(a).localeCompare(JSON.stringify(b)));
+   assert(dependencies.length>0,"The fetched Maven POM contains no plugin-marker dependencies");
    results.push({name:entry.name,status:"fetched",source:entry.url,resolvedUrl:p.resolvedUrl,
      sha256:sha,bytes:p.bytes.length,contentType:p.type,sidecarSha256:sidecar,
-     sidecarMatches:sidecar===sha,matchesLocked:sha===expected,matchesFailedRun:sha===observedByUnitJob});
+     sidecarMatches:sidecar===sha,matchesLocked:sha===expected,matchesFailedRun:sha===observedByUnitJob,
+     dependencyGraph:dependencies,xmlContent:text});
  }catch(e){
    results.push({name:entry.name,status:"unavailable",source:entry.url,error:String(e.message).slice(0,190)});
  }
 }
+const reported=results.filter(x=>x.status==="fetched");
+const sameDependencies=reported.length===2 && JSON.stringify(reported[0].dependencyGraph)===JSON.stringify(reported[1].dependencyGraph);
 const result={
- schema:"acx-gradle-dependency-provenance-diagnostic/1",coordinate,artifact,
+ schema:"acx-gradle-dependency-provenance-diagnostic/2",coordinate,artifact,
+ bothOfficialPomsFetched:reported.length===2,dependencyGraphEquivalent:sameDependencies,
  failure:"The strict unit-test job twice rejected one plugin POM. The separate Debug APK build and signing succeeded.",
  expectedSha256:expected,failedUnitJobObservedSha256:observedByUnitJob,
  observedIsDifferentFromLock:expected!==observedByUnitJob,
