@@ -1,5 +1,6 @@
 package com.sysadmindoc.alarmclock.ui.ringtone
 
+import com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
@@ -201,14 +202,14 @@ fun MusicLibraryDialog(
                                 }
                                 Column(modifier = Modifier.weight(1f)) {
                                     Text(
-                                        stringResource(R.string.music_library_title),
+                                        Lp2PreviewText.text(R.string.music_library_title, "music_library_title"),
                                         style = MaterialTheme.typography.titleLarge,
-                                        maxLines = 1,
+                                        maxLines = if (Lp2PreviewText.showsTwoLanguages()) 2 else 1,
                                         overflow = TextOverflow.Ellipsis
                                     )
                                     Text(
                                         if (showHistory) {
-                                            stringResource(R.string.music_library_history_title)
+                                            Lp2PreviewText.text(R.string.music_library_history_title, "music_library_history_title")
                                         } else {
                                             stringResource(
                                                 R.string.music_library_track_count,
@@ -424,7 +425,7 @@ private fun MusicCatalogContent(
             },
             dismissButton = {
                 TextButton(onClick = { reviewedSystemToneCandidates = emptyList() }) {
-                    Text(stringResource(R.string.music_library_system_tones_cancel))
+                    Text(Lp2PreviewText.text(R.string.music_library_system_tones_cancel, "music_library_system_tones_cancel"))
                 }
             }
         )
@@ -492,7 +493,7 @@ private fun MusicCatalogContent(
                 onClick = { onCategoryChange(MusicLibraryCategory.ALL) }
             )
             CatalogFilterChip(
-                label = stringResource(R.string.music_library_category_music),
+                label = Lp2PreviewText.text(R.string.music_library_category_music, "music_library_category_music"),
                 selected = category == MusicLibraryCategory.MUSIC,
                 onClick = { onCategoryChange(MusicLibraryCategory.MUSIC) }
             )
@@ -531,7 +532,7 @@ private fun MusicCatalogContent(
                     stringResource(
                         R.string.music_library_source_scope_active,
                         scopeLabel,
-                        stringResource(R.string.music_library_source_scope_all)
+                        Lp2PreviewText.text(R.string.music_library_source_scope_all, "music_library_source_scope_all")
                     )
                 )
             }
@@ -569,7 +570,7 @@ private fun MusicCatalogContent(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             CatalogFilterChip(
-                label = stringResource(R.string.music_library_pool_all_candidates),
+                label = Lp2PreviewText.text(R.string.music_library_pool_all_candidates, "music_library_pool_all_candidates"),
                 selected = state.catalogFilter == MusicPoolFilter.ALL_CANDIDATES,
                 onClick = { viewModel.setCatalogFilter(MusicPoolFilter.ALL_CANDIDATES) }
             )
@@ -747,7 +748,7 @@ private fun MusicCatalogContent(
                 items(visible, key = { it.track.uri }) { item ->
                     val membershipLabel = when (item.membershipState) {
                         MusicPoolEntry.INCLUDED ->
-                            stringResource(R.string.music_library_pool_status_included)
+                            Lp2PreviewText.text(R.string.music_library_pool_status_included, "music_library_pool_status_included")
                         MusicPoolEntry.EXCLUDED ->
                             stringResource(R.string.music_library_pool_status_excluded)
                         else ->
@@ -890,7 +891,7 @@ private fun CatalogSourceScopePicker(
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         CatalogFilterChip(
-            label = stringResource(R.string.music_library_source_scope_all),
+            label = Lp2PreviewText.text(R.string.music_library_source_scope_all, "music_library_source_scope_all"),
             selected = state.catalogSourceScope == null,
             onClick = { onSelect(null) }
         )
@@ -1089,7 +1090,7 @@ private fun PlaybackHistoryContent(
             FilterChip(
                 selected = state.historyFilterMode == HistoryFilterMode.RECENT,
                 onClick = { viewModel.loadRecentHistory() },
-                label = { Text(stringResource(R.string.music_library_history_filter_recent)) }
+                label = { Text(Lp2PreviewText.text(R.string.music_library_history_filter_recent, "music_library_history_filter_recent")) }
             )
             FilterChip(
                 selected = state.historyFilterMode == HistoryFilterMode.BY_DATE,
@@ -1131,7 +1132,7 @@ private fun PlaybackHistoryContent(
         }
 
         if (state.history.isEmpty()) {
-            Text(stringResource(R.string.music_library_no_history))
+            Text(Lp2PreviewText.text(R.string.music_library_no_history, "music_library_no_history"))
         } else {
             val currentReplayState = replayState
             LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {

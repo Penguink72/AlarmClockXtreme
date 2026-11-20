@@ -1,5 +1,6 @@
 package com.sysadmindoc.alarmclock.ui.alarmlist
 
+import com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText
 import com.sysadmindoc.alarmclock.ui.alarmedit.toAlarmChallengeSummary
 import androidx.compose.ui.res.pluralStringResource
 import android.content.Context
@@ -183,7 +184,7 @@ fun AlarmListScreen(
             onDismissRequest = { statsAlarmLabel = null; viewModel.clearAlarmStats() },
             confirmButton = {
                 TextButton(onClick = { statsAlarmLabel = null; viewModel.clearAlarmStats() }) {
-                    Text(stringResource(R.string.settings_close))
+                    Text(Lp2PreviewText.text(R.string.settings_close, "settings_close"))
                 }
             },
             title = { Text(statsAlarmLabel ?: stringResource(R.string.alarmlist_alarm_history)) },
@@ -575,7 +576,7 @@ fun AlarmListScreen(
                                                     viewModel.selectProfile(null)
                                                 }
                                             ) {
-                                                Text(stringResource(R.string.alarm_list_clear_filters), color = MaterialTheme.colorScheme.primary)
+                                                Text(Lp2PreviewText.text(R.string.alarm_list_clear_filters, "alarm_list_clear_filters"), color = MaterialTheme.colorScheme.primary)
                                             }
                                         }
                                     )
@@ -1018,7 +1019,7 @@ private fun AlarmDetailPane(
             val alarmToggleState = if (alarm.isEnabled) {
                 stringResource(R.string.alarmlist_enabled)
             } else {
-                stringResource(R.string.alarm_edit_disabled)
+                Lp2PreviewText.text(R.string.alarm_edit_disabled, "alarm_edit_disabled")
             }
             Surface(
                 modifier = Modifier
@@ -1111,7 +1112,7 @@ private fun AlarmDetailPane(
                     ) {
                         Icon(Icons.Default.Delete, contentDescription = null, modifier = Modifier.size(18.dp))
                         Spacer(modifier = Modifier.width(6.dp))
-                        Text(stringResource(R.string.alarm_list_delete))
+                        Text(Lp2PreviewText.text(R.string.alarm_list_delete, "alarm_list_delete"))
                     }
                 }
                 if (alarm.isEnabled && alarm.isRecurringSchedule) {
@@ -1244,9 +1245,9 @@ private fun AlarmReorderHandle(
         stringResource(R.string.alarmlist_drag_handle_unavailable)
     }
     val dragHandleState = if (enabled) {
-        stringResource(R.string.settings_ready)
+        Lp2PreviewText.text(R.string.settings_ready, "settings_ready")
     } else {
-        stringResource(R.string.alarm_edit_disabled)
+        Lp2PreviewText.text(R.string.alarm_edit_disabled, "alarm_edit_disabled")
     }
     Box(
         modifier = modifier
@@ -1423,7 +1424,7 @@ private fun AlarmCard(
                     val compactToggleState = if (alarm.isEnabled) {
                         stringResource(R.string.alarmlist_enabled)
                     } else {
-                        stringResource(R.string.alarm_edit_disabled)
+                        Lp2PreviewText.text(R.string.alarm_edit_disabled, "alarm_edit_disabled")
                     }
                     Box(
                         modifier = Modifier
@@ -1480,7 +1481,7 @@ private fun AlarmCard(
                                 onClick = { showMenu = false; onShowHistory() }
                             )
                             DropdownMenuItem(
-                                text = { Text(stringResource(R.string.alarm_list_delete), color = AccentRed) },
+                                text = { Text(Lp2PreviewText.text(R.string.alarm_list_delete, "alarm_list_delete"), color = AccentRed) },
                                 leadingIcon = { Icon(Icons.Default.Delete, null, tint = AccentRed, modifier = Modifier.size(18.dp)) },
                                 onClick = { showMenu = false; onDelete() }
                             )
@@ -1600,7 +1601,7 @@ private fun SelectionActionBar(
                 ) {
                     Icon(Icons.Default.NotificationsOff, contentDescription = null, modifier = Modifier.size(18.dp))
                     Spacer(modifier = Modifier.width(6.dp))
-                    Text(stringResource(R.string.alarm_list_pause))
+                    Text(Lp2PreviewText.text(R.string.alarm_list_pause, "alarm_list_pause"))
                 }
                 Button(
                     onClick = onDeleteSelected,
@@ -1610,7 +1611,7 @@ private fun SelectionActionBar(
                 ) {
                     Icon(Icons.Default.Delete, contentDescription = null, modifier = Modifier.size(18.dp))
                     Spacer(modifier = Modifier.width(6.dp))
-                    Text(stringResource(R.string.alarm_list_delete))
+                    Text(Lp2PreviewText.text(R.string.alarm_list_delete, "alarm_list_delete"))
                 }
             }
         }
@@ -1629,7 +1630,7 @@ private fun SelectableAlarmCard(
     val selectionState = if (isSelected) {
         stringResource(R.string.settings_selected)
     } else {
-        stringResource(R.string.settings_not_selected)
+        Lp2PreviewText.text(R.string.settings_not_selected, "settings_not_selected")
     }
     Card(
         modifier = Modifier

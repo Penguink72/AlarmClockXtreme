@@ -1679,7 +1679,7 @@
       "reason": "Real music test 不應被理解成一般正式鬧鐘排程。",
       "sourceEvidence": {
         "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/alarmedit/AlarmEditScreen.kt",
-        "line": 694,
+        "line": 695,
         "kind": "STATIC_ANDROID_CALLSITE"
       }
     },
@@ -1730,7 +1730,7 @@
       "reason": "舊日文省略本規則適用鬧鐘音樂的首句。",
       "sourceEvidence": {
         "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/alarmedit/AlarmMusicSettingsScreen.kt",
-        "line": 306,
+        "line": 307,
         "kind": "STATIC_ANDROID_CALLSITE"
       }
     },

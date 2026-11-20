@@ -21,6 +21,7 @@ import com.sysadmindoc.alarmclock.service.AlarmService
 import com.sysadmindoc.alarmclock.ui.alarmfiring.AlarmFiringActivity
 import com.sysadmindoc.alarmclock.ui.components.WhatsNewDialog
 import com.sysadmindoc.alarmclock.ui.navigation.AppNavigation
+import com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText
 import com.sysadmindoc.alarmclock.ui.theme.AlarmClockXtremeTheme
 import com.sysadmindoc.alarmclock.util.WhatsNewTracker
 import dagger.hilt.android.AndroidEntryPoint
@@ -98,7 +99,13 @@ class MainActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
-        val snapshot = AlarmService.activeAlarm.get() ?: return
+        val snapshot = AlarmService.activeAlarm.get()
+        if (snapshot == null) {
+            // Only inspect experimental locale data when no alarm has firing priority.
+            // Release builds never load Debug-only language-pack assets.
+            if (BuildConfig.DEBUG) Lp2PreviewText.refresh(this)
+            return
+        }
         val intent = Intent(this, AlarmFiringActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
             putExtra(AlarmScheduler.EXTRA_ALARM_ID, snapshot.alarmId)
