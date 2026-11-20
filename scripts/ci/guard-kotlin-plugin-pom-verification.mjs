@@ -16,14 +16,14 @@ const also=[...primary[2].matchAll(/<also-trust value="([0-9a-f]{64})"\s*\/>/g)]
 assert.deepEqual(also,[portal],"Only the independently verified Gradle Plugin Portal POM may be added");
 const composeLock="db3bde26de3ea7433086163644a5750e280a1540990e30f1ae99fe80f2d5f160";
 const composePortal="fe78fa62efbf0c89ebef4bb0695ab219f41d802e854aafe0fedc561b1bc4a0d7";
-const composeComponents=[...xml.matchAll(/<component group="org\\.jetbrains\\.kotlin\\.plugin\\.compose" name="org\\.jetbrains\\.kotlin\\.plugin\\.compose\\.gradle\\.plugin" version="2\\.1\\.0">([\\s\\S]*?)<\\/component>/g)];
+const composeComponents=[...xml.matchAll(/<component group="org\.jetbrains\.kotlin\.plugin\.compose" name="org\.jetbrains\.kotlin\.plugin\.compose\.gradle\.plugin" version="2\.1\.0">([\s\S]*?)<\/component>/g)];
 assert.equal(composeComponents.length,1,"Exactly one Compose 2.1.0 marker must exist");
-const composeItems=[...composeComponents[0][1].matchAll(/<artifact name="org\\.jetbrains\\.kotlin\\.plugin\\.compose\\.gradle\\.plugin-2\\.1\\.0\\.pom">([\\s\\S]*?)<\\/artifact>/g)];
+const composeItems=[...composeComponents[0][1].matchAll(/<artifact name="org\.jetbrains\.kotlin\.plugin\.compose\.gradle\.plugin-2\.1\.0\.pom">([\s\S]*?)<\/artifact>/g)];
 assert.equal(composeItems.length,1);
-const composeSha=composeItems[0][1].match(/<sha256 value="([0-9a-f]{64})"[^>]*>([\\s\\S]*?)<\\/sha256>/);
+const composeSha=composeItems[0][1].match(/<sha256 value="([0-9a-f]{64})"[^>]*>([\s\S]*?)<\/sha256>/);
 assert(composeSha,"Compose marker POM digest missing");
 assert.equal(composeSha[1],composeLock);
-const composeAlso=[...composeSha[2].matchAll(/<also-trust value="([0-9a-f]{64})"\\s*\\/>/g)].map(m=>m[1]);
+const composeAlso=[...composeSha[2].matchAll(/<also-trust value="([0-9a-f]{64})"\s*\/>/g)].map(m=>m[1]);
 assert.deepEqual(composeAlso,[composePortal],"Compose portal digest must be exact and independently audited");
 assert.equal([...xml.matchAll(/<also-trust value="/g)].length,2,"Only two audited plugin marker POMs may have alternative hashes");
 const commands=readFileSync(".github/workflows/p0-android-baseline.yml","utf8");
