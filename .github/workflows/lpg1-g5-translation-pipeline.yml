@@ -7,6 +7,7 @@ on:
       - feature/p31-lpg-content-review-b2-completion-20261120
       - integration/p31-i0-lp1-lpg-20261120
       - feature/p31-s0-canonical-source-refresh-20261120
+      - feature/p31-g6-current-catalog-rebase-20261120
     paths:
       - "scripts/localization/**"
       - "localization/governance/**"
@@ -76,6 +77,15 @@ jobs:
           echo "EXPECTED: official pack rejected without semantic approvals."
       - name: I0 - Verify G5 unreviewed preview can be imported by LP1 Debug language lab
         run: node scripts/localization/i0-bridge-contract.test.mjs build/localization/UNREVIEWED_PREVIEW_NOT_RELEASE
+      - name: G6 - Rebase current canonical source and generate unreviewed review queue
+        run: |
+          node scripts/localization/g6-rebase-current-catalog.mjs --out-dir build/localization/G6_UNREVIEWED_CURRENT_PREVIEW
+          node scripts/localization/g6-rebase-current-catalog.test.mjs
+          if node scripts/localization/g6-rebase-current-catalog.mjs --mode release; then
+            echo "SECURITY FAILURE: G6 release wrongly permitted without independent semantic approval"
+            exit 1
+          fi
+          echo "G6 release blocked as designed."
       - name: Publish review bundle for human auditing
         uses: actions/upload-artifact@v4
         with:
@@ -92,6 +102,7 @@ jobs:
             docs/localization/LP-G4-CONTENT-REVIEW-BATCH2-20261120.md
             docs/localization/LP-G4-LEGACY-REMAINING-REVIEW-20261120.md
             build/localization/UNREVIEWED_PREVIEW_NOT_RELEASE/
+            build/localization/G6_UNREVIEWED_CURRENT_PREVIEW/
             docs/localization/LP-G1-GLOSSARY-CONTRACT-20261119.md
             docs/localization/LP-G2-CONTEXT-EVIDENCE-20261119.md
             docs/localization/LP-G3-CANDIDATE-TRANSLATIONS-20261119.md
