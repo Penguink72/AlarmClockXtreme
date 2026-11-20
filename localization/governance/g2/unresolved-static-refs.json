@@ -8,7 +8,7 @@
       "status": "NO_DIRECT_STATIC_REFERENCE",
       "nearby": {
         "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/ringtone/MusicLibraryDialog.kt",
-        "line": 500,
+        "line": 501,
         "expectedSnippet": "R.string.music_library_category_videos"
       },
       "note": "Current video-category chip uses a different resource name."
@@ -18,7 +18,7 @@
       "status": "NO_DIRECT_STATIC_REFERENCE",
       "nearby": {
         "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/alarmedit/AlarmMusicSettingsScreen.kt",
-        "line": 45,
+        "line": 46,
         "expectedSnippet": "fun AlarmMusicSettingsScreen("
       },
       "note": "No direct use of old shared-mode label; investigate dynamic menu bindings."
@@ -28,7 +28,7 @@
       "status": "NO_DIRECT_STATIC_REFERENCE",
       "nearby": {
         "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/alarmedit/AlarmMusicSettingsScreen.kt",
-        "line": 81,
+        "line": 82,
         "expectedSnippet": "R.string.alarm_music_settings_apply_draft"
       },
       "note": "Current action says Apply draft; old Save key still requires migration audit."
@@ -38,7 +38,7 @@
       "status": "NO_DIRECT_STATIC_REFERENCE",
       "nearby": {
         "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/ringtone/MusicPlaylistsWorkspace.kt",
-        "line": 839,
+        "line": 840,
         "expectedSnippet": "onClick = onRemove"
       },
       "note": "Removal exists but not with the exact old resource key."
@@ -48,7 +48,7 @@
       "status": "NO_DIRECT_STATIC_REFERENCE",
       "nearby": {
         "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/ringtone/MusicLibraryDialog.kt",
-        "line": 1147,
+        "line": 1148,
         "expectedSnippet": "HistoryTrackRow("
       },
       "note": "History UI uses a dedicated composable rather than the old format key."
