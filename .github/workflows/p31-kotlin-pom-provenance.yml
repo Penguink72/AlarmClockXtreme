@@ -19,10 +19,14 @@ jobs:
         run: node --version
       - name: Fetch official POMs and compare checksums (NO lock update)
         run: node scripts/ci/gradle-kotlin-pom-provenance.mjs
+      - name: Compare Compose plugin POM bytes and transitive marker dependency
+        run: node scripts/ci/gradle-compose-pom-provenance.mjs
       - name: Upload hash and upstream evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: p31-kotlin-pom-provenance
-          path: build/diagnostics/kotlin-plugin-pom.json
+          path: |
+            build/diagnostics/kotlin-plugin-pom.json
+            build/diagnostics/compose-plugin-pom.json
           retention-days: 14
