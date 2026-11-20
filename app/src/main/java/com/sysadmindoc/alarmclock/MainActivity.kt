@@ -21,6 +21,7 @@ import com.sysadmindoc.alarmclock.service.AlarmService
 import com.sysadmindoc.alarmclock.ui.alarmfiring.AlarmFiringActivity
 import com.sysadmindoc.alarmclock.ui.components.WhatsNewDialog
 import com.sysadmindoc.alarmclock.ui.navigation.AppNavigation
+import com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText
 import com.sysadmindoc.alarmclock.ui.theme.AlarmClockXtremeTheme
 import com.sysadmindoc.alarmclock.util.WhatsNewTracker
 import dagger.hilt.android.AndroidEntryPoint
@@ -35,6 +36,13 @@ class MainActivity : ComponentActivity() {
     private var lastHandledShareTokenKey: String? = null
     private var pendingSharedAlarmToken: String? = null
     private var pendingSharedAlarmDraft by mutableStateOf<Alarm?>(null)
+
+    override fun onResume() {
+        super.onResume()
+        // Restore the opted-in Debug text preview before navigating across screens.
+        // Release builds never read experimental language-pack assets.
+        if (BuildConfig.DEBUG) Lp2PreviewText.refresh(this)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()

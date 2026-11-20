@@ -16,9 +16,10 @@ import java.io.InputStream
 import java.util.Locale
 
 /**
- * LP2-A pilot: only 21 whitelisted real SettingsScreen strings are live-resolved.
- * The hook returns ordinary Android stringResource() outside an explicitly enabled
- * DEBUG preview. Never called by alarms, notifications, services or history.
+ * LP2-A/B1: a Debug-only pilot resolves 21 Settings keys and 31
+ * additional UI keys on alarm list/edit, music and playback-history surfaces.
+ * The hook returns native stringResource() outside an explicitly enabled
+ * preview. Never called by alarm firing, scheduling, notifications or services.
  * LP1 experimental assets are untouched; LP2 requires the current G6 revision.
  */
 internal object Lp2PreviewText {
@@ -53,6 +54,41 @@ internal object Lp2PreviewText {
         "settings_readiness_exact_alarms",
         "settings_return_to_app_after_dismiss_description"
     )
+
+    val crossScreenKeys: Set<String> = setOf(
+        "settings_close",
+        "alarm_list_clear_filters",
+        "alarm_edit_disabled",
+        "alarm_list_delete",
+        "settings_ready",
+        "alarm_list_pause",
+        "settings_not_selected",
+        "alarm_edit_background_selected",
+        "alarm_edit_background_permission_warning",
+        "alarm_edit_saving",
+        "music_library_title",
+        "music_library_history_title",
+        "music_library_system_tones_cancel",
+        "music_library_category_music",
+        "music_library_source_scope_all",
+        "music_library_pool_all_candidates",
+        "music_library_pool_status_included",
+        "music_library_history_filter_recent",
+        "music_library_no_history",
+        "recent_playback_title",
+        "recent_playback_empty",
+        "replay_status_playing",
+        "replay_action_pause",
+        "replay_open_in_external",
+        "alarm_music_settings_playlist_smart_all",
+        "u4_snooze_mode_note",
+        "music_playlist_integration_pending",
+        "music_playlist_apply_to_alarm",
+        "music_playlist_empty",
+        "music_playlist_rename",
+        "music_playlist_remove"
+    )
+    val previewKeys: Set<String> = pilotKeys + crossScreenKeys
 
     data class Entry(val source: String, val placeholders: List<String>)
     data class Catalog(val revision: String, val entries: Map<String, Entry>)
@@ -100,8 +136,13 @@ internal object Lp2PreviewText {
             require(placeholders(source) == expected) { "Invalid source placeholders: " + key }
             entries[key] = Entry(source, expected)
         }
-        require(entries.keys.containsAll(pilotKeys) && pilotKeys.size == 21) { "Missing LP2 pilot keys" }
-        require(pilotKeys.all { entries.getValue(it).placeholders.isEmpty() }) { "Pilot cannot format parameterized keys" }
+        require(pilotKeys.size == 21 && crossScreenKeys.size == 31 && previewKeys.size == 51) {
+            "Unexpected LP2-A/B1 preview coverage"
+        }
+        require(entries.keys.containsAll(previewKeys)) { "Missing LP2 preview keys" }
+        require(previewKeys.all { entries.getValue(it).placeholders.isEmpty() }) {
+            "Preview cannot format parameterized keys"
+        }
         return Catalog(data.getString("revision"), entries)
     }
 
@@ -236,7 +277,7 @@ internal object Lp2PreviewText {
     fun text(@StringRes resId: Int, key: String): String {
         val native = stringResource(resId)
         val active = session
-        if (!BuildConfig.DEBUG || active == null || key !in pilotKeys) return native
+        if (!BuildConfig.DEBUG || active == null || key !in previewKeys) return native
         val entry = active.catalog.entries[key] ?: return native
         fun render(pack: Pack): String {
             val text = pack.values[key]
