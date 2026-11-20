@@ -1,0 +1,27 @@
+name: S0 canonical source + stale locale guard (Node only)
+on:
+  push:
+    branches:
+      - feature/p31-s0-canonical-source-refresh-20261120
+    paths:
+      - "app/src/main/res/**"
+      - "localization/governance/s0/**"
+      - "localization/governance/g4/source-defects.json"
+      - "experiments/lp0-200/verify-resources.test.js"
+      - "scripts/localization/s0-*"
+      - ".github/workflows/s0-canonical-source-guard.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  s0-source-review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Confirm immutable LP0 snapshot with one amendment
+        run: node experiments/lp0-200/verify-resources.test.js
+      - name: Verify source hash rotation, stale locale reviews and failure cases
+        run: |
+          node scripts/localization/s0-source-amendments.mjs
+          node scripts/localization/s0-source-amendments.test.mjs
