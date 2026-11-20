@@ -5,6 +5,7 @@ on:
       - feature/p31-lp1-android-offline-pack-lab-20261118
       - integration/p31-i0-lp1-lpg-20261120
       - feature/p31-s0-canonical-source-refresh-20261120
+      - feature/p31-lp2a-live-settings-preview-20261120
     paths:
       - "experiments/lp0-200/**"
       - "app/src/debug/**"
