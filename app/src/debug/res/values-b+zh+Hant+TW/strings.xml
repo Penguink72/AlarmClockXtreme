@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="lp2a_header">LP2-A 設定頁即時預覽</string>
+    <string name="lp2a_back">返回</string>
+    <string name="lp2a_warning">僅供 Debug 實驗。此功能不修改鬧鐘、通知或系統 App 語言。</string>
+    <string name="lp2a_revision">使用現行 G6 200 字串目錄；尚無任何獨立語義核准。</string>
+    <string name="lp2a_import">匯入 G6 JSON</string>
+    <string name="lp2a_disable">停用預覽</string>
+    <string name="lp2a_enabled">預覽設定頁文字</string>
+    <string name="lp2a_primary">主要語言</string>
+    <string name="lp2a_secondary">對照語言</string>
+    <string name="lp2a_dual">顯示兩種語言</string>
+    <string name="lp2a_count">即時設定頁 Key：%1$d</string>
+    <string name="lp2a_imported">語言包已匯入並套用。</string>
+    <string name="lp2a_saved">預覽設定已儲存。</string>
+    <string name="lp2a_error">無法套用預覽：</string>
+    <string name="lp2a_intro">選擇語言後返回設定頁，即可看到真正畫面上的文字切換。</string>
+    <string name="lp2a_sample_label">翻譯預覽樣本</string>
+    <string name="lp2a_return_to_settings">返回設定頁</string>
+</resources>
