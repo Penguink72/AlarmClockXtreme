@@ -1,0 +1,28 @@
+name: P31 Kotlin Gradle plugin POM provenance (read-only)
+on:
+  push:
+    branches:
+      - diagnostics/p31-lp2b1-kotlin-pom-provenance-20261120
+    paths:
+      - ".github/workflows/p31-kotlin-pom-provenance.yml"
+      - "scripts/ci/gradle-kotlin-pom-provenance.mjs"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  compare-official-pom-digests:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - name: Print Node runtime and current locked SHA
+        run: node --version
+      - name: Fetch official POMs and compare checksums (NO lock update)
+        run: node scripts/ci/gradle-kotlin-pom-provenance.mjs
+      - name: Upload hash and upstream evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: p31-kotlin-pom-provenance
+          path: build/diagnostics/kotlin-plugin-pom.json
+          retention-days: 14
