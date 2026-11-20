@@ -34,6 +34,10 @@ for(const [suffix,keys] of Object.entries(modules)){
 assert.equal(totalCallsites,42,"Cross-screen LP2-B1 text callsites changed unexpectedly");
 assert.equal(all.length,31,"Cross-screen whitelist should contain 31 unique-per-file keys");
 assert.equal(new Set(all).size,31,"Cross-screen whitelist contains duplicates");
+
+const musicTitleSource=file("app/src/main/java/com/sysadmindoc/alarmclock/ui/ringtone/MusicLibraryDialog.kt");
+assert(musicTitleSource.includes("maxLines = if (Lp2PreviewText.showsTwoLanguages()) 2 else 1"),
+  "Dual-language library title must not silently clip its second language");
 const repo=file("app/src/main/java/com/sysadmindoc/alarmclock/ui/settings/Lp2PreviewText.kt");
 function extractSet(name){
  const start=repo.indexOf("val "+name+": Set<String> = setOf(");
@@ -53,6 +57,7 @@ assert(union.has("settings_not_selected"));
 assert(repo.includes("key !in previewKeys"),"Cross-screen UI must use guarded allowlist");
 for(const key of union)assert.deepEqual(byKey.get(key)?.placeholders,[],"Unexpected placeholder key "+key);
 assert(repo.includes("BuildConfig.DEBUG"),"Release isolation missing");
+assert(repo.includes("fun showsTwoLanguages(): Boolean"),"Bilingual UI layout state missing");
 const main=file("app/src/main/java/com/sysadmindoc/alarmclock/MainActivity.kt");
 assert(main.includes("if (BuildConfig.DEBUG) Lp2PreviewText.refresh(this)"),
   "Preview must refresh on MainActivity resume, including after a cold restart");

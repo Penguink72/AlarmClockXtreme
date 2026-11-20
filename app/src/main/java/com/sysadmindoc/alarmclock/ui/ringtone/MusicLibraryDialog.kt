@@ -204,7 +204,7 @@ fun MusicLibraryDialog(
                                     Text(
                                         Lp2PreviewText.text(R.string.music_library_title, "music_library_title"),
                                         style = MaterialTheme.typography.titleLarge,
-                                        maxLines = 1,
+                                        maxLines = if (Lp2PreviewText.showsTwoLanguages()) 2 else 1,
                                         overflow = TextOverflow.Ellipsis
                                     )
                                     Text(

@@ -102,6 +102,11 @@ internal object Lp2PreviewText {
 
     fun isEnabled(): Boolean = BuildConfig.DEBUG && session != null
     fun lastError(): String? = lastLoadError
+    fun showsTwoLanguages(): Boolean {
+        val state = session ?: return false
+        return BuildConfig.DEBUG && state.options.dual &&
+            state.options.primary != state.options.secondary
+    }
 
     private fun placeholders(text: String): List<String> =
         printf.findAll(text).map { it.value }.filter { it != "%%" }.sorted().toList()
