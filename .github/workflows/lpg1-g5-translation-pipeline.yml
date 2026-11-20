@@ -6,6 +6,7 @@ on:
       - feature/p31-lpg-content-review-b1-20261119
       - feature/p31-lpg-content-review-b2-completion-20261120
       - integration/p31-i0-lp1-lpg-20261120
+      - feature/p31-s0-canonical-source-refresh-20261120
     paths:
       - "scripts/localization/**"
       - "localization/governance/**"
@@ -23,6 +24,10 @@ jobs:
     timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
+      - name: S0 - Verify source correction and stale translation reviews
+        run: |
+          node scripts/localization/s0-source-amendments.mjs
+          node scripts/localization/s0-source-amendments.test.mjs
       - name: Verify LP0 source 200 keys and legacy data
         run: |
           node experiments/lp0-200/verify-resources.test.js

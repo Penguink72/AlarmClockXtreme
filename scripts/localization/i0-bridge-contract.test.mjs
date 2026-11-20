@@ -19,6 +19,8 @@ assert.equal(manifest.releaseChannel, "UNREVIEWED_PREVIEW_NOT_RELEASE");
 assert.equal(manifest.mayDistributeAsOfficial, false);
 assert.equal(manifest.reviewStatus, "no-human-approval");
 assert.equal(manifest.catalogRevision, debug.revision);
+assert.equal(manifest.frozenBaselinePreview,true);
+assert.deepEqual(manifest.staleCanonicalSourceKeys,["music_playlist_integration_pending"]);
 const kotlin = readFileSync(join(root,
   "app/src/debug/java/com/sysadmindoc/alarmclock/ui/languagelab/Lp1Repository.kt"), "utf8");
 assert.match(kotlin, /PACK_FORMAT = "acx-language-pack-probe\/1"/);
