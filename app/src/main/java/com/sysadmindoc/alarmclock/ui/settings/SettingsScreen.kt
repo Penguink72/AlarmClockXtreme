@@ -385,6 +385,28 @@ fun SettingsScreen(
                             )
                         }
                     }
+                    // LP1 debug-only Android lab. Never visible in production release builds.
+                    if (com.sysadmindoc.alarmclock.BuildConfig.DEBUG) {
+                        settingsItem("settings-home-lp1-debug") {
+                            SettingsGroup(title = stringResource(R.string.settings_lp1_lab_label)) {
+                                SettingsActionRow(
+                                    label = stringResource(R.string.settings_lp1_lab_open),
+                                    value = stringResource(R.string.settings_lp1_lab_open),
+                                    supportingText = stringResource(R.string.settings_lp1_lab_description),
+                                    onClick = {
+                                        runCatching {
+                                            context.startActivity(Intent().setClassName(
+                                                context.packageName,
+                                                "com.sysadmindoc.alarmclock.ui.languagelab.Lp1LanguageLabActivity"
+                                            ))
+                                        }.onFailure {
+                                            Toast.makeText(context, it.message.orEmpty(), Toast.LENGTH_SHORT).show()
+                                        }
+                                    }
+                                )
+                            }
+                        }
+                    }
                     settingsItem("settings-home-readiness") {
                         WakeReadinessSection(
                             state = state,
