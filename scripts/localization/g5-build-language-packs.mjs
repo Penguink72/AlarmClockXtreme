@@ -11,7 +11,7 @@ import { checkReviewQueue } from "./g4-review-gate.mjs";
 const root=resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 export const jsonHash = value => "sha256:"+createHash("sha256").update(JSON.stringify(value),"utf8").digest("hex");
 
-export function buildPacks(mode,catalog,glossary,queue,qa){
+export function buildPacks(mode,catalog,glossary,queue,qa,sourceDefects=null){
  assert(["preview","release"].includes(mode),"Allowed modes are preview and release");
  assert.equal(catalog.revision,queue.catalogRevision);
  assert.equal(queue.glossaryRevision,glossary.glossaryRevision);
@@ -28,6 +28,14 @@ export function buildPacks(mode,catalog,glossary,queue,qa){
      assert.equal(qa.stats[locale]?.approved,catalog.entries.length,
        "Release blocked: locale is not fully reviewed: "+locale);
    }
+   assert.equal(sourceDefects?.schema,"acx-g4-source-defects/1",
+     "Release blocked: source-defect ledger must be checked");
+   assert.equal(sourceDefects.catalogRevision,catalog.revision,
+     "Release blocked: source-defect ledger/catalog mismatch");
+   const unresolved=sourceDefects.items.filter(d=>d.releaseBlocking && d.status!=="RESOLVED");
+   assert.equal(unresolved.length,0,
+     "Release blocked: unresolved canonical English source defects: "+unresolved.map(d=>d.key).join(", "));
+
  }else{
    assert.equal(queue.approval,"NONE","Preview must remain unapproved");
  }
@@ -113,7 +121,8 @@ const reviewEvidence=loadJson("localization/governance/g2/context-evidence.json"
 const reviewerLedger=loadJson("localization/governance/g4/review-ledger.json");
 const verifiedQa=checkReviewQueue(queue,glossary,reviewEvidence,reviewerLedger);
 assert.deepEqual(qa,verifiedQa,"G5 blocked: QA artifact must match the independent review ledger");
-const result=buildPacks(mode,catalog,glossary,queue,verifiedQa);
+const sourceDefects=loadJson("localization/governance/g4/source-defects.json");
+const result=buildPacks(mode,catalog,glossary,queue,verifiedQa,sourceDefects);
 const outIdx=process.argv.indexOf("--out-dir");
 if(outIdx>=0){
  const dir=resolve(process.argv[outIdx+1]||"");

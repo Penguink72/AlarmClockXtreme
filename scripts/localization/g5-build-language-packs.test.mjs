@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { buildPacks } from "./g5-build-language-packs.mjs";
 import { loadJson } from "./lp0-audit.mjs";
 import core from "../../experiments/lp0-200/web/probe-core.js";
+const sourceDefects=loadJson("localization/governance/g4/source-defects.json");
 const catalog=loadJson("experiments/lp0-200/catalog.json");
 const glossary=loadJson("localization/governance/g1/glossary-contract.json");
 const queue=loadJson("localization/governance/g3/review-queue.generated.json");
@@ -66,10 +67,17 @@ console.log("G5_TESTS PASS 200 preview strings per locale, release denied withou
    }
  }
  for(const row of fully.rows)row.approved=true;
- const syntheticRelease=buildPacks("release",catalog,approvedGlossary,queue,fully);
+ assert.throws(()=>buildPacks("release",catalog,approvedGlossary,queue,fully,sourceDefects),
+   /unresolved canonical English source defects/);
+ // In-memory only: prove the serialization code would work after the source
+ // is actually corrected, reviewed and the defect properly resolved.
+ const resolved=structuredClone(sourceDefects);
+ resolved.items[0].status="RESOLVED";
+ resolved.items[0].releaseBlocking=false;
+ const syntheticRelease=buildPacks("release",catalog,approvedGlossary,queue,fully,resolved);
  assert.equal(syntheticRelease.manifest.mayDistributeAsOfficial,true);
  assert.equal(syntheticRelease.manifest.totals["zh-TW"].approved,200);
  assert.equal(syntheticRelease.manifest.totals.ja.approved,200);
  assert.equal(Object.keys(syntheticRelease.packs["zh-TW"].translations).length,200);
 }
-console.log("G5_STRICT_COVERAGE_TESTS PASS: partial approval rejected, synthetic 400/400 approval serializes");
+console.log("G5_STRICT_COVERAGE_TESTS PASS: partial approval and open stale English source blocked; synthetic fully approved/resolved fixture serializes");
