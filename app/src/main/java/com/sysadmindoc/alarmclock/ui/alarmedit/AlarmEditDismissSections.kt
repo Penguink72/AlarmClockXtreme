@@ -91,7 +91,7 @@ internal fun LazyListScope.alarmEditDismissSections(
     // Snooze - interactive picker
     SettingsSection(editorPage, AlarmEditorSection.SNOOZE) {
         var showSnoozeMenu by remember { mutableStateOf(false) }
-        SettingsRow(label = stringResource(R.string.snooze_duration)) {
+        SettingsRow(label = com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.text(R.string.snooze_duration, "snooze_duration")) {
             Box {
                 SettingsValueButton(
                     label = stringResource(R.string.alarm_edit_minutes_short, state.snoozeDurationMinutes),
@@ -157,7 +157,7 @@ internal fun LazyListScope.alarmEditDismissSections(
         )
 
         SettingsRow(
-            label = stringResource(R.string.alarm_edit_progressive_snooze),
+            label = com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.text(R.string.alarm_edit_progressive_snooze, "alarm_edit_progressive_snooze"),
             trailing = {
                 Switch(
                     checked = state.progressiveSnooze,
@@ -167,7 +167,7 @@ internal fun LazyListScope.alarmEditDismissSections(
             }
         )
         SettingsHint(
-            stringResource(R.string.alarm_edit_progressive_snooze_hint),
+            com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.text(R.string.alarm_edit_progressive_snooze_hint, "alarm_edit_progressive_snooze_hint"),
             tone = HintTone.Neutral
         )
     }
@@ -330,7 +330,7 @@ internal fun LazyListScope.alarmEditDismissSections(
         // SQUAT: squat count config
         if (state.challengeType == "SQUAT") {
             var showSquatsMenu by remember { mutableStateOf(false) }
-            SettingsRow(label = stringResource(R.string.alarm_edit_squats_required)) {
+            SettingsRow(label = com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.text(R.string.alarm_edit_squats_required, "alarm_edit_squats_required")) {
                 Box {
                     SettingsValueButton(
                         label = pluralStringResource(
@@ -440,7 +440,7 @@ internal fun LazyListScope.alarmEditDismissSections(
             }
             SettingsHint(
                 if (state.photoMatchUri.isBlank()) {
-                    stringResource(R.string.alarm_edit_capture_photo_hint)
+                    com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.text(R.string.alarm_edit_capture_photo_hint, "alarm_edit_capture_photo_hint")
                 } else {
                     stringResource(R.string.alarm_edit_photo_saved_for_alarm)
                 },
@@ -459,7 +459,7 @@ internal fun LazyListScope.alarmEditDismissSections(
     SettingsSection(editorPage, AlarmEditorSection.CHAIN) {
         val chainItems = state.challengeChain.toChallengeChainList()
         SettingsRow(
-            label = stringResource(R.string.alarm_edit_challenge_chain),
+            label = com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.text(R.string.alarm_edit_challenge_chain, "alarm_edit_challenge_chain"),
             trailing = {
                 SettingsValueButton(
                     label = if (chainItems.isEmpty()) {
@@ -625,7 +625,7 @@ internal fun LazyListScope.alarmEditDismissSections(
 @Composable
 private fun snoozeLimitLabel(limit: Int): String =
     if (limit <= 0) {
-        stringResource(R.string.alarm_edit_snooze_limit_unlimited)
+        com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.text(R.string.alarm_edit_snooze_limit_unlimited, "alarm_edit_snooze_limit_unlimited")
     } else {
         pluralStringResource(R.plurals.alarm_edit_snooze_limit_value, limit, limit)
     }

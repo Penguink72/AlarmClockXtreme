@@ -332,7 +332,7 @@ fun RingtonePickerSheet(
                 }
                 if (previewError.isNotBlank()) {
                     AppStatusChip(
-                        label = stringResource(R.string.ringtone_preview_unavailable),
+                        label = com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.text(R.string.ringtone_preview_unavailable, "ringtone_preview_unavailable"),
                         color = SnoozeYellow
                     )
                 }
@@ -340,7 +340,7 @@ fun RingtonePickerSheet(
 
             if (previewError.isNotBlank()) {
                 AppInlineNotice(
-                    title = stringResource(R.string.ringtone_preview_unavailable),
+                    title = com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.text(R.string.ringtone_preview_unavailable, "ringtone_preview_unavailable"),
                     message = previewError,
                     icon = Icons.Default.Warning,
                     color = SnoozeYellow
@@ -593,7 +593,7 @@ internal fun RingtonePickerHeader(
                         modifier = Modifier.size(18.dp)
                     )
                     Spacer(modifier = Modifier.size(6.dp))
-                    Text(stringResource(R.string.ringtone_folder), fontWeight = FontWeight.SemiBold)
+                    Text(com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.text(R.string.ringtone_folder, "ringtone_folder"), fontWeight = FontWeight.SemiBold)
                 }
                 if (youTubeAvailable) {
                     OutlinedButton(

@@ -68,7 +68,7 @@ internal fun MusicLibrarySourcesDialog(
                     enabled = !state.scanning && !state.loadingPool,
                     onClick = { folderLauncher.launch(null) }
                 ) {
-                    Text(stringResource(R.string.music_library_add_folder))
+                    Text(com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.text(R.string.music_library_add_folder, "music_library_add_folder"))
                 }
                 if (state.sources.isEmpty()) {
                     Text(stringResource(R.string.music_library_no_sources))
@@ -99,7 +99,7 @@ internal fun MusicLibrarySourcesDialog(
         },
         confirmButton = {
             TextButton(onClick = onDismiss) {
-                Text(stringResource(R.string.music_library_close))
+                Text(com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.text(R.string.music_library_close, "music_library_close"))
             }
         },
         dismissButton = {
@@ -139,7 +139,7 @@ private fun MusicLibrarySourceRow(
             stringResource(R.string.music_library_source_removable)
         else -> source.treeUri.substringAfter("://")
             .substringBefore('/')
-            .ifBlank { stringResource(R.string.music_library_source_unknown_origin) }
+            .ifBlank { com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.text(R.string.music_library_source_unknown_origin, "music_library_source_unknown_origin") }
     }
     Column(
         modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
@@ -173,7 +173,7 @@ private fun MusicLibrarySourceRow(
                     )
                 }
                 TextButton(enabled = !scanning, onClick = onRemove) {
-                    Text(stringResource(R.string.music_library_remove_source))
+                    Text(com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.text(R.string.music_library_remove_source, "music_library_remove_source"))
                 }
             }
             TextButton(enabled = !scanning, onClick = onSelectSubfolders) {

@@ -228,7 +228,7 @@ internal fun IncidentTimelineSection(
                     ))
                 }
                 OutlinedButton(onClick = onExportDiagnostics) {
-                    Text(stringResource(R.string.settings_export_incident_diagnostics))
+                    Text(com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.text(R.string.settings_export_incident_diagnostics, "settings_export_incident_diagnostics"))
                 }
             }
             if (showEventTimeline) {
@@ -476,7 +476,7 @@ internal fun OnCallModeSection(
     AppSurfaceCard(highlighted = state.settings.onCallModeEnabled) {
         AppSectionTitle(
             title = stringResource(R.string.settings_on_call_mode),
-            description = stringResource(R.string.settings_on_call_mode_description),
+            description = com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.text(R.string.settings_on_call_mode_description, "settings_on_call_mode_description"),
             action = {
                 AppStatusChip(
                     label = stringResource(

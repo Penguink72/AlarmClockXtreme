@@ -126,7 +126,7 @@ fun StatsScreen(
     val summaryLine = when {
         state.isLoading -> stringResource(R.string.stats_collecting_history_and_response_patterns)
         state.recentEvents.isEmpty() -> stringResource(R.string.stats_your_alarm_habits_will_start_to)
-        else -> stringResource(R.string.stats_track_consistency_snooze_behavior_and_which)
+        else -> com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.text(R.string.stats_track_consistency_snooze_behavior_and_which, "stats_track_consistency_snooze_behavior_and_which")
     }
 
     val snackbarHostState = remember { SnackbarHostState() }
@@ -214,7 +214,7 @@ fun StatsScreen(
                     }
                     item {
                         StatMiniCard(
-                            label = stringResource(R.string.stats_snoozed),
+                            label = com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.text(R.string.stats_snoozed, "stats_snoozed"),
                             value = "${stats.snoozeRate}%",
                             color = SnoozeYellow,
                             icon = Icons.Default.Snooze,
@@ -387,7 +387,7 @@ fun StatsScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     AppSectionTitle(
-                        title = stringResource(R.string.stats_recent_history),
+                        title = com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.text(R.string.stats_recent_history, "stats_recent_history"),
                         description = stringResource(R.string.stats_last_few_alarm_outcomes_useful)
                     )
                     if (state.recentEvents.isNotEmpty()) {
@@ -764,7 +764,7 @@ private fun HealthConnectStatsCard(
                 !summary.permissionGranted ->
                     stringResource(R.string.stats_grant_sleep_data_access_in_settings)
                 summary.hasRecentSession ->
-                    stringResource(R.string.stats_recent_health_connect_sessions_stay_local)
+                    com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.text(R.string.stats_recent_health_connect_sessions_stay_local, "stats_recent_health_connect_sessions_stay_local")
                 else ->
                     stringResource(R.string.stats_sleep_data_access_is_granted_but)
             }
@@ -897,7 +897,7 @@ private fun SleepWakeAnalyticsCard(
             AppEmptyState(
                 icon = Icons.Default.BarChart,
                 title = stringResource(R.string.stats_no_sleep_wake_trend_yet),
-                description = stringResource(R.string.stats_alarm_history_optional_health_connect)
+                description = com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.text(R.string.stats_alarm_history_optional_health_connect, "stats_alarm_history_optional_health_connect")
             )
             return@AppSurfaceCard
         }
@@ -1519,7 +1519,7 @@ private fun sleepWakeAnalyticsDescription(
 ): String {
     return when {
         analytics.hasSleepWakeCorrelation ->
-            stringResource(R.string.stats_compares_recent_sleep_duration_with_dismiss)
+            com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.text(R.string.stats_compares_recent_sleep_duration_with_dismiss, "stats_compares_recent_sleep_duration_with_dismiss")
         !healthConnectEnabled ->
             stringResource(R.string.stats_enable_health_connect_to_layer_sleep)
         !sleepPermissionGranted ->
