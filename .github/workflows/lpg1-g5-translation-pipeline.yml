@@ -10,6 +10,7 @@ on:
       - feature/p31-g6-current-catalog-rebase-20261120
       - feature/p31-lp2a-live-settings-preview-20261120
       - feature/p31-lp2b1-cross-screen-language-preview-20261120
+      - feature/p31-lp2b2-edit-music-stats-preview-20261120
     paths:
       - "scripts/localization/**"
       - "localization/governance/**"
@@ -85,6 +86,7 @@ jobs:
           node scripts/localization/g6-rebase-current-catalog.test.mjs
           node scripts/localization/lp2a-assets.test.mjs
           node scripts/localization/lp2b1-cross-screen.test.mjs
+          node scripts/localization/lp2b2-more-surfaces.test.mjs
           if node scripts/localization/g6-rebase-current-catalog.mjs --mode release; then
             echo "SECURITY FAILURE: G6 release wrongly permitted without independent semantic approval"
             exit 1
