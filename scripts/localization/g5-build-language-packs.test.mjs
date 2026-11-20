@@ -33,3 +33,43 @@ assert.throws(()=>buildPacks("release",catalog,glossary,queue,qa),/Release block
  assert.throws(()=>buildPacks("preview",catalog,glossary,queue,changed));
 }
 console.log("G5_TESTS PASS 200 preview strings per locale, release denied without approvals, provenance enforced");
+
+{
+ // In-memory synthetic one-key approval: even a 'green' generic G4 flag
+ // must NOT allow an incomplete locale to be published.
+ const approvedGlossary=structuredClone(glossary);
+ approvedGlossary.approval="APPROVED_FOR_RELEASE";
+ approvedGlossary.concepts.forEach(c=>{c.labelState="APPROVED";});
+ const partial=structuredClone(qa);
+ partial.releaseAllowed=true;
+ const sample=queue.locales["zh-TW"][0];
+ partial.approvals=[{...sample,review:{sourceHash:sample.sourceHash,
+   glossaryRevision:glossary.glossaryRevision,
+   translationDigest:"sha256:fixture-only"}}];
+ partial.stats["zh-TW"].approved=1;
+ assert.throws(()=>buildPacks("release",catalog,approvedGlossary,queue,partial),
+   /every 200-key sample translation/);
+ // Fully synthetic fixture tests the successful release serialization path;
+ // no such approval is stored in the real review-ledger.
+ const fully=structuredClone(qa);
+ fully.releaseAllowed=true;
+ fully.approvals=[];
+ for(const locale of ["zh-TW","ja"]){
+   fully.stats[locale].approved=200;
+   fully.stats[locale].reviewRequired=0;
+   for(const candidate of queue.locales[locale]){
+     fully.approvals.push({...candidate,review:{
+       sourceHash:candidate.sourceHash,glossaryRevision:glossary.glossaryRevision,
+       translationDigest:"sha256:"+((await import("node:crypto")).createHash("sha256")
+         .update(candidate.text,"utf8").digest("hex"))
+     }});
+   }
+ }
+ for(const row of fully.rows)row.approved=true;
+ const syntheticRelease=buildPacks("release",catalog,approvedGlossary,queue,fully);
+ assert.equal(syntheticRelease.manifest.mayDistributeAsOfficial,true);
+ assert.equal(syntheticRelease.manifest.totals["zh-TW"].approved,200);
+ assert.equal(syntheticRelease.manifest.totals.ja.approved,200);
+ assert.equal(Object.keys(syntheticRelease.packs["zh-TW"].translations).length,200);
+}
+console.log("G5_STRICT_COVERAGE_TESTS PASS: partial approval rejected, synthetic 400/400 approval serializes");

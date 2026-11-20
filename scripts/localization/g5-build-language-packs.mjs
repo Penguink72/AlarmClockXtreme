@@ -6,6 +6,7 @@ import { mkdirSync, writeFileSync } from "node:fs";
 import { resolve, dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { loadJson } from "./lp0-audit.mjs";
+import { checkReviewQueue } from "./g4-review-gate.mjs";
 
 const root=resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 export const jsonHash = value => "sha256:"+createHash("sha256").update(JSON.stringify(value),"utf8").digest("hex");
@@ -21,7 +22,12 @@ export function buildPacks(mode,catalog,glossary,queue,qa){
  if(production){
    assert.equal(glossary.approval,"APPROVED_FOR_RELEASE","Release blocked: glossary is not independently approved");
    assert.equal(qa.releaseAllowed,true,"Release blocked: no independently approved translations");
-   assert(approved.size>0,"Release blocked: no approved translations");
+   assert.equal(approved.size,catalog.entries.length*2,
+     "Release blocked: every 200-key sample translation must be independently approved in both locales");
+   for(const locale of ["zh-TW","ja"]){
+     assert.equal(qa.stats[locale]?.approved,catalog.entries.length,
+       "Release blocked: locale is not fully reviewed: "+locale);
+   }
  }else{
    assert.equal(queue.approval,"NONE","Preview must remain unapproved");
  }
@@ -46,6 +52,12 @@ export function buildPacks(mode,catalog,glossary,queue,qa){
      if(production){
        if(gate){
          assert.equal(gate.text,candidate.text,"Approval does not match payload");
+         assert.equal(gate.sourceHash,candidate.sourceHash,"Approval source hash changed");
+         assert.equal(gate.review?.sourceHash,candidate.sourceHash,"Reviewer approved a stale source");
+         assert.equal(gate.review?.glossaryRevision,glossary.glossaryRevision,"Reviewer approved a stale glossary");
+         assert.equal(gate.review?.translationDigest,
+           "sha256:"+createHash("sha256").update(candidate.text,"utf8").digest("hex"),
+           "Translation changed after review");
          values[candidate.key]=candidate.text;
          copiedApproved++;
        }
@@ -68,8 +80,12 @@ export function buildPacks(mode,catalog,glossary,queue,qa){
      approved:copiedApproved,
      unreviewedLegacy:copiedLegacy,
      unreviewedModelDrafts:copiedModelDrafts};
-   if(production)assert.equal(Object.keys(values).length,copiedApproved,
-     "Release output includes unapproved translation");
+   if(production){
+     assert.equal(Object.keys(values).length,catalog.entries.length,
+       "Release blocked: incomplete locale pack would require English fallback: "+locale);
+     assert.equal(copiedApproved,catalog.entries.length,
+       "Release blocked: only fully approved locale packs may be published");
+   }
  }
  const manifest={
    schema:"acx-g5-pack-manifest/1",
@@ -91,7 +107,13 @@ const queue=loadJson("localization/governance/g3/review-queue.generated.json");
 const qa=loadJson("localization/governance/g4/qa-report.generated.json");
 const modeIndex=process.argv.indexOf("--mode");
 const mode=modeIndex>=0?process.argv[modeIndex+1]:"preview";
-const result=buildPacks(mode,catalog,glossary,queue,qa);
+// Verify the generated QA report against the actual review ledger again at
+// the final CLI boundary: a manually edited qa-report.json cannot unlock release.
+const reviewEvidence=loadJson("localization/governance/g2/context-evidence.json");
+const reviewerLedger=loadJson("localization/governance/g4/review-ledger.json");
+const verifiedQa=checkReviewQueue(queue,glossary,reviewEvidence,reviewerLedger);
+assert.deepEqual(qa,verifiedQa,"G5 blocked: QA artifact must match the independent review ledger");
+const result=buildPacks(mode,catalog,glossary,queue,verifiedQa);
 const outIdx=process.argv.indexOf("--out-dir");
 if(outIdx>=0){
  const dir=resolve(process.argv[outIdx+1]||"");
