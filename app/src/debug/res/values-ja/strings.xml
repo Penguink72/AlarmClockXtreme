@@ -17,4 +17,5 @@
     <string name="lp2a_intro">言語を選択して設定画面に戻ると、実際の表示文言が切り替わります。</string>
     <string name="lp2a_sample_label">翻訳の例</string>
     <string name="lp2a_return_to_settings">設定画面に戻る</string>
+    <string name="lp2a_open_legacy">以前の LP1 言語ラボを開く</string>
 </resources>

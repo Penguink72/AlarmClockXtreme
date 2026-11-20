@@ -17,4 +17,5 @@
     <string name="lp2a_intro">Select a language and return to Settings to see real screen labels change.</string>
     <string name="lp2a_sample_label">Sample translations</string>
     <string name="lp2a_return_to_settings">Return to Settings</string>
+    <string name="lp2a_open_legacy">Open historical LP1 language lab</string>
 </resources>

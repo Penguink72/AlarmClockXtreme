@@ -17,4 +17,5 @@
     <string name="lp2a_intro">選擇語言後返回設定頁，即可看到真正畫面上的文字切換。</string>
     <string name="lp2a_sample_label">翻譯預覽樣本</string>
     <string name="lp2a_return_to_settings">返回設定頁</string>
+    <string name="lp2a_open_legacy">開啟歷史 LP1 語言包實驗室</string>
 </resources>
