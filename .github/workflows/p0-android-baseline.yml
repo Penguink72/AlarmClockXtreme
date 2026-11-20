@@ -24,6 +24,7 @@ on:
       - feature/p31-s0-canonical-source-refresh-20261120
       - feature/p31-lp2a-live-settings-preview-20261120
       - feature/p31-lp2b1-cross-screen-language-preview-20261120
+      - feature/p31-lp2b2-edit-music-stats-preview-20261120
     paths:
       - ".github/workflows/p0-android-baseline.yml"
       - "localization/governance/**"

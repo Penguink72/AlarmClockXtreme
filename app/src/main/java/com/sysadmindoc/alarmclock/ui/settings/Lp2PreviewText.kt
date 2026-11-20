@@ -16,8 +16,8 @@ import java.io.InputStream
 import java.util.Locale
 
 /**
- * LP2-A/B1: a Debug-only pilot resolves 21 Settings keys and 31
- * additional UI keys on alarm list/edit, music and playback-history surfaces.
+ * LP2-A/B1/B2: the Debug-only pilot resolves 21 Settings keys, 31
+ * additional B1 keys and 36 new B2 keys on edit/music/statistics surfaces.
  * The hook returns native stringResource() outside an explicitly enabled
  * preview. Never called by alarm firing, scheduling, notifications or services.
  * LP1 experimental assets are untouched; LP2 requires the current G6 revision.
@@ -88,7 +88,45 @@ internal object Lp2PreviewText {
         "music_playlist_rename",
         "music_playlist_remove"
     )
-    val previewKeys: Set<String> = pilotKeys + crossScreenKeys
+    val extendedKeys: Set<String> = setOf(
+        "alarm_edit_add_ringtone",
+        "alarm_edit_add_ringtone_accessibility",
+        "alarm_edit_add_ringtone_title",
+        "alarm_edit_capture_photo_hint",
+        "alarm_edit_challenge_chain",
+        "alarm_edit_delivery_test_limitation",
+        "alarm_edit_heartbeat",
+        "alarm_edit_immediately_default",
+        "alarm_edit_progressive_snooze",
+        "alarm_edit_progressive_snooze_hint",
+        "alarm_edit_ringtone_duplicate",
+        "alarm_edit_ringtone_uri_hint",
+        "alarm_edit_shift_pattern",
+        "alarm_edit_snooze_limit_unlimited",
+        "alarm_edit_squats_required",
+        "b2_test_cancel",
+        "b2_test_saved_only",
+        "music_library_add_folder",
+        "music_library_close",
+        "music_library_pool_source_label",
+        "music_library_remove_source",
+        "music_library_source_unknown_origin",
+        "replay_action_stop",
+        "ringtone_folder",
+        "ringtone_preview_unavailable",
+        "settings_cover_to_snooze_description",
+        "settings_export_incident_diagnostics",
+        "settings_long_press_threshold_description",
+        "settings_on_call_mode_description",
+        "snooze_duration",
+        "stats_alarm_history_optional_health_connect",
+        "stats_compares_recent_sleep_duration_with_dismiss",
+        "stats_recent_health_connect_sessions_stay_local",
+        "stats_recent_history",
+        "stats_snoozed",
+        "stats_track_consistency_snooze_behavior_and_which"
+    )
+    val previewKeys: Set<String> = pilotKeys + crossScreenKeys + extendedKeys
 
     data class Entry(val source: String, val placeholders: List<String>)
     data class Catalog(val revision: String, val entries: Map<String, Entry>)
@@ -141,7 +179,7 @@ internal object Lp2PreviewText {
             require(placeholders(source) == expected) { "Invalid source placeholders: " + key }
             entries[key] = Entry(source, expected)
         }
-        require(pilotKeys.size == 21 && crossScreenKeys.size == 31 && previewKeys.size == 51) {
+        require(pilotKeys.size == 21 && crossScreenKeys.size == 31 && extendedKeys.size == 36 && previewKeys.size == 87) {
             "Unexpected LP2-A/B1 preview coverage"
         }
         require(entries.keys.containsAll(previewKeys)) { "Missing LP2 preview keys" }

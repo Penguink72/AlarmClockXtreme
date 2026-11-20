@@ -135,7 +135,7 @@ internal fun LazyListScope.alarmEditSoundSections(
                     // Show the active source, not the dormant ringtone
                     // value retained while a music playlist is selected.
                     label = if (state.randomMusicEnabled) {
-                        stringResource(R.string.music_library_title)
+                        com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.text(R.string.music_library_title, "music_library_title")
                     } else when (state.ringtoneUri) {
                         "" -> stringResource(R.string.alarm_edit_default)
                         "silent" -> stringResource(R.string.alarm_edit_silent)
@@ -161,7 +161,7 @@ internal fun LazyListScope.alarmEditSoundSections(
             tone = HintTone.Neutral
         )
         SettingsRow(
-            label = stringResource(R.string.music_library_title),
+            label = com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.text(R.string.music_library_title, "music_library_title"),
             trailing = {
                 SettingsValueButton(
                     label = stringResource(R.string.music_library_button),
@@ -175,7 +175,7 @@ internal fun LazyListScope.alarmEditSoundSections(
         )
         val selectedPlaylistName = musicSettings.playlists
             .firstOrNull { it.playlistId == musicSettings.draft.playlistId }?.name
-            ?: stringResource(R.string.alarm_music_settings_playlist_smart_all)
+            ?: com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.text(R.string.alarm_music_settings_playlist_smart_all, "alarm_music_settings_playlist_smart_all")
         SettingsRow(
             label = stringResource(R.string.alarm_music_settings_playlist_label),
             trailing = {
@@ -214,7 +214,7 @@ internal fun LazyListScope.alarmEditSoundSections(
                     Text(stringResource(R.string.alarm_edit_preview_current_sound))
                 }
                 OutlinedButton(onClick = onStopSoundPreview, enabled = previewActive) {
-                    Text(stringResource(R.string.replay_action_stop))
+                    Text(com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.text(R.string.replay_action_stop, "replay_action_stop"))
                 }
             }
         }
@@ -236,7 +236,7 @@ internal fun LazyListScope.alarmEditSoundSections(
             }
         }
         SettingsHint(
-            stringResource(R.string.alarm_edit_delivery_test_limitation),
+            com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.text(R.string.alarm_edit_delivery_test_limitation, "alarm_edit_delivery_test_limitation"),
             tone = HintTone.Neutral
         )
 
@@ -248,11 +248,11 @@ internal fun LazyListScope.alarmEditSoundSections(
                     Text(stringResource(R.string.b2_test_run))
                 }
                 OutlinedButton(onClick = onCancelProductionAlarmTest) {
-                    Text(stringResource(R.string.b2_test_cancel))
+                    Text(com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.text(R.string.b2_test_cancel, "b2_test_cancel"))
                 }
             }
         }
-        SettingsHint(stringResource(R.string.b2_test_saved_only), tone = HintTone.Neutral)
+        SettingsHint(com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.text(R.string.b2_test_saved_only, "b2_test_saved_only"), tone = HintTone.Neutral)
 
         SettingsRow(
             label = stringResource(R.string.alarm_edit_override_volume),
@@ -351,7 +351,7 @@ internal fun LazyListScope.alarmEditSoundSections(
             val patterns = listOf(
                 Triple("default", stringResource(R.string.alarm_edit_default), stringResource(R.string.alarm_edit_vibration_default)),
                 Triple("gentle", stringResource(R.string.alarm_edit_gentle), stringResource(R.string.alarm_edit_vibration_gentle)),
-                Triple("heartbeat", stringResource(R.string.alarm_edit_heartbeat), stringResource(R.string.alarm_edit_vibration_heartbeat)),
+                Triple("heartbeat", com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.text(R.string.alarm_edit_heartbeat, "alarm_edit_heartbeat"), stringResource(R.string.alarm_edit_vibration_heartbeat)),
                 Triple("escalating", stringResource(R.string.alarm_edit_escalating), stringResource(R.string.alarm_edit_vibration_escalating)),
                 Triple("sos", stringResource(R.string.alarm_edit_sos), stringResource(R.string.alarm_edit_vibration_sos))
             )
@@ -454,7 +454,7 @@ internal fun LazyListScope.alarmEditSoundSections(
                                 text = {
                                     Text(
                                         when (secs) {
-                                            0 -> stringResource(R.string.alarm_edit_immediately_default)
+                                            0 -> com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.text(R.string.alarm_edit_immediately_default, "alarm_edit_immediately_default")
                                             in 1..59 -> pluralStringResource(R.plurals.alarm_edit_seconds, secs, secs)
                                             else -> pluralStringResource(R.plurals.alarm_edit_minutes, secs / 60, secs / 60)
                                         },

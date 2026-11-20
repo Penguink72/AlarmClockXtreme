@@ -166,12 +166,12 @@ internal fun LazyListScope.alarmEditAdvancedSection(
         }
         var showShiftPatternMenu by remember { mutableStateOf(false) }
         val selectedShiftPattern = ShiftPattern.fromKey(state.shiftPattern)
-        SettingsRow(label = stringResource(R.string.alarm_edit_shift_pattern)) {
+        SettingsRow(label = com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.text(R.string.alarm_edit_shift_pattern, "alarm_edit_shift_pattern")) {
             Box {
                 SettingsValueButton(
                     label = selectedShiftPattern
                         ?.let { stringResource(it.titleRes) }
-                        ?: stringResource(R.string.alarm_edit_disabled),
+                        ?: com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.text(R.string.alarm_edit_disabled, "alarm_edit_disabled"),
                     onClick = { showShiftPatternMenu = true }
                 )
                 DropdownMenu(
@@ -179,7 +179,7 @@ internal fun LazyListScope.alarmEditAdvancedSection(
                     onDismissRequest = { showShiftPatternMenu = false }
                 ) {
                     DropdownMenuItem(
-                        text = { Text(stringResource(R.string.alarm_edit_disabled)) },
+                        text = { Text(com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.text(R.string.alarm_edit_disabled, "alarm_edit_disabled")) },
                         onClick = {
                             viewModel.updateShiftPattern("")
                             showShiftPatternMenu = false
@@ -228,7 +228,7 @@ internal fun LazyListScope.alarmEditAdvancedSection(
             Box {
                 SettingsValueButton(
                     label = if (state.weatherEarlyMinutes == 0) {
-                        stringResource(R.string.alarm_edit_disabled)
+                        com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.text(R.string.alarm_edit_disabled, "alarm_edit_disabled")
                     } else {
                         stringResource(R.string.alarm_edit_minutes_short, state.weatherEarlyMinutes)
                     },
@@ -240,7 +240,7 @@ internal fun LazyListScope.alarmEditAdvancedSection(
                             text = {
                                 Text(
                                     if (mins == 0) {
-                                        stringResource(R.string.alarm_edit_disabled)
+                                        com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.text(R.string.alarm_edit_disabled, "alarm_edit_disabled")
                                     } else {
                                         pluralStringResource(R.plurals.alarm_edit_minutes_earlier, mins, mins)
                                     }
@@ -262,7 +262,7 @@ internal fun LazyListScope.alarmEditAdvancedSection(
             Box {
                 SettingsValueButton(
                     label = if (state.earlyDismissMinutes == 0) {
-                        stringResource(R.string.alarm_edit_disabled)
+                        com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.text(R.string.alarm_edit_disabled, "alarm_edit_disabled")
                     } else {
                         stringResource(R.string.alarm_edit_minutes_short, state.earlyDismissMinutes)
                     },
@@ -274,7 +274,7 @@ internal fun LazyListScope.alarmEditAdvancedSection(
                             text = {
                                 Text(
                                     if (mins == 0) {
-                                        stringResource(R.string.alarm_edit_disabled)
+                                        com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.text(R.string.alarm_edit_disabled, "alarm_edit_disabled")
                                     } else {
                                         pluralStringResource(R.plurals.alarm_edit_minutes_before, mins, mins)
                                     }
@@ -401,9 +401,9 @@ internal fun LazyListScope.alarmEditAdvancedSection(
                     )
                 }
                 AppFilterChip(
-                    label = stringResource(R.string.alarm_edit_add_ringtone),
+                    label = com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.text(R.string.alarm_edit_add_ringtone, "alarm_edit_add_ringtone"),
                     selected = false,
-                    accessibilityLabel = stringResource(R.string.alarm_edit_add_ringtone_accessibility),
+                    accessibilityLabel = com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.text(R.string.alarm_edit_add_ringtone_accessibility, "alarm_edit_add_ringtone_accessibility"),
                     onClick = { showAddRingtoneDialog = true }
                 )
             }
@@ -419,11 +419,11 @@ internal fun LazyListScope.alarmEditAdvancedSection(
             val canAddRingtone = trimmedUri.isNotEmpty() && !duplicateUri
             AlertDialog(
                 onDismissRequest = { showAddRingtoneDialog = false },
-                title = { Text(stringResource(R.string.alarm_edit_add_ringtone_title)) },
+                title = { Text(com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.text(R.string.alarm_edit_add_ringtone_title, "alarm_edit_add_ringtone_title")) },
                 text = {
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         Text(
-                            stringResource(R.string.alarm_edit_ringtone_uri_hint),
+                            com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.text(R.string.alarm_edit_ringtone_uri_hint, "alarm_edit_ringtone_uri_hint"),
                             color = TextSecondary,
                             style = MaterialTheme.typography.bodySmall
                         )
@@ -439,7 +439,7 @@ internal fun LazyListScope.alarmEditAdvancedSection(
                         )
                         if (duplicateUri) {
                             Text(
-                                text = stringResource(R.string.alarm_edit_ringtone_duplicate),
+                                text = com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.text(R.string.alarm_edit_ringtone_duplicate, "alarm_edit_ringtone_duplicate"),
                                 color = AccentRed,
                                 style = MaterialTheme.typography.bodySmall
                             )
@@ -454,7 +454,7 @@ internal fun LazyListScope.alarmEditAdvancedSection(
                             viewModel.updateRingtonePool(next)
                             showAddRingtoneDialog = false
                         }
-                    ) { Text(stringResource(R.string.alarm_edit_add_ringtone)) }
+                    ) { Text(com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.text(R.string.alarm_edit_add_ringtone, "alarm_edit_add_ringtone")) }
                 },
                 dismissButton = {
                     TextButton(onClick = { showAddRingtoneDialog = false }) {

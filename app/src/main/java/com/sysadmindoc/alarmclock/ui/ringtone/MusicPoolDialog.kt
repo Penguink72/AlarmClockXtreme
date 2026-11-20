@@ -64,7 +64,7 @@ internal fun MusicPoolDialog(
                     singleLine = true
                 )
                 Text(
-                    stringResource(R.string.music_library_pool_source_label),
+                    com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.text(R.string.music_library_pool_source_label, "music_library_pool_source_label"),
                     style = MaterialTheme.typography.labelMedium
                 )
                 Row(
@@ -96,7 +96,7 @@ internal fun MusicPoolDialog(
                     horizontalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
                     PoolFilterChip(
-                        label = stringResource(R.string.music_library_pool_all_candidates),
+                        label = com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.text(R.string.music_library_pool_all_candidates, "music_library_pool_all_candidates"),
                         selected = state.poolFilter == MusicPoolFilter.ALL_CANDIDATES,
                         onClick = { viewModel.setPoolFilter(MusicPoolFilter.ALL_CANDIDATES) }
                     )
@@ -238,7 +238,7 @@ internal fun MusicPoolDialog(
         },
         confirmButton = {
             TextButton(onClick = onDismiss) {
-                Text(stringResource(R.string.music_library_close))
+                Text(com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.text(R.string.music_library_close, "music_library_close"))
             }
         }
     )

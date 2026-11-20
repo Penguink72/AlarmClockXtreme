@@ -21,7 +21,9 @@ class Lp2CrossScreenTextTest {
         assertEquals(200, catalog.entries.size)
         assertEquals(21, Lp2PreviewText.pilotKeys.size)
         assertEquals(31, Lp2PreviewText.crossScreenKeys.size)
-        assertEquals(51, Lp2PreviewText.previewKeys.size)
+        assertEquals(87, Lp2PreviewText.previewKeys.size)
+        assertEquals(36, Lp2PreviewText.extendedKeys.size)
+        assertEquals(51, (Lp2PreviewText.pilotKeys + Lp2PreviewText.crossScreenKeys).size)
         assertTrue(Lp2PreviewText.previewKeys.containsAll(Lp2PreviewText.pilotKeys))
         assertTrue(Lp2PreviewText.previewKeys.containsAll(Lp2PreviewText.crossScreenKeys))
         for(key in Lp2PreviewText.previewKeys) {

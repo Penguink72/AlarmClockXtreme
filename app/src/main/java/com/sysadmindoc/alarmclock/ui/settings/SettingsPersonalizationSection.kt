@@ -217,7 +217,7 @@ internal fun PersonalizationSection(state: SettingsUiState, viewModel: SettingsV
         SettingsToggle(
             label = stringResource(R.string.settings_cover_to_snooze),
             checked = state.settings.coverToSnoozeEnabled,
-            supportingText = stringResource(R.string.settings_cover_to_snooze_description),
+            supportingText = com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.text(R.string.settings_cover_to_snooze_description, "settings_cover_to_snooze_description"),
             onToggle = viewModel::toggleCoverToSnooze
         )
 
@@ -285,7 +285,7 @@ internal fun PersonalizationSection(state: SettingsUiState, viewModel: SettingsV
             Column(modifier = Modifier.weight(1f)) {
                 Text(stringResource(R.string.settings_long_press_threshold), color = TextPrimary, style = MaterialTheme.typography.bodyLarge)
                 Text(
-                    stringResource(R.string.settings_long_press_threshold_description),
+                    com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.text(R.string.settings_long_press_threshold_description, "settings_long_press_threshold_description"),
                     color = TextMuted,
                     style = MaterialTheme.typography.bodySmall
                 )
