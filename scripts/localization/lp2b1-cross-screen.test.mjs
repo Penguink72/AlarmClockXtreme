@@ -56,6 +56,15 @@ assert(repo.includes("BuildConfig.DEBUG"),"Release isolation missing");
 const main=file("app/src/main/java/com/sysadmindoc/alarmclock/MainActivity.kt");
 assert(main.includes("if (BuildConfig.DEBUG) Lp2PreviewText.refresh(this)"),
   "Preview must refresh on MainActivity resume, including after a cold restart");
+assert.equal([...main.matchAll(/override fun onResume\(\)/g)].length,1,
+  "MainActivity must never declare two onResume methods");
+const alarmPriority=main.indexOf("val snapshot = AlarmService.activeAlarm.get()");
+const previewLoad=main.indexOf("Lp2PreviewText.refresh(this)",alarmPriority);
+assert(alarmPriority>0 && previewLoad>alarmPriority,
+  "Debug pack IO must follow checking active alarms");
+assert(main.includes("if (snapshot == null)"),"An active alarm must skip preview IO");
+assert(main.includes("putExtra(AlarmScheduler.EXTRA_ALARM_FIRE_ID, snapshot.fireId)"),
+  "MainActivity must preserve alarm firing navigation data");
 const corrected=JSON.parse(file("localization/governance/s0/source-amendments.json")).items[0];
 const packs=["en","zh-TW","ja"].map(locale=>JSON.parse(file("app/src/debug/assets/lp2/packs/"+locale+".json")));
 for(const pack of packs)assert.equal(pack.catalogRevision,cat.revision);

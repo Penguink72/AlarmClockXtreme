@@ -23,3 +23,9 @@
 - LP2-B2：繼續擴張剩餘 Key，逐步移除畫面硬編碼與跨流程格式化落差。
 - G6-Q：獨立內容審核、術語契約及正式發布完整驗證。
 - 不改 Room、AlarmManager、Media3、AlarmService、正式通知及播放歷史紀錄。
+
+## 失敗修補與驗收紀錄
+- 首輪 P0 Android 編譯失敗：MainActivity 已有 onResume 處理 AlarmService.activeAlarm；LP2-B1 新增重複 override，Kotlin 回報 Conflicting overloads。
+- 修補後保留唯一 onResume，先取得 active alarm；若存在則維持原響鈴畫面轉導與 fireId，僅在沒有活躍鬧鐘時載入 Debug 預覽；正式 Release 不讀入預覽檔。
+- 加入 Node 反向靜態護欄：onResume 僅能宣告一次、活躍鬧鐘檢查必須先於預覽載入、響鈴必要 extra 不可消失。
+- Android T2 必須重新以修補後的最新提交驗證，不能沿用先前失敗或取消的工作流。
