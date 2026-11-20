@@ -2656,4 +2656,7 @@
     <string name="settings_lp1_lab_label">LP1 Language Pack Lab</string>
     <string name="settings_lp1_lab_open">Open offline language pack experiment</string>
     <string name="settings_lp1_lab_description">Import, preview and edit 200 sample strings; does not change the active alarm interface.</string>
+    <string name="settings_lp2a_lab_label">LP2-A live Settings text preview</string>
+    <string name="settings_lp2a_lab_open">Open live language preview</string>
+    <string name="settings_lp2a_lab_description">Import current G6 language packs and preview selected Settings labels. Debug only.</string>
 </resources>
