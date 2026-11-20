@@ -247,11 +247,14 @@ fun SettingsScreen(
     // "Battery & device care" page and granted the exemption. Without the
     // resume hook the chip / banner / row would all keep reading "Needs
     // setup" until the user manually navigated away and back.
+    val lp2Context = LocalContext.current
     val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
     androidx.compose.runtime.DisposableEffect(lifecycleOwner) {
+        if (com.sysadmindoc.alarmclock.BuildConfig.DEBUG) Lp2PreviewText.refresh(lp2Context)
         val observer = androidx.lifecycle.LifecycleEventObserver { _, event ->
             if (event == androidx.lifecycle.Lifecycle.Event.ON_RESUME) {
                 viewModel.refreshWakeReadiness()
+                if (com.sysadmindoc.alarmclock.BuildConfig.DEBUG) Lp2PreviewText.refresh(lp2Context)
             }
         }
         lifecycleOwner.lifecycle.addObserver(observer)
@@ -277,7 +280,7 @@ fun SettingsScreen(
     val languagePickerSupported = AppLanguageManager.isSupported()
     val screenScope = rememberCoroutineScope()
     val supportBundleSubject = stringResource(R.string.settings_support_bundle_subject)
-    val shareSupportBundleTitle = stringResource(R.string.settings_share_support_bundle)
+    val shareSupportBundleTitle = Lp2PreviewText.text(R.string.settings_share_support_bundle, "settings_share_support_bundle")
     val crashLogSubject = stringResource(R.string.settings_crash_log_subject)
     val shareCrashLogTitle = stringResource(R.string.settings_share_crash_log)
     val shareUnavailableMessage = stringResource(R.string.settings_share_unavailable)
@@ -369,7 +372,7 @@ fun SettingsScreen(
                 } else if (showSettingsHome) {
                     item(key = "settings-hero") {
                         AlarmClockHeroHeader(
-                            title = stringResource(R.string.settings_title),
+                            title = Lp2PreviewText.text(R.string.settings_title, "settings_title"),
                             subtitle = state.appVersion
                         )
                     }
@@ -426,7 +429,7 @@ fun SettingsScreen(
                             subtitle = "",
                             actions = {
                                 TextButton(onClick = { selectedPaneId = null }) {
-                                    Text(stringResource(R.string.settings_title))
+                                    Text(Lp2PreviewText.text(R.string.settings_title, "settings_title"))
                                 }
                             }
                         )
@@ -483,12 +486,12 @@ fun SettingsScreen(
             settingsItem("defaults-alarm") {
             SettingsGroup(
                 title = stringResource(R.string.settings_alarm_defaults),
-                description = stringResource(R.string.settings_alarm_defaults_description)
+                description = Lp2PreviewText.text(R.string.settings_alarm_defaults_description, "settings_alarm_defaults_description")
             ) {
                 SettingsToggle(
                     label = stringResource(R.string.settings_return_to_app_after_dismiss),
                     checked = state.settings.returnToAppAfterDismiss,
-                    supportingText = stringResource(R.string.settings_return_to_app_after_dismiss_description),
+                    supportingText = Lp2PreviewText.text(R.string.settings_return_to_app_after_dismiss_description, "settings_return_to_app_after_dismiss_description"),
                     onToggle = viewModel::toggleReturnToAppAfterDismiss
                 )
                 SettingsToggle(
@@ -516,7 +519,7 @@ fun SettingsScreen(
                     onToggle = viewModel::togglePhoneSpeakers
                 )
                 SettingsToggle(
-                    label = stringResource(R.string.settings_flip_snooze),
+                    label = Lp2PreviewText.text(R.string.settings_flip_snooze, "settings_flip_snooze"),
                     checked = state.settings.flipToSnoozeEnabled,
                     supportingText = stringResource(R.string.settings_flip_snooze_description),
                     onToggle = viewModel::toggleFlipToSnooze
@@ -525,7 +528,7 @@ fun SettingsScreen(
                 SettingsActionRow(
                     label = stringResource(R.string.settings_default_snooze),
                     value = stringResource(R.string.settings_minutes_short, state.settings.defaultSnoozeDuration),
-                    supportingText = stringResource(R.string.settings_default_snooze_description),
+                    supportingText = Lp2PreviewText.text(R.string.settings_default_snooze_description, "settings_default_snooze_description"),
                     onClick = { showDefaultSnoozeMenu = true }
                 )
                 DropdownMenu(
@@ -601,7 +604,7 @@ fun SettingsScreen(
             settingsItem("defaults-dashboard") {
             SettingsGroup(
                 title = stringResource(R.string.settings_dashboard),
-                description = stringResource(R.string.settings_dashboard_description)
+                description = Lp2PreviewText.text(R.string.settings_dashboard_description, "settings_dashboard_description")
             ) {
                 SettingsToggle(
                     label = stringResource(R.string.show_weather),
@@ -618,7 +621,7 @@ fun SettingsScreen(
                 SettingsToggle(
                     label = stringResource(R.string.settings_post_dismiss_summary),
                     checked = state.settings.postDismissSummaryEnabled,
-                    supportingText = stringResource(R.string.settings_post_dismiss_summary_description),
+                    supportingText = Lp2PreviewText.text(R.string.settings_post_dismiss_summary_description, "settings_post_dismiss_summary_description"),
                     onToggle = viewModel::togglePostDismissSummary
                 )
                 SettingsToggle(
@@ -745,7 +748,7 @@ fun SettingsScreen(
                 SettingsActionRow(
                     label = stringResource(R.string.settings_commute_history),
                     value = stringResource(R.string.settings_clear),
-                    supportingText = stringResource(R.string.settings_commute_history_description),
+                    supportingText = Lp2PreviewText.text(R.string.settings_commute_history_description, "settings_commute_history_description"),
                     onClick = { showClearCommuteHistoryDialog = true },
                     enabled = state.settings.calendarCommuteAwareEnabled
                 )
@@ -805,7 +808,7 @@ fun SettingsScreen(
                 description = stringResource(R.string.settings_bottom_navigation_description)
             ) {
                 SettingsToggle(
-                    label = stringResource(R.string.settings_show_today_tab),
+                    label = Lp2PreviewText.text(R.string.settings_show_today_tab, "settings_show_today_tab"),
                     checked = state.settings.showDashboardTab,
                     supportingText = stringResource(R.string.settings_show_today_description),
                     onToggle = viewModel::toggleShowDashboardTab
@@ -874,7 +877,7 @@ fun SettingsScreen(
             settingsItem("utilities-shortcuts") {
             SettingsGroup(
                 title = stringResource(R.string.settings_utilities),
-                description = stringResource(R.string.settings_utilities_description)
+                description = Lp2PreviewText.text(R.string.settings_utilities_description, "settings_utilities_description")
             ) {
                 AppLanguageSelectionRow(
                     selectedLanguageOption = selectedLanguageOption,
@@ -887,15 +890,15 @@ fun SettingsScreen(
                 HorizontalDivider(color = TextMuted.copy(alpha = 0.14f))
                 UtilityShortcutCard(
                     icon = Icons.Default.BarChart,
-                    title = stringResource(R.string.settings_alarm_statistics),
+                    title = Lp2PreviewText.text(R.string.settings_alarm_statistics, "settings_alarm_statistics"),
                     description = stringResource(R.string.settings_alarm_statistics_description),
                     onClick = onNavigateToStats
                 )
                 HorizontalDivider(color = TextMuted.copy(alpha = 0.14f))
                 UtilityShortcutCard(
                     icon = Icons.Default.Speed,
-                    title = stringResource(R.string.nav_stopwatch),
-                    description = stringResource(R.string.settings_stopwatch_description),
+                    title = Lp2PreviewText.text(R.string.nav_stopwatch, "nav_stopwatch"),
+                    description = Lp2PreviewText.text(R.string.settings_stopwatch_description, "settings_stopwatch_description"),
                     onClick = onNavigateToStopwatch
                 )
                 HorizontalDivider(color = TextMuted.copy(alpha = 0.14f))
@@ -985,7 +988,7 @@ fun SettingsScreen(
                 SettingsInfo(stringResource(R.string.settings_version), state.appVersion)
                 SettingsInfo(stringResource(R.string.settings_device), state.deviceModel)
                 SettingsInfo(stringResource(R.string.settings_android), state.androidVersion)
-                SettingsInfo(stringResource(R.string.settings_license), stringResource(R.string.settings_license_value))
+                SettingsInfo(Lp2PreviewText.text(R.string.settings_license, "settings_license"), stringResource(R.string.settings_license_value))
                 SettingsInfo(stringResource(R.string.settings_source), stringResource(R.string.settings_source_value))
                 HorizontalDivider(color = TextMuted.copy(alpha = 0.14f))
                 UtilityShortcutCard(
@@ -1054,7 +1057,7 @@ fun SettingsScreen(
     if (showLanguageDialog) {
         AlertDialog(
             onDismissRequest = { showLanguageDialog = false },
-            title = { Text(stringResource(R.string.settings_language_dialog_title)) },
+            title = { Text(Lp2PreviewText.text(R.string.settings_language_dialog_title, "settings_language_dialog_title")) },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     AppLanguageOptionRow(
@@ -1067,7 +1070,7 @@ fun SettingsScreen(
                         }
                     )
                     AppLanguageOptionRow(
-                        label = stringResource(R.string.settings_language_english),
+                        label = Lp2PreviewText.text(R.string.settings_language_english, "settings_language_english"),
                         selected = selectedLanguageOption == AppLanguageOption.ENGLISH,
                         onSelect = {
                             selectedLanguageOption = AppLanguageOption.ENGLISH
@@ -1088,7 +1091,7 @@ fun SettingsScreen(
                         }
                     )
                     AppLanguageOptionRow(
-                        label = stringResource(R.string.settings_language_japanese),
+                        label = Lp2PreviewText.text(R.string.settings_language_japanese, "settings_language_japanese"),
                         selected = selectedLanguageOption == AppLanguageOption.JAPANESE,
                         onSelect = {
                             selectedLanguageOption = AppLanguageOption.JAPANESE
@@ -1244,7 +1247,7 @@ private fun SettingsPaneRail(
 ) {
     val categoriesDescription = stringResource(R.string.settings_categories_accessibility)
     val selectedDescription = stringResource(R.string.settings_selected)
-    val notSelectedDescription = stringResource(R.string.settings_not_selected)
+    val notSelectedDescription = Lp2PreviewText.text(R.string.settings_not_selected, "settings_not_selected")
     AppSurfaceCard(
         modifier = modifier.semantics {
             contentDescription = categoriesDescription
@@ -1258,13 +1261,13 @@ private fun SettingsPaneRail(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Text(
-                text = stringResource(R.string.settings_title),
+                text = Lp2PreviewText.text(R.string.settings_title, "settings_title"),
                 color = TextPrimary,
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.SemiBold
             )
             Text(
-                text = stringResource(R.string.settings_choose_group_hint),
+                text = Lp2PreviewText.text(R.string.settings_choose_group_hint, "settings_choose_group_hint"),
                 color = TextSecondary,
                 style = MaterialTheme.typography.bodySmall
             )
@@ -1641,7 +1644,7 @@ internal fun formatIncidentElapsed(elapsedMs: Long?): String {
 @Composable
 internal fun wakeReadinessSummary(state: SettingsUiState): String {
     val locale = LocalConfiguration.current.locales[0]
-    val exactAlarms = stringResource(R.string.settings_readiness_exact_alarms)
+    val exactAlarms = Lp2PreviewText.text(R.string.settings_readiness_exact_alarms, "settings_readiness_exact_alarms")
     val notifications = stringResource(R.string.settings_readiness_notifications)
     val fullScreenAlarmAccess = stringResource(R.string.settings_readiness_fullscreen_alarm)
     val localNetworkAccess = stringResource(R.string.settings_readiness_local_network)
