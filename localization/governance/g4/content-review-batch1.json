@@ -532,7 +532,7 @@
       "decision": "RETAIN_UNREVIEWED_DRAFT",
       "sourceEvidence": {
         "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/settings/SettingsScreen.kt",
-        "line": 519,
+        "line": 522,
         "kind": "STATIC_CODE_CALLSITE_PLUS_READ_CODE_CONTEXT"
       },
       "rationale": "設定 flipToSnoozeEnabled 開關；翻轉手機啟用貪睡，不是直接解除",
@@ -559,7 +559,7 @@
       "decision": "RETAIN_UNREVIEWED_DRAFT",
       "sourceEvidence": {
         "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/settings/SettingsScreen.kt",
-        "line": 808,
+        "line": 811,
         "kind": "STATIC_CODE_CALLSITE_PLUS_READ_CODE_CONTEXT"
       },
       "rationale": "底部導覽 showDashboardTab 開關；候選譯文可保留",
@@ -586,7 +586,7 @@
       "decision": "RETAIN_UNREVIEWED_DRAFT",
       "sourceEvidence": {
         "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/settings/SettingsScreen.kt",
-        "line": 988,
+        "line": 991,
         "kind": "STATIC_CODE_CALLSITE_PLUS_READ_CODE_CONTEXT"
       },
       "rationale": "關於頁面以 License 欄位顯示 Apache License 2.0；授權條款為可理解用語",
@@ -721,7 +721,7 @@
       "decision": "REVISED_UNREVIEWED_DRAFT",
       "sourceEvidence": {
         "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/settings/SettingsScreen.kt",
-        "line": 1644,
+        "line": 1647,
         "kind": "STATIC_CODE_CALLSITE_PLUS_READ_CODE_CONTEXT"
       },
       "rationale": "當 canScheduleExactAlarms 為 false，字串被加入缺少權限摘要，單寫精確鬧鐘容易誤讀成鬧鐘模式",
