@@ -44,3 +44,10 @@
 - 兩個 Compose POM 都只有同一個 `org.jetbrains.kotlin:compose-compiler-gradle-plugin:2.1.0` 相依項。這是獨立來源與 XML 依賴宣告的核對，不聲稱 XML 位元完全相等或有發布者 PGP 簽章。
 - 對 Compose 此一精確 POM 另外加入 `also-trust`；同時更新唯讀 Node 護欄，現在限定 **只有 Android Kotlin + Compose 這兩個 marker POM** 可各有一個額外的已核查雜湊。
 - 兩份主原始 SHA-256 不變，所有其他套件仍保持嚴格驗證。若新版 Build Runner 有其他 POM 不一致，必須再逐一獨立確認；不可全域停用依賴驗證。
+
+## 2026-11-20 最終 T2 驗收結論（附錄；不覆寫原始施工／失敗記錄）
+
+- [P0 Android Run 44761537401](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/44761537401) 針對本片最終提交 `b2c03972a5aba58804796244d3634bbb253909b9` **SUCCESS**。
+- 嚴格依賴驗證下的 F-Droid Debug APK 建置 PASS；`856/856` 單元測試，`0` 失敗、錯誤、略過；第二 Runner 升級簽章 PASS。
+- 此處的 T2 完成**不包含 T3 實機**，也不構成 G6 候選翻譯獨立核准；仍維持 Draft PR、不合併 main。
+- Gradle 兩個 Kotlin marker POM 的原始來源、SHA 和修補證據請見 [CI 來源鑑別紀錄](../ci/P31-KOTLIN-COMPOSE-POM-PROVENANCE-20261120.md)。
