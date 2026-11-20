@@ -37,3 +37,10 @@
 - 依 Gradle 官方 `Trusting Multiple Checksums` 規則，只在 `gradle/verification-metadata.xml` 這一個 2.1.0 POM 的 sha256 項下加入 `also-trust` 值 `96e007b3ecb22cc6d9617e414484539fe5b77b28e6659c8c916b4fddf8961ced`；原主 checksum 原封不動，其他依賴與版本不受影響。
 - 新增 `scripts/ci/guard-kotlin-plugin-pom-verification.mjs`，在 APK 和單元測試兩個獨立 Runner 上都檢查只容許這兩個精確雜湊、沒有額外批准、不得關閉 Gradle 相依套件驗證。
 - 修補後仍必須等待完整精確 SHA 的 Android CI 通過後才能將 LP2-B1 標為 T2 完成。
+
+## Compose 2.1.0 marker POM 附加來源證據
+- [診斷 Run 44761041843](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/44761041843) 同時獨立下載兩個 Kotlin 2.1.0 插件的 Maven Central 及 Gradle Plugin Portal POM。
+- Compose marker 在 Maven Central 的原鎖定 SHA-256 為 `db3bde26de3ea7433086163644a5750e280a1540990e30f1ae99fe80f2d5f160`；Gradle Plugin Portal 另發布 `fe78fa62efbf0c89ebef4bb0695ab219f41d802e854aafe0fedc561b1bc4a0d7`，與第二次失敗的 Build Runner 摘要相同。
+- 兩個 Compose POM 都只有同一個 `org.jetbrains.kotlin:compose-compiler-gradle-plugin:2.1.0` 相依項。這是獨立來源與 XML 依賴宣告的核對，不聲稱 XML 位元完全相等或有發布者 PGP 簽章。
+- 對 Compose 此一精確 POM 另外加入 `also-trust`；同時更新唯讀 Node 護欄，現在限定 **只有 Android Kotlin + Compose 這兩個 marker POM** 可各有一個額外的已核查雜湊。
+- 兩份主原始 SHA-256 不變，所有其他套件仍保持嚴格驗證。若新版 Build Runner 有其他 POM 不一致，必須再逐一獨立確認；不可全域停用依賴驗證。
