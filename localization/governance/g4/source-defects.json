@@ -1,0 +1,39 @@
+{
+  "schema": "acx-g4-source-defects/1",
+  "catalogRevision": "lp0-200-20261118",
+  "policy": "Any unresolved releaseBlocking source defect prevents official full-coverage language pack publication.",
+  "items": [
+    {
+      "key": "music_playlist_integration_pending",
+      "sourceHash": "sha256:93808f158152ec3e5592054d367e4c93ff848ad3ede93c9c79efd5f51330575d",
+      "source": "Playlist storage is waiting for the Room v28 integration. Existing Room v27 search and music-pool actions remain available; playlist changes are not saved yet.",
+      "status": "OPEN",
+      "releaseBlocking": true,
+      "severity": "HIGH",
+      "category": "STALE_ENGLISH_SOURCE",
+      "evidence": [
+        {
+          "path": "app/src/main/java/com/sysadmindoc/alarmclock/data/local/AlarmDatabase.kt",
+          "line": 40,
+          "expected": "version = 28,"
+        },
+        {
+          "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/ringtone/MusicPlaylistsWorkspace.kt",
+          "line": 178,
+          "expected": "if (repository == null)"
+        },
+        {
+          "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/ringtone/MusicPlaylistsWorkspace.kt",
+          "line": 180,
+          "expected": "R.string.music_playlist_integration_pending"
+        }
+      ],
+      "finding": "Old English says Room v28 integration is still pending but Room v28 is already configured; UI displays this when repository is null.",
+      "proposedSource": "Playlist storage is unavailable right now. You can still browse your music library, but playlist changes cannot be saved until storage becomes available.",
+      "suggestedZhTW": "目前無法使用播放清單儲存功能。仍可瀏覽音樂庫，但在儲存功能恢復前無法保存播放清單變更。",
+      "suggestedJa": "現在、プレイリストを保存できません。音楽ライブラリは引き続き閲覧できますが、保存機能が利用可能になるまで変更内容は保存されません。",
+      "disposition": "DO_NOT_TRANSLATE_OUTDATED_SOURCE_FOR_RELEASE; fix canonical English and re-review each locale",
+      "humanApproved": false
+    }
+  ]
+}

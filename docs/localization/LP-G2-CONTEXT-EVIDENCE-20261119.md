@@ -24,3 +24,7 @@ node scripts/localization/g2-index-context.test.mjs
 新增 `localization/governance/g2/concept-exclusions.json`，保留原始 LP0 字根推測作為歷史證據，並對已確認不適用的 **10 條 Key／術語連結**建立可追溯的排除規則。前九條來自 G4 第一批，另新增 `stats_track_consistency_snooze_behavior_and_which` 的 Track 是動詞（追蹤規律），不是歌曲 Track。
 
 G2 輸出分別保留 `rawHeuristicConceptIds`、`conceptIds`（有效映射）和 `excludedConceptIds`。G3 後續只從 G2 有效映射取得概念。G4 情境證據雜湊納入概念版本與排除關係，防止改了術語分類卻沿用舊審核。這是模型檢查的概念排除，不是人類翻譯核准。
+
+## 第二批再排除兩條誤連結（2026-11-20）
+
+`settings_stopwatch_description` 的 Track laps 是記錄碼錶圈數而非音樂 Track；`music_playlist_integration_pending` 的 not saved 是儲存狀態而非 Save 操作。有效概念排除數提升至 12，原始 LP0 啟發式推測完整保留。五個無靜態參照 Key 的近鄰 UI 線索另記於 `localization/governance/g2/unresolved-static-refs.json`。

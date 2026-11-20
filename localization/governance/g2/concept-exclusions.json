@@ -1,7 +1,7 @@
 {
   "schema": "acx-g2-concept-exclusions/1",
   "catalogRevision": "lp0-200-20261118",
-  "revision": "lpg2-concept-exclusions-20261120-r1",
+  "revision": "lpg2-concept-exclusions-20261120-r2",
   "basis": "Model-checked source/context mismatch; preserves LP0 heuristic evidence",
   "approval": "NOT_A_TRANSLATION_APPROVAL",
   "exclusions": [
@@ -84,6 +84,22 @@
       "source": "G4_CONTENT_REVIEW_BATCH2",
       "humanApproval": false,
       "action": "EXCLUDE_FROM_EFFECTIVE_CONCEPT_IDS"
+    },
+    {
+      "key": "settings_stopwatch_description",
+      "conceptId": "music.track",
+      "reason": "Track laps 是記錄碼錶圈數的動詞，並非音樂曲目 Track；此處不應套用音樂曲目術語。",
+      "source": "G4_REMAINING_LEGACY_TRIAGE",
+      "action": "EXCLUDE_FROM_EFFECTIVE_CONCEPT_IDS",
+      "humanApproval": false
+    },
+    {
+      "key": "music_playlist_integration_pending",
+      "conceptId": "ui.action.save",
+      "reason": "Playlist changes not saved 是儲存狀態描述，並非 Save 按鈕或動作提示。",
+      "source": "G4_REMAINING_LEGACY_TRIAGE",
+      "action": "EXCLUDE_FROM_EFFECTIVE_CONCEPT_IDS",
+      "humanApproval": false
     }
   ]
 }

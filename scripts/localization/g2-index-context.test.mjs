@@ -22,14 +22,14 @@ const contract=loadJson("localization/governance/g2/concept-exclusions.json");
 const matrix=loadJson("localization/governance/lp0/source-matrix.json");
 const terms=loadJson("localization/governance/g1/glossary-contract.json");
 assert.equal(out.conceptBindingRevision,contract.revision);
-assert.equal(out.stats.modelRefutedConceptLinks,10);
+assert.equal(out.stats.modelRefutedConceptLinks,12);
 for(const rule of contract.exclusions){
  const row=out.records.find(x=>x.key===rule.key);
  assert(row.rawHeuristicConceptIds.includes(rule.conceptId));
  assert(!row.conceptIds.includes(rule.conceptId));
  assert(row.excludedConceptIds.includes(rule.conceptId));
 }
-assert.equal(compileConceptExclusions(matrix,terms,contract).size,10);
+assert.equal(compileConceptExclusions(matrix,terms,contract).size,12);
 {
  const bad=structuredClone(contract);
  bad.exclusions.push({...bad.exclusions[0]});
@@ -40,4 +40,4 @@ assert.equal(compileConceptExclusions(matrix,terms,contract).size,10);
  bad.exclusions[0].key="unknown-key";
  assert.throws(()=>compileConceptExclusions(matrix,terms,bad),/missing key/);
 }
-console.log("G2_CONCEPT_BINDING_TESTS PASS: historical heuristic links preserved, 10 false links excluded");
+console.log("G2_CONCEPT_BINDING_TESTS PASS: historical heuristic links preserved, 12 false links excluded");

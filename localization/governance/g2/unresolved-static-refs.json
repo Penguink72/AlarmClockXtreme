@@ -1,0 +1,57 @@
+{
+  "schema": "acx-g2-unresolved-static-references/1",
+  "catalogRevision": "lp0-200-20261118",
+  "certainty": "No direct static callsite found; alternatives are context clues only, not proof old key is unused.",
+  "items": [
+    {
+      "key": "music_library_tab_videos",
+      "status": "NO_DIRECT_STATIC_REFERENCE",
+      "nearby": {
+        "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/ringtone/MusicLibraryDialog.kt",
+        "line": 500,
+        "expectedSnippet": "R.string.music_library_category_videos"
+      },
+      "note": "Current video-category chip uses a different resource name."
+    },
+    {
+      "key": "alarm_music_settings_mode_shared",
+      "status": "NO_DIRECT_STATIC_REFERENCE",
+      "nearby": {
+        "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/alarmedit/AlarmMusicSettingsScreen.kt",
+        "line": 45,
+        "expectedSnippet": "fun AlarmMusicSettingsScreen("
+      },
+      "note": "No direct use of old shared-mode label; investigate dynamic menu bindings."
+    },
+    {
+      "key": "alarm_music_settings_save",
+      "status": "NO_DIRECT_STATIC_REFERENCE",
+      "nearby": {
+        "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/alarmedit/AlarmMusicSettingsScreen.kt",
+        "line": 81,
+        "expectedSnippet": "R.string.alarm_music_settings_apply_draft"
+      },
+      "note": "Current action says Apply draft; old Save key still requires migration audit."
+    },
+    {
+      "key": "alarm_music_settings_remove_track",
+      "status": "NO_DIRECT_STATIC_REFERENCE",
+      "nearby": {
+        "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/ringtone/MusicPlaylistsWorkspace.kt",
+        "line": 839,
+        "expectedSnippet": "onClick = onRemove"
+      },
+      "note": "Removal exists but not with the exact old resource key."
+    },
+    {
+      "key": "music_library_history_row",
+      "status": "NO_DIRECT_STATIC_REFERENCE",
+      "nearby": {
+        "path": "app/src/main/java/com/sysadmindoc/alarmclock/ui/ringtone/MusicLibraryDialog.kt",
+        "line": 1147,
+        "expectedSnippet": "HistoryTrackRow("
+      },
+      "note": "History UI uses a dedicated composable rather than the old format key."
+    }
+  ]
+}
