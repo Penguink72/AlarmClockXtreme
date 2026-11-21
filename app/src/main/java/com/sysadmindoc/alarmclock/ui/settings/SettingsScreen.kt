@@ -162,6 +162,8 @@ import com.sysadmindoc.alarmclock.worker.GuardianReadiness
 import com.sysadmindoc.alarmclock.worker.GuardianSmsPath
 import com.sysadmindoc.alarmclock.util.AppLanguageManager
 import com.sysadmindoc.alarmclock.util.AppLanguageOption
+import com.sysadmindoc.alarmclock.util.LocaleCoordinator
+import com.sysadmindoc.alarmclock.util.LocaleSelectionAction
 import com.sysadmindoc.alarmclock.localization.LanguageCenterActivity
 import com.sysadmindoc.alarmclock.util.LocalNetworkPermission
 import java.time.DayOfWeek
@@ -279,6 +281,20 @@ fun SettingsScreen(
         mutableStateOf(AppLanguageManager.currentOption(context))
     }
     val languagePickerSupported = AppLanguageManager.isSupported()
+    fun chooseLanguage(option: AppLanguageOption) {
+        val action = if (option == AppLanguageOption.SYSTEM_DEFAULT) {
+            LocaleSelectionAction.FollowSystem
+        } else {
+            LocaleSelectionAction.SelectBuiltin(requireNotNull(option.languageTag))
+        }
+        val applied = LocaleCoordinator.forApp(context).dispatch(action)
+        if (applied.accepted) {
+            selectedLanguageOption = AppLanguageManager.currentOption(context)
+            showLanguageDialog = false
+        } else {
+            Toast.makeText(context, applied.reason, Toast.LENGTH_SHORT).show()
+        }
+    }
     val screenScope = rememberCoroutineScope()
     val supportBundleSubject = stringResource(R.string.settings_support_bundle_subject)
     val shareSupportBundleTitle = Lp2PreviewText.text(R.string.settings_share_support_bundle, "settings_share_support_bundle")
@@ -1076,41 +1092,22 @@ fun SettingsScreen(
                     AppLanguageOptionRow(
                         label = stringResource(R.string.settings_language_system_default),
                         selected = selectedLanguageOption == AppLanguageOption.SYSTEM_DEFAULT,
-                        onSelect = {
-                            selectedLanguageOption = AppLanguageOption.SYSTEM_DEFAULT
-                            AppLanguageManager.setOption(context, AppLanguageOption.SYSTEM_DEFAULT)
-                            showLanguageDialog = false
-                        }
+                        onSelect = { chooseLanguage(AppLanguageOption.SYSTEM_DEFAULT) }
                     )
                     AppLanguageOptionRow(
                         label = Lp2PreviewText.text(R.string.settings_language_english, "settings_language_english"),
                         selected = selectedLanguageOption == AppLanguageOption.ENGLISH,
-                        onSelect = {
-                            selectedLanguageOption = AppLanguageOption.ENGLISH
-                            AppLanguageManager.setOption(context, AppLanguageOption.ENGLISH)
-                            showLanguageDialog = false
-                        }
+                        onSelect = { chooseLanguage(AppLanguageOption.ENGLISH) }
                     )
                     AppLanguageOptionRow(
                         label = stringResource(R.string.settings_language_traditional_chinese),
                         selected = selectedLanguageOption == AppLanguageOption.TRADITIONAL_CHINESE,
-                        onSelect = {
-                            selectedLanguageOption = AppLanguageOption.TRADITIONAL_CHINESE
-                            AppLanguageManager.setOption(
-                                context,
-                                AppLanguageOption.TRADITIONAL_CHINESE
-                            )
-                            showLanguageDialog = false
-                        }
+                        onSelect = { chooseLanguage(AppLanguageOption.TRADITIONAL_CHINESE) }
                     )
                     AppLanguageOptionRow(
                         label = Lp2PreviewText.text(R.string.settings_language_japanese, "settings_language_japanese"),
                         selected = selectedLanguageOption == AppLanguageOption.JAPANESE,
-                        onSelect = {
-                            selectedLanguageOption = AppLanguageOption.JAPANESE
-                            AppLanguageManager.setOption(context, AppLanguageOption.JAPANESE)
-                            showLanguageDialog = false
-                        }
+                        onSelect = { chooseLanguage(AppLanguageOption.JAPANESE) }
                     )
                 }
             },
