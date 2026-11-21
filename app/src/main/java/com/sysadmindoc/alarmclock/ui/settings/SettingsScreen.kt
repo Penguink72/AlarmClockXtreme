@@ -425,7 +425,7 @@ fun SettingsScreen(
                 } else {
                     item(key = "settings-pane-header-${selectedPane.id}") {
                         AlarmClockHeroHeader(
-                            title = stringResource(selectedPane.titleRes),
+                            title = com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.textForResource(selectedPane.titleRes),
                             subtitle = "",
                             actions = {
                                 TextButton(onClick = { selectedPaneId = null }) {
@@ -1126,7 +1126,7 @@ private fun AppLanguageSelectionRow(
                 AppLanguageOption.JAPANESE -> R.string.settings_language_japanese
             }
         ),
-        supportingText = stringResource(
+        supportingText = com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.textForResource(
             if (languagePickerSupported) {
                 R.string.settings_language_description
             } else {
@@ -1172,7 +1172,7 @@ private fun SettingsCategoryHome(
                         modifier = Modifier.size(22.dp)
                     )
                     Text(
-                        text = stringResource(category.titleRes),
+                        text = com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.textForResource(category.titleRes),
                         color = TextPrimary,
                         style = MaterialTheme.typography.titleMedium,
                         modifier = Modifier.weight(1f)
@@ -1202,8 +1202,8 @@ private fun SettingsPaneHeader(
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         AppSectionTitle(
-            title = stringResource(category.titleRes),
-            description = stringResource(category.descriptionRes),
+            title = com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.textForResource(category.titleRes),
+            description = com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.textForResource(category.descriptionRes),
             action = {
                 AppStatusChip(
                     label = state.appVersion,
@@ -1218,7 +1218,7 @@ private fun SettingsPaneHeader(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             AppStatusChip(
-                label = stringResource(
+                label = com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.textForResource(
                     if (state.isIgnoringBatteryOptimizations) {
                         R.string.settings_battery_protected
                     } else {
@@ -1229,7 +1229,7 @@ private fun SettingsPaneHeader(
                 color = if (state.isIgnoringBatteryOptimizations) DismissGreen else SnoozeYellow
             )
             AppStatusChip(
-                label = stringResource(category.titleRes),
+                label = com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.textForResource(category.titleRes),
                 icon = category.icon,
                 color = MaterialTheme.colorScheme.primary
             )
@@ -1278,7 +1278,7 @@ private fun SettingsPaneRail(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 AppStatusChip(
-                    label = stringResource(
+                    label = com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.textForResource(
                         if (state.isIgnoringBatteryOptimizations) {
                             R.string.settings_protected
                         } else {
@@ -1334,13 +1334,13 @@ private fun SettingsPaneRail(
                         )
                         Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
                             Text(
-                                text = stringResource(category.titleRes),
+                                text = com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.textForResource(category.titleRes),
                                 color = TextPrimary,
                                 style = MaterialTheme.typography.titleSmall,
                                 fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Medium
                             )
                             Text(
-                                text = stringResource(category.descriptionRes),
+                                text = com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.textForResource(category.descriptionRes),
                                 color = TextSecondary,
                                 style = MaterialTheme.typography.bodySmall,
                                 maxLines = 2,

@@ -222,7 +222,7 @@ internal fun IncidentTimelineSection(
             )
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 TextButton(onClick = { showEventTimeline = !showEventTimeline }) {
-                    Text(stringResource(
+                    Text(com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.textForResource(
                         if (showEventTimeline) R.string.settings_hide_incident_events
                         else R.string.settings_show_incident_events
                     ))

@@ -9,6 +9,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
 import com.sysadmindoc.alarmclock.BuildConfig
+import com.sysadmindoc.alarmclock.R
 import org.json.JSONObject
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -16,10 +17,10 @@ import java.io.InputStream
 import java.util.Locale
 
 /**
- * LP2-A/B1/B2: the Debug-only pilot resolves 21 Settings keys, 31
- * additional B1 keys and 36 new B2 keys on edit/music/statistics surfaces.
- * The hook returns native stringResource() outside an explicitly enabled
- * preview. Never called by alarm firing, scheduling, notifications or services.
+ * LP2-A/B1/B2/B3: an opt-in Debug-only preview for a governed G6 catalog.
+ * B3 adds 13 direct and 22 resource-ID-indirected UI keys (122 total).
+ * Non-allowlisted UI and every release build use Android stringResource().
+ * Alarm-firing screens, notifications, scheduling and services are excluded.
  * LP1 experimental assets are untouched; LP2 requires the current G6 revision.
  */
 internal object Lp2PreviewText {
@@ -126,7 +127,46 @@ internal object Lp2PreviewText {
         "stats_snoozed",
         "stats_track_consistency_snooze_behavior_and_which"
     )
-    val previewKeys: Set<String> = pilotKeys + crossScreenKeys + extendedKeys
+    val b3DirectKeys: Set<String> = setOf(
+        "alarm_edit_default_ringtone_placeholder",
+        "alarm_edit_emergency_phone",
+        "alarm_edit_group_custom_name",
+        "alarm_edit_holidays_hint",
+        "settings_backup_locked_description",
+        "settings_webhook_description",
+        "settings_recent_deliveries",
+        "settings_hue_api_placeholder",
+        "settings_health_no_session",
+        "settings_connection_sunrise_skipped",
+        "bedtime_update_health_connect_before_recent_sleep",
+        "alarm_edit_delete_digit",
+        "permissions_context_permissions"
+    )
+    val b3IndirectKeys: Set<String> = setOf(
+        "settings_pane_readiness",
+        "settings_pane_defaults_description",
+        "settings_pane_integrations_description",
+        "settings_pane_personalization_description",
+        "settings_pane_backup_description",
+        "settings_pane_utilities_description",
+        "settings_language_description",
+        "settings_battery_protected",
+        "settings_battery_setup_needed",
+        "settings_setup_needed",
+        "alarm_edit_page_integrations",
+        "alarm_edit_section_group_description",
+        "alarm_edit_anti_snooze",
+        "alarm_edit_section_anti_snooze_description",
+        "alarm_edit_smart_alarm",
+        "alarm_edit_section_hue_description",
+        "alarm_edit_24_hour",
+        "onboarding_see_weather_calendar_next_alarm",
+        "music_library_pool_clear_selection",
+        "music_library_catalog_empty",
+        "music_library_preview",
+        "settings_show_incident_events"
+    )
+    val previewKeys: Set<String> = pilotKeys + crossScreenKeys + extendedKeys + b3DirectKeys + b3IndirectKeys
 
     data class Entry(val source: String, val placeholders: List<String>)
     data class Catalog(val revision: String, val entries: Map<String, Entry>)
@@ -179,7 +219,7 @@ internal object Lp2PreviewText {
             require(placeholders(source) == expected) { "Invalid source placeholders: " + key }
             entries[key] = Entry(source, expected)
         }
-        require(pilotKeys.size == 21 && crossScreenKeys.size == 31 && extendedKeys.size == 36 && previewKeys.size == 87) {
+        require(pilotKeys.size == 21 && crossScreenKeys.size == 31 && extendedKeys.size == 36 && b3DirectKeys.size == 13 && b3IndirectKeys.size == 22 && previewKeys.size == 122) {
             "Unexpected LP2-A/B1 preview coverage"
         }
         require(entries.keys.containsAll(previewKeys)) { "Missing LP2 preview keys" }
@@ -314,6 +354,39 @@ internal object Lp2PreviewText {
         val value = pack(context, catalog, locale).values[key]
         return if (value.isNullOrBlank()) Resolved(entry.source, fallback = locale != "en")
         else Resolved(value, fallback = false)
+    }
+
+    /** The sole audited resource-ID mapping for B3; non-matches are Android-native. */
+    fun b3KeyForResource(@StringRes resId: Int): String? = when (resId) {
+            R.string.settings_pane_readiness -> "settings_pane_readiness"
+            R.string.settings_pane_defaults_description -> "settings_pane_defaults_description"
+            R.string.settings_pane_integrations_description -> "settings_pane_integrations_description"
+            R.string.settings_pane_personalization_description -> "settings_pane_personalization_description"
+            R.string.settings_pane_backup_description -> "settings_pane_backup_description"
+            R.string.settings_pane_utilities_description -> "settings_pane_utilities_description"
+            R.string.settings_language_description -> "settings_language_description"
+            R.string.settings_battery_protected -> "settings_battery_protected"
+            R.string.settings_battery_setup_needed -> "settings_battery_setup_needed"
+            R.string.settings_setup_needed -> "settings_setup_needed"
+            R.string.alarm_edit_page_integrations -> "alarm_edit_page_integrations"
+            R.string.alarm_edit_section_group_description -> "alarm_edit_section_group_description"
+            R.string.alarm_edit_anti_snooze -> "alarm_edit_anti_snooze"
+            R.string.alarm_edit_section_anti_snooze_description -> "alarm_edit_section_anti_snooze_description"
+            R.string.alarm_edit_smart_alarm -> "alarm_edit_smart_alarm"
+            R.string.alarm_edit_section_hue_description -> "alarm_edit_section_hue_description"
+            R.string.alarm_edit_24_hour -> "alarm_edit_24_hour"
+            R.string.onboarding_see_weather_calendar_next_alarm -> "onboarding_see_weather_calendar_next_alarm"
+            R.string.music_library_pool_clear_selection -> "music_library_pool_clear_selection"
+            R.string.music_library_catalog_empty -> "music_library_catalog_empty"
+            R.string.music_library_preview -> "music_library_preview"
+            R.string.settings_show_incident_events -> "settings_show_incident_events"
+        else -> null
+    }
+
+    @Composable
+    fun textForResource(@StringRes resId: Int): String {
+        val key = b3KeyForResource(resId)
+        return if (key == null) stringResource(resId) else text(resId, key)
     }
 
     @Composable

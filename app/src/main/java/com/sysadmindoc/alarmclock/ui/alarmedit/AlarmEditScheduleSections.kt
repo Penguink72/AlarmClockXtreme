@@ -164,7 +164,7 @@ internal fun LazyListScope.alarmEditScheduleSections(
             }
         )
         SettingsHint(
-            stringResource(R.string.alarm_edit_holidays_hint),
+            com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.text(R.string.alarm_edit_holidays_hint, "alarm_edit_holidays_hint"),
             tone = HintTone.Warning
         )
     }

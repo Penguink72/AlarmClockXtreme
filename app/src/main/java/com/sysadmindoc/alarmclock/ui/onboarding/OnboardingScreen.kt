@@ -513,7 +513,7 @@ private fun OnboardingPageContent(
                     textAlign = TextAlign.Center
                 )
                 Text(
-                    text = stringResource(page.descriptionRes),
+                    text = com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.textForResource(page.descriptionRes),
                     style = MaterialTheme.typography.bodyLarge,
                     color = TextSecondary,
                     textAlign = TextAlign.Center

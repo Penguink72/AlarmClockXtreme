@@ -171,7 +171,7 @@ import kotlinx.coroutines.launch
 internal fun IntegrationsSection(state: SettingsUiState, viewModel: SettingsViewModel) {
     SettingsGroup(
         title = stringResource(R.string.settings_webhook_integrations),
-        description = stringResource(R.string.settings_webhook_description)
+        description = com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.text(R.string.settings_webhook_description, "settings_webhook_description")
     ) {
         SettingsToggle(
             label = stringResource(R.string.settings_enable_webhook),
@@ -291,7 +291,7 @@ internal fun IntegrationsSection(state: SettingsUiState, viewModel: SettingsView
         if (deliveryLog.isNotBlank()) {
             Spacer(modifier = Modifier.size(10.dp))
             Text(
-                text = stringResource(R.string.settings_recent_deliveries),
+                text = com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.text(R.string.settings_recent_deliveries, "settings_recent_deliveries"),
                 style = MaterialTheme.typography.labelMedium,
                 color = TextMuted
             )
@@ -307,7 +307,7 @@ internal fun IntegrationsSection(state: SettingsUiState, viewModel: SettingsView
         } else if (state.settings.webhookEnabled) {
             Spacer(modifier = Modifier.size(10.dp))
             Text(
-                text = stringResource(R.string.settings_recent_deliveries),
+                text = com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.text(R.string.settings_recent_deliveries, "settings_recent_deliveries"),
                 style = MaterialTheme.typography.labelMedium,
                 color = TextMuted
             )
@@ -429,7 +429,7 @@ internal fun PhilipsHueSection(state: SettingsUiState, viewModel: SettingsViewMo
             value = state.settings.hueApiKey,
             onCommit = viewModel::updateHueApiKey,
             label = { Text(stringResource(R.string.settings_hue_api_key)) },
-            placeholder = { Text(stringResource(R.string.settings_hue_api_placeholder)) },
+            placeholder = { Text(com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.text(R.string.settings_hue_api_placeholder, "settings_hue_api_placeholder")) },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
             visualTransformation = PasswordVisualTransformation(),
@@ -681,7 +681,7 @@ private fun healthConnectDescription(
 
 @Composable
 private fun formatSleepMinutes(minutes: Long?): String {
-    val value = minutes ?: return stringResource(R.string.settings_health_no_session)
+    val value = minutes ?: return com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.text(R.string.settings_health_no_session, "settings_health_no_session")
     val hours = value / 60
     val mins = value % 60
     return when {
@@ -769,7 +769,7 @@ internal fun ConnectionsSection(state: SettingsUiState) {
                 enabled = true,
                 domain = stringResource(R.string.settings_connection_lan_domain, state.settings.hueBridgeIp),
                 dataSent = stringResource(R.string.settings_connection_hue_data),
-                offlineFallback = stringResource(R.string.settings_connection_sunrise_skipped)
+                offlineFallback = com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.text(R.string.settings_connection_sunrise_skipped, "settings_connection_sunrise_skipped")
             ))
         }
         add(ConnectionInfo(
