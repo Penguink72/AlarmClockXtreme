@@ -139,7 +139,7 @@ fun PermissionRequestCard(
         highlighted = true
     ) {
         AppSectionTitle(
-            title = if (includeNotifications) stringResource(R.string.permissions_recommended_permissions) else stringResource(R.string.permissions_context_permissions),
+            title = if (includeNotifications) stringResource(R.string.permissions_recommended_permissions) else com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.text(R.string.permissions_context_permissions, "permissions_context_permissions"),
             description = if (includeNotifications) {
                 "A few optional permissions unlock weather, calendar, and clearer alarm alerts."
             } else {

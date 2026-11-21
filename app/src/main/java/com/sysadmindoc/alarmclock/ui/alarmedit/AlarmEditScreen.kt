@@ -474,7 +474,7 @@ fun AlarmEditScreen(
         topBar = {
             val editorTitle = if (editorPage == AlarmEditorPage.OVERVIEW) {
                 stringResource(if (state.isEditing) R.string.edit_alarm else R.string.new_alarm)
-            } else stringResource(editorPage.titleRes)
+            } else com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.textForResource(editorPage.titleRes)
             val editorSubtitle = if (editorPage == AlarmEditorPage.OVERVIEW) {
                 if (state.isEditing) {
                     stringResource(R.string.alarm_edit_existing_subtitle)
@@ -818,7 +818,7 @@ fun AlarmEditScreen(
             title = {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     AppStatusChip(
-                        label = stringResource(
+                        label = com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.textForResource(
                             if (state.is24HourFormat) R.string.alarm_edit_24_hour else R.string.alarm_edit_12_hour
                         ),
                         icon = Icons.Default.Schedule,

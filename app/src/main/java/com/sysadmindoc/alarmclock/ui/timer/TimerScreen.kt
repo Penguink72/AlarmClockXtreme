@@ -446,7 +446,7 @@ private fun NumPad(
                     val interactionSource = remember { MutableInteractionSource() }
                     val pressed by interactionSource.collectIsPressedAsState()
                     val keyLabel = when (key) {
-                        -1 -> stringResource(R.string.alarm_edit_delete_digit)
+                        -1 -> com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.text(R.string.alarm_edit_delete_digit, "alarm_edit_delete_digit")
                         -2 -> stringResource(R.string.timer_add_double_zero)
                         else -> stringResource(R.string.timer_enter, key)
                     }

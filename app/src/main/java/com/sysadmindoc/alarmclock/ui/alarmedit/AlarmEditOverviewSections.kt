@@ -306,7 +306,7 @@ internal fun LazyListScope.alarmEditOverviewSections(
             OutlinedTextField(
                 value = state.group.trim(),
                 onValueChange = viewModel::updateGroup,
-                label = { Text(stringResource(R.string.alarm_edit_group_custom_name), color = TextMuted) },
+                label = { Text(com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.text(R.string.alarm_edit_group_custom_name, "alarm_edit_group_custom_name"), color = TextMuted) },
                 colors = appOutlinedTextFieldColors(),
                 shape = AppInputShape,
                 modifier = Modifier

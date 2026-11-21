@@ -19,7 +19,8 @@ class Lp2ExpandedPreviewTextTest {
         val catalog = Lp2PreviewText.catalog(context)
         assertEquals("g6-200-current-20261120",catalog.revision)
         assertEquals(36,Lp2PreviewText.extendedKeys.size)
-        assertEquals(87,Lp2PreviewText.previewKeys.size)
+        assertEquals(122,Lp2PreviewText.previewKeys.size)
+        assertEquals(87,(Lp2PreviewText.pilotKeys + Lp2PreviewText.crossScreenKeys + Lp2PreviewText.extendedKeys).size)
         for(key in Lp2PreviewText.extendedKeys) {
             assertTrue("Missing current source: "+key,catalog.entries.containsKey(key))
             assertTrue("Formatted B2 key requires separate resolver: "+key,

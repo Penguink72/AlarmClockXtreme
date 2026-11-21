@@ -307,7 +307,7 @@ internal fun HealthConnectSleepSection(
             title = stringResource(R.string.bedtime_tracking_health_connect_sleep),
             description = when {
                 summary.availability == HealthConnectAvailability.PROVIDER_UPDATE_REQUIRED ->
-                    stringResource(R.string.bedtime_update_health_connect_before_recent_sleep)
+                    com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.text(R.string.bedtime_update_health_connect_before_recent_sleep, "bedtime_update_health_connect_before_recent_sleep")
                 summary.availability == HealthConnectAvailability.UNAVAILABLE ->
                     stringResource(R.string.settings_health_unavailable_description)
                 !summary.permissionGranted ->

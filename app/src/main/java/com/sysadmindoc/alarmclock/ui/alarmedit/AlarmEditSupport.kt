@@ -454,8 +454,8 @@ internal fun SettingsSectionContent(
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         AppSectionTitle(
-            title = stringResource(section.titleRes),
-            description = stringResource(section.descriptionRes)
+            title = com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.textForResource(section.titleRes),
+            description = com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.textForResource(section.descriptionRes)
         )
         AppSurfaceCard(contentPadding = PaddingValues(horizontal = 18.dp, vertical = 18.dp)) {
             content()

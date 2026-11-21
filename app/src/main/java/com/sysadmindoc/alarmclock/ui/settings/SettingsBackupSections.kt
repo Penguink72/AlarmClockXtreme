@@ -533,7 +533,7 @@ internal fun BackupRestoreSection(viewModel: SettingsViewModel, is24HourFormat: 
                         text = if (importPreviewBusy) {
                             stringResource(R.string.settings_restore_choices_description)
                         } else {
-                            stringResource(R.string.settings_backup_locked_description)
+                            com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.text(R.string.settings_backup_locked_description, "settings_backup_locked_description")
                         },
                         color = TextSecondary,
                         style = MaterialTheme.typography.bodySmall

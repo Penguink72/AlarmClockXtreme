@@ -617,7 +617,7 @@ private fun MusicCatalogContent(
                 }
             ) {
                 Text(
-                    stringResource(
+                    com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.textForResource(
                         if (allVisibleSelected) R.string.music_library_pool_clear_selection
                         else R.string.music_library_pool_select_visible
                     )
@@ -733,7 +733,7 @@ private fun MusicCatalogContent(
             CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
         } else if (visible.isEmpty()) {
             Text(
-                stringResource(
+                com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.textForResource(
                     if (state.poolTracks.isEmpty()) R.string.music_library_catalog_empty
                     else R.string.music_library_catalog_no_results
                 ),
@@ -860,7 +860,7 @@ internal fun MusicCatalogTrackRow(
             ) {
                 Icon(
                     imageVector = if (previewing) Icons.Default.Stop else Icons.Default.PlayArrow,
-                    contentDescription = stringResource(
+                    contentDescription = com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.textForResource(
                         if (previewing) R.string.components_stop_preview
                         else R.string.music_library_preview
                     )
