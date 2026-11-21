@@ -15,6 +15,7 @@ on:
       - feature/p31-g6q1-current-content-audit-20261121
       - feature/p31-g6q2-full-200-key-model-audit-20261121
       - integration/acx-r0-product-candidate-20261121
+      - feature/acx-b0-full-locale-inventory-20261121
     paths:
       - "scripts/localization/**"
       - "localization/governance/**"
@@ -115,6 +116,16 @@ jobs:
             exit 1
           fi
           echo "G6-Q2 model-only screening complete; official release remains blocked."
+      - name: B0 - Inventory all Android locale resources and real source references
+        run: |
+          node --test scripts/localization/b0-resource-inventory.test.mjs
+          node scripts/localization/b0-resource-inventory.mjs --out-dir build/localization/B0_FULL_APP_INVENTORY
+      - name: Publish B0 full-app inventory evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: acx-b0-full-app-locale-inventory
+          path: build/localization/B0_FULL_APP_INVENTORY/
+          retention-days: 14
       - name: Publish review bundle for human auditing
         uses: actions/upload-artifact@v4
         with:
