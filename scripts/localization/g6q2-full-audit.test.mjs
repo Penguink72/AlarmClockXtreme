@@ -7,6 +7,11 @@ import {auditG6Q2,loadQ2Inputs,toTsv} from "./g6q2-full-audit.mjs";
 const inputs=loadQ2Inputs();
 const output=auditG6Q2(inputs);
 const {manifest,worklist}=output;
+assert.equal(output.noStaticCallsiteKeysInQ2,5);
+assert.deepEqual(output.noStaticKeyNames,[
+ "alarm_music_settings_mode_shared","alarm_music_settings_remove_track",
+ "alarm_music_settings_save","music_library_history_row","music_library_tab_videos"
+]);
 assert.equal(manifest.sourceKeys,200);
 assert.equal(manifest.candidateLocaleRows,400);
 assert.equal(manifest.q1LocaleRows,74);
@@ -60,7 +65,8 @@ const invalidMutations=[
  x=>{x.q1.g4.approvals.push({decision:"APPROVED"});},
  x=>{x.q1.glossary.approval="APPROVED_FOR_RELEASE";},
  x=>{x.q1.packs.ja.translations.nav_stopwatch="source drift";},
- x=>{x.q1.g2.records.find(r=>r.key==="music_playlist_integration_pending").sourceHash=x.q1.triage.records.find(r=>r.key==="music_playlist_integration_pending").sourceHash;}
+ x=>{x.q1.g2.records.find(r=>r.key==="music_playlist_integration_pending").sourceHash=x.q1.triage.records.find(r=>r.key==="music_playlist_integration_pending").sourceHash;},
+ x=>{x.q1.g2.records.find(r=>r.key==="alarm_music_settings_remove_track").sourceCallsites=[{path:"unverified",line:1}];}
 ];
 for(let i=0;i<invalidMutations.length;i++){
  const input=structuredClone(inputs);

@@ -26,3 +26,7 @@
 優先 14 個 CRITICAL Key（Q1 10、Q2 4）、21 個格式 Key、無靜態呼叫情境的 Key，以及 27 筆候選修訂的實際操作後果；需要獨立審核者、日期、原文／譯文雜湊、母語與上下文證據。不能由本模型自己寫入 APPROVED。
 
 [完整 Q2 內容與 9 筆修訂](../localization/P31-G6Q2-ALL-200-MODEL-CONTENT-AUDIT-20261121.md)
+
+## G2 無直接靜態來源的交接
+
+G6-Q2 的五項 `music_library_tab_videos`、`alarm_music_settings_mode_shared`、`alarm_music_settings_save`、`alarm_music_settings_remove_track`、`music_library_history_row` 尚無精確的直接字串呼叫點；需沿動態資源與真實 Compose 路徑追查。此缺口是已記錄的審核依據不足，不是刪除或發布授權。詳見 [Q2 語言審核文件](../localization/P31-G6Q2-ALL-200-MODEL-CONTENT-AUDIT-20261121.md)。

@@ -84,3 +84,15 @@ Node-only CI 將產生 `build/localization/G6Q2_PRELIMINARY_NOT_APPROVED/{manife
 下一階段 G6-Q3 應先獨立核對 Q1 10 個 CRITICAL Key、Q2 4 個 CRITICAL Key、全部 21 個格式 Key 的實際程序與母語呈現，再建立可追溯的獨立核准入口。G1 詞彙也須獨立批准，不能由 Node PASS 解鎖。
 
 [Q2 原始 163-Key 矩陣](../../localization/governance/g6q/model-triage-q2.json) ｜ [TCL 分支規劃](../tcl/P31-G6Q2-COMPLETE-MODEL-SURFACE-AUDIT-20261121.md)
+
+## Q2 另外發現：五個沒有直接靜態字串呼叫的 Key
+
+本輪 CI 重新產生的 G2 靜態呼叫紀錄，與既有 `localization/governance/g2/unresolved-static-refs.json` 完全一致：下列五個 Key 在抽樣來源搜尋中**沒有直接 `R.string.<key>` 呼叫點**。這不等於功能不存在、可刪除或翻譯正確；可能由別名、舊版資源、動態資源 ID 或間接畫面組裝處理。
+
+- `music_library_tab_videos` — 旁證為 `music_library_category_videos` 的實際分類呼叫。
+- `alarm_music_settings_mode_shared` — 旁證在 `AlarmMusicSettingsScreen` 畫面定義。
+- `alarm_music_settings_save` — 旁證在音樂設定的 `apply_draft` 按鈕。
+- `alarm_music_settings_remove_track` — 旁證為播放清單移除按鈕 `onRemove`。本輪日文修訂提議**不能在不核對該操作的情況下採納**。
+- `music_library_history_row` — 旁證為畫面 `HistoryTrackRow` 元件。
+
+Q2 Node 程式現在要求這五項與 GitHub 已提交的 G2 未解決引用清單**精確相符**，只要來源移動或新增引用，必須重新核對並更新審核記錄，不能憑舊行號偷渡內容核准。

@@ -40,7 +40,7 @@ export function auditG6Q2({q1,q2}){
  const prior=new Set(q1.triage.records.map(x=>x.key));
  const byKey=new Map(),seenProposals=new Set();
  const counts={},risks={CRITICAL:0,HIGH:0,MEDIUM:0};
- let proposed=0,formatted=0,flagged=0,noStatic=0;
+ let proposed=0,formatted=0,flagged=0,noStatic=0;const noStaticNames=[];
  for(const r of q2.records){
   const en=sources.get(r.key),base=oldSources.get(r.key),ctx=staticContexts.get(r.key);
   assert(en&&base&&ctx,"Missing G6/G2/Q2 source "+r.key);
@@ -63,7 +63,7 @@ export function auditG6Q2({q1,q2}){
   assert.equal(r.contextVerificationRequired,true);
   assert(["MODEL_CONTEXT_RISK_FLAGGED","MODEL_TEXT_SURFACE_ONLY"].includes(r.semanticEvidenceType));
   if(r.semanticEvidenceType==="MODEL_CONTEXT_RISK_FLAGGED")flagged++;
-  if(ctx.sourceCallsites.length===0)noStatic++;
+  if(ctx.sourceCallsites.length===0){noStatic++;noStaticNames.push(r.key);}
   assert.deepEqual(Object.keys(r.localeReview).sort(),locales.slice().sort());
   for(const locale of locales){
    const one=r.localeReview[locale];
@@ -93,6 +93,11 @@ export function auditG6Q2({q1,q2}){
    }
   }
  }
+ const unresolved=read("localization/governance/g2/unresolved-static-refs.json");
+ assert.equal(unresolved.items.length,5,"G2 unresolved refs unexpectedly changed");
+ assert.deepEqual(noStaticNames.slice().sort(),unresolved.items.map(x=>x.key).sort(),
+   "Q2 missing-static-reference keys must match original G2 unresolved evidence");
+ assert.equal(noStatic,5,"Five keys must receive manual/dynamic source context review");
  assert.equal(byKey.size,163);
  assert.equal(formatted,21);
  assert.equal(flagged,43);
@@ -158,7 +163,7 @@ export function auditG6Q2({q1,q2}){
   q1ProposedLocaleRevisions:18,q2ProposedLocaleRevisions:9,totalProposedLocaleRevisions:27,
   independentHumanApprovals:0,glossaryApprovedForRelease:false,humanContextEvidenceStillRequired:true,
   officialRelease:"DENY"};
- return {manifest,worklist:final,noStaticCallsiteKeysInQ2:noStatic,priorityCounts:risks};
+ return {manifest,worklist:final,noStaticCallsiteKeysInQ2:noStatic,noStaticKeyNames:noStaticNames.slice().sort(),priorityCounts:risks};
 }
 const cell=v=>{
  let s=String(v??"").replace(/[\t\r\n]+/g," ");
@@ -180,7 +185,7 @@ function main(){
  const args=process.argv;
  if(args.includes("--mode") && args[args.indexOf("--mode")+1]!=="preview")
   throw Error("G6-Q2 release DENIED: preliminary model screening is not independent human approval");
- const {manifest,worklist,noStaticCallsiteKeysInQ2,priorityCounts}=auditG6Q2(loadQ2Inputs());
+ const {manifest,worklist,noStaticCallsiteKeysInQ2,noStaticKeyNames,priorityCounts}=auditG6Q2(loadQ2Inputs());
  const i=args.indexOf("--out-dir");
  if(i>=0){
   const dir=resolve(root,args[i+1]||"");
@@ -195,6 +200,6 @@ function main(){
    "Reviewer/decision/date/rationale columns are intentionally blank; G1 glossary is unapproved.\n"+
    "Official language pack release remains BLOCKED. Do not overwrite Android/Debug resources.\n");
  }
- console.log("G6Q2_FULL_MODEL_TRIAGE_PASS "+JSON.stringify({...manifest,noStaticCallsiteKeysInQ2,priorityCounts}));
+ console.log("G6Q2_FULL_MODEL_TRIAGE_PASS "+JSON.stringify({...manifest,noStaticCallsiteKeysInQ2,noStaticKeyNames,priorityCounts}));
 }
 if(process.argv[1]&&resolve(process.argv[1])===fileURLToPath(import.meta.url))main();
