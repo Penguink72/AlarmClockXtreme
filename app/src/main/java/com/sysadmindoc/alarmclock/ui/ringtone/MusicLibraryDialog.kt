@@ -1221,4 +1221,65 @@ private fun PlaybackHistoryContent(
             }
         }
     }
+    val chosenHistory = targetHistory
+    if (chosenHistory != null) {
+        AlertDialog(
+            onDismissRequest = { if (!saving) targetHistory = null },
+            title = { Text(stringResource(R.string.music_playlist_title)) },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(chosenHistory.title, style = MaterialTheme.typography.bodyMedium)
+                    if (availablePlaylists.isEmpty()) {
+                        Text(stringResource(R.string.music_playlist_none))
+                    } else {
+                        LazyColumn(modifier = Modifier.heightIn(max = 320.dp)) {
+                            items(availablePlaylists, key = MusicPlaylist::playlistId) { playlist ->
+                                TextButton(
+                                    enabled = !saving,
+                                    onClick = {
+                                        val repo = playlistRepository ?: return@TextButton
+                                        if (saving) return@TextButton
+                                        saving = true
+                                        scope.launch {
+                                            try {
+                                                val added = repo.addHistoryTrack(
+                                                    playlist.playlistId, chosenHistory.uri
+                                                )
+                                                val message = when {
+                                                    added.addedItems > 0 -> context.getString(
+                                                        R.string.music_playlist_added_count, added.addedItems)
+                                                    added.excludedItemsSkipped > 0 -> context.getString(
+                                                        R.string.music_playlist_item_unavailable)
+                                                    else -> context.getString(R.string.music_playlist_add_zero)
+                                                }
+                                                Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                                                targetHistory = null
+                                            } catch (cancel: CancellationException) {
+                                                throw cancel
+                                            } catch (error: Exception) {
+                                                Toast.makeText(context,
+                                                    context.getString(R.string.music_library_pool_update_failed,
+                                                        error.message.orEmpty()),
+                                                    Toast.LENGTH_LONG).show()
+                                            } finally {
+                                                saving = false
+                                            }
+                                        }
+                                    }
+                                ) {
+                                    Text(playlist.name, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(enabled = !saving, onClick = { targetHistory = null }) {
+                    Text(stringResource(R.string.cancel))
+                }
+            }
+        )
+    }
+
 }
