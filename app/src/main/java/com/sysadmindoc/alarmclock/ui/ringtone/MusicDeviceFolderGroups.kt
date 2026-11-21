@@ -1,7 +1,6 @@
 package com.sysadmindoc.alarmclock.ui.ringtone
 
 import com.sysadmindoc.alarmclock.data.local.entity.MusicPoolEntry
-import java.util.Locale
 
 /**
  * A browsing projection, never a file-system access claim. Indexing comes from
@@ -19,7 +18,7 @@ internal data class DeviceMediaFolderGroup(
 }
 
 internal fun normalizeMusicFolderPath(path: String): String =
-    path.trim().replace('\\', '/').trim('/').lowercase(Locale.ROOT)
+    path.trim().replace('\\', '/').trim('/')
 
 /** Do not materialize thousands of individual file rows just to browse folders. */
 internal fun groupMediaStoreFolders(

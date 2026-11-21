@@ -50,8 +50,8 @@ class MusicFolderPoolRulesTest {
             )
         )
         val grouped=MusicFolderPoolRules.scannedUrisByRuleKey(scan)
-        assertEquals(setOf(uriA),grouped[MusicFolderPoolRules.mediaStoreKey("music")])
-        assertEquals(setOf(uriB),grouped[MusicFolderPoolRules.mediaStoreKey("videos")])
+        assertEquals(setOf(uriA),grouped[MusicFolderPoolRules.mediaStoreKey("Music")])
+        assertEquals(setOf(uriB),grouped[MusicFolderPoolRules.mediaStoreKey("Videos")])
         assertEquals(setOf(uriSaf),grouped[MusicFolderPoolRules.safSourceKey("source-1")])
         // Device-wide opt-in includes audio only; video audio is a separate
         // folder decision, not swept in by the one-tap music import.

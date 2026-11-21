@@ -20,13 +20,13 @@ class MusicDeviceFolderGroupsTest {
         )
         val metadata = mapOf(
             "content://a" to MusicCatalogTrackMetadata("content://a", folderPath="Music/Albums/"),
-            "content://v" to MusicCatalogTrackMetadata("content://v", folderPath="music/albums"),
+            "content://v" to MusicCatalogTrackMetadata("content://v", folderPath="Music/Albums"),
             "content://other" to MusicCatalogTrackMetadata("content://other", folderPath="Recordings"),
             "content://saf" to MusicCatalogTrackMetadata("content://saf", folderPath="Music/Albums")
         )
         val grouped = groupMediaStoreFolders(rows, metadata)
         assertEquals(2, grouped.size)
-        assertEquals("music/albums", grouped[0].relativePath)
+        assertEquals("Music/Albums", grouped[0].relativePath)
         assertEquals(setOf("content://a","content://v"), grouped[0].trackUris)
         assertEquals(1, grouped[0].audioCount)
         assertEquals(1, grouped[0].videoCount)
@@ -50,7 +50,7 @@ class MusicDeviceFolderGroupsTest {
             tracks=rows,
             filter=MusicPoolFilter.ALL_CANDIDATES,
             search="",
-            sourceScope=MusicPoolSourceScope.DeviceFolder("music/a"),
+            sourceScope=MusicPoolSourceScope.DeviceFolder("Music/A"),
             metadataByUri=metadata
         )
         assertEquals(listOf("content://a"),result.map { it.track.uri })
