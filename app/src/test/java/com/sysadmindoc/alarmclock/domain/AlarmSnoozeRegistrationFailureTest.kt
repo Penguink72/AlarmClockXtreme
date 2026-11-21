@@ -271,4 +271,44 @@ class AlarmSnoozeRegistrationFailureTest {
         verify(exactly = 1) { alarmManager.setAlarmClock(any(), any()) }
         coVerify(exactly = 0) { repository.updateNextTrigger(id, any()) }
     }
+
+    @Test
+    fun malformedAlarmSnoozeMinutesAreSanitizedBeforeInexactRegistration() = runTest {
+        val alarmManager = mockk<AlarmManager>(relaxed = true)
+        every { alarmManager.canScheduleExactAlarms() } returns false
+        val repository = mockk<AlarmRepository>(relaxed = true)
+        val preferencesManager = mockk<PreferencesManager>()
+        coEvery { preferencesManager.getCurrentSettings() } returns AppSettings()
+        every { preferencesManager.getCachedSettings() } returns AppSettings()
+
+        val realContext: Context = ApplicationProvider.getApplicationContext()
+        val context = object : ContextWrapper(realContext) {
+            override fun getSystemService(name: String): Any? =
+                if (name == Context.ALARM_SERVICE) alarmManager
+                else super.getSystemService(name)
+        }
+        val scheduler = AlarmScheduler(
+            context = context, repository = repository,
+            calculator = mockk(relaxed = true),
+            preferencesManager = preferencesManager,
+            holidayRepository = mockk(relaxed = true),
+            alarmIncidentRepository = mockk(relaxed = true),
+            weatherRepository = mockk(relaxed = true)
+        )
+        val alarm = Alarm(id = 881L, hour = 7, minute = 0,
+            snoozeDurationMinutes = Int.MIN_VALUE, isEnabled = true)
+
+        val before = System.currentTimeMillis()
+        assertTrue(scheduler.scheduleSnooze(alarm))
+        val after = System.currentTimeMillis()
+
+        verify(exactly = 1) {
+            alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,
+                match { it in (before + 60_000L)..(after + 60_000L) }, any())
+        }
+        coVerify(exactly = 1) {
+            repository.updateNextTrigger(881L,
+                match { it in (before + 60_000L)..(after + 60_000L) })
+        }
+    }
 }
