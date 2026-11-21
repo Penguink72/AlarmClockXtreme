@@ -16,6 +16,7 @@ on:
       - feature/p31-g6q2-full-200-key-model-audit-20261121
       - integration/acx-r0-product-candidate-20261121
       - feature/acx-b0-full-locale-inventory-20261121
+      - feature/acx-b0-t1-trilingual-catalog-20261121
     paths:
       - "scripts/localization/**"
       - "localization/governance/**"
@@ -124,6 +125,8 @@ jobs:
           node scripts/localization/b0-format-contracts.mjs --out-dir build/localization/B0_FULL_APP_INVENTORY
           node --test scripts/localization/b0-ui-and-unused-triage.test.mjs
           node scripts/localization/b0-ui-and-unused-triage.mjs --out-dir build/localization/B0_FULL_APP_INVENTORY
+          node --test scripts/localization/b0-t1-canonical-matrix.test.mjs
+          node scripts/localization/b0-t1-canonical-matrix.mjs --verify --out-dir build/localization/B0_FULL_APP_INVENTORY
       - name: Publish B0 full-app inventory evidence
         uses: actions/upload-artifact@v4
         with:
