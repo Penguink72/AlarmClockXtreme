@@ -40,7 +40,7 @@ internal data class LanguageCatalogV1(
     companion object {
         const val ASSET = "localization/v1/catalog.json"
         fun load(context: Context): LanguageCatalogV1 {
-            val raw = context.assets.open(ASSET).use(LanguagePackV1Validator::readBounded)
+            val raw = context.assets.open(ASSET).use { LanguagePackV1Validator.readBounded(it) }
             return fromJson(raw)
         }
         fun fromJson(raw: String): LanguageCatalogV1 {
