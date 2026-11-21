@@ -51,7 +51,19 @@
       "restore": "Restore",
       "counts": "Status",
       "noTranslation": "No translation saved",
-      "valueTooLong": "Translation is too long"
+      "valueTooLong": "Translation is too long",
+      "followSystem": "Follow system",
+      "primaryChoice": "Primary language",
+      "secondaryChoice": "Secondary language",
+      "dualMode": "Show two languages",
+      "customChoice": "Use selected custom pack (preview)",
+      "effective": "Effective selection",
+      "nativeLanguage": "Native Android UI",
+      "pendingRuntime": "Custom packs and dual labels are saved but not yet applied across normal screens.",
+      "selectionSaved": "Language selection saved",
+      "selectionFailed": "Language selection rejected",
+      "none": "None",
+      "androidOlder": "On Android 12 or older, language choice is saved for preview only."
     },
     "zh-TW": {
       "title": "語言中心",
@@ -103,7 +115,19 @@
       "restore": "還原",
       "counts": "狀態",
       "noTranslation": "尚未保存翻譯",
-      "valueTooLong": "翻譯文字太長"
+      "valueTooLong": "翻譯文字太長",
+      "followSystem": "跟隨系統",
+      "primaryChoice": "主要語言",
+      "secondaryChoice": "對照語言",
+      "dualMode": "顯示雙語",
+      "customChoice": "選擇此自訂包（預覽）",
+      "effective": "有效選擇",
+      "nativeLanguage": "Android 原生介面語言",
+      "pendingRuntime": "自訂語言包與雙語偏好已儲存，但尚未套用到一般 App 畫面。",
+      "selectionSaved": "語言選擇已儲存",
+      "selectionFailed": "無法套用語言選擇",
+      "none": "無",
+      "androidOlder": "Android 12 及以下只會保存語言選擇供預覽。"
     },
     "ja": {
       "title": "言語センター",
@@ -155,7 +179,19 @@
       "restore": "復元",
       "counts": "状態",
       "noTranslation": "翻訳は保存されていません",
-      "valueTooLong": "翻訳が長すぎます"
+      "valueTooLong": "翻訳が長すぎます",
+      "followSystem": "システムに合わせる",
+      "primaryChoice": "主言語",
+      "secondaryChoice": "対照言語",
+      "dualMode": "二言語表示",
+      "customChoice": "このカスタムパックを選択（プレビュー）",
+      "effective": "有効な選択",
+      "nativeLanguage": "Android 標準UI",
+      "pendingRuntime": "カスタムパックと二言語設定は保存されますが、通常の画面にはまだ適用されません。",
+      "selectionSaved": "言語設定を保存しました",
+      "selectionFailed": "言語設定を適用できません",
+      "none": "なし",
+      "androidOlder": "Android 12 以前は言語選択がプレビュー用にのみ保存されます。"
     }
   }
 }
