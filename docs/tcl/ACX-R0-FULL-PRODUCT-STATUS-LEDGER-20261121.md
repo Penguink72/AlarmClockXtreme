@@ -80,3 +80,17 @@
 - B0 XML 獨立讀取確認 `2471` 個英文基底定義（`2427 string + 43 plurals + 1 string-array`），其中 `2462` 可翻譯；繁中與日文 XML 各 912 定義，各缺 1550 個有效基底 Key 的專屬翻譯定義。這些是**翻譯定義覆蓋差距，不是直接可見 UI 比率**。詳細資料在 PR #32 的 CI artifact `acx-b0-full-app-locale-inventory`（暫存）及 [B0 基準文檔](https://github.com/Penguink72/AlarmClockXtreme/blob/feature/acx-b0-full-locale-inventory-20261121/docs/localization/ACX-B0-FULL-APP-RESOURCE-BASELINE-20261121.md)。
 
 以上不影響原有 R1 亮屏貪睡 T3 及 R3 五秒實測的未封閉裁定。PR #31/#32 都未合併至 A0 或 main；任何下一輪狀態以各自精確 SHA 和 CI 重驗。
+
+## 7. A1/B0 最新施工證據（2026-11-21，隔離分支不等於已整合）
+
+| 分支 | 可追溯交付 | 本輪裁定 |
+|---|---|---|
+| [PR #31 A1](https://github.com/Penguink72/AlarmClockXtreme/pull/31) | `recordScheduleIncident` 捕捉同步診斷例外；後續 `safeSnoozeDelayMillis` 先將分鐘數限制 1～180 再以 Long 計算；5 個新增純/整合測試分批提交 | 第一片 [Run 44890033111](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/44890033111) 的 864 項單測、APK、跨 Runner 簽章成功；**後續分鐘安全切片仍須自己的新 SHA CI，不能繼承第一片 PASS** |
+| [PR #32 B0](https://github.com/Penguink72/AlarmClockXtreme/pull/32) | 2,471 個全 App 基底資源、兩語覆蓋、24 個未解引用、格式契約與疑似硬編碼候選；Node scanner/test 與 TSV 證據已提交 | [Run 44895076599](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/44895076599) 已通過：369 格式 Key、738 語言列（254 詞法一致、484 缺專屬定義、0 詞法 mismatch），97 UI literal 分成 25 自然語言、10 資源引用、25 技術識別、12 結構字串、25 待查；不代表語義 Q 核准 |
+
+**長期保存來源**：
+- [B0 2471 Key 完整覆蓋 TSV](https://github.com/Penguink72/AlarmClockXtreme/blob/feature/acx-b0-full-locale-inventory-20261121/localization/evidence/b0/full-base-resource-coverage-20261121.tsv)
+- [B0 CI 來源/摘要與 24 Key](https://github.com/Penguink72/AlarmClockXtreme/blob/feature/acx-b0-full-locale-inventory-20261121/docs/localization/evidence/ACX-B0-CI-OUTPUT-SNAPSHOT-20261121.md)
+- [B0 25 個自然語言候選與 Debug Lab 原始行](https://github.com/Penguink72/AlarmClockXtreme/blob/feature/acx-b0-full-locale-inventory-20261121/docs/localization/evidence/ACX-B0-UI-LITERAL-TRIAGE-20261121.md)
+
+**不得升格**：A1 的純測試不證明亮屏 10 分鐘貪睡已恢復；B0 的靜態引用數不證明全 App 中文/日文已完成；B1/B2 仍未開始正式 runtime 施工。上列兩條分支均為 Draft PR，沒有合併 A0 或 main。
