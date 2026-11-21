@@ -57,8 +57,8 @@ class MusicLargeLibraryPlaylistRoundTripTest {
             val playlist = first.create("Morning favorites")
             val added = first.addTracks(playlist.playlistId, chosen.map { it.uri })
             assertEquals(chosen.size, added.addedItems)
-            assertEquals(chosen.size, added.autoIncludedCandidates)
-            assertEquals(chosen.size, first.includedPoolCount())
+            assertEquals(0, added.autoIncludedCandidates)
+            assertEquals(0, first.includedPoolCount())
 
             first.saveSettings(
                 alarmId = 4_935L,
@@ -78,7 +78,7 @@ class MusicLargeLibraryPlaylistRoundTripTest {
             val playable = reopened.loadPlaylistSnapshotForAlarm(4_935L).eligibleEntries()
             assertEquals(chosen.size, playable.size)
             assertEquals(chosen.map { it.uri }.toSet(), playable.map { it.uri }.toSet())
-            assertEquals(4_935 - chosen.size, reopened.poolCandidates().count {
+            assertEquals(4_935, reopened.poolCandidates().count {
                 it.membershipState == null
             })
         } finally {

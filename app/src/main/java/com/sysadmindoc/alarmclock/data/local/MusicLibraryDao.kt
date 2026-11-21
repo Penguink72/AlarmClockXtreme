@@ -279,7 +279,8 @@ interface MusicLibraryDao {
         val poolUpdates = LinkedHashMap<String, MusicPoolEntry>()
         val itemsToInsert = mutableListOf<MusicPlaylistItemEntity>()
         val excludedSkippedUris = mutableListOf<String>()
-        var autoIncludedCandidates = 0
+        // Named playlists do not auto-enroll candidates in the shared Smart All pool.
+        val autoIncludedCandidates = 0
         var excludedItemsSkipped = 0
         var excludedItemsRestored = 0
         var unavailableItemsSkipped = 0
@@ -307,11 +308,7 @@ interface MusicLibraryDao {
                         continue
                     }
                 }
-                null -> {
-                    poolByUri[uri] = MusicPoolEntry.INCLUDED
-                    poolUpdates[uri] = MusicPoolEntry(uri, MusicPoolEntry.INCLUDED, nowMillis)
-                    autoIncludedCandidates++
-                }
+                null -> Unit // Playlist membership is independent of global pool inclusion.
                 else -> Unit
             }
 
@@ -343,6 +340,19 @@ interface MusicLibraryDao {
             excludedTrackUris = excludedSkippedUris.distinct()
         )
     }
+
+    /** Idempotent history -> playlist operation, scoped to one playlist. */
+    @Transaction
+    suspend fun addHistoryTrackOnceTransaction(playlistId: String, uri: String): AddTracksResult {
+        if (getPlaylistById(playlistId) == null) return AddTracksResult()
+        if (getPlaylistItems(playlistId).any { it.trackUri == uri }) return AddTracksResult()
+        return addTracksToPlaylistTransaction(
+            playlistId, listOf(uri), ExcludedTrackResolution.KEEP_EXCLUDED
+        )
+    }
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertPlaylistIfAbsent(playlist: MusicPlaylistEntity): Long
 
     @Transaction
     suspend fun removePlaylistItemTransaction(playlistItemId: String) {
