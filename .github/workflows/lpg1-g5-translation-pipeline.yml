@@ -18,6 +18,7 @@ on:
       - feature/acx-b0-full-locale-inventory-20261121
       - feature/acx-b0-t1-trilingual-catalog-20261121
       - feature/acx-b1-c1-pack-validation-repo-20261121
+      - feature/acx-b1-u1-language-center-20261121
     paths:
       - "scripts/localization/**"
       - "localization/governance/**"
@@ -130,6 +131,7 @@ jobs:
           node scripts/localization/b0-t1-canonical-matrix.mjs --verify --out-dir build/localization/B0_FULL_APP_INVENTORY
           node --test scripts/localization/b1-build-canonical-catalog.test.mjs
           node scripts/localization/b1-build-canonical-catalog.mjs --verify
+          node scripts/localization/b1-u1-compare-index.mjs --verify
       - name: Publish B0 full-app inventory evidence
         uses: actions/upload-artifact@v4
         with:
