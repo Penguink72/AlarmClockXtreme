@@ -71,3 +71,14 @@
 5. 若效能或 metadata 過多使 App 啟動變慢，要測量 catalog 載入時間並作快取，不在每次 Compose recomposition 重新解析約 0.95 MB 資源。
 
 關聯：[B0-T1 文字矩陣](ACX-B0-T1-TRILINGUAL-MATRIX-20261121.md)、[B0-L1 狀態機](ACX-B0-L1-LOCALE-STATE-TRANSITION-CONTRACT-20261121.md)、[B0～B2 原架構](ACX-B0-B2-LOCALE-RUNTIME-AND-PACK-CONTRACT-20261121.md)。
+
+## 6. GitHub CI 實際驗收（2026-11-21）
+
+**B1-C1 已完成 T2**：
+
+- [Node G1～G6／B0／B1 Run #44905760153](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/44905760153)：**completed / SUCCESS**，SHA `0019138398b4f18a1b7abc5d465ddf09733e38bb`。包含 B0-T1 TSV 的 2,471 Key 源 XML byte-verify、B1 完整 catalog asset byte-verify、全部既有翻譯治理 gate；官方缺獨立批准的 pack 仍預期拒絕。
+- [Android P0 Run #44906233649](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/44906233649)：**completed / SUCCESS**，code SHA `75e60bed1fe4c184cd21ba97e0ce050541248294`；F-Droid debug APK Build SUCCESS、**891/891 單元測試通過（0 failures、0 errors、0 skipped）**、第二 Runner v162 簽章／升級 APK 檢核 SUCCESS。
+- 此兩者 source/runtime code 相同。Android CI SHA 只比 Node SHA 多一筆 **單元測試 fixture 修正**：舊格式的負向測試一開始對 JSON 字串執行 `.replace("acx-language-pack/1", "...probe/1")`，但 Android `JSONObject` 會將斜線轉義，替換實際沒有生效，因此初次 [Android Run #44905760124](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/44905760124) **890/891，1 failure**。已在修正 SHA `75e60bed1fe4c184cd21ba97e0ce050541248294` 將 fixture 改為 `JSONObject(...).put("format","acx-language-pack-probe/1")`；後續全量驗證 891/891 成功。原失敗紀錄不隱藏。
+- **不可因此宣稱** V1 使用者匯入 UI 已完成或在真機切換語言可用。此片僅有 backend validator/repository 與產物；T3、個人包實機操作與 B2 顯示範圍 **仍未驗證**。
+
+交付界線：PR #35 維持 Draft，**未合併 main 或其他平行 PR**；下一階段 B1-U1 SAF UI、B2 resolver 與單／雙語實際接線需再開隔離施工與新版 CI。
