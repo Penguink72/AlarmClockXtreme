@@ -66,3 +66,9 @@
 - Android full F-Droid unit / release-safe build / 第二 runner v162 簽章；更新 DAO 反映「named != Smart All」，對 4,935 曲目與同 URI 收藏使用 Room 測試。
 - 當前分支與 GitHub PR 狀態以最新提交為準。若最終 Android Run 未成功，保持 `T2_PENDING` 並記錄失敗，不能稱已完成；真機 `T3` 與 UX `P` 另行核對。
 - 這輪僅改 P1–P3，不啟動 B2 自訂語言包正常 UI、HANDS 或 Writing-tool 的 runtime 工程。
+
+### P1 裝置全音樂快捷操作補充
+
+資料夾頁在個別路徑列表之上提供「裝置媒體／加入音樂池」快捷操作：只針對 MediaStore **音訊**，排除已辨識的系統聲音；影片音軌不跟著加入，仍由其資料夾個別管理。全音樂快捷加入只納入 pool member 為 null 的候選，**不恢復**已明示排除曲目；即使未來掃描新增檔案，先執行 broad include，再套用指定資料夾 EXCLUDE。若使用者明確點選單一資料夾加入，才會重選該資料夾內所有已索引曲目。
+
+路徑識別保留 Android 提供的 **大小寫**：`Music/A` 和 `music/a` 不會因 app 的大小寫折疊而錯誤合併或跨資料夾排除；只正規化斜線與尾斜線。目前跨儲存卷同一相對路徑識別仍需額外改善，不能視為已完成完全一致的實體目錄標識。
