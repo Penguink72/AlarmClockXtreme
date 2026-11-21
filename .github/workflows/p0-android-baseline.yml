@@ -27,6 +27,7 @@ on:
       - feature/p31-lp2b2-edit-music-stats-preview-20261120
       - feature/p31-lp2b3-direct-indirect-ui-preview-20261121
       - integration/acx-r0-product-candidate-20261121
+      - feature/acx-b0-l1-locale-state-contract-20261121
     paths:
       - ".github/workflows/p0-android-baseline.yml"
       - "localization/governance/**"
