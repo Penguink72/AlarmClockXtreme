@@ -94,3 +94,22 @@
 - [B0 25 個自然語言候選與 Debug Lab 原始行](https://github.com/Penguink72/AlarmClockXtreme/blob/feature/acx-b0-full-locale-inventory-20261121/docs/localization/evidence/ACX-B0-UI-LITERAL-TRIAGE-20261121.md)
 
 **不得升格**：A1 的純測試不證明亮屏 10 分鐘貪睡已恢復；B0 的靜態引用數不證明全 App 中文/日文已完成；B1/B2 仍未開始正式 runtime 施工。上列兩條分支均為 Draft PR，沒有合併 A0 或 main。
+
+## 8. B0-T1 三語正文與 B0-L1 語系狀態契約（2026-11-21）
+
+### B0-T1｜完整版權威文本
+
+- [Draft PR #33](https://github.com/Penguink72/AlarmClockXtreme/pull/33)，`feature/acx-b0-t1-trilingual-catalog-20261121`，基於 B0 PR #32 的固定 HEAD `0ceab1d1`，與 B0-L1 分支獨立。
+- [完整 2471-Key 英／繁中／日文原始文本 TSV](https://github.com/Penguink72/AlarmClockXtreme/blob/feature/acx-b0-t1-trilingual-catalog-20261121/localization/catalog/b0-t1-trilingual-source-matrix.tsv)，有逐條英文 source XML、現有繁中與日文 XML、可讀預覽、per-Key sourceHash、各語 translationHash、來源行號、格式/plural 契約與 UNKNOWN 審核狀態。不是只有「有無翻譯」。
+- catalog revision：`sha256:c608e163bb47aeefa169e3ca72b8e86ebd8deb37d89c59e47796d953fe95c70a`；相對 G6 200-Key 審核目錄屬新全量權威，不能繼承舊 400-row 人工批准。
+- [Node CI 44898937783](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/44898937783) SUCCESS，`--verify` 再生 TSV 與 Repo 檔 byte-identical；2,471 keys、2,462 translatable、各內建 zh/ja 912、各缺 1,550。無自動譯文或人工作業核准。
+
+### B0-L1｜系統／App／自訂／雙語語系狀態轉移
+
+- [Draft PR #34](https://github.com/Penguink72/AlarmClockXtreme/pull/34)，`feature/acx-b0-l1-locale-state-contract-20261121`，基於相同 B0 固定 SHA。
+- 已提交純 Kotlin `LocaleSelectionContract.kt` 與 **13 個 JUnit 測試**；情境包括裝置語言更改、內建指定、自訂包有效／缺失、主次語言、同語不重複、Android 外部 AppLocales 變動、自身寫入 ACK、Android 12 API 限制、安全 fallback。
+- [狀態轉移矩陣](https://github.com/Penguink72/AlarmClockXtreme/blob/feature/acx-b0-l1-locale-state-contract-20261121/docs/localization/ACX-B0-L1-LOCALE-STATE-TRANSITION-CONTRACT-20261121.md)。
+- [Android CI 44899090595](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/44899090595) 已啟動，結果必須以 run 最終狀態和 code SHA 裁定。暫未將新增 13 測試視為 PASS。
+- **L1 尚未接入運作中的 Android LocaleManager/Settings/Compose/Service**。Android 13+ 原生選擇仍依既有 `AppLanguageManager`；Android 12 以下的內建 App 自選語言尚未正式實作。L1 是已具執行測試的狀態機，不是「所有機型都已能切換自訂語言包」。
+
+**依賴與下一片**：B1 可以同時取用 T1 全量 catalog contract 與 L1 reducer，但必須新建整合分支驗證同步版本、匯入驗證／持久化／原生 fallback 及實際設定頁重啟；B2 才擴及通知、響鈴、安全操作和雙語排版。PR #33/#34 尚未合併 B0、A0 或 main；不因兩個 Node/Android test PASS 而推稱所有 T3 或官方翻譯 Q 完成。
