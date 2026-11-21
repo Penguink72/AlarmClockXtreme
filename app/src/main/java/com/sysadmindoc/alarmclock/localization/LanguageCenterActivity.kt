@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.weight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
@@ -81,6 +80,9 @@ private fun LanguageCenterScreen(onClose: () -> Unit) {
     var pluralDraft by remember { mutableStateOf<Map<String,String>>(emptyMap()) }
     var arrayDraft by remember { mutableStateOf<List<String>>(emptyList()) }
     var menuOpen by remember { mutableStateOf(false) }
+    val loaded = snapshot
+    val labels = loaded?.labels
+    val store = repository
 
     LaunchedEffect(context) {
         val result = withContext(Dispatchers.IO) {
@@ -99,10 +101,6 @@ private fun LanguageCenterScreen(onClose: () -> Unit) {
             current = if (chosen.isEmpty()) null else withContext(Dispatchers.IO) { store.load(chosen) }
         }.onFailure { initialError = it.message ?: it.javaClass.simpleName }
     }
-
-    val loaded = snapshot
-    val labels = loaded?.labels
-    val store = repository
 
     // Rebind drafts to the selected key + current stored revision. This avoids
     // accidentally saving the prior key's translation after switching items.
