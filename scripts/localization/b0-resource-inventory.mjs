@@ -29,7 +29,7 @@ export function extractResourceDefinitions(xml) {
   // pseudo-definitions inside comments/CDATA; preserve offsets for line numbers.
   const masked = xml.replace(/<!--[\s\S]*?-->/g, blank)
     .replace(/<!\[CDATA\[[\s\S]*?\]\]>/g, blank);
-  const pattern = /<(string|plurals|string-array|integer-array|array)\b([^>]*)>/g;
+  const pattern = /<(string-array|integer-array|plurals|array|string)\b([^>]*)>/g;
   const result = [];
   const seen = new Set();
   for (const m of masked.matchAll(pattern)) {
