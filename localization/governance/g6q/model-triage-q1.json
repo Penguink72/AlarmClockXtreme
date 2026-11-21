@@ -576,7 +576,7 @@
         "zh-TW": "只對本次鬧鐘生效。",
         "ja": "今回のアラームにのみ適用されます。"
       },
-      "reviewRationale": "僅對這一次鬧鐘生效，不改整體預設。",
+      "reviewRationale": "僅對這一次響鈴的貪睡操作生效，不改變已儲存的預設時間或其他鬧鐘。",
       "proposedReplacements": {},
       "sourceReviewNeeded": false,
       "status": "CONTEXT_SEMANTIC_REVIEW_REQUIRED",
