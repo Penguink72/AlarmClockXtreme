@@ -966,6 +966,20 @@ private fun MusicFoldersContent(
         if (deviceFolders.isNotEmpty()) {
             Text(stringResource(R.string.music_library_pool_device_warning),
                 style = MaterialTheme.typography.bodySmall)
+            val allDeviceAudio = state.poolTracks.filter { item ->
+                item.track.source == MusicLibraryIndexer.SOURCE_MEDIA_STORE &&
+                    state.supplementalCatalog.trackMetadataByUri[item.track.uri]?.isSystemTone != true
+            }.mapTo(LinkedHashSet()) { it.track.uri }
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(stringResource(R.string.music_library_folder_device_media),
+                    style = MaterialTheme.typography.titleSmall)
+                TextButton(
+                    enabled = allDeviceAudio.isNotEmpty() && !state.loadingPool && !state.scanning,
+                    onClick = { viewModel.setFolderPoolRule(
+                        MusicFolderPoolRules.allDeviceAudioKey(), allDeviceAudio, true
+                    ) }
+                ) { Text(stringResource(R.string.music_library_pool_add)) }
+            }
         }
         LazyColumn(
             modifier = Modifier.weight(1f),
