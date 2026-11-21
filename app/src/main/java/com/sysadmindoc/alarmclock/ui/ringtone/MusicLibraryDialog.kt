@@ -285,6 +285,8 @@ fun MusicLibraryDialog(
                         browseMode == MusicLibraryBrowseMode.FOLDERS -> MusicFoldersContent(
                             state = state,
                             viewModel = viewModel,
+                            hasAudioPermission = hasAudioPermission,
+                            onRequestPermission = { permissionLauncher.launch(permissions) },
                             onManageSources = { showSources = true },
                             onBrowseSource = { sourceId ->
                                 viewModel.setCatalogSourceScope(MusicPoolSourceScope.Folder(sourceId))
@@ -931,6 +933,8 @@ private fun CatalogSourceScopePicker(
 private fun MusicFoldersContent(
     state: MusicLibraryUiState,
     viewModel: MusicLibraryViewModel,
+    hasAudioPermission: Boolean,
+    onRequestPermission: () -> Unit,
     onManageSources: () -> Unit,
     onBrowseSource: (String) -> Unit,
     onBrowseDeviceFolder: (String) -> Unit,
@@ -946,11 +950,22 @@ private fun MusicFoldersContent(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Text(stringResource(R.string.music_library_pool_non_destructive_hint))
+        if (!hasAudioPermission) {
+            Text(stringResource(R.string.music_library_catalog_permission),
+                style = MaterialTheme.typography.bodySmall)
+            OutlinedButton(onClick = onRequestPermission, modifier = Modifier.fillMaxWidth()) {
+                Text(stringResource(R.string.music_library_catalog_grant_permission))
+            }
+        }
         OutlinedButton(onClick = onManageSources, modifier = Modifier.fillMaxWidth()) {
             Text(stringResource(R.string.music_library_sources_button))
         }
         if (state.sources.isEmpty() && deviceFolders.isEmpty()) {
             Text(stringResource(R.string.music_library_no_sources))
+        }
+        if (deviceFolders.isNotEmpty()) {
+            Text(stringResource(R.string.music_library_pool_device_warning),
+                style = MaterialTheme.typography.bodySmall)
         }
         LazyColumn(
             modifier = Modifier.weight(1f),
@@ -968,10 +983,9 @@ private fun MusicFoldersContent(
                     Text(stringResource(R.string.music_library_source_counts,
                         folder.trackCount, folder.audioCount, folder.videoCount),
                         style = MaterialTheme.typography.bodySmall)
-                    Text(stringResource(R.string.music_library_pool_scope_summary,
-                        folder.relativePath.ifBlank {
-                            stringResource(R.string.music_library_pool_device_source)
-                        }, folder.includedCount), style = MaterialTheme.typography.bodySmall)
+                    Text("${folder.includedCount}/${folder.trackCount} · " +
+                        stringResource(R.string.music_library_pool_included),
+                        style = MaterialTheme.typography.bodySmall)
                     state.folderPoolRules[key]?.let { rule ->
                         Text(stringResource(if (rule == MusicFolderPoolRules.INCLUDE)
                             R.string.music_library_pool_status_included
