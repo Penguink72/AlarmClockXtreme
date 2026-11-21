@@ -8,7 +8,7 @@
 |---|---|---:|
 | App 基底英文 | `app/src/main/res/values/strings.xml` | **2471** |
 | 其中 `translatable != false` | 同上 | **2462** |
-| `string` / `plurals` | 同上 | **2428 / 43** |
+| `string` / `plurals` / `string-array` | 同上 | **2427 / 43 / 1** |
 | 繁中 Android 內建 | `app/src/main/res/values-b+zh+Hant+TW/strings.xml` | **912** |
 | 日文 Android 內建 | `app/src/main/res/values-ja/strings.xml` | **912** |
 | 繁中 string / plurals | 同上 | 900 / 12 |
@@ -36,3 +36,25 @@
 4. B0 最後完成還需要處置動態 ID/間接查詢及通知／Service 程式上下文。此切片是**第一批全 App 靜態盤點引擎**，並非全部可見 UI 已自動接上語言解析器。
 
 參考 [R5 解析器／語言包設計](ACX-B0-B2-LOCALE-RUNTIME-AND-PACK-CONTRACT-20261121.md) 和 [R0 產品狀態帳本](../tcl/ACX-R0-FULL-PRODUCT-STATUS-LEDGER-20261121.md)。
+
+## 4. 實際全程 Node 盤點成果與最新 T2
+
+[B0 Node 成功 Run 44890645147](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/44890645147) 在 scanner SHA `b738e747f74e54b32ea99448fe9b3f19a0dde72e` 成功執行，Artifact：`acx-b0-full-app-locale-inventory`。該 Artifact 帶有 sourceSha、逐 Key、最多 20 筆直接引用位置、所有語言專屬缺漏與潛在 UI literal 候選；到期前可重取，之後直接使用已提交的 Node scanner 重建。
+
+| 指標 | 實測結果 |
+|---|---:|
+| 全 App 基底資源 | 2471 = 2427 string + 43 plurals + 1 string-array |
+| 可翻譯基底 Key | 2462 |
+| 含 printf / 字串格式符號 | 369 |
+| 含富文字標記 | 44 |
+| 有直接靜態引用的 Key | 2447 |
+| **找不到直接靜態引用**（不等於未使用） | **24** |
+| Kotlin/Java/XML 掃描的使用點檔案 | 312 |
+| 疑似硬編碼 UI 文案位置（候選、尚未核准） | 97 |
+| G6 200-Key 抽樣落在基底中的交集 | 200 |
+
+24 個未找到直接引用的 Key 包含 `music_library_tab_*`、`alarm_music_settings_*`、`music_library_history_row` 等，與先前 G2 的五個疑點相互印證。其餘仍需逐筆辨認有無動態引用，不能靠這個數據直接刪除 Key。
+
+97 個候選位置**不是 97 個確定硬編碼缺陷**：不少是動畫命名、數值、符號、`@string/` 參照或 UI 組字。但 Debug LP1 Language Lab 內有直接 `Text("…")` 繁中文字面，例如「語言包資料無法載入」「匯入 JSON」「建立」與多段編輯提示；若希望語言包工具本身支援不同語言，這些文字應列入後續 B1/B2 的真實 UI 掃描，而不是假設 R.string 覆蓋已包含。
+
+本次源資料分類與文字篩選仍是**語法與靜態證據**，不代表任意 locale 已在正常 Release UI 中可切換。若新增掃描器或資源變更，需另用新 SHA 的 Node CI 產生新的 artifact；本次基準不外推到未來代碼。
