@@ -93,7 +93,10 @@ class LanguagePackV1Test {
     }
 
     @Test fun previousProbeSchemaCannotBeSilentlyAccepted() {
-        val old=makePack().replace("acx-language-pack/1","acx-language-pack-probe/1")
+        // JSONObject encodes "/" as "\\/" in some Android implementations, so
+        // substring replacement is not a reliable way to build a negative fixture.
+        // Mutate the parsed field explicitly to verify the actual version gate.
+        val old=JSONObject(makePack()).put("format","acx-language-pack-probe/1").toString()
         assertEquals(listOf("UNSUPPORTED_PACK_FORMAT"),validator.validate(old).errors)
     }
 
