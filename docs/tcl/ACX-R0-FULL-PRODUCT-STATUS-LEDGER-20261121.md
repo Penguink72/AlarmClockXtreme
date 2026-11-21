@@ -113,3 +113,11 @@
 - **L1 尚未接入運作中的 Android LocaleManager/Settings/Compose/Service**。Android 13+ 原生選擇仍依既有 `AppLanguageManager`；Android 12 以下的內建 App 自選語言尚未正式實作。L1 是已具執行測試的狀態機，不是「所有機型都已能切換自訂語言包」。
 
 **依賴與下一片**：B1 可以同時取用 T1 全量 catalog contract 與 L1 reducer，但必須新建整合分支驗證同步版本、匯入驗證／持久化／原生 fallback 及實際設定頁重啟；B2 才擴及通知、響鈴、安全操作和雙語排版。PR #33/#34 尚未合併 B0、A0 或 main；不因兩個 Node/Android test PASS 而推稱所有 T3 或官方翻譯 Q 完成。
+
+### B0-L1 最終 CI 覆寫先前「進行中」狀態（同日補證）
+
+[Android P0 Run 44899090595](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/44899090595) 對 B0-L1 code SHA `691933c241aff801b8fda70af05fac5bdfead263` 的 **build APK、全部 unit tests、獨立第二 Runner signing 三 Job completed/SUCCESS**。Unit job `136830965585` 證據：`UNIT_TEST_COUNTS files=159 tests=875 failures=0 errors=0 skipped=0`；相對 B0 基準新增純狀態轉移測試 13 項。先前第 8 節「L1 CI 進行中」是歷史階段記錄，**以上是較新裁定**。
+
+- [B0-L1 受測規則文件](https://github.com/Penguink72/AlarmClockXtreme/blob/feature/acx-b0-l1-locale-state-contract-20261121/docs/localization/ACX-B0-L1-LOCALE-STATE-TRANSITION-CONTRACT-20261121.md) 現已標記 T2 PASS、T3/P UNVERIFIED。
+- [B0-T1 Node Run 44898937783](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/44898937783) 全量 2,471-Key 英／繁中／日文矩陣資料與 sourceHash 重新生成比較亦完成 SUCCESS。
+- 兩條新 PR 仍 Draft；Android 系統與 App Locale 正式交互、B1 使用者包匯入／重啟、B2 UI/通知覆蓋、C1 人工語義核准仍未實作或未驗證，**不得將 T2 綠燈推定為交付完成**。
