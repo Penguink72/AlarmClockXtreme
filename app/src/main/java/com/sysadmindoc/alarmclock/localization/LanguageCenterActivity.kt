@@ -40,6 +40,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.sysadmindoc.alarmclock.localization.LanguagePackV1Repository
+import com.sysadmindoc.alarmclock.R
+import androidx.compose.ui.res.stringResource
 import com.sysadmindoc.alarmclock.ui.theme.AlarmClockXtremeTheme
 import com.sysadmindoc.alarmclock.util.LocaleSelectionContract
 import kotlinx.coroutines.Dispatchers
@@ -145,7 +147,7 @@ private fun LanguageCenterScreen(onClose: () -> Unit) {
                             (result.validation?.errors?.joinToString() ?: result.errorCode)
                     }
                     if (result.stored && result.locale != null) reloadPack(result.locale)
-                }.onFailure { status = (labels?.get("failed") ?: "Error") + " " + it.javaClass.simpleName }
+                }.onFailure { status = labels?.get("failed").orEmpty() + " " + it.javaClass.simpleName }
             }
         }
     }
@@ -227,14 +229,14 @@ private fun LanguageCenterScreen(onClose: () -> Unit) {
 
     Scaffold(topBar = {
         Row(Modifier.fillMaxWidth().padding(12.dp), horizontalArrangement=Arrangement.SpaceBetween) {
-            Text(labels?.get("title") ?: "Language center",style=MaterialTheme.typography.titleLarge)
-            TextButton(onClick=onClose) { Text(labels?.get("back") ?: "Back") }
+            Text(labels?.get("title") ?: stringResource(R.string.settings_language),style=MaterialTheme.typography.titleLarge)
+            TextButton(onClick=onClose) { Text(labels?.get("back") ?: stringResource(R.string.cancel)) }
         }
     }) { insets ->
         if (loaded == null) {
             Column(Modifier.fillMaxSize().padding(insets).padding(20.dp)) {
                 if (initialError == null) CircularProgressIndicator()
-                Text(initialError ?: "Loading catalog")
+                Text(initialError ?: stringResource(R.string.settings_title))
             }
         } else {
             LazyColumn(
