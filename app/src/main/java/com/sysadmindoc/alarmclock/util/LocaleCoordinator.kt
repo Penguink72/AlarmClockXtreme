@@ -58,6 +58,7 @@ internal class LocaleCoordinator(
     companion object {
         private const val PREFS = "acx-locale-selection-v1"
         private const val VERSION = 1
+        private val processLock = Any()
 
         fun forApp(
             context: Context,
@@ -69,7 +70,6 @@ internal class LocaleCoordinator(
         )
     }
 
-    private val lock = Any()
     private val platformTags: String
         get() = LocaleSelectionContract.normalizedAndroidAppLocales(
             platform.appLanguageTags()
@@ -122,9 +122,9 @@ internal class LocaleCoordinator(
         return result.state
     }
 
-    fun snapshot(): LocaleSelectionState = synchronized(lock) { observed() }
+    fun snapshot(): LocaleSelectionState = synchronized(processLock) { observed() }
 
-    fun decision(): LocaleSelectionDecision = synchronized(lock) {
+    fun decision(): LocaleSelectionDecision = synchronized(processLock) {
         val state=observed()
         LocaleSelectionContract.decide(state,LocaleSelectionEnvironment(
             deviceLocaleTags=platform.deviceLanguageTags(),
@@ -141,7 +141,7 @@ internal class LocaleCoordinator(
      * mutating Resources/Locale.setDefault or promising whole-app switching.
      */
     fun dispatch(action: LocaleSelectionAction): LocaleSelectionTransition =
-        synchronized(lock) {
+        synchronized(processLock) {
             val previous=observed()
             val next=LocaleSelectionContract.transition(
                 previous,action,installedCustomPacks()
