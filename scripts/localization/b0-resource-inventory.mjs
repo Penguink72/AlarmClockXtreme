@@ -41,7 +41,7 @@ export function extractResourceDefinitions(xml) {
     seen.add(key);
     const translatable = !/\btranslatable\s*=\s*(['"])false\1/.test(m[2]);
     const after = (m.index ?? 0) + m[0].length;
-    const close = xml.indexOf("</" + m[1] + ">", after);
+    const close = masked.indexOf("</" + m[1] + ">", after);
     const rawValue = close < 0 || m[0].endsWith("/>") ? "" : xml.slice(after, close);
     const formats = [...new Set(rawValue.match(formatter) ?? [])].sort();
     const isPlural = kind === "plurals";
