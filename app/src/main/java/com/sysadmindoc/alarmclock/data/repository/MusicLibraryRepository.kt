@@ -468,8 +468,8 @@ class MusicLibraryRepository @Inject constructor(
             for (item in rowsForPlaylist) {
                 val cand = candidateByUri[item.trackUri]
                 val meta = metaByUri[item.trackUri]
-                val isIncluded = cand?.membershipState == MusicPoolEntry.INCLUDED
-                val isPlayable = cand != null && isIncluded &&
+                val isNotExcluded = cand?.membershipState != MusicPoolEntry.EXCLUDED
+                val isPlayable = cand != null && isNotExcluded &&
                     (meta == null || meta.audioProbeStatus == MediaAvailability.PLAYABLE.name)
                 if (isPlayable) playable++ else unavailable++
             }
@@ -676,6 +676,25 @@ class MusicLibraryRepository @Inject constructor(
         )
     }
 
+    override suspend fun ensureFavorites(): MusicPlaylist {
+        val now = System.currentTimeMillis()
+        musicLibraryDao.insertPlaylistIfAbsent(MusicPlaylistEntity(
+            playlistId = MusicPlaylistRepository.FAVORITES_PLAYLIST_ID,
+            name = FAVORITES_DEFAULT_NAME,
+            kind = MusicPlaylistKind.FAVORITES.name,
+            createdAt = now,
+            updatedAt = now
+        ))
+        return getPlaylistsSnapshot().first {
+            it.playlistId == MusicPlaylistRepository.FAVORITES_PLAYLIST_ID
+        }
+    }
+
+    override suspend fun addHistoryTrack(playlistId: String, uri: String): AddTracksResult {
+        require(playlistId != MusicPlaylistRepository.SMART_ALL_PLAYLIST_ID)
+        return musicLibraryDao.addHistoryTrackOnceTransaction(playlistId, uri)
+    }
+
     override suspend fun removeItem(playlistItemId: String) {
         musicLibraryDao.removePlaylistItemTransaction(playlistItemId)
     }
@@ -857,6 +876,11 @@ class MusicLibraryRepository @Inject constructor(
         val includedByUri = candidates
             .filter { it.membershipState == MusicPoolEntry.INCLUDED }
             .associate { it.track.uri to it.track }
+        // Named playlists are independent from Smart All inclusion. Explicit
+        // EXCLUDED is the shared safety veto, never silently restored here.
+        val availableForNamedPlaylist = candidates
+            .filter { it.membershipState != MusicPoolEntry.EXCLUDED }
+            .associate { it.track.uri to it.track }
         val metaByUri = musicLibraryDao.getAllCatalogMetadata().associateBy { it.uri }
         val playlistId = draft.playlistId
             ?.takeUnless { it == MusicPlaylistRepository.SMART_ALL_PLAYLIST_ID }
@@ -882,8 +906,8 @@ class MusicLibraryRepository @Inject constructor(
             val playlistItems = musicLibraryDao.getPlaylistItems(playlistId)
                 .sortedBy { it.position }
             playlistItems.mapNotNull { item ->
-                // Must also be in GLOBAL INCLUDED (explicitly EXCLUDED tracks never play)
-                val track = includedByUri[item.trackUri] ?: return@mapNotNull null
+                // A named playlist does not mutate or depend on Smart All inclusion.
+                val track = availableForNamedPlaylist[item.trackUri] ?: return@mapNotNull null
                 val meta = metaByUri[track.uri]
                 val folderIds = buildSet {
                     meta?.relativePath?.takeIf { it.isNotBlank() }?.let(::add)

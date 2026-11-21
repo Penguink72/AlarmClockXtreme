@@ -118,8 +118,8 @@ interface MusicPlaylistRepository {
 
     /**
      * Must execute in a single Room transaction:
-     * - Candidate (`membershipState == null`) tracks are automatically set to
-     *   `INCLUDED` and added to [playlistId].
+     * - Candidate (`membershipState == null`) tracks join this named playlist
+     *   WITHOUT joining the shared Smart All alarm pool.
      * - `EXCLUDED` tracks are never silently restored unless the user chooses
      *   [ExcludedTrackResolution.RESTORE_EXCLUDED].
      * - Unavailable tracks are skipped and reported in [AddTracksResult].
@@ -129,6 +129,13 @@ interface MusicPlaylistRepository {
         selectedUris: List<String>,
         excludedResolution: ExcludedTrackResolution = ExcludedTrackResolution.KEEP_EXCLUDED
     ): AddTracksResult
+
+    /** Built-in favorites is created lazily and survives reopen. */
+    suspend fun ensureFavorites(): MusicPlaylist = create("Favorites")
+
+    /** History insertion is idempotent per URI and never auto-includes Smart All. */
+    suspend fun addHistoryTrack(playlistId: String, uri: String): AddTracksResult =
+        addTracks(playlistId, listOf(uri), ExcludedTrackResolution.KEEP_EXCLUDED)
 
     suspend fun removeItem(playlistItemId: String)
 

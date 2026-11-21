@@ -52,6 +52,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.sysadmindoc.alarmclock.service.ReplayUiState
+import com.sysadmindoc.alarmclock.data.local.entity.PlaybackHistoryEntry
+import android.widget.Toast
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.flow.collect
 import com.sysadmindoc.alarmclock.ui.components.HistoryTrackRow
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.input.pointer.pointerInput
@@ -112,7 +116,7 @@ fun MusicLibraryDialog(
     val workspace = MusicLibraryWorkspace.valueOf(workspaceName)
     var categoryName by rememberSaveable { mutableStateOf(MusicLibraryCategory.ALL.name) }
     val category = MusicLibraryCategory.valueOf(categoryName)
-    var browseModeName by rememberSaveable { mutableStateOf(MusicLibraryBrowseMode.MEDIA.name) }
+    var browseModeName by rememberSaveable { mutableStateOf(MusicLibraryBrowseMode.FOLDERS.name) }
     val browseMode = MusicLibraryBrowseMode.valueOf(browseModeName)
     val permissions = remember {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -124,18 +128,18 @@ fun MusicLibraryDialog(
             arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
         }
     }
+    val requiredAudioPermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+        Manifest.permission.READ_MEDIA_AUDIO else Manifest.permission.READ_EXTERNAL_STORAGE
     var hasAudioPermission by remember {
-        mutableStateOf(
-            permissions.any {
-                ContextCompat.checkSelfPermission(context, it) ==
-                    PackageManager.PERMISSION_GRANTED
-            }
-        )
+        mutableStateOf(ContextCompat.checkSelfPermission(context, requiredAudioPermission) ==
+            PackageManager.PERMISSION_GRANTED)
     }
     val permissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { grants ->
-        hasAudioPermission = grants.values.any { it }
+        // A video grant alone does not authorize device audio indexing.
+        hasAudioPermission = ContextCompat.checkSelfPermission(context, requiredAudioPermission) ==
+            PackageManager.PERMISSION_GRANTED
         viewModel.scan()
     }
 
@@ -259,6 +263,7 @@ fun MusicLibraryDialog(
                     when {
                         showHistory -> PlaybackHistoryContent(
                             viewModel = viewModel,
+                            playlistRepository = playlistRepository,
                             modifier = Modifier.padding(padding)
                         )
                         workspace == MusicLibraryWorkspace.PLAYLISTS -> MusicPlaylistsWorkspace(
@@ -279,13 +284,16 @@ fun MusicLibraryDialog(
                         )
                         browseMode == MusicLibraryBrowseMode.FOLDERS -> MusicFoldersContent(
                             state = state,
+                            viewModel = viewModel,
+                            hasAudioPermission = hasAudioPermission,
+                            onRequestPermission = { permissionLauncher.launch(permissions) },
                             onManageSources = { showSources = true },
                             onBrowseSource = { sourceId ->
                                 viewModel.setCatalogSourceScope(MusicPoolSourceScope.Folder(sourceId))
                                 browseModeName = MusicLibraryBrowseMode.MEDIA.name
                             },
-                            onBrowseDeviceMedia = {
-                                viewModel.setCatalogSourceScope(MusicPoolSourceScope.DeviceMedia)
+                            onBrowseDeviceFolder = { path ->
+                                viewModel.setCatalogSourceScope(MusicPoolSourceScope.DeviceFolder(path))
                                 browseModeName = MusicLibraryBrowseMode.MEDIA.name
                             },
                             modifier = Modifier.padding(padding)
@@ -522,6 +530,10 @@ private fun MusicCatalogContent(
                     stringResource(R.string.music_library_pool_scope_folders)
                 MusicPoolSourceScope.DeviceMedia ->
                     stringResource(R.string.music_library_pool_device_source)
+                is MusicPoolSourceScope.DeviceFolder ->
+                    scope.relativePath.ifBlank {
+                        stringResource(R.string.music_library_pool_device_source)
+                    }
                 is MusicPoolSourceScope.Folder ->
                     state.sources.firstOrNull { it.id == scope.sourceId }?.name
                         ?: stringResource(R.string.music_library_pool_unknown_source)
@@ -920,50 +932,91 @@ private fun CatalogSourceScopePicker(
 @Composable
 private fun MusicFoldersContent(
     state: MusicLibraryUiState,
+    viewModel: MusicLibraryViewModel,
+    hasAudioPermission: Boolean,
+    onRequestPermission: () -> Unit,
     onManageSources: () -> Unit,
     onBrowseSource: (String) -> Unit,
-    onBrowseDeviceMedia: () -> Unit,
+    onBrowseDeviceFolder: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val deviceTrackCount = state.poolTracks.count {
-        it.track.source == MusicLibraryIndexer.SOURCE_MEDIA_STORE
-    }
+    val deviceFolders = groupMediaStoreFolders(
+        state.poolTracks, state.supplementalCatalog.trackMetadataByUri
+    )
     Column(
         modifier = modifier
             .fillMaxSize()
             .padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Text(stringResource(R.string.music_library_folder_relative_paths_pending))
+        Text(stringResource(R.string.music_library_pool_non_destructive_hint))
+        if (!hasAudioPermission) {
+            Text(stringResource(R.string.music_library_catalog_permission),
+                style = MaterialTheme.typography.bodySmall)
+            OutlinedButton(onClick = onRequestPermission, modifier = Modifier.fillMaxWidth()) {
+                Text(stringResource(R.string.music_library_catalog_grant_permission))
+            }
+        }
         OutlinedButton(onClick = onManageSources, modifier = Modifier.fillMaxWidth()) {
             Text(stringResource(R.string.music_library_sources_button))
         }
-        if (state.sources.isEmpty() && deviceTrackCount == 0) {
+        if (state.sources.isEmpty() && deviceFolders.isEmpty()) {
             Text(stringResource(R.string.music_library_no_sources))
+        }
+        if (deviceFolders.isNotEmpty()) {
+            Text(stringResource(R.string.music_library_pool_device_warning),
+                style = MaterialTheme.typography.bodySmall)
+            val allDeviceAudio = state.poolTracks.filter { item ->
+                item.track.source == MusicLibraryIndexer.SOURCE_MEDIA_STORE &&
+                    state.supplementalCatalog.trackMetadataByUri[item.track.uri]?.isSystemTone != true
+            }.mapTo(LinkedHashSet()) { it.track.uri }
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(stringResource(R.string.music_library_folder_device_media),
+                    style = MaterialTheme.typography.titleSmall)
+                TextButton(
+                    enabled = allDeviceAudio.isNotEmpty() && !state.loadingPool && !state.scanning,
+                    onClick = { viewModel.setFolderPoolRule(
+                        MusicFolderPoolRules.allDeviceAudioKey(), allDeviceAudio, true
+                    ) }
+                ) { Text(stringResource(R.string.music_library_pool_add)) }
+            }
         }
         LazyColumn(
             modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            if (deviceTrackCount > 0) {
-                item(key = "device-media") {
-                    Column(
-                        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
-                        verticalArrangement = Arrangement.spacedBy(4.dp)
-                    ) {
-                        Text(
-                            stringResource(R.string.music_library_folder_device_media),
-                            style = MaterialTheme.typography.titleMedium
-                        )
-                        Text(
-                            stringResource(
-                                R.string.music_library_folder_track_count,
-                                deviceTrackCount
-                            ),
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                        OutlinedButton(onClick = onBrowseDeviceMedia) {
+            items(deviceFolders, key = { "media:${it.relativePath}" }) { folder ->
+                val key = MusicFolderPoolRules.mediaStoreKey(folder.relativePath)
+                Column(
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    Text(folder.relativePath.ifBlank {
+                        stringResource(R.string.music_library_folder_device_media)
+                    }, style = MaterialTheme.typography.titleMedium)
+                    Text(stringResource(R.string.music_library_source_counts,
+                        folder.trackCount, folder.audioCount, folder.videoCount),
+                        style = MaterialTheme.typography.bodySmall)
+                    Text("${folder.includedCount}/${folder.trackCount} · " +
+                        stringResource(R.string.music_library_pool_included),
+                        style = MaterialTheme.typography.bodySmall)
+                    state.folderPoolRules[key]?.let { rule ->
+                        Text(stringResource(if (rule == MusicFolderPoolRules.INCLUDE)
+                            R.string.music_library_pool_status_included
+                        else R.string.music_library_pool_status_excluded),
+                            style = MaterialTheme.typography.bodySmall)
+                    }
+                    Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                        TextButton(onClick = { onBrowseDeviceFolder(folder.relativePath) }) {
                             Text(stringResource(R.string.music_library_folder_browse))
+                        }
+                        TextButton(enabled = !state.loadingPool && !state.scanning,
+                            onClick = { viewModel.setFolderPoolRule(key, folder.trackUris, true) }) {
+                            Text(stringResource(R.string.music_library_pool_add))
+                        }
+                        TextButton(enabled = !state.loadingPool && !state.scanning,
+                            onClick = { viewModel.setFolderPoolRule(key, folder.trackUris, false) }) {
+                            Text(stringResource(R.string.music_library_pool_exclude))
                         }
                     }
                 }
@@ -995,11 +1048,26 @@ private fun MusicFoldersContent(
                             style = MaterialTheme.typography.bodySmall
                         )
                     }
-                    OutlinedButton(
-                        enabled = sourceTracks > 0,
-                        onClick = { onBrowseSource(source.id) }
-                    ) {
-                        Text(stringResource(R.string.music_library_folder_browse))
+                    val key = MusicFolderPoolRules.safSourceKey(source.id)
+                    state.folderPoolRules[key]?.let { rule ->
+                        Text(stringResource(if (rule == MusicFolderPoolRules.INCLUDE)
+                            R.string.music_library_pool_status_included
+                        else R.string.music_library_pool_status_excluded),
+                            style = MaterialTheme.typography.bodySmall)
+                    }
+                    Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                        TextButton(enabled = sourceTracks > 0,
+                            onClick = { onBrowseSource(source.id) }) {
+                            Text(stringResource(R.string.music_library_folder_browse))
+                        }
+                        TextButton(enabled = sourceTracks > 0 && !state.loadingPool && !state.scanning,
+                            onClick = { viewModel.setFolderPoolRule(key, source.trackUris, true) }) {
+                            Text(stringResource(R.string.music_library_pool_add))
+                        }
+                        TextButton(enabled = sourceTracks > 0 && !state.loadingPool && !state.scanning,
+                            onClick = { viewModel.setFolderPoolRule(key, source.trackUris, false) }) {
+                            Text(stringResource(R.string.music_library_pool_exclude))
+                        }
                     }
                 }
             }
@@ -1070,11 +1138,32 @@ private fun ArtistCatalogUnavailable(modifier: Modifier = Modifier) {
 @Composable
 private fun PlaybackHistoryContent(
     viewModel: MusicLibraryViewModel,
+    playlistRepository: MusicPlaylistRepository?,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val replayState by viewModel.replayState.collectAsStateWithLifecycle()
+    val scope = rememberCoroutineScope()
+    var targetHistory by remember { mutableStateOf<PlaybackHistoryEntry?>(null) }
+    var availablePlaylists by remember { mutableStateOf<List<MusicPlaylist>>(emptyList()) }
+    var saving by remember { mutableStateOf(false) }
+
+    LaunchedEffect(playlistRepository) {
+        if (playlistRepository != null) {
+            try {
+                playlistRepository.ensureFavorites()
+                playlistRepository.observePlaylists().collect { rows ->
+                    availablePlaylists = rows.filter { it.kind == MusicPlaylistKind.FAVORITES ||
+                        it.kind == MusicPlaylistKind.NAMED || it.kind == MusicPlaylistKind.ALARM_COPY }
+                }
+            } catch (cancel: CancellationException) {
+                throw cancel
+            } catch (_: Exception) {
+                availablePlaylists = emptyList()
+            }
+        }
+    }
 
     Column(
         modifier = modifier
@@ -1151,10 +1240,74 @@ private fun PlaybackHistoryContent(
                         replayState = currentReplayState,
                         onPlay = { viewModel.playHistory(entry.id) },
                         onPause = { viewModel.pauseReplay() },
-                        onResume = { viewModel.resumeReplay() }
+                        onResume = { viewModel.resumeReplay() },
+                        onAddToPlaylist = if (playlistRepository != null) {
+                            { targetHistory = entry }
+                        } else null
                     )
                 }
             }
         }
     }
+    val chosenHistory = targetHistory
+    if (chosenHistory != null) {
+        AlertDialog(
+            onDismissRequest = { if (!saving) targetHistory = null },
+            title = { Text(stringResource(R.string.music_playlist_title)) },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(chosenHistory.title, style = MaterialTheme.typography.bodyMedium)
+                    if (availablePlaylists.isEmpty()) {
+                        Text(stringResource(R.string.music_playlist_none))
+                    } else {
+                        LazyColumn(modifier = Modifier.heightIn(max = 320.dp)) {
+                            items(availablePlaylists, key = MusicPlaylist::playlistId) { playlist ->
+                                TextButton(
+                                    enabled = !saving,
+                                    onClick = {
+                                        val repo = playlistRepository ?: return@TextButton
+                                        if (saving) return@TextButton
+                                        saving = true
+                                        scope.launch {
+                                            try {
+                                                val added = repo.addHistoryTrack(
+                                                    playlist.playlistId, chosenHistory.uri
+                                                )
+                                                val message = when {
+                                                    added.addedItems > 0 -> context.getString(
+                                                        R.string.music_playlist_added_count, added.addedItems)
+                                                    added.excludedItemsSkipped > 0 -> context.getString(
+                                                        R.string.music_playlist_item_unavailable)
+                                                    else -> context.getString(R.string.music_playlist_add_zero)
+                                                }
+                                                Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                                                targetHistory = null
+                                            } catch (cancel: CancellationException) {
+                                                throw cancel
+                                            } catch (error: Exception) {
+                                                Toast.makeText(context,
+                                                    context.getString(R.string.music_library_pool_update_failed,
+                                                        error.message.orEmpty()),
+                                                    Toast.LENGTH_LONG).show()
+                                            } finally {
+                                                saving = false
+                                            }
+                                        }
+                                    }
+                                ) {
+                                    Text(playlist.name, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(enabled = !saving, onClick = { targetHistory = null }) {
+                    Text(stringResource(R.string.cancel))
+                }
+            }
+        )
+    }
+
 }

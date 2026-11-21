@@ -44,6 +44,9 @@ internal fun MusicPoolDialog(
     val scopeLabel = when (val scope = state.poolSourceScope) {
         MusicPoolSourceScope.Folders -> stringResource(R.string.music_library_pool_scope_folders)
         MusicPoolSourceScope.DeviceMedia -> stringResource(R.string.music_library_pool_device_source)
+        is MusicPoolSourceScope.DeviceFolder -> scope.relativePath.ifBlank {
+            stringResource(R.string.music_library_pool_device_source)
+        }
         is MusicPoolSourceScope.Folder -> state.sources.firstOrNull { it.id == scope.sourceId }?.name
             ?: stringResource(R.string.music_library_pool_unknown_source)
     }

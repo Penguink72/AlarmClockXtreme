@@ -63,3 +63,12 @@
 `id | owner_branch | source_sha | source_file | T0 | T1 | T2_run_and_sha | T3_device_date | P_task_and_measure | Q_authority | open_blocker | next_gate | decision_supersedes`
 
 **禁止**僅憑新增 Test 數量、Key 數量或 CI 綠燈提高整體產品 P 完成率。後續施工序參考 [A0～D0 執行計畫](ACX-A0-TO-D0-PRODUCT-DELIVERY-ROADMAP-20261121.md)。
+
+## 6. PR #38｜使用者完成判定與 P1–P3 音樂庫管理獨立切片（2026-11-21）
+
+- **Q0 的產品完成**：使用者明示「早在實際可以看到鬧鐘音樂播放紀錄的時候我的需求就完成了」。因此將初始音樂鬧鐘＋可見實播歷史視為**該次使用者確認完成**；此裁定不能反推新分支 T3 或所有 OS 可靠性已驗收，也不受另行拓展的 R5 語言包、可用性優化等工程線影響。
+- **Q1 獨立改善**：從整部手機的音訊或單一音訊／影片來源資料夾按目錄整批增減；可在不進鬧鐘編輯器的音樂中心維護播放清單與收藏；從歷史事件另存喜愛的歌；鬧鐘綁定既有池或具名播放清單。
+- [Draft PR #38](https://github.com/Penguink72/AlarmClockXtreme/pull/38) 基於 PR #37，新增 P1 folder-first 首頁音樂中心、MediaStore 路徑分類／整批操作及 durable include/exclude、P2 歷史→收藏/具名清單 idempotent transaction、P3 named playlist 與 Smart All 的成員分離。文件 [KLS／PRTP 完整契約](ACX-P1P2P3-KLS-PRTP-MUSIC-CENTER-20261121.md)。
+- **範圍**：原始 Room v28 架構未遷移、錄音與影片音軌僅在可用媒體索引權限下處理；未改鬧鐘排程、服務、歷史、SAF 檔案、翻譯包正式批准或 main。
+- **負向判準**：具名清單新增候選不得改變 Smart All；不同大小寫目錄不得混合；未批准系統鈴聲不得透過全裝置快捷誤入；手動 EXCLUDED 在全裝置 opt-in／重掃後仍排除；歷史收藏不更改過去播放事件。Android 舊版無路徑 metadata 的來源只以未分類裝置媒體呈現。
+- **驗收狀態**：T0 明示授權、T1 具可定位程式；T2 以 **PR #38 最新 HEAD** 的完整 F-Droid 單測、APK、第二 Runner 與 Node CI 結果另行標示，不因首次 Gradle 曾有舊自動包含預期失敗、或舊 SHA 成功而誤稱 PASS。T3/P 需本機版本實機觀察，仍未受此次遠端修改證明。

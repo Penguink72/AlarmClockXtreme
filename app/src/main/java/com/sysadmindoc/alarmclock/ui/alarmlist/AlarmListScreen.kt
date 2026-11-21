@@ -168,6 +168,7 @@ fun AlarmListScreen(
     var searchQuery by remember { mutableStateOf("") }
     var showBulkDeleteConfirmation by remember { mutableStateOf(false) }
     var showMusicHistoryDialog by rememberSaveable { mutableStateOf(false) }
+    var showIndependentMusicCenter by rememberSaveable { mutableStateOf(false) }
 
     // v1.7.1: Prominent (non-tucked) YouTube download entry. The user can
     // build up an alarm-sound library without first creating an alarm.
@@ -233,6 +234,10 @@ fun AlarmListScreen(
             },
             onDismiss = { showTemplates = false }
         )
+    }
+
+    if (showIndependentMusicCenter) {
+        MusicLibraryDialog(onDismiss = { showIndependentMusicCenter = false })
     }
 
     if (showMusicHistoryDialog) {
@@ -463,6 +468,15 @@ fun AlarmListScreen(
                                 )
                             }
                         }
+                    }
+                }
+
+                item {
+                    OutlinedButton(
+                        onClick = { showIndependentMusicCenter = true },
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 6.dp)
+                    ) {
+                        Text(stringResource(R.string.music_library_title))
                     }
                 }
 

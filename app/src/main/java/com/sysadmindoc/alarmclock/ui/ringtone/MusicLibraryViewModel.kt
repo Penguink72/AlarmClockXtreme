@@ -39,6 +39,7 @@ data class MusicLibraryUiState(
     val audioCount: Int = 0,
     val videoCount: Int = 0,
     val sources: List<MusicLibrarySource> = emptyList(),
+    val folderPoolRules: Map<String, String> = emptyMap(),
     val scanning: Boolean = false,
     val scanningSourceIds: Set<String> = emptySet(),
     val status: String = "",
@@ -78,6 +79,7 @@ enum class MusicPoolFilter {
 sealed interface MusicPoolSourceScope {
     data object Folders : MusicPoolSourceScope
     data object DeviceMedia : MusicPoolSourceScope
+    data class DeviceFolder(val relativePath: String) : MusicPoolSourceScope
     data class Folder(val sourceId: String) : MusicPoolSourceScope
 }
 
@@ -93,6 +95,7 @@ internal fun MusicTrack.isVideoAudio(): Boolean = MusicLibraryIndexer.isVideoSou
 internal fun MusicPoolUiTrack.matchesScope(scope: MusicPoolSourceScope): Boolean = when (scope) {
     MusicPoolSourceScope.Folders -> !MusicLibraryIndexer.isMediaStoreSource(track.source)
     MusicPoolSourceScope.DeviceMedia -> MusicLibraryIndexer.isMediaStoreSource(track.source)
+    is MusicPoolSourceScope.DeviceFolder -> MusicLibraryIndexer.isMediaStoreSource(track.source)
     is MusicPoolSourceScope.Folder ->
         !MusicLibraryIndexer.isMediaStoreSource(track.source) && scope.sourceId in sourceIds
 }
@@ -139,8 +142,12 @@ internal fun filterLibraryCatalog(
             MusicPoolFilter.INCLUDED -> item.membershipState == MusicPoolEntry.INCLUDED
             MusicPoolFilter.EXCLUDED -> item.membershipState == MusicPoolEntry.EXCLUDED
         }
-        if (!matchesFilter ||
-            (sourceScope != null && !item.matchesScope(sourceScope)) ||
+        val matchingFolder = if (sourceScope is MusicPoolSourceScope.DeviceFolder) {
+            MusicLibraryIndexer.isMediaStoreSource(item.track.source) &&
+                normalizeMusicFolderPath(metadataByUri[item.track.uri]?.folderPath.orEmpty()) ==
+                    sourceScope.relativePath
+        } else sourceScope == null || item.matchesScope(sourceScope)
+        if (!matchesFilter || !matchingFolder ||
             (videoOnly && !item.track.isVideoAudio())
         ) return@filter false
         if (query.isBlank()) return@filter true
@@ -284,7 +291,10 @@ class MusicLibraryViewModel @Inject constructor(
                 val sources = withContext(Dispatchers.IO) {
                     MusicLibrarySourceStore.getSources(context)
                 }
-                _uiState.value = _uiState.value.copy(sources = sources)
+                _uiState.value = _uiState.value.copy(
+                    sources = sources,
+                    folderPoolRules = MusicFolderPoolRules.readAll(context)
+                )
             } catch (error: CancellationException) {
                 throw error
             } catch (error: Exception) {
@@ -337,6 +347,11 @@ class MusicLibraryViewModel @Inject constructor(
                         check(MusicLibrarySourceStore.remove(context, sourceId) != null) {
                             "Music folder source no longer exists"
                         }
+                        // Removing a source must not resurrect its old inclusion
+                        // policy when the same SAF tree is selected again.
+                        MusicFolderPoolRules.restore(
+                            context, MusicFolderPoolRules.safSourceKey(sourceId), null
+                        )
                     }
                     updatePoolCounts(repository.poolCandidates())
                     _uiState.value = _uiState.value.copy(sources = remainingSources)
@@ -457,6 +472,20 @@ class MusicLibraryViewModel @Inject constructor(
                     metadataByUri = result.metadataByUri,
                     videoSourceStatus = result.videoSourceStatus
                 )
+                // A folder rule survives a rescan. INCLUDE only adds newly
+                // discovered candidates; an explicit per-track exclusion stays.
+                val scannedByRule = MusicFolderPoolRules.scannedUrisByRuleKey(result)
+                // Broad opt-in runs first; an explicit folder EXCLUDE wins.
+                for ((key, mode) in MusicFolderPoolRules.readAll(context).toList()
+                    .sortedBy { if (it.first == MusicFolderPoolRules.allDeviceAudioKey()) 0 else 1 }) {
+                    val uris = scannedByRule[key].orEmpty()
+                    if (uris.isEmpty()) continue
+                    if (mode == MusicFolderPoolRules.INCLUDE) {
+                        repository.includeUnselectedSourceTracks(uris)
+                    } else if (mode == MusicFolderPoolRules.EXCLUDE) {
+                        repository.setPoolMembership(uris, included = false)
+                    }
+                }
                 if (sourceIds == null && result.mediaStoreScanned) {
                     MusicAutoPoolPreferences.recordScanCompleted(context)
                 }
@@ -571,6 +600,47 @@ class MusicLibraryViewModel @Inject constructor(
                         error.message.orEmpty()
                     )
                 )
+            } finally {
+                _uiState.value = _uiState.value.copy(loadingPool = false)
+            }
+        }
+    }
+
+    /** Folder-level operations do not touch actual files or playlist rows. */
+    fun setFolderPoolRule(key: String, visibleUris: Set<String>, include: Boolean) {
+        if (_uiState.value.loadingPool || _uiState.value.scanning || visibleUris.isEmpty()) return
+        val currentUris = _uiState.value.poolTracks.mapTo(HashSet()) { it.track.uri }
+        val approved = visibleUris.intersect(currentUris)
+        if (approved.isEmpty()) return
+        val old = MusicFolderPoolRules.readAll(context)[key]
+        val mode = if (include) MusicFolderPoolRules.INCLUDE else MusicFolderPoolRules.EXCLUDE
+        systemToneUndoSnapshot = emptyMap()
+        _uiState.value = _uiState.value.copy(loadingPool = true, systemToneUndoCount = 0)
+        viewModelScope.launch {
+            try {
+                withContext(Dispatchers.IO) { MusicFolderPoolRules.write(context, key, mode) }
+                // This explicitly chosen whole-folder action includes/restores
+                // all current folder rows; later rescans do NOT undo manual
+                // per-track exclusions.
+                val changedCount = if (include && key == MusicFolderPoolRules.allDeviceAudioKey()) {
+                    // A broad opt-in must NOT undo folder-specific or manual
+                    // EXCLUDED decisions. Those require an explicit folder action.
+                    repository.includeUnselectedSourceTracks(approved)
+                } else {
+                    repository.setPoolMembership(approved, included = include)
+                    approved.size
+                }
+                loadPoolCandidatesNow()
+                reportStatus(context.getString(
+                    if (include) R.string.music_library_catalog_added
+                    else R.string.music_library_catalog_excluded, changedCount
+                ))
+            } catch (error: CancellationException) {
+                throw error
+            } catch (error: Exception) {
+                runCatching { MusicFolderPoolRules.restore(context, key, old) }
+                reportStatus(context.getString(R.string.music_library_pool_update_failed,
+                    error.message.orEmpty()))
             } finally {
                 _uiState.value = _uiState.value.copy(loadingPool = false)
             }
@@ -838,6 +908,7 @@ class MusicLibraryViewModel @Inject constructor(
         val scope = _uiState.value.poolSourceScope
         _uiState.value = _uiState.value.copy(
             sources = sources,
+            folderPoolRules = MusicFolderPoolRules.readAll(context),
             supplementalCatalog = supplemental,
             poolSourceScope = if (
                 scope is MusicPoolSourceScope.Folder && sources.none { it.id == scope.sourceId }

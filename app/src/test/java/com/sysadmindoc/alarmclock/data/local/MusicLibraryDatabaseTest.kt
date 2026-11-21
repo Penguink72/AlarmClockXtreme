@@ -715,7 +715,7 @@ class MusicLibraryDatabaseTest {
     }
 
     @Test
-    fun namedPlaylistCrudAutoIncludesCandidatesProtectsExcludedTracksSupportsDuplicatesAndBlocksReferencedDeletes() = runBlocking {
+    fun namedPlaylistCrudKeepsSmartAllIsolatedProtectsExcludedTracksSupportsDuplicatesAndBlocksReferencedDeletes() = runBlocking {
         val context = ApplicationProvider.getApplicationContext<Application>()
         val database = Room.inMemoryDatabaseBuilder(context, AlarmDatabase::class.java)
             .allowMainThreadQueries()
@@ -749,10 +749,13 @@ class MusicLibraryDatabaseTest {
                 excludedResolution = ExcludedTrackResolution.KEEP_EXCLUDED
             )
             assertEquals(20, addResult.addedItems)
-            assertEquals(20, addResult.autoIncludedCandidates)
+            assertEquals(0, addResult.autoIncludedCandidates)
             assertEquals(1, addResult.excludedItemsSkipped)
             assertEquals(listOf(excludedTrack.uri), addResult.excludedTrackUris)
-            assertEquals(20, repository.includedPoolCount())
+            assertEquals(0, repository.includedPoolCount())
+            assertEquals(20, repository.buildPlaylistSnapshotForDraft(
+                AlarmMusicSettingsDraft(playlistId = playlist.playlistId)
+            ).eligibleEntries().size)
 
             // Explicit restore of excluded track after confirmation
             val restoreResult = repository.addTracks(
@@ -762,7 +765,7 @@ class MusicLibraryDatabaseTest {
             )
             assertEquals(1, restoreResult.addedItems)
             assertEquals(1, restoreResult.excludedItemsRestored)
-            assertEquals(21, repository.includedPoolCount())
+            assertEquals(1, repository.includedPoolCount())
 
             // Duplicate URI in the same ordered playlist creates a distinct playlistItemId
             val dupUri = candidateTracks.first().uri
