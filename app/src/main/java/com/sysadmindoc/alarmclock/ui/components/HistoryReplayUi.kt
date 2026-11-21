@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.History
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.OpenInNew
 import androidx.compose.material.icons.filled.Pause
@@ -567,6 +568,7 @@ fun HistoryTrackRow(
     onPlay: () -> Unit,
     onPause: () -> Unit,
     onResume: () -> Unit,
+    onAddToPlaylist: (() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -690,6 +692,13 @@ fun HistoryTrackRow(
                     }
                 }
 
+                if (onAddToPlaylist != null) {
+                    IconButton(onClick = onAddToPlaylist, modifier = Modifier.size(48.dp)) {
+                        Icon(Icons.Default.Add,
+                            contentDescription = stringResource(R.string.music_playlist_add_tracks),
+                            tint = TextPrimary)
+                    }
+                }
                 Box {
                     var menuExpanded by remember { mutableStateOf(false) }
                     IconButton(
