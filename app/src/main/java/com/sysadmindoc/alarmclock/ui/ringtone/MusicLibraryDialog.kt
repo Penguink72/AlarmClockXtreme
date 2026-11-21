@@ -112,7 +112,7 @@ fun MusicLibraryDialog(
     val workspace = MusicLibraryWorkspace.valueOf(workspaceName)
     var categoryName by rememberSaveable { mutableStateOf(MusicLibraryCategory.ALL.name) }
     val category = MusicLibraryCategory.valueOf(categoryName)
-    var browseModeName by rememberSaveable { mutableStateOf(MusicLibraryBrowseMode.MEDIA.name) }
+    var browseModeName by rememberSaveable { mutableStateOf(MusicLibraryBrowseMode.FOLDERS.name) }
     val browseMode = MusicLibraryBrowseMode.valueOf(browseModeName)
     val permissions = remember {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -279,13 +279,14 @@ fun MusicLibraryDialog(
                         )
                         browseMode == MusicLibraryBrowseMode.FOLDERS -> MusicFoldersContent(
                             state = state,
+                            viewModel = viewModel,
                             onManageSources = { showSources = true },
                             onBrowseSource = { sourceId ->
                                 viewModel.setCatalogSourceScope(MusicPoolSourceScope.Folder(sourceId))
                                 browseModeName = MusicLibraryBrowseMode.MEDIA.name
                             },
-                            onBrowseDeviceMedia = {
-                                viewModel.setCatalogSourceScope(MusicPoolSourceScope.DeviceMedia)
+                            onBrowseDeviceFolder = { path ->
+                                viewModel.setCatalogSourceScope(MusicPoolSourceScope.DeviceFolder(path))
                                 browseModeName = MusicLibraryBrowseMode.MEDIA.name
                             },
                             modifier = Modifier.padding(padding)
@@ -522,6 +523,10 @@ private fun MusicCatalogContent(
                     stringResource(R.string.music_library_pool_scope_folders)
                 MusicPoolSourceScope.DeviceMedia ->
                     stringResource(R.string.music_library_pool_device_source)
+                is MusicPoolSourceScope.DeviceFolder ->
+                    scope.relativePath.ifBlank {
+                        stringResource(R.string.music_library_pool_device_source)
+                    }
                 is MusicPoolSourceScope.Folder ->
                     state.sources.firstOrNull { it.id == scope.sourceId }?.name
                         ?: stringResource(R.string.music_library_pool_unknown_source)
@@ -920,50 +925,65 @@ private fun CatalogSourceScopePicker(
 @Composable
 private fun MusicFoldersContent(
     state: MusicLibraryUiState,
+    viewModel: MusicLibraryViewModel,
     onManageSources: () -> Unit,
     onBrowseSource: (String) -> Unit,
-    onBrowseDeviceMedia: () -> Unit,
+    onBrowseDeviceFolder: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val deviceTrackCount = state.poolTracks.count {
-        it.track.source == MusicLibraryIndexer.SOURCE_MEDIA_STORE
-    }
+    val deviceFolders = groupMediaStoreFolders(
+        state.poolTracks, state.supplementalCatalog.trackMetadataByUri
+    )
     Column(
         modifier = modifier
             .fillMaxSize()
             .padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Text(stringResource(R.string.music_library_folder_relative_paths_pending))
+        Text(stringResource(R.string.music_library_pool_non_destructive_hint))
         OutlinedButton(onClick = onManageSources, modifier = Modifier.fillMaxWidth()) {
             Text(stringResource(R.string.music_library_sources_button))
         }
-        if (state.sources.isEmpty() && deviceTrackCount == 0) {
+        if (state.sources.isEmpty() && deviceFolders.isEmpty()) {
             Text(stringResource(R.string.music_library_no_sources))
         }
         LazyColumn(
             modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            if (deviceTrackCount > 0) {
-                item(key = "device-media") {
-                    Column(
-                        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
-                        verticalArrangement = Arrangement.spacedBy(4.dp)
-                    ) {
-                        Text(
-                            stringResource(R.string.music_library_folder_device_media),
-                            style = MaterialTheme.typography.titleMedium
-                        )
-                        Text(
-                            stringResource(
-                                R.string.music_library_folder_track_count,
-                                deviceTrackCount
-                            ),
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                        OutlinedButton(onClick = onBrowseDeviceMedia) {
+            items(deviceFolders, key = { "media:${it.relativePath}" }) { folder ->
+                val key = MusicFolderPoolRules.mediaStoreKey(folder.relativePath)
+                Column(
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    Text(folder.relativePath.ifBlank {
+                        stringResource(R.string.music_library_folder_device_media)
+                    }, style = MaterialTheme.typography.titleMedium)
+                    Text(stringResource(R.string.music_library_source_counts,
+                        folder.trackCount, folder.audioCount, folder.videoCount),
+                        style = MaterialTheme.typography.bodySmall)
+                    Text(stringResource(R.string.music_library_pool_scope_summary,
+                        folder.relativePath.ifBlank {
+                            stringResource(R.string.music_library_pool_device_source)
+                        }, folder.includedCount), style = MaterialTheme.typography.bodySmall)
+                    state.folderPoolRules[key]?.let { rule ->
+                        Text(stringResource(if (rule == MusicFolderPoolRules.INCLUDE)
+                            R.string.music_library_pool_status_included
+                        else R.string.music_library_pool_status_excluded),
+                            style = MaterialTheme.typography.bodySmall)
+                    }
+                    Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                        TextButton(onClick = { onBrowseDeviceFolder(folder.relativePath) }) {
                             Text(stringResource(R.string.music_library_folder_browse))
+                        }
+                        TextButton(enabled = !state.loadingPool && !state.scanning,
+                            onClick = { viewModel.setFolderPoolRule(key, folder.trackUris, true) }) {
+                            Text(stringResource(R.string.music_library_pool_add))
+                        }
+                        TextButton(enabled = !state.loadingPool && !state.scanning,
+                            onClick = { viewModel.setFolderPoolRule(key, folder.trackUris, false) }) {
+                            Text(stringResource(R.string.music_library_pool_exclude))
                         }
                     }
                 }
@@ -995,11 +1015,26 @@ private fun MusicFoldersContent(
                             style = MaterialTheme.typography.bodySmall
                         )
                     }
-                    OutlinedButton(
-                        enabled = sourceTracks > 0,
-                        onClick = { onBrowseSource(source.id) }
-                    ) {
-                        Text(stringResource(R.string.music_library_folder_browse))
+                    val key = MusicFolderPoolRules.safSourceKey(source.id)
+                    state.folderPoolRules[key]?.let { rule ->
+                        Text(stringResource(if (rule == MusicFolderPoolRules.INCLUDE)
+                            R.string.music_library_pool_status_included
+                        else R.string.music_library_pool_status_excluded),
+                            style = MaterialTheme.typography.bodySmall)
+                    }
+                    Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                        TextButton(enabled = sourceTracks > 0,
+                            onClick = { onBrowseSource(source.id) }) {
+                            Text(stringResource(R.string.music_library_folder_browse))
+                        }
+                        TextButton(enabled = sourceTracks > 0 && !state.loadingPool && !state.scanning,
+                            onClick = { viewModel.setFolderPoolRule(key, source.trackUris, true) }) {
+                            Text(stringResource(R.string.music_library_pool_add))
+                        }
+                        TextButton(enabled = sourceTracks > 0 && !state.loadingPool && !state.scanning,
+                            onClick = { viewModel.setFolderPoolRule(key, source.trackUris, false) }) {
+                            Text(stringResource(R.string.music_library_pool_exclude))
+                        }
                     }
                 }
             }
