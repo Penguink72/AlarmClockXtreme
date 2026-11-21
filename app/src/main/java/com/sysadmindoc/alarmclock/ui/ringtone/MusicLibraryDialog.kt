@@ -52,6 +52,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.sysadmindoc.alarmclock.service.ReplayUiState
+import com.sysadmindoc.alarmclock.data.local.entity.PlaybackHistoryEntry
+import android.widget.Toast
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.flow.collect
 import com.sysadmindoc.alarmclock.ui.components.HistoryTrackRow
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.input.pointer.pointerInput
@@ -259,6 +263,7 @@ fun MusicLibraryDialog(
                     when {
                         showHistory -> PlaybackHistoryContent(
                             viewModel = viewModel,
+                            playlistRepository = playlistRepository,
                             modifier = Modifier.padding(padding)
                         )
                         workspace == MusicLibraryWorkspace.PLAYLISTS -> MusicPlaylistsWorkspace(
@@ -1105,11 +1110,32 @@ private fun ArtistCatalogUnavailable(modifier: Modifier = Modifier) {
 @Composable
 private fun PlaybackHistoryContent(
     viewModel: MusicLibraryViewModel,
+    playlistRepository: MusicPlaylistRepository?,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val replayState by viewModel.replayState.collectAsStateWithLifecycle()
+    val scope = rememberCoroutineScope()
+    var targetHistory by remember { mutableStateOf<PlaybackHistoryEntry?>(null) }
+    var availablePlaylists by remember { mutableStateOf<List<MusicPlaylist>>(emptyList()) }
+    var saving by remember { mutableStateOf(false) }
+
+    LaunchedEffect(playlistRepository) {
+        if (playlistRepository != null) {
+            try {
+                playlistRepository.ensureFavorites()
+                playlistRepository.observePlaylists().collect { rows ->
+                    availablePlaylists = rows.filter { it.kind == MusicPlaylistKind.FAVORITES ||
+                        it.kind == MusicPlaylistKind.NAMED || it.kind == MusicPlaylistKind.ALARM_COPY }
+                }
+            } catch (cancel: CancellationException) {
+                throw cancel
+            } catch (_: Exception) {
+                availablePlaylists = emptyList()
+            }
+        }
+    }
 
     Column(
         modifier = modifier
@@ -1186,7 +1212,10 @@ private fun PlaybackHistoryContent(
                         replayState = currentReplayState,
                         onPlay = { viewModel.playHistory(entry.id) },
                         onPause = { viewModel.pauseReplay() },
-                        onResume = { viewModel.resumeReplay() }
+                        onResume = { viewModel.resumeReplay() },
+                        onAddToPlaylist = if (playlistRepository != null) {
+                            { targetHistory = entry }
+                        } else null
                     )
                 }
             }
