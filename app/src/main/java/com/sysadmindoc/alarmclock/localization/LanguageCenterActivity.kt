@@ -25,6 +25,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -44,6 +45,10 @@ import com.sysadmindoc.alarmclock.R
 import androidx.compose.ui.res.stringResource
 import com.sysadmindoc.alarmclock.ui.theme.AlarmClockXtremeTheme
 import com.sysadmindoc.alarmclock.util.LocaleSelectionContract
+import com.sysadmindoc.alarmclock.util.LocaleSelectionAction
+import com.sysadmindoc.alarmclock.util.LocaleSelectionState
+import com.sysadmindoc.alarmclock.util.LocaleSelectionDecision
+import com.sysadmindoc.alarmclock.util.LocaleCoordinator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -82,9 +87,39 @@ private fun LanguageCenterScreen(onClose: () -> Unit) {
     var pluralDraft by remember { mutableStateOf<Map<String,String>>(emptyMap()) }
     var arrayDraft by remember { mutableStateOf<List<String>>(emptyList()) }
     var menuOpen by remember { mutableStateOf(false) }
+    var secondaryMenuOpen by remember { mutableStateOf(false) }
+    var localeSelection by remember { mutableStateOf<LocaleSelectionState?>(null) }
+    var localeDecision by remember { mutableStateOf<LocaleSelectionDecision?>(null) }
     val loaded = snapshot
     val labels = loaded?.labels
     val store = repository
+    val coordinator = remember(context,store) {
+        if (store == null) null else LocaleCoordinator.forApp(context) {
+            store.installedLocales()
+        }
+    }
+    LaunchedEffect(coordinator) {
+        if (coordinator != null) {
+            val choice = withContext(Dispatchers.IO) {
+                coordinator.snapshot() to coordinator.decision()
+            }
+            localeSelection = choice.first
+            localeDecision = choice.second
+        }
+    }
+    fun changeSelection(action: LocaleSelectionAction) {
+        val target = coordinator ?: return
+        scope.launch {
+            val result = withContext(Dispatchers.IO) {
+                val transition = target.dispatch(action)
+                Triple(transition,target.snapshot(),target.decision())
+            }
+            localeSelection = result.second
+            localeDecision = result.third
+            status = (labels?.get(if (result.first.accepted) "selectionSaved"
+                else "selectionFailed") ?: "") + " " + result.first.reason
+        }
+    }
 
     LaunchedEffect(context) {
         val result = withContext(Dispatchers.IO) {
@@ -249,6 +284,78 @@ private fun LanguageCenterScreen(onClose: () -> Unit) {
                         style=MaterialTheme.typography.bodySmall,color=MaterialTheme.colorScheme.error)
                     Text(labels?.get("unreviewed").orEmpty(),style=MaterialTheme.typography.labelSmall)
                     if(status.isNotEmpty()) Text(status,style=MaterialTheme.typography.bodyMedium)
+                }
+                item("locale-selection") {
+                    Column(verticalArrangement=Arrangement.spacedBy(8.dp)) {
+                        HorizontalDivider()
+                        Text(labels?.get("primaryChoice").orEmpty(),
+                            style=MaterialTheme.typography.titleMedium)
+                        Row(horizontalArrangement=Arrangement.spacedBy(8.dp)) {
+                            OutlinedButton(onClick={
+                                changeSelection(LocaleSelectionAction.FollowSystem)
+                            }) { Text(labels?.get("followSystem").orEmpty()) }
+                            OutlinedButton(onClick={
+                                changeSelection(LocaleSelectionAction.SelectBuiltin("en"))
+                            }) { Text(stringResource(R.string.settings_language_english)) }
+                        }
+                        Row(horizontalArrangement=Arrangement.spacedBy(8.dp)) {
+                            OutlinedButton(onClick={
+                                changeSelection(LocaleSelectionAction.SelectBuiltin("zh-TW"))
+                            }) { Text(stringResource(R.string.settings_language_traditional_chinese)) }
+                            OutlinedButton(onClick={
+                                changeSelection(LocaleSelectionAction.SelectBuiltin("ja"))
+                            }) { Text(stringResource(R.string.settings_language_japanese)) }
+                        }
+                        OutlinedButton(
+                            enabled=chosenLocale.isNotBlank(),
+                            onClick={
+                                changeSelection(LocaleSelectionAction.SelectCustom(chosenLocale))
+                            }
+                        ) { Text(labels?.get("customChoice").orEmpty()) }
+                        Text((labels?.get("effective") ?: "") + ": " +
+                            (localeDecision?.primaryLocale ?: ""),
+                            style=MaterialTheme.typography.bodyMedium)
+                        Text((labels?.get("nativeLanguage") ?: "") + ": " +
+                            (localeDecision?.nativeResourceLocale ?: ""),
+                            style=MaterialTheme.typography.bodySmall)
+                        Text(labels?.get("secondaryChoice").orEmpty(),
+                            style=MaterialTheme.typography.titleSmall)
+                        OutlinedButton(onClick={secondaryMenuOpen=true}) {
+                            Text(localeSelection?.secondaryTag ?: labels?.get("none").orEmpty())
+                        }
+                        DropdownMenu(expanded=secondaryMenuOpen,
+                            onDismissRequest={secondaryMenuOpen=false}) {
+                            DropdownMenuItem(
+                                text={Text(labels?.get("none").orEmpty())},
+                                onClick={
+                                    secondaryMenuOpen=false
+                                    changeSelection(LocaleSelectionAction.SelectSecondary(null))
+                                }
+                            )
+                            (listOf("en","zh-TW","ja")+installed.sorted()).distinct().forEach { tag ->
+                                DropdownMenuItem(text={Text(tag)},onClick={
+                                    secondaryMenuOpen=false
+                                    changeSelection(LocaleSelectionAction.SelectSecondary(tag))
+                                })
+                            }
+                        }
+                        Row(horizontalArrangement=Arrangement.spacedBy(10.dp)) {
+                            Text(labels?.get("dualMode").orEmpty())
+                            Switch(
+                                checked=localeSelection?.dualEnabled==true,
+                                onCheckedChange={
+                                    changeSelection(LocaleSelectionAction.SetDual(it))
+                                }
+                            )
+                        }
+                        Text(labels?.get("pendingRuntime").orEmpty(),
+                            style=MaterialTheme.typography.bodySmall,
+                            color=MaterialTheme.colorScheme.error)
+                        if(localeDecision?.platformOverrideSupported==false)
+                            Text(labels?.get("androidOlder").orEmpty(),
+                                style=MaterialTheme.typography.bodySmall)
+                        HorizontalDivider()
+                    }
                 }
                 item("pack-actions") {
                     OutlinedTextField(

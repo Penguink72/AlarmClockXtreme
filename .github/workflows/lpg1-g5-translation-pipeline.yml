@@ -19,6 +19,7 @@ on:
       - feature/acx-b0-t1-trilingual-catalog-20261121
       - feature/acx-b1-c1-pack-validation-repo-20261121
       - feature/acx-b1-u1-language-center-20261121
+      - feature/acx-b0-l1-coordinator-integration-20261121
     paths:
       - "scripts/localization/**"
       - "localization/governance/**"
