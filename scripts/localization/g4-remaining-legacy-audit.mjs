@@ -89,11 +89,14 @@ export function verifyRemaining({matrix,high,remaining,context,unresolved,source
  for(const item of unresolved.items){
    assert(item.nearby.path.startsWith("app/src/main/"));
    const lines=readFileSync(resolve(root,item.nearby.path),"utf8").split(/\r?\n/);
-   // Require an exact, unambiguous token within the same recorded file;
-   // absolute line drift is expected when folder/history UI is inserted.
-   const matching=lines.filter(line=>line.includes(item.nearby.expectedSnippet));
+   // Match exact code tokens inside a bounded historical line neighborhood.
+   // New folder/history UI can shift this callsite by over 40 lines, but
+   // arbitrary fabricated line=1 remains a failing negative fixture.
+   const start=Math.max(0,item.nearby.line-129);
+   const end=Math.min(lines.length,item.nearby.line+128);
+   const matching=lines.slice(start,end).filter(line=>line.includes(item.nearby.expectedSnippet));
    assert.equal(matching.length,1,
-     "Nearby candidate source missing or ambiguous "+item.key);
+     "Nearby candidate source missing, displaced or ambiguous "+item.key);
  }
  assert.equal(sourceDefects.schema,"acx-g4-source-defects/1");
  assert.equal(sourceDefects.items.length,1);
