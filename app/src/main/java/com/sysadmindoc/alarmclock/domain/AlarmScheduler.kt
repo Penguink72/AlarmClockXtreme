@@ -33,6 +33,14 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
 
+/**
+ * In-editor snooze durations are limited, but external alarms and malformed
+ * imports can bypass the editor. Make every scheduler entry use a safe Long
+ * interval and align the upper bound with Alarm.sanitized() (1..180 minutes).
+ */
+internal fun safeSnoozeDelayMillis(minutes: Int): Long =
+    minutes.coerceIn(1, 180).toLong() * 60_000L
+
 /** The registration result describes API acceptance, not eventual delivery. */
 internal enum class AlarmRegistrationResult {
     EXACT, INEXACT, FAILED;
@@ -304,8 +312,11 @@ class AlarmScheduler @Inject constructor(
      * @param customMinutes Override snooze duration (null = use alarm's default)
      */
     suspend fun scheduleSnooze(alarm: Alarm, customMinutes: Int? = null): Boolean {
-        val minutes = customMinutes ?: alarm.snoozeDurationMinutes
-        val snoozeTime = System.currentTimeMillis() + (minutes * 60 * 1000L)
+        // Alarm rows restored from backup or constructed outside the editor may
+        // contain zero, negative or extreme durations. Calculate from a bounded
+        // Long before scheduling; never send a past/overflowed snooze to Android.
+        val minutes = customMinutes ?: alarm.sanitized().snoozeDurationMinutes
+        val snoozeTime = System.currentTimeMillis() + safeSnoozeDelayMillis(minutes)
         if (!canScheduleExactAlarms()) {
             // Exact-alarm access was revoked mid-ring. The service has already
             // recorded and announced the snooze, so silently dropping it is
@@ -790,6 +801,11 @@ class AlarmScheduler @Inject constructor(
         }
     }
 
+    /**
+     * An incident record is diagnostic evidence, never part of OS alarm
+     * registration. A synchronous logging failure must not prevent an exact
+     * alarm from being armed or turn an accepted alarm into a false failure.
+     */
     private fun recordScheduleIncident(
         alarmId: Long,
         fireId: String,
@@ -797,15 +813,19 @@ class AlarmScheduler @Inject constructor(
         status: String,
         reasonCode: String
     ) {
-        alarmIncidentRepository.recordAsync(
-            alarmId = alarmId,
-            fireId = fireId,
-            scheduledAt = triggerTime,
-            type = AlarmIncidentEvent.TYPE_SCHEDULE,
-            status = status,
-            reasonCode = reasonCode,
-            source = "AlarmScheduler"
-        )
+        runCatching {
+            alarmIncidentRepository.recordAsync(
+                alarmId = alarmId,
+                fireId = fireId,
+                scheduledAt = triggerTime,
+                type = AlarmIncidentEvent.TYPE_SCHEDULE,
+                status = status,
+                reasonCode = reasonCode,
+                source = "AlarmScheduler"
+            )
+        }.onFailure { error ->
+            android.util.Log.e("AlarmScheduler", "Could not record scheduling incident", error)
+        }
     }
 
     private fun scheduleSupportingWork(alarm: Alarm, triggerTime: Long) {
