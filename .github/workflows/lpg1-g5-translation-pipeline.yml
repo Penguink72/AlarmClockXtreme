@@ -120,6 +120,8 @@ jobs:
         run: |
           node --test scripts/localization/b0-resource-inventory.test.mjs
           node scripts/localization/b0-resource-inventory.mjs --out-dir build/localization/B0_FULL_APP_INVENTORY
+          node --test scripts/localization/b0-format-contracts.test.mjs
+          node scripts/localization/b0-format-contracts.mjs --out-dir build/localization/B0_FULL_APP_INVENTORY
       - name: Publish B0 full-app inventory evidence
         uses: actions/upload-artifact@v4
         with:
