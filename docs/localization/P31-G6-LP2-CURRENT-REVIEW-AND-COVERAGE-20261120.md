@@ -48,3 +48,10 @@
 - [LP2-B2 Android CI 44762900025](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/44762900025) — 859／859 單測、APK、簽章 PASS；[Node 治理 CI 44762900020](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/44762900020) PASS。
 
 **尚未驗證：** T3 實機語言匯入、雙語排版、重新開啟／切換、無障礙與響鈴優先級。待審核候選不能打包成正式發行。
+## 2026-11-21 B3 新切片（上方 B2 表格為 11/20 歷史快照）
+
+- 從 92 個未接線、無參數 Key 中找到 35 個有實際可定位 UI 呼叫的 Key：13 個直接 `stringResource(R.string.xxx)`、22 個透過 enum／category／條件式取得的 `R.string` ID。
+- 新接線位置：直接 15 處 + 間接 19 處；新增 `textForResource` 只對 22 個精確 ID 進行 G6 映射，其他資源保持原生 Android fallback。
+- Debug 白名單累計 **122／200**；仍未接線 **57 個無參數 Key** 及 **21 個有參數 Key**。這只是實驗目錄數字，並非 App 全資源覆蓋。
+- 為避免響鈴操作文字導致雙語截斷或影響警報，`AlarmFiringScreen`、通知、服務不在 B3 範圍。詳見 [LP2-B3 TCL](../tcl/P31-LP2B3-DIRECT-INDIRECT-20261121.md)。
+- 中日兩語 400 筆候選的正式獨立語義核准仍為 0；新增 UI 接線**不會解除發布阻擋**。正式發布依然需要 G6-Q。
