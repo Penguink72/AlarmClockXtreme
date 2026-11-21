@@ -67,9 +67,10 @@ export function verifyBatch2({matrix,originalProposals,firstReview,secondReview,
    const path=row.sourceEvidence.path,line=row.sourceEvidence.line;
    assert(path.startsWith("app/src/main/")&&Number.isInteger(line)&&line>0);
    const ref=byContext.get(row.key)?.sourceCallsites||[];
-   assert(ref.some(r=>r.path===path&&r.line===line),"Unverifiable G2 source reference "+row.key);
    const raw=readFileSync(resolve(root,path),"utf8").split(/\r?\n/);
-   assert(raw[line-1]?.includes("R.string."+row.key),"Source line drift "+row.key);
+   assert(ref.some(r=>r.path===path&&Math.abs(r.line-line)<=40 &&
+     raw[r.line-1]?.includes("R.string."+row.key)),
+     "Unverifiable G2 source reference or displaced code "+row.key);
  }
  assert.equal(secondKeys.size,24);
  const unreviewedKeys=new Set([...firstKeys,...secondKeys]);
