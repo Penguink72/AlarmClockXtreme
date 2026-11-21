@@ -475,7 +475,9 @@ class MusicLibraryViewModel @Inject constructor(
                 // A folder rule survives a rescan. INCLUDE only adds newly
                 // discovered candidates; an explicit per-track exclusion stays.
                 val scannedByRule = MusicFolderPoolRules.scannedUrisByRuleKey(result)
-                for ((key, mode) in MusicFolderPoolRules.readAll(context)) {
+                // Broad opt-in runs first; an explicit folder EXCLUDE wins.
+                for ((key, mode) in MusicFolderPoolRules.readAll(context).toList()
+                    .sortedBy { if (it.first == MusicFolderPoolRules.allDeviceAudioKey()) 0 else 1 }) {
                     val uris = scannedByRule[key].orEmpty()
                     if (uris.isEmpty()) continue
                     if (mode == MusicFolderPoolRules.INCLUDE) {
