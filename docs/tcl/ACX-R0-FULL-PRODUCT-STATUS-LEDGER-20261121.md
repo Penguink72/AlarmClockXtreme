@@ -121,3 +121,16 @@
 - [B0-L1 受測規則文件](https://github.com/Penguink72/AlarmClockXtreme/blob/feature/acx-b0-l1-locale-state-contract-20261121/docs/localization/ACX-B0-L1-LOCALE-STATE-TRANSITION-CONTRACT-20261121.md) 現已標記 T2 PASS、T3/P UNVERIFIED。
 - [B0-T1 Node Run 44898937783](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/44898937783) 全量 2,471-Key 英／繁中／日文矩陣資料與 sourceHash 重新生成比較亦完成 SUCCESS。
 - 兩條新 PR 仍 Draft；Android 系統與 App Locale 正式交互、B1 使用者包匯入／重啟、B2 UI/通知覆蓋、C1 人工語義核准仍未實作或未驗證，**不得將 T2 綠燈推定為交付完成**。
+
+## 9. B1-C1 正式 V1 語言包解析與離線儲存（2026-11-21）
+
+- [Draft PR #35](https://github.com/Penguink72/AlarmClockXtreme/pull/35)，分支 `feature/acx-b1-c1-pack-validation-repo-20261121`。基於已完成 Node CI 的 B0-T1 PR #33 head `c47f92a`，並使用 exact Git blob 把 B0-L1 PR #34 的純 Kotlin 狀態機、13 項測試及契約文檔帶入此隔離枝；**不合併任何父 PR 或 main**。
+- 產品實作：`app/src/main/assets/localization/v1/catalog.json`；由 `scripts/localization/b1-build-canonical-catalog.mjs` 固定生成，含全 2,471 Key 的 `sourceHash`、`formatTokens`、`pluralQuantities`、原始 XML。與 B0-T1 revision `sha256:c608e163bb47aeefa169e3ca72b8e86ebd8deb37d89c59e47796d953fe95c70a` 一致。
+- `LanguagePackV1.kt`：V1 嚴格 JSON schema、輸入上限 2 MiB、文字 4,096 字元、JSON 物件重複鍵防護、BCP47 locale、來源 stale per-key、格式／plural／array 分類、USER_SUPPLIED_UNREVIEWED 限制。
+- `LanguagePackV1Repository.kt`：`InputStream` 離線匯入、`OutputStream` 匯出、`AtomicFile` 新舊包保留、失敗不覆蓋、舊包回滾及損壞時唯讀回退。限制：仍未連接真正設定頁 SAF 選檔、Android LocaleManager 或響鈴流程；跨 process 同時改檔仍待驗。
+- [B1-C1 施工證據與操作契約](https://github.com/Penguink72/AlarmClockXtreme/blob/feature/acx-b1-c1-pack-validation-repo-20261121/docs/localization/ACX-B1-C1-V1-PACK-VALIDATOR-AND-STORAGE-20261121.md)。
+- [Node CI Run 44905760153](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/44905760153) **completed SUCCESS**，完整 B0-T1 + B1 catalog byte-for-byte verify 通過，原 G5/G6 官方未審核包仍預期拒絕發布。
+- [Android CI Run 44905760124](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/44905760124) 針對相同 code SHA `0019138398b4f18a1b7abc5d465ddf09733e38bb` 啟動嚴格 Android build、full unit、第二 Runner signing。最終裁定仍須查 Run 與 Job logs，不可拿 Node SUCCESS 冒充 Android T2。
+- `T3/P/Q` 均未因此升格；真正個人包可以從正式 UI 匯入、切換、重啟保留是 **B1-U1/B2**，不屬於本次 B1-C1 的已驗收結果。
+
+**依賴**：B1-U1 需取得 PR #35 的 manifest/Validator/Repository + B0-L1 Reducer，而非從 Debug LP1/LP2 直接推導正式 UI 能力。A1 實機貪睡、A2 5 秒操作未在本切片改動。
