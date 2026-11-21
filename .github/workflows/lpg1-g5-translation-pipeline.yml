@@ -14,6 +14,7 @@ on:
       - feature/p31-lp2b3-direct-indirect-ui-preview-20261121
       - feature/p31-g6q1-current-content-audit-20261121
       - feature/p31-g6q2-full-200-key-model-audit-20261121
+      - integration/acx-r0-product-candidate-20261121
     paths:
       - "scripts/localization/**"
       - "localization/governance/**"
