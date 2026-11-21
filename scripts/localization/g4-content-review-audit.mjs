@@ -73,11 +73,17 @@ export function verifyContentReview({review,glossary,matrix,drafts,contexts,appr
    assert(loc.path.startsWith("app/src/main/java/"),"No Android source path");
    assert(Number.isInteger(loc.line) && loc.line>0);
    const references=contextsByKey.get(row.key)?.sourceCallsites||[];
-   assert(references.some(e=>e.path===loc.path&&e.line===loc.line),
-     "Referenced callsite absent from generated G2 evidence "+row.key);
    const lines=readFileSync(resolve(root,loc.path),"utf8").split(/\r?\n/);
-   assert(lines[loc.line-1]?.includes("R.string."+row.key),
-     "Code at reference line has changed "+row.key+" "+loc.path+":"+loc.line);
+   // Historical line is a review-location hint, not a permanent identity:
+   // inserting an unrelated Settings action shifts later callsites. Keep the
+   // exact path+resource token AND a narrow displacement bound (40 lines).
+   // Never accept a callsite in another file or a distant, unrelated section.
+   const anchored=references.filter(e=>e.path===loc.path &&
+     Math.abs(e.line-loc.line)<=40 &&
+     lines[e.line-1]?.includes("R.string."+row.key));
+   assert(anchored.length>0,
+     "Referenced callsite absent or displaced from G2 evidence "+row.key+
+     " "+loc.path+":"+loc.line);
    const changed=["zh-TW","ja"].some(locale=>row.originalDraft[locale]!==row.currentDraft[locale]);
    assert.equal(row.decision,changed?"REVISED_UNREVIEWED_DRAFT":"RETAIN_UNREVIEWED_DRAFT");
    if(changed)revisions++;
