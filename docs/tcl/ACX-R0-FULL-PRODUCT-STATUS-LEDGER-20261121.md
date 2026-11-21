@@ -134,3 +134,11 @@
 - `T3/P/Q` 均未因此升格；真正個人包可以從正式 UI 匯入、切換、重啟保留是 **B1-U1/B2**，不屬於本次 B1-C1 的已驗收結果。
 
 **依賴**：B1-U1 需取得 PR #35 的 manifest/Validator/Repository + B0-L1 Reducer，而非從 Debug LP1/LP2 直接推導正式 UI 能力。A1 實機貪睡、A2 5 秒操作未在本切片改動。
+
+### B1-C1 最終 CI 封閉（以 Run 結果覆寫同日 pending）
+
+- **Node CI** [Run 44905760153](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/44905760153) `0019138398b4f18a1b7abc5d465ddf09733e38bb` = **SUCCESS**：B0-T1 2,471-Key TSV 和 B1 2,471-Key Android manifest 的 byte-identity verify 通過，官方未批准翻譯包的發行阻擋有效。
+- **Android P0** [Run 44906233649](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/44906233649) code SHA `75e60bed1fe4c184cd21ba97e0ce050541248294` = **completed/SUCCESS**：F-Droid APK、`891/891` 全單測（`0 failures/0 errors/0 skipped`）、第二 Runner v162 signing/upgrade 共三 Job SUCCESS。
+- **保留第一輪負證據**：[Android Run 44905760124](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/44905760124) `0019138398b4f18a1b7abc5d465ddf09733e38bb` 為 **890/891，一項負向 fixture 斜線 escape 問題**。修正只在測試 `LanguagePackV1Test.previousProbeSchemaCannotBeSilentlyAccepted` 構造 JSON 時使用真正的 `put("format",...)`，驗證器本身無邏輯變更。不可把失敗 Run 當成從未發生。
+- **T2=PASS（B1-C1 契約與離線儲存）**；T3/P 仍未驗證。沒有正式 SAF 匯入操作畫面、沒有 Android LocaleManager／Compose UI 接線、沒有響鈴通知雙語。G4/G6 獨立批准仍 0/400。不要把此一全綠當 B1/B2 或 App 發布成功。
+- [B1-C1 詳細來源與結果](https://github.com/Penguink72/AlarmClockXtreme/blob/feature/acx-b1-c1-pack-validation-repo-20261121/docs/localization/ACX-B1-C1-V1-PACK-VALIDATOR-AND-STORAGE-20261121.md)；PR #35 繼續 Draft，不碰 main。
