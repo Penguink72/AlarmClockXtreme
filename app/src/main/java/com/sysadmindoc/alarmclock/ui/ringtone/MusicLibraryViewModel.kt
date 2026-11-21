@@ -622,11 +622,18 @@ class MusicLibraryViewModel @Inject constructor(
                 // This explicitly chosen whole-folder action includes/restores
                 // all current folder rows; later rescans do NOT undo manual
                 // per-track exclusions.
-                repository.setPoolMembership(approved, included = include)
+                val changedCount = if (include && key == MusicFolderPoolRules.allDeviceAudioKey()) {
+                    // A broad opt-in must NOT undo folder-specific or manual
+                    // EXCLUDED decisions. Those require an explicit folder action.
+                    repository.includeUnselectedSourceTracks(approved)
+                } else {
+                    repository.setPoolMembership(approved, included = include)
+                    approved.size
+                }
                 loadPoolCandidatesNow()
                 reportStatus(context.getString(
                     if (include) R.string.music_library_catalog_added
-                    else R.string.music_library_catalog_excluded, approved.size
+                    else R.string.music_library_catalog_excluded, changedCount
                 ))
             } catch (error: CancellationException) {
                 throw error
