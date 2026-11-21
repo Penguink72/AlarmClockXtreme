@@ -69,7 +69,7 @@ internal class LanguagePackV1Repository(
     private fun loadRaw(file: File): String? =
         if (file.isFile) {
             runCatching {
-                AtomicFile(file).openRead().use(LanguagePackV1Validator::readBounded)
+                AtomicFile(file).openRead().use { LanguagePackV1Validator.readBounded(it) }
             }.getOrNull()
         } else null
 
@@ -103,7 +103,7 @@ internal class LanguagePackV1Repository(
      */
     fun importFromStream(input: InputStream): LanguagePackInstallResult {
         val text = try {
-            input.use(LanguagePackV1Validator::readBounded)
+            input.use { LanguagePackV1Validator.readBounded(it) }
         } catch (problem: LanguagePackProblem) {
             return LanguagePackInstallResult(false,null,null,problem.code)
         } catch (_: Exception) {
