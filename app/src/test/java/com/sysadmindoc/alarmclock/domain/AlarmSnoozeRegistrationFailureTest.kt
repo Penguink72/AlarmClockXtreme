@@ -184,4 +184,91 @@ class AlarmSnoozeRegistrationFailureTest {
         assertTrue(AlarmRegistrationResult.INEXACT.registered)
         assertEquals(3, AlarmRegistrationResult.entries.size)
     }
+
+    /**
+     * A diagnostic sink that fails synchronously must never gate the real
+     * AlarmManager registration. This is the EXACT path, independent from
+     * the existing inexact fallback regression cases.
+     */
+    @Test
+    fun exactSnoozeSurvivesSynchronousIncidentLoggerFailure() = runTest {
+        val alarmManager = mockk<AlarmManager>(relaxed = true)
+        every { alarmManager.canScheduleExactAlarms() } returns true
+
+        val repository = mockk<AlarmRepository>(relaxed = true)
+        val incidentRepository = mockk<AlarmIncidentRepository>()
+        every {
+            incidentRepository.recordAsync(
+                any(), any(), any(), any(), any(), any(), any(), any(), any()
+            )
+        } throws IllegalStateException("injected diagnostic sink failure")
+        val preferencesManager = mockk<PreferencesManager>()
+        coEvery { preferencesManager.getCurrentSettings() } returns AppSettings()
+        every { preferencesManager.getCachedSettings() } returns AppSettings()
+        val realContext: Context = ApplicationProvider.getApplicationContext()
+        val context = object : ContextWrapper(realContext) {
+            override fun getSystemService(name: String): Any? =
+                if (name == Context.ALARM_SERVICE) alarmManager
+                else super.getSystemService(name)
+        }
+        val scheduler = AlarmScheduler(
+            context = context,
+            repository = repository,
+            calculator = mockk(relaxed = true),
+            preferencesManager = preferencesManager,
+            holidayRepository = mockk(relaxed = true),
+            alarmIncidentRepository = incidentRepository,
+            weatherRepository = mockk(relaxed = true)
+        )
+        val id = 879L
+        val target = System.currentTimeMillis() + 10 * 60_000L
+        val alarm = Alarm(id = id, hour = 7, minute = 0, isEnabled = true)
+
+        assertTrue("Diagnostic failure must not reject an accepted exact snooze",
+            scheduler.scheduleSnoozeAt(alarm, target))
+        verify(exactly = 1) { alarmManager.setAlarmClock(any(), any()) }
+        coVerify(exactly = 1) { repository.updateNextTrigger(id, target) }
+    }
+
+    @Test
+    fun exactRegistrationFailureRemainsFailureWhenIncidentLoggerAlsoFails() = runTest {
+        val alarmManager = mockk<AlarmManager>(relaxed = true)
+        every { alarmManager.canScheduleExactAlarms() } returns true
+        every { alarmManager.setAlarmClock(any(), any()) } throws
+            IllegalStateException("injected AlarmManager rejection")
+
+        val repository = mockk<AlarmRepository>(relaxed = true)
+        val incidentRepository = mockk<AlarmIncidentRepository>()
+        every {
+            incidentRepository.recordAsync(
+                any(), any(), any(), any(), any(), any(), any(), any(), any()
+            )
+        } throws IllegalStateException("injected diagnostic sink failure")
+        val preferencesManager = mockk<PreferencesManager>()
+        coEvery { preferencesManager.getCurrentSettings() } returns AppSettings()
+        every { preferencesManager.getCachedSettings() } returns AppSettings()
+        val realContext: Context = ApplicationProvider.getApplicationContext()
+        val context = object : ContextWrapper(realContext) {
+            override fun getSystemService(name: String): Any? =
+                if (name == Context.ALARM_SERVICE) alarmManager
+                else super.getSystemService(name)
+        }
+        val scheduler = AlarmScheduler(
+            context = context,
+            repository = repository,
+            calculator = mockk(relaxed = true),
+            preferencesManager = preferencesManager,
+            holidayRepository = mockk(relaxed = true),
+            alarmIncidentRepository = incidentRepository,
+            weatherRepository = mockk(relaxed = true)
+        )
+        val id = 880L
+        val target = System.currentTimeMillis() + 10 * 60_000L
+        val alarm = Alarm(id = id, hour = 7, minute = 0, isEnabled = true)
+
+        assertFalse("OS refusal remains failure even when diagnostic sink fails",
+            scheduler.scheduleSnoozeAt(alarm, target))
+        verify(exactly = 1) { alarmManager.setAlarmClock(any(), any()) }
+        coVerify(exactly = 0) { repository.updateNextTrigger(id, any()) }
+    }
 }
