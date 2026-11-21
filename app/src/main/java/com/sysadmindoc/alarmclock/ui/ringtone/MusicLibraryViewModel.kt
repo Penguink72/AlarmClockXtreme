@@ -347,6 +347,11 @@ class MusicLibraryViewModel @Inject constructor(
                         check(MusicLibrarySourceStore.remove(context, sourceId) != null) {
                             "Music folder source no longer exists"
                         }
+                        // Removing a source must not resurrect its old inclusion
+                        // policy when the same SAF tree is selected again.
+                        MusicFolderPoolRules.restore(
+                            context, MusicFolderPoolRules.safSourceKey(sourceId), null
+                        )
                     }
                     updatePoolCounts(repository.poolCandidates())
                     _uiState.value = _uiState.value.copy(sources = remainingSources)
