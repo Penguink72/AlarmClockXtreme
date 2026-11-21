@@ -162,6 +162,7 @@ import com.sysadmindoc.alarmclock.worker.GuardianReadiness
 import com.sysadmindoc.alarmclock.worker.GuardianSmsPath
 import com.sysadmindoc.alarmclock.util.AppLanguageManager
 import com.sysadmindoc.alarmclock.util.AppLanguageOption
+import com.sysadmindoc.alarmclock.localization.LanguageCenterActivity
 import com.sysadmindoc.alarmclock.util.LocalNetworkPermission
 import java.time.DayOfWeek
 import java.time.Instant
@@ -385,6 +386,12 @@ fun SettingsScreen(
                                     selectedLanguageOption = AppLanguageManager.currentOption(context)
                                     showLanguageDialog = true
                                 }
+                            )
+                            SettingsActionRow(
+                                label = stringResource(R.string.settings_language),
+                                value = stringResource(R.string.alarm_edit_custom),
+                                supportingText = stringResource(R.string.settings_language_description),
+                                onClick = { context.startActivity(Intent(context, LanguageCenterActivity::class.java)) }
                             )
                         }
                     }
@@ -886,6 +893,12 @@ fun SettingsScreen(
                         selectedLanguageOption = AppLanguageManager.currentOption(context)
                         showLanguageDialog = true
                     }
+                )
+                SettingsActionRow(
+                    label = stringResource(R.string.settings_language),
+                    value = stringResource(R.string.alarm_edit_custom),
+                    supportingText = stringResource(R.string.settings_language_description),
+                    onClick = { context.startActivity(Intent(context, LanguageCenterActivity::class.java)) }
                 )
                 HorizontalDivider(color = TextMuted.copy(alpha = 0.14f))
                 UtilityShortcutCard(
