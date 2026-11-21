@@ -63,3 +63,20 @@
 `id | owner_branch | source_sha | source_file | T0 | T1 | T2_run_and_sha | T3_device_date | P_task_and_measure | Q_authority | open_blocker | next_gate | decision_supersedes`
 
 **禁止**僅憑新增 Test 數量、Key 數量或 CI 綠燈提高整體產品 P 完成率。後續施工序參考 [A0～D0 執行計畫](ACX-A0-TO-D0-PRODUCT-DELIVERY-ROADMAP-20261121.md)。
+
+## 6. 2026-11-21 A0 獨立 CI 重新核對及分線
+
+以下是**工作流來源 GitHub Actions 本身的結果**，不是模型估計：
+
+| 工作流 | 實際提交 SHA | 工作執行與結果 |
+|---|---|---|
+| [Android P0 baseline](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/44889250691) | `5208169dc41beb6deca9ba811b6bd07dcbc66178` | Build F-Droid debug APK、全單元測試、第二 Runner upgrade/signing，三 Job 全 SUCCESS |
+| [LP-G1~G6 Node](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/44889254791) | `9c721d71585c15a95018dc0dd7151427823436d3` | governed-language-pipeline SUCCESS；官方未審包拒絕發布仍為預期結果 |
+
+**SHA 界線**：兩 Run 皆由 PR #30 的整合分支 `push` 觸發。Android Run 所測 SHA 與 Node Run 的 SHA 相差一次工作流白名單更新，**沒有 Android 程式碼或字串資源改動**。因而 Android 工程基準可視為該候選所含的相同產品 code 狀態通過，但不冒稱兩個 Run 是同一 SHA，也不代表 PR #30 後續文件提交重新跑過三項 Android 工作。
+
+- **A1 起點**：[Draft PR #31](https://github.com/Penguink72/AlarmClockXtreme/pull/31)（`feature/acx-a1-reliability-closure-20261121`），針對精準排程診斷例外做實際程式切片與兩個負向測試；新增程式必須獨立 T2。
+- **B0 起點**：[Draft PR #32](https://github.com/Penguink72/AlarmClockXtreme/pull/32)（`feature/acx-b0-full-locale-inventory-20261121`），全 App Node 靜態盤點、每 Key JSON 與測試；[B0 Run 44890316169](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/44890316169) SUCCESS（SHA `2acb18faf479d29a231937d6525fa8eb6cdee51f`）；首兩次掃描器測試失敗為 `string-array` 被分類成 `string`，已以規則排序修復，不能引用失敗的舊 Run 為通過。
+- B0 XML 獨立讀取確認 `2471` 個英文基底定義（`2427 string + 43 plurals + 1 string-array`），其中 `2462` 可翻譯；繁中與日文 XML 各 912 定義，各缺 1550 個有效基底 Key 的專屬翻譯定義。這些是**翻譯定義覆蓋差距，不是直接可見 UI 比率**。詳細資料在 PR #32 的 CI artifact `acx-b0-full-app-locale-inventory`（暫存）及 [B0 基準文檔](https://github.com/Penguink72/AlarmClockXtreme/blob/feature/acx-b0-full-locale-inventory-20261121/docs/localization/ACX-B0-FULL-APP-RESOURCE-BASELINE-20261121.md)。
+
+以上不影響原有 R1 亮屏貪睡 T3 及 R3 五秒實測的未封閉裁定。PR #31/#32 都未合併至 A0 或 main；任何下一輪狀態以各自精確 SHA 和 CI 重驗。
