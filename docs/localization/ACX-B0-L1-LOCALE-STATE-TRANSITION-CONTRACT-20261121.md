@@ -73,3 +73,13 @@
 - L1 不影響 A1 原貪睡不再響的 T3 真機風險，不合併 main。
 
 測試：`./gradlew :app:testFdroidDebugUnitTest --tests '*LocaleSelectionContractTest*'`（還需要嚴格 APK、全量 unit、跨 Runner 簽章 CI）。
+
+## 6. 同 SHA 的 Android T2 驗證（2026-11-21）
+
+[Run #44899090595](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/44899090595) 針對 code SHA `691933c241aff801b8fda70af05fac5bdfead263` **completed / success**，三項 Job 皆成功：
+
+1. F-Droid debug APK **Build SUCCESS**。
+2. 全量 F-Droid unit tests **875/875 PASS，0 failures、0 errors、0 skipped**；含本片新增 13 個 `LocaleSelectionContractTest` 測試。Job `136830965585` 的 `UNIT_TEST_COUNTS` 為來源證據。
+3. 第二 Runner 的 APK **v162** 簽章／可升級檢核 **SUCCESS**。
+
+此 CI 的提交在本文件新增這段文字之前；文件追加不改 Kotlin、Gradle 或工作流可執行內容。**T2=PASS；T3/P=UNVERIFIED**，因為本切片的 LocaleCoordinator 還未連結真正 Android 系統語言設定與使用畫面。正式自訂包的 B1/B2 驗收不應繼承這個 PASS。
