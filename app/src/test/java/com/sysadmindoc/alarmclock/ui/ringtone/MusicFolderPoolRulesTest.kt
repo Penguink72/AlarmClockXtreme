@@ -53,5 +53,8 @@ class MusicFolderPoolRulesTest {
         assertEquals(setOf(uriA),grouped[MusicFolderPoolRules.mediaStoreKey("music")])
         assertEquals(setOf(uriB),grouped[MusicFolderPoolRules.mediaStoreKey("videos")])
         assertEquals(setOf(uriSaf),grouped[MusicFolderPoolRules.safSourceKey("source-1")])
+        // Device-wide opt-in includes audio only; video audio is a separate
+        // folder decision, not swept in by the one-tap music import.
+        assertEquals(setOf(uriA),grouped[MusicFolderPoolRules.allDeviceAudioKey()])
     }
 }
