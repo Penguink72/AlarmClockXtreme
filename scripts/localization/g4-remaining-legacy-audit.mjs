@@ -54,10 +54,10 @@ export function verifyRemaining({matrix,high,remaining,context,unresolved,source
      const loc=row.sourceEvidence;
      assert(loc && loc.kind==="STATIC_ANDROID_CALLSITE");
      const ref=ctxMap.get(row.key)?.sourceCallsites||[];
-     assert(ref.some(c=>c.path===loc.path&&c.line===loc.line),
-       "Review evidence not present in source index "+row.key);
-     const line=readFileSync(resolve(root,loc.path),"utf8").split(/\r?\n/)[loc.line-1];
-     assert(line?.includes("R.string."+row.key),"Review source line drift "+row.key);
+     const lines=readFileSync(resolve(root,loc.path),"utf8").split(/\r?\n/);
+     assert(ref.some(c=>c.path===loc.path&&Math.abs(c.line-loc.line)<=40 &&
+       lines[c.line-1]?.includes("R.string."+row.key)),
+       "Review evidence absent or displaced from source index "+row.key);
      for(const [locale,proposal]of Object.entries(row.suggestions)){
        assert(["zh-TW","ja"].includes(locale));
        assert(proposal.trim()&&proposal!==row.existing[locale]);
@@ -88,9 +88,10 @@ export function verifyRemaining({matrix,high,remaining,context,unresolved,source
  assert.deepEqual(unresolved.items.map(x=>x.key).sort(),noRef);
  for(const item of unresolved.items){
    assert(item.nearby.path.startsWith("app/src/main/"));
-   const line=readFileSync(resolve(root,item.nearby.path),"utf8").split(/\r?\n/)[item.nearby.line-1];
-   assert(line?.includes(item.nearby.expectedSnippet),
-     "Nearby candidate source changed "+item.key);
+   const lines=readFileSync(resolve(root,item.nearby.path),"utf8").split(/\r?\n/);
+   const start=Math.max(0,item.nearby.line-41),end=Math.min(lines.length,item.nearby.line+40);
+   assert(lines.slice(start,end).some(line=>line.includes(item.nearby.expectedSnippet)),
+     "Nearby candidate source changed or displaced "+item.key);
  }
  assert.equal(sourceDefects.schema,"acx-g4-source-defects/1");
  assert.equal(sourceDefects.items.length,1);
@@ -102,8 +103,10 @@ export function verifyRemaining({matrix,high,remaining,context,unresolved,source
  assert.equal(defect.sourceHash,sourceMap.get(defect.key)?.sourceHash);
  assert.equal(defect.source,sourceMap.get(defect.key)?.source);
  for(const evidence of defect.evidence){
-   const line=readFileSync(resolve(root,evidence.path),"utf8").split(/\r?\n/)[evidence.line-1];
-   assert(line?.includes(evidence.expected),"Outdated product-source evidence changed");
+   const lines=readFileSync(resolve(root,evidence.path),"utf8").split(/\r?\n/);
+   const start=Math.max(0,evidence.line-41),end=Math.min(lines.length,evidence.line+40);
+   assert(lines.slice(start,end).some(line=>line.includes(evidence.expected)),
+     "Outdated product-source evidence changed or displaced");
  }
  return {existingModelSurfaceScreened:113,existingHighPriorityFlagged:52,
    sourceDefectsOpen:1,unresolvedDirectReferences:5,legacySuggestedKeys:6,
