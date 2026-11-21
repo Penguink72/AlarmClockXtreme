@@ -60,6 +60,22 @@ function sourceVariant(path) {
   return m ? {module:m[1], sourceSet:m[2], qualifier:m[3]} : null;
 }
 
+/** Candidate-only: a literal is not proven visible without runtime UI evidence. */
+export function possibleInlineUiLiteral(line) {
+  const checks = [
+    ["COMPOSE_TEXT_LITERAL", /\bText\s*\(\s*(?:text\s*=\s*)?"([^"\\]*(?:\\.[^"\\]*)*)"/],
+    ["ACCESSIBILITY_LITERAL", /\bcontentDescription\s*=\s*"([^"\\]*(?:\\.[^"\\]*)*)"/],
+    ["NOTIFICATION_LITERAL", /\bsetContent(?:Title|Text|Info)\s*\(\s*"([^"\\]*(?:\\.[^"\\]*)*)"/],
+    ["ANDROID_XML_LITERAL", /\bandroid:(?:text|hint|contentDescription)\s*=\s*"([^"@][^"]*)"/],
+    ["UI_NAMED_LITERAL", /\b(?:text|title|label|hint|description)\s*=\s*"([^"\\]*(?:\\.[^"\\]*)*)"/]
+  ];
+  for (const [kind, pattern] of checks) {
+    const m = line.match(pattern);
+    if (m && m[1].trim()) return {kind, preview:m[1].slice(0,120)};
+  }
+  return null;
+}
+
 export function buildInventory(root = ROOT) {
   const resources = [];
   const sourceDirs = [
@@ -89,6 +105,7 @@ export function buildInventory(root = ROOT) {
 
   const sourcePaths = [
     ...walk(join(root, "app/src/main")),
+    ...walk(join(root, "app/src/debug")),
     ...walk(join(root, "wear/src/main"))
   ].filter(p => [".kt", ".java", ".xml"].includes(extname(p))
     && !/\/res\/values[^/]*\//.test(p.replaceAll("\\", "/")));
@@ -96,6 +113,7 @@ export function buildInventory(root = ROOT) {
   const uses = new Map([...byKey.keys()].map(key => [key, []]));
   const externalOrNotInAppBase = new Map();
   const dynamicHints = [];
+  const possibleHardcodedUiText = [];
   for (const file of sourcePaths) {
     const path = rel(root, file);
     const lines = readFileSync(file, "utf8").split(/\r?\n/);
@@ -113,6 +131,11 @@ export function buildInventory(root = ROOT) {
       }
       if (/\bgetIdentifier\s*\(|\bgetQuantityText\s*\(|\bResources\.getSystem\s*\(|\bgetTextArray\s*\(/.test(withoutLineComment)) {
         dynamicHints.push({path,line:index + 1,kind:"DYNAMIC_OR_INDIRECT_RESOURCE_HINT"});
+      }
+      const literal = possibleInlineUiLiteral(withoutLineComment);
+      if (literal) {
+        possibleHardcodedUiText.push({path, line:index + 1,
+          ...literal, evidence:"POTENTIAL_LITERAL_NOT_RUNTIME_PROOF"});
       }
     }
   }
@@ -165,6 +188,7 @@ export function buildInventory(root = ROOT) {
     noDirectStaticReferenceKeys:strings.filter(x=>!x.callsiteCount).length,
     scannedCallsiteFiles:sourcePaths.length,
     dynamicHints:dynamicHints.length,
+    possibleHardcodedUiTextLocations:possibleHardcodedUiText.length,
     nonBaseReferences:externalOrNotInAppBase.size,
     g6SampleSize, g6SampleOverlap
   };
@@ -177,7 +201,8 @@ export function buildInventory(root = ROOT) {
     nonBaseReferences:[...externalOrNotInAppBase.entries()]
       .sort(([a],[b])=>a.localeCompare(b,"en"))
       .map(([key,locations])=>({key,count:locations.length,locations:locations.slice(0,5)})),
-    dynamicHints
+    dynamicHints,
+    possibleHardcodedUiText
   };
 }
 
@@ -199,6 +224,7 @@ export function markdownSummary(inventory) {
 | 未找到直接靜態引用的基底 Key | ${s.noDirectStaticReferenceKeys} |
 | Kotlin/Java/XML 使用點掃描檔 | ${s.scannedCallsiteFiles} |
 | 動態/間接資源提示 | ${s.dynamicHints} |
+| 疑似硬編碼可見文案位置（需人工確認） | ${s.possibleHardcodedUiTextLocations} |
 | G6 抽樣 Key | ${s.g6SampleSize ?? "無"} |
 | G6 抽樣與全 App 基底交集 | ${s.g6SampleOverlap ?? "無"} |
 
