@@ -128,18 +128,18 @@ fun MusicLibraryDialog(
             arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
         }
     }
+    val requiredAudioPermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+        Manifest.permission.READ_MEDIA_AUDIO else Manifest.permission.READ_EXTERNAL_STORAGE
     var hasAudioPermission by remember {
-        mutableStateOf(
-            permissions.any {
-                ContextCompat.checkSelfPermission(context, it) ==
-                    PackageManager.PERMISSION_GRANTED
-            }
-        )
+        mutableStateOf(ContextCompat.checkSelfPermission(context, requiredAudioPermission) ==
+            PackageManager.PERMISSION_GRANTED)
     }
     val permissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { grants ->
-        hasAudioPermission = grants.values.any { it }
+        // A video grant alone does not authorize device audio indexing.
+        hasAudioPermission = ContextCompat.checkSelfPermission(context, requiredAudioPermission) ==
+            PackageManager.PERMISSION_GRANTED
         viewModel.scan()
     }
 
