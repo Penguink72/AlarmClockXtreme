@@ -790,6 +790,11 @@ class AlarmScheduler @Inject constructor(
         }
     }
 
+    /**
+     * An incident record is diagnostic evidence, never part of OS alarm
+     * registration. A synchronous logging failure must not prevent an exact
+     * alarm from being armed or turn an accepted alarm into a false failure.
+     */
     private fun recordScheduleIncident(
         alarmId: Long,
         fireId: String,
@@ -797,15 +802,19 @@ class AlarmScheduler @Inject constructor(
         status: String,
         reasonCode: String
     ) {
-        alarmIncidentRepository.recordAsync(
-            alarmId = alarmId,
-            fireId = fireId,
-            scheduledAt = triggerTime,
-            type = AlarmIncidentEvent.TYPE_SCHEDULE,
-            status = status,
-            reasonCode = reasonCode,
-            source = "AlarmScheduler"
-        )
+        runCatching {
+            alarmIncidentRepository.recordAsync(
+                alarmId = alarmId,
+                fireId = fireId,
+                scheduledAt = triggerTime,
+                type = AlarmIncidentEvent.TYPE_SCHEDULE,
+                status = status,
+                reasonCode = reasonCode,
+                source = "AlarmScheduler"
+            )
+        }.onFailure { error ->
+            android.util.Log.e("AlarmScheduler", "Could not record scheduling incident", error)
+        }
     }
 
     private fun scheduleSupportingWork(alarm: Alarm, triggerTime: Long) {
