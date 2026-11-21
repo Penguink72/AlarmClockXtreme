@@ -16,6 +16,9 @@ internal object MusicFolderPoolRules {
     fun mediaStoreKey(relativePath: String): String =
         "device:" + normalizeMusicFolderPath(relativePath)
 
+    /** Dedicated opt-in for all device AUDIO, excluding recognizable system tones. */
+    fun allDeviceAudioKey(): String = "device:*"
+
     fun safSourceKey(sourceId: String): String = "saf:$sourceId"
 
     private fun store(context: Context): SharedPreferences =
@@ -49,8 +52,13 @@ internal object MusicFolderPoolRules {
         val grouped = linkedMapOf<String, MutableSet<String>>()
         result.tracks.forEach { track ->
             if (MusicLibraryIndexer.isMediaStoreSource(track.source)) {
-                val path = result.metadataByUri[track.uri]?.folderPath.orEmpty()
+                val metadata = result.metadataByUri[track.uri]
+                val path = metadata?.folderPath.orEmpty()
                 grouped.getOrPut(mediaStoreKey(path)) { linkedSetOf() }.add(track.uri)
+                if (track.source == MusicLibraryIndexer.SOURCE_MEDIA_STORE &&
+                    metadata?.isSystemTone != true) {
+                    grouped.getOrPut(allDeviceAudioKey()) { linkedSetOf() }.add(track.uri)
+                }
             }
         }
         result.sources.forEach { source ->
