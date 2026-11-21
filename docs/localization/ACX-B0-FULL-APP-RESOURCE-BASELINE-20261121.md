@@ -58,3 +58,39 @@
 97 個候選位置**不是 97 個確定硬編碼缺陷**：不少是動畫命名、數值、符號、`@string/` 參照或 UI 組字。但 Debug LP1 Language Lab 內有直接 `Text("…")` 繁中文字面，例如「語言包資料無法載入」「匯入 JSON」「建立」與多段編輯提示；若希望語言包工具本身支援不同語言，這些文字應列入後續 B1/B2 的真實 UI 掃描，而不是假設 R.string 覆蓋已包含。
 
 本次源資料分類與文字篩選仍是**語法與靜態證據**，不代表任意 locale 已在正常 Release UI 中可切換。若新增掃描器或資源變更，需另用新 SHA 的 Node CI 產生新的 artifact；本次基準不外推到未來代碼。
+
+## 5. B0-1 格式契約與 UI 疑點分層（2026-11-21）
+
+依 [B0 Run 44895076599](https://github.com/Penguink72/AlarmClockXtreme/actions/runs/44895076599)，Node CI SUCCESS；新執行工具：
+
+- `scripts/localization/b0-format-contracts.mjs` + `.test.mjs`
+- `scripts/localization/b0-ui-and-unused-triage.mjs` + `.test.mjs`
+- 同一 `acx-b0-full-app-locale-inventory` Artifact 中新增 `format-contract-review.json` 及 `unresolved-and-ui-literal-triage.json`。
+
+**格式與 plurals：**
+
+| 指標 | 本次實測 |
+|---|---:|
+| 英文基底有格式符號的 Key | **369** |
+| 基底 plural Key | 43（已包含於上列比對集合） |
+| 兩語共檢查 Key/locale 組合 | **738** |
+| 沒有專屬語言定義 | **484** |
+| 目前存在且詞法格式 token 一致 | **254** |
+| 詞法 token 不一致候選 | **0** |
+| 已獨立語義核准 | **0**（此管線不審核） |
+
+`0 mismatch` 只表示**已有的譯文定義**在這輪詞法抽樣規則下保留相同佔位符，不能推導正確參數型別、實際語序、複數規則或 Runtime 顯示。484 個缺漏項也不是格式錯誤；Android 原生 fallback 可以提供英文原文。完整 runtime 驗收應在 B2。
+
+**97 處疑似硬編碼文字的位置，再分層如下：**
+
+| 類別 | 個數 | 下一步 |
+|---|---:|---|
+| 可能是真正的自然語言文字 | **25** | 優先核對實際 Compose/通知 UI |
+| 類似資源別名（非硬編碼） | 10 | 排除假陽性 |
+| 疑似內部程式識別字 | 25 | 排除命名/動畫 key |
+| 動態組字、結構符號 | 12 | 驗證後由 Locale 格式器接手 |
+| 還需查看上下文 | 25 | 保留 UNKNOWN |
+
+**24 個沒有直接靜態引用的基底 Key** 持續被列為 `NO_STATIC_CALLSITE_YET`、`deletionAllowed=false`。此分類不能擅自刪除 source Key、翻譯批准或假裝已完成 B1/B2。
+
+Node CI 的每一份檔案都是本次分支 SHA 的產物。全程皆沒有修改正式 `app/src/main/res`、Android `AlarmService`、Room v28 或使用者的翻譯內容。下一步 B0 是用呼叫點追查高風險 Key，並建立正式 B1 解析器所需的型別契約；不是先把 1,550 缺漏全部自動填入模型譯文。
