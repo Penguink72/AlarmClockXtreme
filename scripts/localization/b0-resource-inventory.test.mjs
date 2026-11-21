@@ -4,7 +4,7 @@ import assert from "node:assert/strict";
 import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
-  extractResourceDefinitions, buildInventory, markdownSummary
+  extractResourceDefinitions, buildInventory, markdownSummary, possibleInlineUiLiteral
 } from "./b0-resource-inventory.mjs";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
@@ -57,4 +57,18 @@ test("B0 explicitly distinguishes absent static refs from verified unused", () =
     x.callsiteStatus === "STATIC_REFERENCE_FOUND" ||
     x.callsiteStatus === "NO_STATIC_REFERENCE_FOUND"));
   assert.equal(inventory.sourceKeys.some(x => x.callsiteStatus === "LEGACY_UNUSED"), false);
+});
+
+test("B0 records only potential user-facing hardcoded literal hints", () => {
+  assert.equal(possibleInlineUiLiteral('Text(text = "Hello")')?.kind, "COMPOSE_TEXT_LITERAL");
+  assert.equal(possibleInlineUiLiteral('contentDescription = "Snooze"')?.kind,
+    "ACCESSIBILITY_LITERAL");
+  assert.equal(possibleInlineUiLiteral('builder.setContentTitle("Alarm active")')?.kind,
+    "NOTIFICATION_LITERAL");
+  assert.equal(possibleInlineUiLiteral('android:text="Tap here"')?.kind,
+    "ANDROID_XML_LITERAL");
+  assert.equal(possibleInlineUiLiteral('reasonCode = "NOT_USER_VISIBLE"'), null);
+  const inventory = buildInventory(root);
+  assert(Array.isArray(inventory.possibleHardcodedUiText));
+  assert(inventory.summary.possibleHardcodedUiTextLocations >= 0);
 });
