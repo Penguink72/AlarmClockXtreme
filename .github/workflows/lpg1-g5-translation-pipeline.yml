@@ -13,6 +13,7 @@ on:
       - feature/p31-lp2b2-edit-music-stats-preview-20261120
       - feature/p31-lp2b3-direct-indirect-ui-preview-20261121
       - feature/p31-g6q1-current-content-audit-20261121
+      - feature/p31-g6q2-full-200-key-model-audit-20261121
     paths:
       - "scripts/localization/**"
       - "localization/governance/**"
@@ -104,6 +105,15 @@ jobs:
             exit 1
           fi
           echo "G6-Q1 remains model-preliminary; 400 candidate rows still require independent review."
+      - name: G6-Q2 - Screen remaining 326 locale rows and merge all 400 reviewer entries
+        run: |
+          node scripts/localization/g6q2-full-audit.mjs --out-dir build/localization/G6Q2_PRELIMINARY_NOT_APPROVED
+          node scripts/localization/g6q2-full-audit.test.mjs
+          if node scripts/localization/g6q2-full-audit.mjs --mode release; then
+            echo "SECURITY FAILURE: independent semantic review is required for G6 language pack"
+            exit 1
+          fi
+          echo "G6-Q2 model-only screening complete; official release remains blocked."
       - name: Publish review bundle for human auditing
         uses: actions/upload-artifact@v4
         with:
@@ -123,6 +133,10 @@ jobs:
             build/localization/G6_UNREVIEWED_CURRENT_PREVIEW/
             localization/governance/g6q/model-triage-q1.json
             build/localization/G6Q1_PRELIMINARY_NOT_APPROVED/
+            localization/governance/g6q/model-triage-q2.json
+            build/localization/G6Q2_PRELIMINARY_NOT_APPROVED/
+            docs/localization/P31-G6Q2-ALL-200-MODEL-CONTENT-AUDIT-20261121.md
+            docs/tcl/P31-G6Q2-COMPLETE-MODEL-SURFACE-AUDIT-20261121.md
             docs/localization/P31-G6Q1-CONTENT-AUDIT-20261121.md
             docs/tcl/P31-G6Q1-REVIEW-ROADMAP-20261121.md
             docs/localization/LP-G1-GLOSSARY-CONTRACT-20261119.md

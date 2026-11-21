@@ -78,3 +78,9 @@
 - [G6-Q1 初審批次 TCL](P31-G6Q1-REVIEW-ROADMAP-20261121.md) 與 [37 Key／18 筆修訂候選](../localization/P31-G6Q1-CONTENT-AUDIT-20261121.md)：依 S0/G6 現行 200 Key 建立 37 Key × 中日 2 語＝74 筆模型初審紀錄，並產生 400 筆完整 reviewer worklist。
 - 審核結果屬於 **MODEL_PRELIMINARY_ONLY**：16 筆為 G4 舊模型提議的重新確認，2 筆新提出繁中貪睡通知用語修訂；沒有直接更改正式中日文字或 G6 Debug 包。
 - **0/400** 獨立語義批准、G1 術語未核准、正式 release 持續拒絕；人工審核以及舊來源缺陷的當前版本解鎖仍是後續工作。B3 的 122-Key Debug 覆蓋狀態沒有改變。
+
+## 2026-11-21 G6-Q2：163 Key／326 筆候選模型字面初審
+
+- [G6-Q2 TCL](P31-G6Q2-COMPLETE-MODEL-SURFACE-AUDIT-20261121.md) 與 [完整內容／9 筆修訂建議](../localization/P31-G6Q2-ALL-200-MODEL-CONTENT-AUDIT-20261121.md)：處理 Q1 未初審的全部 163 個 Key、326 筆中日候選。兩階段合計 200 Key／400 rows 的**模型文字表層初審**。
+- Q2 新增 43 Key 具體風險註記、21 格式 Key 佔位符比對、9 筆未核准修訂；與 Q1 的 18 筆合計 27 筆候選。
+- 正式 **0/400** 獨立語義核准、G1 仍未批准，發布維持拒絕；B3 Debug UI 122/200 接線狀態不變。
