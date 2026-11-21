@@ -1,0 +1,956 @@
+{
+  "schema": "acx-g6q1-model-preliminary-triage/1",
+  "catalogRevision": "g6-200-current-20261120",
+  "sourceCommit": "b8c8b9c9655b03d54452d8947ee851f8588edba1",
+  "authority": "MODEL_PRELIMINARY_ONLY",
+  "humanApproval": false,
+  "independentApprovals": 0,
+  "policy": "This Q1 model triage cannot approve G1 concepts or G6 translations; candidates and proposals stay unreviewed. The G4 release ledger is not edited.",
+  "stats": {
+    "selectedKeys": 37,
+    "selectedLocaleRows": 74,
+    "oldLegacySuggestions": 16,
+    "newSuggestions": 2,
+    "sourceAmendedKeys": 1,
+    "independentApprovals": 0
+  },
+  "records": [
+    {
+      "key": "music_playlist_integration_pending",
+      "section": "music",
+      "priority": "HIGH",
+      "issueCode": "SOURCE_AMENDMENT",
+      "source": "Playlist storage is unavailable right now. You can still browse your music library, but playlist changes cannot be saved until storage becomes available.",
+      "sourceHash": "sha256:332b74a082326a3979132d74cf4d00f0632c09f6f98381392a4d4c8308bf3ed2",
+      "candidateOrigins": {
+        "zh-TW": "S0_SOURCE_AMENDED",
+        "ja": "S0_SOURCE_AMENDED"
+      },
+      "candidates": {
+        "zh-TW": "目前無法使用播放清單儲存功能。仍可瀏覽音樂庫，但在儲存功能恢復前無法保存播放清單變更。",
+        "ja": "現在、プレイリストを保存できません。音楽ライブラリは引き続き閲覧できますが、保存機能が利用可能になるまで変更内容は保存されません。"
+      },
+      "reviewRationale": "S0 已修正文案，不得繼承舊 Room v28 來源語義；須確認儲存庫 unavailable 時的 UI 行為。",
+      "proposedReplacements": {},
+      "sourceReviewNeeded": true,
+      "status": "SOURCE_AMENDED_HUMAN_REVIEW_REQUIRED",
+      "reviewerType": "MODEL_PRELIMINARY_ONLY",
+      "humanApproved": false,
+      "humanApproval": null
+    },
+    {
+      "key": "music_library_remove_source",
+      "section": "music",
+      "priority": "CRITICAL",
+      "issueCode": "DELETE_VS_REMOVE",
+      "source": "Remove source",
+      "sourceHash": "sha256:54d0920fe28f49b1bfc115b13dc5af415dc2b13ed884b89db0a8b1772f7ff361",
+      "candidateOrigins": {
+        "zh-TW": "LEGACY_UNREVIEWED",
+        "ja": "LEGACY_UNREVIEWED"
+      },
+      "candidates": {
+        "zh-TW": "移除來源",
+        "ja": "ソースを削除"
+      },
+      "reviewRationale": "移除已登錄的來源不是刪除手機媒體檔，原日文「削除」易誤導為檔案刪除。",
+      "proposedReplacements": {
+        "ja": {
+          "text": "音楽ソースの登録を解除",
+          "origin": "G4_PRIOR_MODEL_PROPOSAL"
+        }
+      },
+      "sourceReviewNeeded": false,
+      "status": "REVISION_PROPOSED_HUMAN_REVIEW_REQUIRED",
+      "reviewerType": "MODEL_PRELIMINARY_ONLY",
+      "humanApproved": false,
+      "humanApproval": null
+    },
+    {
+      "key": "music_playlist_remove",
+      "section": "music",
+      "priority": "CRITICAL",
+      "issueCode": "DELETE_VS_REMOVE",
+      "source": "Remove",
+      "sourceHash": "sha256:158bbd5ac2e46b32b4da58ac8447709e6ca96acde61aee247f8f45571ebb83dd",
+      "candidateOrigins": {
+        "zh-TW": "LEGACY_UNREVIEWED",
+        "ja": "LEGACY_UNREVIEWED"
+      },
+      "candidates": {
+        "zh-TW": "移除",
+        "ja": "削除"
+      },
+      "reviewRationale": "從播放清單移除一首曲目，與刪除原始音訊檔不同；原日文「削除」缺上下文。",
+      "proposedReplacements": {
+        "ja": {
+          "text": "プレイリストから外す",
+          "origin": "G4_PRIOR_MODEL_PROPOSAL"
+        }
+      },
+      "sourceReviewNeeded": false,
+      "status": "REVISION_PROPOSED_HUMAN_REVIEW_REQUIRED",
+      "reviewerType": "MODEL_PRELIMINARY_ONLY",
+      "humanApproved": false,
+      "humanApproval": null
+    },
+    {
+      "key": "settings_return_to_app_after_dismiss_description",
+      "section": "settings",
+      "priority": "HIGH",
+      "issueCode": "NAVIGATION_SCOPE",
+      "source": "Show the Alarms screen after the alarm is confirmed stopped. When off, return to your previous screen. Keep the lock screen protected.",
+      "sourceHash": "sha256:0649cbe6cdac228da2952955e75cd5cbe5825749d20e1c8b6c262c5b2b1d8f2a",
+      "candidateOrigins": {
+        "zh-TW": "LEGACY_UNREVIEWED",
+        "ja": "LEGACY_UNREVIEWED"
+      },
+      "candidates": {
+        "zh-TW": "確認鬧鐘停止後返回鬧鐘 App；關閉則返回原本的手機畫面。鎖定畫面仍保持保護。",
+        "ja": "停止を確認した後、アラーム一覧に戻ります。オフの場合は元の画面に戻ります。ロック画面は保護されます。"
+      },
+      "reviewRationale": "原文指鬧鐘畫面與前一畫面，繁中原譯誤指 App 或手機畫面。",
+      "proposedReplacements": {
+        "zh-TW": {
+          "text": "確認鬧鐘已停止後顯示「鬧鐘」畫面；關閉此選項則返回先前畫面，並維持鎖定畫面保護。",
+          "origin": "G4_PRIOR_MODEL_PROPOSAL"
+        }
+      },
+      "sourceReviewNeeded": false,
+      "status": "REVISION_PROPOSED_HUMAN_REVIEW_REQUIRED",
+      "reviewerType": "MODEL_PRELIMINARY_ONLY",
+      "humanApproved": false,
+      "humanApproval": null
+    },
+    {
+      "key": "firing_snooze_schedule_failed",
+      "section": "snooze",
+      "priority": "CRITICAL",
+      "issueCode": "ALARM_FAILURE",
+      "source": "Snooze could not be scheduled. Alarm is still ringing. Try again or dismiss it.",
+      "sourceHash": "sha256:d61b302c080d4b892ef4f30d03c5bbc5ce65d7928cb6f613e14bcff1d686b3d6",
+      "candidateOrigins": {
+        "zh-TW": "LEGACY_UNREVIEWED",
+        "ja": "LEGACY_UNREVIEWED"
+      },
+      "candidates": {
+        "zh-TW": "貪睡排程失敗，鬧鐘應仍在響鈴。請重新貪睡或直接解除。",
+        "ja": "スヌーズを予約できませんでした。アラームは鳴り続けます。再試行するか停止してください。"
+      },
+      "reviewRationale": "來源確定鬧鐘繼續響鈴，繁中「應仍在」降低確定性；貪睡重試不等於解除。",
+      "proposedReplacements": {
+        "zh-TW": {
+          "text": "貪睡排程失敗，鬧鐘仍在響鈴。請重試貪睡或直接解除鬧鐘。",
+          "origin": "G4_PRIOR_MODEL_PROPOSAL"
+        }
+      },
+      "sourceReviewNeeded": false,
+      "status": "REVISION_PROPOSED_HUMAN_REVIEW_REQUIRED",
+      "reviewerType": "MODEL_PRELIMINARY_ONLY",
+      "humanApproved": false,
+      "humanApproval": null
+    },
+    {
+      "key": "b2_test_snooze",
+      "section": "snooze",
+      "priority": "HIGH",
+      "issueCode": "TEST_VS_LIVE",
+      "source": "Test snooze: ring again in 1 min",
+      "sourceHash": "sha256:0aa9f2516b0d7b778db0d545c40a1da5b3a3d801254c2aa39785c52ff7c072e3",
+      "candidateOrigins": {
+        "zh-TW": "LEGACY_UNREVIEWED",
+        "ja": "LEGACY_UNREVIEWED"
+      },
+      "candidates": {
+        "zh-TW": "測試貪睡：1 分鐘後再響",
+        "ja": "スヌーズテスト：1 分後に再通知"
+      },
+      "reviewRationale": "測試貪睡並在 1 分鐘後再響，不是正式鬧鐘排程；核對日文短標籤。",
+      "proposedReplacements": {
+        "ja": {
+          "text": "スヌーズテスト：1分後に再び鳴ります",
+          "origin": "G4_PRIOR_MODEL_PROPOSAL"
+        }
+      },
+      "sourceReviewNeeded": false,
+      "status": "REVISION_PROPOSED_HUMAN_REVIEW_REQUIRED",
+      "reviewerType": "MODEL_PRELIMINARY_ONLY",
+      "humanApproved": false,
+      "humanApproval": null
+    },
+    {
+      "key": "alarm_edit_schedule_failed_new",
+      "section": "alarm",
+      "priority": "CRITICAL",
+      "issueCode": "SCHEDULE_FAILURE",
+      "source": "Alarm was not created because Android did not accept its schedule. Check alarm permissions and retry.",
+      "sourceHash": "sha256:2dc0dc8e7b4cb46a3899da4b2bfc4acddc353d60709d2e8d8a2305b3107c23e0",
+      "candidateOrigins": {
+        "zh-TW": "LEGACY_UNREVIEWED",
+        "ja": "LEGACY_UNREVIEWED"
+      },
+      "candidates": {
+        "zh-TW": "Android 未接受響鈴排程，因此沒有建立新的鬧鐘。請檢查鬧鐘權限後重試。",
+        "ja": "Android が通知予定を受け付けなかったため、新しいアラームは作成されませんでした。権限を確認して再試行してください。"
+      },
+      "reviewRationale": "排程被 Android 拒絕時新鬧鐘未建立，譯文需保留權限檢查及重試。",
+      "proposedReplacements": {
+        "ja": {
+          "text": "Android がアラームのスケジュールを受け付けなかったため、新しいアラームは作成されませんでした。アラームの権限を確認して再試行してください。",
+          "origin": "G4_PRIOR_MODEL_PROPOSAL"
+        }
+      },
+      "sourceReviewNeeded": false,
+      "status": "REVISION_PROPOSED_HUMAN_REVIEW_REQUIRED",
+      "reviewerType": "MODEL_PRELIMINARY_ONLY",
+      "humanApproved": false,
+      "humanApproval": null
+    },
+    {
+      "key": "settings_pane_personalization_description",
+      "section": "settings",
+      "priority": "MEDIUM",
+      "issueCode": "FIRING_SCREEN_CONTEXT",
+      "source": "Theme, challenge difficulty, privacy, and firing-screen behavior.",
+      "sourceHash": "sha256:41b4e2bc8c3fd117c190f9df488025a10eb0daea183e14c1a774cdd47708de4a",
+      "candidateOrigins": {
+        "zh-TW": "LEGACY_UNREVIEWED",
+        "ja": "LEGACY_UNREVIEWED"
+      },
+      "candidates": {
+        "zh-TW": "主題、解除難度、隱私及響鈴畫面行為。",
+        "ja": "テーマ、解除の難易度、プライバシー、アラーム画面の設定。"
+      },
+      "reviewRationale": "日文原譯沒有具體保留響鈴畫面的行為語義。",
+      "proposedReplacements": {
+        "ja": {
+          "text": "テーマ、起床チャレンジの難易度、プライバシー、アラーム鳴動画面の動作。",
+          "origin": "G4_PRIOR_MODEL_PROPOSAL"
+        }
+      },
+      "sourceReviewNeeded": false,
+      "status": "REVISION_PROPOSED_HUMAN_REVIEW_REQUIRED",
+      "reviewerType": "MODEL_PRELIMINARY_ONLY",
+      "humanApproved": false,
+      "humanApproval": null
+    },
+    {
+      "key": "settings_alarm_defaults_description",
+      "section": "settings",
+      "priority": "MEDIUM",
+      "issueCode": "PURPOSE_OMISSION",
+      "source": "Set the behavior new alarms start with so setup feels faster and more predictable.",
+      "sourceHash": "sha256:22bbb850697da7a382b6777f4008104e994eeb33313c6141e074a38e480bccf6",
+      "candidateOrigins": {
+        "zh-TW": "LEGACY_UNREVIEWED",
+        "ja": "LEGACY_UNREVIEWED"
+      },
+      "candidates": {
+        "zh-TW": "設定新鬧鐘的初始行為，減少重複設定。",
+        "ja": "新しいアラームの初期動作を設定します。"
+      },
+      "reviewRationale": "原文還有快速、可預期的設定目的；兩語舊譯偏重初始行為。",
+      "proposedReplacements": {
+        "zh-TW": {
+          "text": "設定新鬧鐘的預設行為，讓設定更快速、結果更容易預期。",
+          "origin": "G4_PRIOR_MODEL_PROPOSAL"
+        },
+        "ja": {
+          "text": "新しいアラームの初期動作を設定し、素早く一貫した設定ができるようにします。",
+          "origin": "G4_PRIOR_MODEL_PROPOSAL"
+        }
+      },
+      "sourceReviewNeeded": false,
+      "status": "REVISION_PROPOSED_HUMAN_REVIEW_REQUIRED",
+      "reviewerType": "MODEL_PRELIMINARY_ONLY",
+      "humanApproved": false,
+      "humanApproval": null
+    },
+    {
+      "key": "settings_utilities_description",
+      "section": "settings",
+      "priority": "MEDIUM",
+      "issueCode": "ADDED_SPECIFICITY",
+      "source": "Quick access to companion tools that round out the app.",
+      "sourceHash": "sha256:c979844c7f7e8ff77810224efcfc81c6c96afe346599eb3ea8555a2c6ee1176b",
+      "candidateOrigins": {
+        "zh-TW": "LEGACY_UNREVIEWED",
+        "ja": "LEGACY_UNREVIEWED"
+      },
+      "candidates": {
+        "zh-TW": "計時、統計及其他輔助工具。",
+        "ja": "タイマー、統計、その他のツール。"
+      },
+      "reviewRationale": "原文只說快速存取輔助工具，舊譯自行加入計時／統計類型。",
+      "proposedReplacements": {
+        "zh-TW": {
+          "text": "快速開啟 App 的其他輔助工具。",
+          "origin": "G4_PRIOR_MODEL_PROPOSAL"
+        },
+        "ja": {
+          "text": "アプリの便利な補助ツールへすばやくアクセスできます。",
+          "origin": "G4_PRIOR_MODEL_PROPOSAL"
+        }
+      },
+      "sourceReviewNeeded": false,
+      "status": "REVISION_PROPOSED_HUMAN_REVIEW_REQUIRED",
+      "reviewerType": "MODEL_PRELIMINARY_ONLY",
+      "humanApproved": false,
+      "humanApproval": null
+    },
+    {
+      "key": "settings_stopwatch_description",
+      "section": "settings",
+      "priority": "MEDIUM",
+      "issueCode": "MEANING_OMISSION",
+      "source": "Track laps with best and worst splits highlighted.",
+      "sourceHash": "sha256:0101e1b00935671b76f5de06f06cdec97c052c75ebaac03820afbaf10a2f6ebd",
+      "candidateOrigins": {
+        "zh-TW": "LEGACY_UNREVIEWED",
+        "ja": "LEGACY_UNREVIEWED"
+      },
+      "candidates": {
+        "zh-TW": "開啟碼錶。",
+        "ja": "ストップウォッチを開きます。"
+      },
+      "reviewRationale": "兩語僅稱開啟碼錶，缺漏圈數、最佳與最差分段。",
+      "proposedReplacements": {
+        "zh-TW": {
+          "text": "記錄每圈時間，並特別標出最佳與最差分段成績。",
+          "origin": "G4_PRIOR_MODEL_PROPOSAL"
+        },
+        "ja": {
+          "text": "ラップを記録し、最速と最遅の区間タイムを強調表示します。",
+          "origin": "G4_PRIOR_MODEL_PROPOSAL"
+        }
+      },
+      "sourceReviewNeeded": false,
+      "status": "REVISION_PROPOSED_HUMAN_REVIEW_REQUIRED",
+      "reviewerType": "MODEL_PRELIMINARY_ONLY",
+      "humanApproved": false,
+      "humanApproval": null
+    },
+    {
+      "key": "b2_test_requires_saved",
+      "section": "diagnostics",
+      "priority": "HIGH",
+      "issueCode": "TEST_VS_LIVE",
+      "source": "Save this alarm before running the real music test.",
+      "sourceHash": "sha256:c562414fb3c5723a66ff947995cc04dce1b1833cb7c02338442ebd63d4768f7e",
+      "candidateOrigins": {
+        "zh-TW": "LEGACY_UNREVIEWED",
+        "ja": "LEGACY_UNREVIEWED"
+      },
+      "candidates": {
+        "zh-TW": "請先儲存此鬧鐘，再執行正式音樂測試。",
+        "ja": "このアラームを保存してから音楽テストを実行してください。"
+      },
+      "reviewRationale": "此處要求先儲存再做實際音樂測試，繁中「正式」易被誤認為正式排程。",
+      "proposedReplacements": {
+        "zh-TW": {
+          "text": "執行實際音樂響鈴測試前，請先儲存此鬧鐘。",
+          "origin": "G4_PRIOR_MODEL_PROPOSAL"
+        },
+        "ja": {
+          "text": "実際の音楽アラームテストを行う前に、このアラームを保存してください。",
+          "origin": "G4_PRIOR_MODEL_PROPOSAL"
+        }
+      },
+      "sourceReviewNeeded": false,
+      "status": "REVISION_PROPOSED_HUMAN_REVIEW_REQUIRED",
+      "reviewerType": "MODEL_PRELIMINARY_ONLY",
+      "humanApproved": false,
+      "humanApproval": null
+    },
+    {
+      "key": "u4_snooze_mode_note",
+      "section": "snooze",
+      "priority": "HIGH",
+      "issueCode": "SCOPE_OMISSION",
+      "source": "Applies to alarm music. If a track cannot be accessed or seeked, the alarm uses a playable fallback.",
+      "sourceHash": "sha256:be2bb1faedee558a9e41f6d6113b0d5c9f231a2d0d6a710edd6f11fda00c4532",
+      "candidateOrigins": {
+        "zh-TW": "LEGACY_UNREVIEWED",
+        "ja": "LEGACY_UNREVIEWED"
+      },
+      "candidates": {
+        "zh-TW": "適用於音樂鬧鐘。若音樂失效或無法定位播放位置，會改用可播放的備援。",
+        "ja": "音源が利用できない場合やシークできない場合は、再生可能な代替音を使用します。"
+      },
+      "reviewRationale": "日文候選缺第一句「適用於鬧鐘音樂」，備援還要涵蓋無法 seek 與不可存取。",
+      "proposedReplacements": {
+        "ja": {
+          "text": "アラームの音楽に適用されます。曲を利用できない場合やシークできない場合は、再生可能な代替音を使用します。",
+          "origin": "G4_PRIOR_MODEL_PROPOSAL"
+        }
+      },
+      "sourceReviewNeeded": false,
+      "status": "REVISION_PROPOSED_HUMAN_REVIEW_REQUIRED",
+      "reviewerType": "MODEL_PRELIMINARY_ONLY",
+      "humanApproved": false,
+      "humanApproval": null
+    },
+    {
+      "key": "notif_snooze_countdown_title",
+      "section": "snooze",
+      "priority": "HIGH",
+      "issueCode": "SNOOZE_NOTIFICATION_STATE",
+      "source": "Snoozed alarm",
+      "sourceHash": "sha256:a157280629c716f3713da767a4a83c40401d45ee997fe5d437f12e5331c34979",
+      "candidateOrigins": {
+        "zh-TW": "LEGACY_UNREVIEWED",
+        "ja": "LEGACY_UNREVIEWED"
+      },
+      "candidates": {
+        "zh-TW": "已稍後提醒的鬧鐘",
+        "ja": "スヌーズ中のアラーム"
+      },
+      "reviewRationale": "繁中『已稍後提醒』易讓通知聽起來已完成，需表達貪睡狀態。",
+      "proposedReplacements": {
+        "zh-TW": {
+          "text": "貪睡中的鬧鐘",
+          "origin": "G6Q1_MODEL_PROPOSAL"
+        }
+      },
+      "sourceReviewNeeded": false,
+      "status": "REVISION_PROPOSED_HUMAN_REVIEW_REQUIRED",
+      "reviewerType": "MODEL_PRELIMINARY_ONLY",
+      "humanApproved": false,
+      "humanApproval": null
+    },
+    {
+      "key": "notif_snooze_countdown_subtext",
+      "section": "snooze",
+      "priority": "MEDIUM",
+      "issueCode": "SNOOZE_TERMINOLOGY",
+      "source": "Snooze countdown",
+      "sourceHash": "sha256:e05754cae8a0b7bc176b226f5e4665a25ea8db803ebb998b7bbd6bcac80b254f",
+      "candidateOrigins": {
+        "zh-TW": "LEGACY_UNREVIEWED",
+        "ja": "LEGACY_UNREVIEWED"
+      },
+      "candidates": {
+        "zh-TW": "稍後提醒倒數",
+        "ja": "スヌーズの残り時間"
+      },
+      "reviewRationale": "繁中『稍後提醒倒數』與待核准詞彙『貪睡』不一致，需核對再次響鈴倒數含義。",
+      "proposedReplacements": {
+        "zh-TW": {
+          "text": "貪睡倒數",
+          "origin": "G6Q1_MODEL_PROPOSAL"
+        }
+      },
+      "sourceReviewNeeded": false,
+      "status": "REVISION_PROPOSED_HUMAN_REVIEW_REQUIRED",
+      "reviewerType": "MODEL_PRELIMINARY_ONLY",
+      "humanApproved": false,
+      "humanApproval": null
+    },
+    {
+      "key": "firing_controls_hold_description",
+      "section": "alarm",
+      "priority": "CRITICAL",
+      "issueCode": "DISMISS_VS_SNOOZE",
+      "source": "Hold to confirm dismissal. Snooze remains a quick action.",
+      "sourceHash": "sha256:dc20492c015711f45b1e513a318190b38ddce88a82780bebf6e14a026172d1fc",
+      "candidateOrigins": {
+        "zh-TW": "LEGACY_UNREVIEWED",
+        "ja": "LEGACY_UNREVIEWED"
+      },
+      "candidates": {
+        "zh-TW": "長按以確認解除。貪睡仍可快速操作。",
+        "ja": "長押しして停止を確定します。スヌーズはすぐに使えます。"
+      },
+      "reviewRationale": "長按解除會結束當次響鈴，快速貪睡是延後，二者不得合併；需要實機行為複核。",
+      "proposedReplacements": {},
+      "sourceReviewNeeded": false,
+      "status": "CONTEXT_SEMANTIC_REVIEW_REQUIRED",
+      "reviewerType": "MODEL_PRELIMINARY_ONLY",
+      "humanApproved": false,
+      "humanApproval": null
+    },
+    {
+      "key": "firing_status_swipe_or_snooze",
+      "section": "snooze",
+      "priority": "CRITICAL",
+      "issueCode": "SWIPE_DIRECTION",
+      "source": "Wake-up steps are complete. Swipe left to dismiss, or right to snooze.",
+      "sourceHash": "sha256:0db9d003e57d755cee042e4af2352477cf212fdde89a09ff32c9cb9b197403ae",
+      "candidateOrigins": {
+        "zh-TW": "LEGACY_UNREVIEWED",
+        "ja": "LEGACY_UNREVIEWED"
+      },
+      "candidates": {
+        "zh-TW": "已完成喚醒任務。向左滑動解除，或向右滑動貪睡。",
+        "ja": "起床タスクが完了しました。左にスワイプで停止、右にスワイプでスヌーズします。"
+      },
+      "reviewRationale": "左滑解除、右滑貪睡不能翻反；文字一致仍需真機測試。",
+      "proposedReplacements": {},
+      "sourceReviewNeeded": false,
+      "status": "CONTEXT_SEMANTIC_REVIEW_REQUIRED",
+      "reviewerType": "MODEL_PRELIMINARY_ONLY",
+      "humanApproved": false,
+      "humanApproval": null
+    },
+    {
+      "key": "firing_swipe_protected",
+      "section": "alarm",
+      "priority": "CRITICAL",
+      "issueCode": "PROTECTED_DISMISS",
+      "source": "Swipe-left is protected. Use Hold Dismiss.",
+      "sourceHash": "sha256:5785e907dea844c5d25175d8138ef28b6c1a344c7e97fd24b25a1806cbf8516e",
+      "candidateOrigins": {
+        "zh-TW": "LEGACY_UNREVIEWED",
+        "ja": "LEGACY_UNREVIEWED"
+      },
+      "candidates": {
+        "zh-TW": "已保護向左滑動解除，請長按「解除」。",
+        "ja": "左スワイプによる停止は無効です。「停止」を長押ししてください。"
+      },
+      "reviewRationale": "左滑受保護須長按解除，日文『無効』可能改變對保護機制的理解。",
+      "proposedReplacements": {},
+      "sourceReviewNeeded": false,
+      "status": "CONTEXT_SEMANTIC_REVIEW_REQUIRED",
+      "reviewerType": "MODEL_PRELIMINARY_ONLY",
+      "humanApproved": false,
+      "humanApproval": null
+    },
+    {
+      "key": "firing_snooze_hint",
+      "section": "snooze",
+      "priority": "HIGH",
+      "issueCode": "SAVED_DEFAULT_PRESERVED",
+      "source": "Long-press Snooze for exact minutes, or choose a clock time. Your saved default stays unchanged.",
+      "sourceHash": "sha256:41b02a081cc6269b3d03b7ad56d4b6a93a0ae7c9f6c58c7738c43de2f50227c0",
+      "candidateOrigins": {
+        "zh-TW": "LEGACY_UNREVIEWED",
+        "ja": "LEGACY_UNREVIEWED"
+      },
+      "candidates": {
+        "zh-TW": "長按「貪睡」可指定分鐘數，或選擇貪睡到某個時間；已儲存的預設值不會改變。",
+        "ja": "「スヌーズ」を長押しすると分数や時刻を指定できます。保存済みの既定値は変更されません。"
+      },
+      "reviewRationale": "長按貪睡單次改時間，不會覆寫已儲存預設值。",
+      "proposedReplacements": {},
+      "sourceReviewNeeded": false,
+      "status": "CONTEXT_SEMANTIC_REVIEW_REQUIRED",
+      "reviewerType": "MODEL_PRELIMINARY_ONLY",
+      "humanApproved": false,
+      "humanApproval": null
+    },
+    {
+      "key": "firing_snooze_until_hint",
+      "section": "snooze",
+      "priority": "HIGH",
+      "issueCode": "NEXT_OCCURRENCE",
+      "source": "The alarm will fire at the next occurrence of this time.",
+      "sourceHash": "sha256:f8282807ad2c83f15780a90f6587fd88faf75dd525770a481c3ba89c4268d85e",
+      "candidateOrigins": {
+        "zh-TW": "LEGACY_UNREVIEWED",
+        "ja": "LEGACY_UNREVIEWED"
+      },
+      "candidates": {
+        "zh-TW": "鬧鐘會在下一次到達此時刻時響鈴。",
+        "ja": "次に指定時刻になったときにアラームが鳴ります。"
+      },
+      "reviewRationale": "選擇指定時間的下一次發生，不可暗示當天一定再響。",
+      "proposedReplacements": {},
+      "sourceReviewNeeded": false,
+      "status": "CONTEXT_SEMANTIC_REVIEW_REQUIRED",
+      "reviewerType": "MODEL_PRELIMINARY_ONLY",
+      "humanApproved": false,
+      "humanApproval": null
+    },
+    {
+      "key": "firing_exact_snooze_hint",
+      "section": "snooze",
+      "priority": "HIGH",
+      "issueCode": "ONE_SHOT",
+      "source": "Applies once to this alarm.",
+      "sourceHash": "sha256:4f0188f289a7eb5dba2cd021fac5abbe4b88d3a963565a3afd80e37dca081db5",
+      "candidateOrigins": {
+        "zh-TW": "LEGACY_UNREVIEWED",
+        "ja": "LEGACY_UNREVIEWED"
+      },
+      "candidates": {
+        "zh-TW": "只對本次鬧鐘生效。",
+        "ja": "今回のアラームにのみ適用されます。"
+      },
+      "reviewRationale": "僅對這一次鬧鐘生效，不改整體預設。",
+      "proposedReplacements": {},
+      "sourceReviewNeeded": false,
+      "status": "CONTEXT_SEMANTIC_REVIEW_REQUIRED",
+      "reviewerType": "MODEL_PRELIMINARY_ONLY",
+      "humanApproved": false,
+      "humanApproval": null
+    },
+    {
+      "key": "firing_challenge_none_status",
+      "section": "alarm",
+      "priority": "HIGH",
+      "issueCode": "DISMISS_CONTEXT",
+      "source": "Swipe or tap dismiss when you\\’re ready.",
+      "sourceHash": "sha256:bef1c7244dc0aa0e84d8cd3b35ac4929137c753e6ad9e3f4f6c7813d962accef",
+      "candidateOrigins": {
+        "zh-TW": "LEGACY_UNREVIEWED",
+        "ja": "LEGACY_UNREVIEWED"
+      },
+      "candidates": {
+        "zh-TW": "準備好時，滑動或點選即可解除。",
+        "ja": "準備ができたらスワイプまたはタップして停止します。"
+      },
+      "reviewRationale": "此處點擊或滑動是解除正在響的鬧鐘，不是停止播放歷史。",
+      "proposedReplacements": {},
+      "sourceReviewNeeded": false,
+      "status": "CONTEXT_SEMANTIC_REVIEW_REQUIRED",
+      "reviewerType": "MODEL_PRELIMINARY_ONLY",
+      "humanApproved": false,
+      "humanApproval": null
+    },
+    {
+      "key": "replay_action_stop",
+      "section": "history",
+      "priority": "HIGH",
+      "issueCode": "MUSIC_VS_ALARM_STOP",
+      "source": "Stop",
+      "sourceHash": "sha256:bffc4a860b25284579483a3ca3c51b4592abc86932ae685f3599bef2f1160b95",
+      "candidateOrigins": {
+        "zh-TW": "LEGACY_UNREVIEWED",
+        "ja": "LEGACY_UNREVIEWED"
+      },
+      "candidates": {
+        "zh-TW": "停止",
+        "ja": "停止"
+      },
+      "reviewRationale": "回播停止與解除鬧鐘不能共用操作後果。",
+      "proposedReplacements": {},
+      "sourceReviewNeeded": false,
+      "status": "CONTEXT_SEMANTIC_REVIEW_REQUIRED",
+      "reviewerType": "MODEL_PRELIMINARY_ONLY",
+      "humanApproved": false,
+      "humanApproval": null
+    },
+    {
+      "key": "replay_error_alarm_active",
+      "section": "history",
+      "priority": "CRITICAL",
+      "issueCode": "ALARM_PRIORITY",
+      "source": "Alarm is ringing. Replay stopped to prioritize alarm.",
+      "sourceHash": "sha256:f6b49d3d0a7409067550ec1bb30ed0daa36c6564136f7e45b55ee211d2124d1a",
+      "candidateOrigins": {
+        "zh-TW": "LEGACY_UNREVIEWED",
+        "ja": "LEGACY_UNREVIEWED"
+      },
+      "candidates": {
+        "zh-TW": "鬧鐘響鈴中，為確保鬧鐘優先已停止回播",
+        "ja": "アラーム鳴動中のため、アラームを優先して再生を停止しました"
+      },
+      "reviewRationale": "鬧鐘響鈴時回播必須停止讓位；翻譯不可倒置成停止鬧鐘。",
+      "proposedReplacements": {},
+      "sourceReviewNeeded": false,
+      "status": "CONTEXT_SEMANTIC_REVIEW_REQUIRED",
+      "reviewerType": "MODEL_PRELIMINARY_ONLY",
+      "humanApproved": false,
+      "humanApproval": null
+    },
+    {
+      "key": "replay_error_playback_failed",
+      "section": "history",
+      "priority": "HIGH",
+      "issueCode": "POSSIBLE_CAUSE",
+      "source": "Cannot play this audio. File may be missing or permission revoked.",
+      "sourceHash": "sha256:15875d912247ec43fe57f77fcbe2072c703d970efff2c0d20741e309542437e5",
+      "candidateOrigins": {
+        "zh-TW": "LEGACY_UNREVIEWED",
+        "ja": "LEGACY_UNREVIEWED"
+      },
+      "candidates": {
+        "zh-TW": "無法播放此音訊（檔案可能已移除或權限已失效）",
+        "ja": "この音声を再生できません（ファイルが見つからないか権限が無効です）"
+      },
+      "reviewRationale": "檔案不存在或權限撤銷只是可能原因，不得翻成確診。",
+      "proposedReplacements": {},
+      "sourceReviewNeeded": false,
+      "status": "CONTEXT_SEMANTIC_REVIEW_REQUIRED",
+      "reviewerType": "MODEL_PRELIMINARY_ONLY",
+      "humanApproved": false,
+      "humanApproval": null
+    },
+    {
+      "key": "alarm_edit_disabled",
+      "section": "alarm",
+      "priority": "HIGH",
+      "issueCode": "DISABLED_VS_DELETED",
+      "source": "Disabled",
+      "sourceHash": "sha256:7f82bcc0800df6cb54b6b83aaaedac4b4ccecb3ffa958f26d48602313bf09f4a",
+      "candidateOrigins": {
+        "zh-TW": "LEGACY_UNREVIEWED",
+        "ja": "LEGACY_UNREVIEWED"
+      },
+      "candidates": {
+        "zh-TW": "已停用",
+        "ja": "無効"
+      },
+      "reviewRationale": "選項停用與刪除鬧鐘不是同一操作，依實際功能區塊確認。",
+      "proposedReplacements": {},
+      "sourceReviewNeeded": false,
+      "status": "CONTEXT_SEMANTIC_REVIEW_REQUIRED",
+      "reviewerType": "MODEL_PRELIMINARY_ONLY",
+      "humanApproved": false,
+      "humanApproval": null
+    },
+    {
+      "key": "alarm_list_delete",
+      "section": "alarm",
+      "priority": "CRITICAL",
+      "issueCode": "DELETE_ALARM",
+      "source": "Delete",
+      "sourceHash": "sha256:9bbeebda5a13d1088b3c593b68e924eb7c5d947d42fea708ac38a4da7688807c",
+      "candidateOrigins": {
+        "zh-TW": "LEGACY_UNREVIEWED",
+        "ja": "LEGACY_UNREVIEWED"
+      },
+      "candidates": {
+        "zh-TW": "刪除",
+        "ja": "削除"
+      },
+      "reviewRationale": "刪除鬧鐘定義不同於移除音樂來源／播放清單項目。",
+      "proposedReplacements": {},
+      "sourceReviewNeeded": false,
+      "status": "CONTEXT_SEMANTIC_REVIEW_REQUIRED",
+      "reviewerType": "MODEL_PRELIMINARY_ONLY",
+      "humanApproved": false,
+      "humanApproval": null
+    },
+    {
+      "key": "alarm_edit_challenge_default_description",
+      "section": "alarm",
+      "priority": "CRITICAL",
+      "issueCode": "CHALLENGE_GATE",
+      "source": "Dismissal requires this challenge before the alarm can stop.",
+      "sourceHash": "sha256:3e82909a78b4a8522f34a2afc2678dd1b1ae94caeb08df6484c067c0150100de",
+      "candidateOrigins": {
+        "zh-TW": "LLM_DRAFT_UNREVIEWED",
+        "ja": "LLM_DRAFT_UNREVIEWED"
+      },
+      "candidates": {
+        "zh-TW": "解除鬧鐘並停止響鈴前，必須先完成此挑戰。",
+        "ja": "このチャレンジを完了するまで、アラームを解除して鳴動を止めることはできません。"
+      },
+      "reviewRationale": "完成解除挑戰才可停止鬧鐘響鈴；不能被理解為只停止音樂。",
+      "proposedReplacements": {},
+      "sourceReviewNeeded": false,
+      "status": "CONTEXT_SEMANTIC_REVIEW_REQUIRED",
+      "reviewerType": "MODEL_PRELIMINARY_ONLY",
+      "humanApproved": false,
+      "humanApproval": null
+    },
+    {
+      "key": "settings_post_dismiss_summary_description",
+      "section": "settings",
+      "priority": "MEDIUM",
+      "issueCode": "OFFLINE_PRIVACY",
+      "source": "After the final dismiss step, show cached weather and the next local calendar event. No network request is made.",
+      "sourceHash": "sha256:34ad7f05fdbb769e4e1f4e612bea0865dfa408bca797c4231fb70ab41be90b8f",
+      "candidateOrigins": {
+        "zh-TW": "LLM_DRAFT_UNREVIEWED",
+        "ja": "LLM_DRAFT_UNREVIEWED"
+      },
+      "candidates": {
+        "zh-TW": "完成最後一步解除鬧鐘後，顯示已快取的天氣和下一筆本機行事曆事件；不會發出網路請求。",
+        "ja": "最後のアラーム解除操作の後、キャッシュ済みの天気と次の端末内カレンダーの予定を表示します。ネットワーク通信は行いません。"
+      },
+      "reviewRationale": "只在最後解除後顯示快取天氣與本機行事曆，且不產生網路請求。",
+      "proposedReplacements": {},
+      "sourceReviewNeeded": false,
+      "status": "CONTEXT_SEMANTIC_REVIEW_REQUIRED",
+      "reviewerType": "MODEL_PRELIMINARY_ONLY",
+      "humanApproved": false,
+      "humanApproval": null
+    },
+    {
+      "key": "settings_commute_history_description",
+      "section": "history",
+      "priority": "HIGH",
+      "issueCode": "PRIVACY_RETENTION",
+      "source": "Stores only hashed route keys and up to eight recent durations per route on this device; locations are excluded from support bundles.",
+      "sourceHash": "sha256:0e34c6ce4b2a81a31fa0cc70ed4de2bd94c117971cb9f682d83c38c5aedddf63",
+      "candidateOrigins": {
+        "zh-TW": "LLM_DRAFT_UNREVIEWED",
+        "ja": "LLM_DRAFT_UNREVIEWED"
+      },
+      "candidates": {
+        "zh-TW": "此裝置只儲存路線鍵的雜湊值，以及每條路線最近最多 8 筆行程時間；支援用診斷資料包不包含位置資訊。",
+        "ja": "この端末に保存するのは経路キーのハッシュ値と、経路ごとに直近最大8件の所要時間だけです。サポート用データには位置情報を含めません。"
+      },
+      "reviewRationale": "路線鍵只有雜湊、每路線最多 8 筆行程時長，支援包不含位置；需驗證資料流。",
+      "proposedReplacements": {},
+      "sourceReviewNeeded": false,
+      "status": "CONTEXT_SEMANTIC_REVIEW_REQUIRED",
+      "reviewerType": "MODEL_PRELIMINARY_ONLY",
+      "humanApproved": false,
+      "humanApproval": null
+    },
+    {
+      "key": "settings_on_call_mode_description",
+      "section": "settings",
+      "priority": "HIGH",
+      "issueCode": "DND_PERMISSION",
+      "source": "Use this with a rotating shift pattern when an on-call alarm must break total-silence Do Not Disturb.",
+      "sourceHash": "sha256:13fc1f98a986b2003809df79f051f78a56188568ec2b59019359f63d556ed2c3",
+      "candidateOrigins": {
+        "zh-TW": "LLM_DRAFT_UNREVIEWED",
+        "ja": "LLM_DRAFT_UNREVIEWED"
+      },
+      "candidates": {
+        "zh-TW": "值班鬧鐘需要在「勿擾」完全靜音時仍能響鈴，請搭配輪班模式使用。",
+        "ja": "オンコール用アラームを「おやすみモード」の完全消音中にも鳴らす必要がある場合、交代勤務のシフトパターンと併用してください。"
+      },
+      "reviewRationale": "輪班值班鬧鐘需要突破勿擾完全靜音；翻譯不可當作已取得 Android 例外權限。",
+      "proposedReplacements": {},
+      "sourceReviewNeeded": false,
+      "status": "CONTEXT_SEMANTIC_REVIEW_REQUIRED",
+      "reviewerType": "MODEL_PRELIMINARY_ONLY",
+      "humanApproved": false,
+      "humanApproval": null
+    },
+    {
+      "key": "alarm_edit_holidays_hint",
+      "section": "alarm",
+      "priority": "MEDIUM",
+      "issueCode": "CONFIGURATION_PATH",
+      "source": "Requires holiday auto-skip and country code configured in Settings → Integrations.",
+      "sourceHash": "sha256:74d82fe112436f971e371b5f05430c86351692f69e799017cdb283fc59769349",
+      "candidateOrigins": {
+        "zh-TW": "LLM_DRAFT_UNREVIEWED",
+        "ja": "LLM_DRAFT_UNREVIEWED"
+      },
+      "candidates": {
+        "zh-TW": "需先在「設定」→「整合」中啟用假日自動略過，並設定國家代碼。",
+        "ja": "「設定」→「連携」で祝日の自動スキップを有効にし、国コードを設定する必要があります。"
+      },
+      "reviewRationale": "需在設定→整合開啟假日略過及填入國家代碼，導航名稱需跟實際 UI 一致。",
+      "proposedReplacements": {},
+      "sourceReviewNeeded": false,
+      "status": "CONTEXT_SEMANTIC_REVIEW_REQUIRED",
+      "reviewerType": "MODEL_PRELIMINARY_ONLY",
+      "humanApproved": false,
+      "humanApproval": null
+    },
+    {
+      "key": "alarm_edit_ringtone_uri_hint",
+      "section": "music",
+      "priority": "HIGH",
+      "issueCode": "MEDIA_SOURCE",
+      "source": "Paste a link to a sound file on this device. One entry from the pool plays each time this alarm fires.",
+      "sourceHash": "sha256:f7bc2e4ec4041e43a0f9d531b8712b3b711c100cd50aff38f46b3e59d5e7a002",
+      "candidateOrigins": {
+        "zh-TW": "LLM_DRAFT_UNREVIEWED",
+        "ja": "LLM_DRAFT_UNREVIEWED"
+      },
+      "candidates": {
+        "zh-TW": "貼上此裝置中音效檔案的連結。每次鬧鐘響起時，會從鈴聲池選取一項播放。",
+        "ja": "この端末内の音声ファイルへのリンクを貼り付けます。アラームが鳴るたびに、アラーム音の候補から1件を再生します。"
+      },
+      "reviewRationale": "應表達本機音效檔連結及每次從池選一項，不得暗示不重複／遠端網址。",
+      "proposedReplacements": {},
+      "sourceReviewNeeded": false,
+      "status": "CONTEXT_SEMANTIC_REVIEW_REQUIRED",
+      "reviewerType": "MODEL_PRELIMINARY_ONLY",
+      "humanApproved": false,
+      "humanApproval": null
+    },
+    {
+      "key": "music_library_pool_clear_selection",
+      "section": "music",
+      "priority": "MEDIUM",
+      "issueCode": "CLEAR_SELECTION",
+      "source": "Clear selection",
+      "sourceHash": "sha256:370ef61812812dd804328aa72746f07103be8990493857c84ee8bd671495c6f3",
+      "candidateOrigins": {
+        "zh-TW": "LEGACY_UNREVIEWED",
+        "ja": "LEGACY_UNREVIEWED"
+      },
+      "candidates": {
+        "zh-TW": "清除選取",
+        "ja": "選択を解除"
+      },
+      "reviewRationale": "清除選取標記不是刪除原始媒體檔或移除索引。",
+      "proposedReplacements": {},
+      "sourceReviewNeeded": false,
+      "status": "CONTEXT_SEMANTIC_REVIEW_REQUIRED",
+      "reviewerType": "MODEL_PRELIMINARY_ONLY",
+      "humanApproved": false,
+      "humanApproval": null
+    },
+    {
+      "key": "settings_pane_backup_description",
+      "section": "settings",
+      "priority": "HIGH",
+      "issueCode": "BACKUP_CONFLICT",
+      "source": "Encrypted export, restore preview, and conflict-safe import.",
+      "sourceHash": "sha256:c45b762298e37cd662a462afddd3b428813ea681df75e0e8209a7d2639966d8b",
+      "candidateOrigins": {
+        "zh-TW": "LEGACY_UNREVIEWED",
+        "ja": "LEGACY_UNREVIEWED"
+      },
+      "candidates": {
+        "zh-TW": "加密匯出、還原預覽及避免衝突的匯入。",
+        "ja": "暗号化エクスポート、復元プレビュー、安全なインポート。"
+      },
+      "reviewRationale": "加密匯出、還原預覽、避免衝突的匯入是三個不同功能。",
+      "proposedReplacements": {},
+      "sourceReviewNeeded": false,
+      "status": "CONTEXT_SEMANTIC_REVIEW_REQUIRED",
+      "reviewerType": "MODEL_PRELIMINARY_ONLY",
+      "humanApproved": false,
+      "humanApproval": null
+    },
+    {
+      "key": "settings_language_description",
+      "section": "settings",
+      "priority": "HIGH",
+      "issueCode": "PRODUCT_CLAIM",
+      "source": "Choose the app language. Core alarm, sound, and music screens are available in English, Traditional Chinese, and Japanese; other screens may remain in English.",
+      "sourceHash": "sha256:4dedb340104465464b1a61208cb6df223e6d4070a885a976049e5b94a6221fae",
+      "candidateOrigins": {
+        "zh-TW": "LEGACY_UNREVIEWED",
+        "ja": "LEGACY_UNREVIEWED"
+      },
+      "candidates": {
+        "zh-TW": "選擇 App 語言。鬧鐘、音效與音樂核心畫面支援英文、繁體中文及日文；其他畫面可能仍顯示英文。",
+        "ja": "アプリの言語を選択します。アラーム、サウンド、音楽の主要画面は英語、繁体字中国語、日本語に対応しています。他の画面は英語のままの場合があります。"
+      },
+      "reviewRationale": "來源聲稱鬧鐘／音效／音樂核心畫面有三語；目前 Debug 覆蓋不代表正式產品承諾已驗收。",
+      "proposedReplacements": {},
+      "sourceReviewNeeded": false,
+      "status": "CONTEXT_SEMANTIC_REVIEW_REQUIRED",
+      "reviewerType": "MODEL_PRELIMINARY_ONLY",
+      "humanApproved": false,
+      "humanApproval": null
+    },
+    {
+      "key": "alarm_edit_anti_snooze",
+      "section": "snooze",
+      "priority": "HIGH",
+      "issueCode": "SNOOZE_GUARDRAIL",
+      "source": "Anti-snooze",
+      "sourceHash": "sha256:7b8dd13b9272fa49f2c763d39e914a1d202bbf947c99ed1eec854a32ef3994c2",
+      "candidateOrigins": {
+        "zh-TW": "LEGACY_UNREVIEWED",
+        "ja": "LEGACY_UNREVIEWED"
+      },
+      "candidates": {
+        "zh-TW": "防止重複貪睡",
+        "ja": "スヌーズ防止"
+      },
+      "reviewRationale": "限制反覆延後不必然等於完全停用貪睡；需查設定組合。",
+      "proposedReplacements": {},
+      "sourceReviewNeeded": false,
+      "status": "CONTEXT_SEMANTIC_REVIEW_REQUIRED",
+      "reviewerType": "MODEL_PRELIMINARY_ONLY",
+      "humanApproved": false,
+      "humanApproval": null
+    }
+  ]
+}

@@ -12,6 +12,7 @@ on:
       - feature/p31-lp2b1-cross-screen-language-preview-20261120
       - feature/p31-lp2b2-edit-music-stats-preview-20261120
       - feature/p31-lp2b3-direct-indirect-ui-preview-20261121
+      - feature/p31-g6q1-current-content-audit-20261121
     paths:
       - "scripts/localization/**"
       - "localization/governance/**"
@@ -94,6 +95,15 @@ jobs:
             exit 1
           fi
           echo "G6 release blocked as designed."
+      - name: G6-Q1 - Generate 400-row independent-human-review handoff (no approvals)
+        run: |
+          node scripts/localization/g6q1-review-worklist.mjs --out-dir build/localization/G6Q1_PRELIMINARY_NOT_APPROVED
+          node scripts/localization/g6q1-review-worklist.test.mjs
+          if node scripts/localization/g6q1-review-worklist.mjs --mode release; then
+            echo "SECURITY FAILURE: model review must not publish an approved G6 language pack"
+            exit 1
+          fi
+          echo "G6-Q1 remains model-preliminary; 400 candidate rows still require independent review."
       - name: Publish review bundle for human auditing
         uses: actions/upload-artifact@v4
         with:
@@ -111,6 +121,10 @@ jobs:
             docs/localization/LP-G4-LEGACY-REMAINING-REVIEW-20261120.md
             build/localization/UNREVIEWED_PREVIEW_NOT_RELEASE/
             build/localization/G6_UNREVIEWED_CURRENT_PREVIEW/
+            localization/governance/g6q/model-triage-q1.json
+            build/localization/G6Q1_PRELIMINARY_NOT_APPROVED/
+            docs/localization/P31-G6Q1-CONTENT-AUDIT-20261121.md
+            docs/tcl/P31-G6Q1-REVIEW-ROADMAP-20261121.md
             docs/localization/LP-G1-GLOSSARY-CONTRACT-20261119.md
             docs/localization/LP-G2-CONTEXT-EVIDENCE-20261119.md
             docs/localization/LP-G3-CANDIDATE-TRANSLATIONS-20261119.md
