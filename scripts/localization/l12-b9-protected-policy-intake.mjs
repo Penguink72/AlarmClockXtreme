@@ -342,16 +342,14 @@ if(process.argv[1]&&import.meta.url===pathToFileURL(resolve(process.argv[1])).hr
         riskPlan:x.riskPlan,policy:x.policy,glossary:x.data.glossary,
         g4Ledger:x.data.g4Ledger});
       mkdirSync(out,{recursive:true});
-      writeFileSync(join(out,"unsigned-review-requirements.json"),JSON.stringify(content,null,2)+"
-");
+      writeFileSync(join(out,"unsigned-review-requirements.json"),JSON.stringify(content,null,2)+"\n");
       writeFileSync(join(out,"protected-gate-status.json"),JSON.stringify({
         schema:"acx-l12-b9-gate-status/1",status:"BLOCKED",
         policyAuthorized:false,independentApproved:0,
         actualOfficialXmlWritten:0,requiredReviewRows:content.requiredIndividualLocaleRows,
         uninspectedResidualRows:content.nonSampledResidualLocaleRows,
         releasePath:"INACTIVE_UNTIL_SEPARATE_REAL_SIGNED_AUTHORITY_AND_G1_G4"
-      },null,2)+"
-");
+      },null,2)+"\n");
     }
     console.log("L12_9_NO_SELF_APPROVAL "+JSON.stringify({
       status:"BLOCKED_PENDING_PROTECTED_POLICY_AND_REVIEWER_AUTHORITY",
