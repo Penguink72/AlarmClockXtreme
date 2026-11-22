@@ -1,0 +1,68 @@
+{
+  "schema": "acx-l11-batch10-array-drafts/1",
+  "topic": "L11_B10_MOTIVATIONAL_QUOTES_ARRAY",
+  "status": "MODEL_PRELIMINARY_NOT_APPROVED",
+  "independentApproval": false,
+  "sourceRef": "app/src/main/res/values/strings.xml",
+  "records": [
+    {
+      "key": "array:motivational_quotes",
+      "expectedEnglishPreview": "| The secret of getting ahead is getting started. | Today is a new beginning. Make the most of it. | Your future is created by what you do today. | Rise up, start fresh, see the bright opportunity in each new day. | Every morning brings new potential. | Do something today that your future self will thank you for. | The only way to do great work is to love what you do. | Believe you can and you are halfway there. | Success is not final, failure is not fatal: it is the courage to continue that counts. | The best time for new beginnings is now. | You are never too old to set another goal or to dream a new dream. | What you do today can improve all your tomorrows. | Start where you are. Use what you have. Do what you can. | It does not matter how slowly you go as long as you do not stop. | Act as if what you do makes a difference. It does.",
+      "expectedSourceXml": "\r\n        <item>The secret of getting ahead is getting started.</item>\r\n        <item>Today is a new beginning. Make the most of it.</item>\r\n        <item>Your future is created by what you do today.</item>\r\n        <item>Rise up, start fresh, see the bright opportunity in each new day.</item>\r\n        <item>Every morning brings new potential.</item>\r\n        <item>Do something today that your future self will thank you for.</item>\r\n        <item>The only way to do great work is to love what you do.</item>\r\n        <item>Believe you can and you are halfway there.</item>\r\n        <item>Success is not final, failure is not fatal: it is the courage to continue that counts.</item>\r\n        <item>The best time for new beginnings is now.</item>\r\n        <item>You are never too old to set another goal or to dream a new dream.</item>\r\n        <item>What you do today can improve all your tomorrows.</item>\r\n        <item>Start where you are. Use what you have. Do what you can.</item>\r\n        <item>It does not matter how slowly you go as long as you do not stop.</item>\r\n        <item>Act as if what you do makes a difference. It does.</item>\r\n    ",
+      "expectedEnglishItems": [
+        "The secret of getting ahead is getting started.",
+        "Today is a new beginning. Make the most of it.",
+        "Your future is created by what you do today.",
+        "Rise up, start fresh, see the bright opportunity in each new day.",
+        "Every morning brings new potential.",
+        "Do something today that your future self will thank you for.",
+        "The only way to do great work is to love what you do.",
+        "Believe you can and you are halfway there.",
+        "Success is not final, failure is not fatal: it is the courage to continue that counts.",
+        "The best time for new beginnings is now.",
+        "You are never too old to set another goal or to dream a new dream.",
+        "What you do today can improve all your tomorrows.",
+        "Start where you are. Use what you have. Do what you can.",
+        "It does not matter how slowly you go as long as you do not stop.",
+        "Act as if what you do makes a difference. It does."
+      ],
+      "translations": {
+        "zh-TW": [
+          "想要領先，祕訣就是先開始。",
+          "今天是新的開始，善用每一刻。",
+          "你的未來由今天的行動塑造。",
+          "重新振作、從頭開始，看見每一天的新機會。",
+          "每個早晨都帶來新的可能。",
+          "今天做一件未來的自己會感謝你的事。",
+          "做好一份工作的唯一方法，就是熱愛自己所做的事。",
+          "相信自己做得到，你就已經走了一半。",
+          "成功不是終點，失敗也不是末日；重要的是繼續前進的勇氣。",
+          "開始新生活的最好時機，就是現在。",
+          "無論年紀多大，都能設定新目標、懷抱新夢想。",
+          "今天的努力能讓往後的每一天更好。",
+          "從現在的位置開始，善用手邊資源，做你能做的事。",
+          "只要沒有停下來，走得慢也沒有關係。",
+          "相信自己的行動能帶來改變；它確實能。"
+        ],
+        "ja": [
+          "前に進む秘訣は、まず始めることです。",
+          "今日は新たな始まりです。一日を大切にしましょう。",
+          "未来は今日の行動によってつくられます。",
+          "気持ちを新たに始めましょう。毎日には新しいチャンスがあります。",
+          "朝が来るたび、新しい可能性が生まれます。",
+          "未来の自分が感謝することを、今日ひとつ実行しましょう。",
+          "素晴らしい仕事をするには、自分の仕事を愛することです。",
+          "できると信じれば、すでに道の半分まで来ています。",
+          "成功は終わりではなく、失敗も致命的ではありません。大切なのは進み続ける勇気です。",
+          "新しい始まりに最適な時は、今です。",
+          "何歳になっても、新しい目標や夢を持つことができます。",
+          "今日の行動が、明日からの日々をより良くします。",
+          "今いる場所から始め、手元にあるものを使い、できることをしましょう。",
+          "歩みが遅くても、止まらなければ大丈夫です。",
+          "自分の行動には意味があると信じてください。実際に意味があります。"
+        ]
+      },
+      "reviewRisk": "QUOTE_CONTEXT_TRANSLATION_NOT_INDEPENDENTLY_APPROVED"
+    }
+  ]
+}

@@ -1,0 +1,259 @@
+{
+  "schema": "acx-l11-batch10-string-drafts/1",
+  "topic": "L11_B10_REMAINING_25_STRINGS",
+  "status": "MODEL_PRELIMINARY_NOT_APPROVED",
+  "independentApproval": false,
+  "sourceRef": "app/src/main/res/values/strings.xml",
+  "records": [
+    {
+      "key": "string:alarm_edit_challenge_unknown",
+      "expectedEnglishPreview": "%1$s",
+      "expectedSourceXml": "%1$s",
+      "translations": {
+        "zh-TW": "%1$s",
+        "ja": "%1$s"
+      },
+      "reviewRisk": "UNCHANGED_SOURCE_NEEDS_CONTEXT_OR_IDENTIFIER_REVIEW"
+    },
+    {
+      "key": "string:alarm_edit_dismiss_action_payload_webhook",
+      "expectedEnglishPreview": "https://…",
+      "expectedSourceXml": "https://…",
+      "translations": {
+        "zh-TW": "https://…",
+        "ja": "https://…"
+      },
+      "reviewRisk": "UNCHANGED_SOURCE_NEEDS_CONTEXT_OR_IDENTIFIER_REVIEW"
+    },
+    {
+      "key": "string:alarm_edit_fire_date",
+      "expectedEnglishPreview": "%1$s %2$s",
+      "expectedSourceXml": "%1$s %2$s",
+      "translations": {
+        "zh-TW": "%1$s %2$s",
+        "ja": "%1$s %2$s"
+      },
+      "reviewRisk": "UNCHANGED_SOURCE_NEEDS_CONTEXT_OR_IDENTIFIER_REVIEW"
+    },
+    {
+      "key": "string:alarm_edit_spotify_short",
+      "expectedEnglishPreview": "Spotify",
+      "expectedSourceXml": "Spotify",
+      "translations": {
+        "zh-TW": "Spotify",
+        "ja": "Spotify"
+      },
+      "reviewRisk": "UNCHANGED_SOURCE_NEEDS_CONTEXT_OR_IDENTIFIER_REVIEW"
+    },
+    {
+      "key": "string:app_name",
+      "expectedEnglishPreview": "AlarmClockXtreme",
+      "expectedSourceXml": "AlarmClockXtreme",
+      "translations": {
+        "zh-TW": "AlarmClockXtreme",
+        "ja": "AlarmClockXtreme"
+      },
+      "reviewRisk": "UNCHANGED_SOURCE_NEEDS_CONTEXT_OR_IDENTIFIER_REVIEW"
+    },
+    {
+      "key": "string:bedtime_dnd_rule_name",
+      "expectedEnglishPreview": "AlarmClockXtreme Bedtime DND",
+      "expectedSourceXml": "AlarmClockXtreme Bedtime DND",
+      "translations": {
+        "zh-TW": "AlarmClockXtreme 就寢勿擾規則",
+        "ja": "AlarmClockXtreme おやすみモードのルール"
+      },
+      "reviewRisk": "SEMANTIC_AND_CONTEXT_REVIEW"
+    },
+    {
+      "key": "string:bedtime_dnd_rule_type",
+      "expectedEnglishPreview": "Bedtime DND",
+      "expectedSourceXml": "Bedtime DND",
+      "translations": {
+        "zh-TW": "就寢勿擾",
+        "ja": "就寝時のおやすみモード"
+      },
+      "reviewRisk": "SEMANTIC_AND_CONTEXT_REVIEW"
+    },
+    {
+      "key": "string:bedtime_sonar_last_session",
+      "expectedEnglishPreview": "Last session: %1$dm, %2$dm movement, %3$dm restless, %4$dm still",
+      "expectedSourceXml": "Last session: %1$dm, %2$dm movement, %3$dm restless, %4$dm still",
+      "translations": {
+        "zh-TW": "上次工作階段：%1$d 分鐘，活動 %2$d 分鐘，躁動 %3$d 分鐘，靜止 %4$d 分鐘",
+        "ja": "前回のセッション：%1$d 分、動き %2$d 分、落ち着かない状態 %3$d 分、静止 %4$d 分"
+      },
+      "reviewRisk": "SEMANTIC_AND_CONTEXT_REVIEW"
+    },
+    {
+      "key": "string:challenge_e",
+      "expectedEnglishPreview": "E",
+      "expectedSourceXml": "E",
+      "translations": {
+        "zh-TW": "E",
+        "ja": "E"
+      },
+      "reviewRisk": "UNCHANGED_SOURCE_NEEDS_CONTEXT_OR_IDENTIFIER_REVIEW"
+    },
+    {
+      "key": "string:challenge_s",
+      "expectedEnglishPreview": "S",
+      "expectedSourceXml": "S",
+      "translations": {
+        "zh-TW": "S",
+        "ja": "S"
+      },
+      "reviewRisk": "UNCHANGED_SOURCE_NEEDS_CONTEXT_OR_IDENTIFIER_REVIEW"
+    },
+    {
+      "key": "string:night_clock_nightambient",
+      "expectedEnglishPreview": "nightAmbient",
+      "expectedSourceXml": "nightAmbient",
+      "translations": {
+        "zh-TW": "nightAmbient",
+        "ja": "nightAmbient"
+      },
+      "reviewRisk": "UNCHANGED_SOURCE_NEEDS_CONTEXT_OR_IDENTIFIER_REVIEW"
+    },
+    {
+      "key": "string:notif_channel_external_alarm",
+      "expectedEnglishPreview": "Alarms added by other apps",
+      "expectedSourceXml": "Alarms added by other apps",
+      "translations": {
+        "zh-TW": "其他 App 新增的鬧鐘",
+        "ja": "他のアプリが追加したアラーム"
+      },
+      "reviewRisk": "SEMANTIC_AND_CONTEXT_REVIEW"
+    },
+    {
+      "key": "string:radar_radar_fade",
+      "expectedEnglishPreview": "radar-fade-in",
+      "expectedSourceXml": "radar-fade-in",
+      "translations": {
+        "zh-TW": "radar-fade-in",
+        "ja": "radar-fade-in"
+      },
+      "reviewRisk": "UNCHANGED_SOURCE_NEEDS_CONTEXT_OR_IDENTIFIER_REVIEW"
+    },
+    {
+      "key": "string:radar_radar_skeleton_fade",
+      "expectedEnglishPreview": "radar-skeleton-fade",
+      "expectedSourceXml": "radar-skeleton-fade",
+      "translations": {
+        "zh-TW": "radar-skeleton-fade",
+        "ja": "radar-skeleton-fade"
+      },
+      "reviewRisk": "UNCHANGED_SOURCE_NEEDS_CONTEXT_OR_IDENTIFIER_REVIEW"
+    },
+    {
+      "key": "string:settings_android",
+      "expectedEnglishPreview": "Android",
+      "expectedSourceXml": "Android",
+      "translations": {
+        "zh-TW": "Android",
+        "ja": "Android"
+      },
+      "reviewRisk": "UNCHANGED_SOURCE_NEEDS_CONTEXT_OR_IDENTIFIER_REVIEW"
+    },
+    {
+      "key": "string:settings_fossify_alarm_summary",
+      "expectedEnglishPreview": "\"%1$s %2$s%3$s\"",
+      "expectedSourceXml": "\"%1$s  %2$s%3$s\"",
+      "translations": {
+        "zh-TW": "\"%1$s %2$s%3$s\"",
+        "ja": "\"%1$s %2$s%3$s\""
+      },
+      "reviewRisk": "UNCHANGED_SOURCE_NEEDS_CONTEXT_OR_IDENTIFIER_REVIEW"
+    },
+    {
+      "key": "string:settings_fossify_days_suffix",
+      "expectedEnglishPreview": "\" • %1$s\"",
+      "expectedSourceXml": "\" • %1$s\"",
+      "translations": {
+        "zh-TW": "\" • %1$s\"",
+        "ja": "\" • %1$s\""
+      },
+      "reviewRisk": "UNCHANGED_SOURCE_NEEDS_CONTEXT_OR_IDENTIFIER_REVIEW"
+    },
+    {
+      "key": "string:settings_incident_timing",
+      "expectedEnglishPreview": "%1$s - %2$s",
+      "expectedSourceXml": "%1$s - %2$s",
+      "translations": {
+        "zh-TW": "%1$s - %2$s",
+        "ja": "%1$s - %2$s"
+      },
+      "reviewRisk": "UNCHANGED_SOURCE_NEEDS_CONTEXT_OR_IDENTIFIER_REVIEW"
+    },
+    {
+      "key": "string:settings_license_value",
+      "expectedEnglishPreview": "Apache License 2.0",
+      "expectedSourceXml": "Apache License 2.0",
+      "translations": {
+        "zh-TW": "Apache License 2.0",
+        "ja": "Apache License 2.0"
+      },
+      "reviewRisk": "UNCHANGED_SOURCE_NEEDS_CONTEXT_OR_IDENTIFIER_REVIEW"
+    },
+    {
+      "key": "string:swipe_swipe_bg",
+      "expectedEnglishPreview": "swipe_bg",
+      "expectedSourceXml": "swipe_bg",
+      "translations": {
+        "zh-TW": "swipe_bg",
+        "ja": "swipe_bg"
+      },
+      "reviewRisk": "UNCHANGED_SOURCE_NEEDS_CONTEXT_OR_IDENTIFIER_REVIEW"
+    },
+    {
+      "key": "string:swipe_undo_available_right_after_removal",
+      "expectedEnglishPreview": "Undo is available right after removal",
+      "expectedSourceXml": "Undo is available right after removal",
+      "translations": {
+        "zh-TW": "移除後可立即復原",
+        "ja": "取り除いた直後なら元に戻せます"
+      },
+      "reviewRisk": "SEMANTIC_AND_CONTEXT_REVIEW"
+    },
+    {
+      "key": "string:timer_screen_timer_finished",
+      "expectedEnglishPreview": "timer-finished",
+      "expectedSourceXml": "timer-finished",
+      "translations": {
+        "zh-TW": "timer-finished",
+        "ja": "timer-finished"
+      },
+      "reviewRisk": "UNCHANGED_SOURCE_NEEDS_CONTEXT_OR_IDENTIFIER_REVIEW"
+    },
+    {
+      "key": "string:timer_screen_timer_progress",
+      "expectedEnglishPreview": "timer-progress",
+      "expectedSourceXml": "timer-progress",
+      "translations": {
+        "zh-TW": "timer-progress",
+        "ja": "timer-progress"
+      },
+      "reviewRisk": "UNCHANGED_SOURCE_NEEDS_CONTEXT_OR_IDENTIFIER_REVIEW"
+    },
+    {
+      "key": "string:youtube_download_progress",
+      "expectedEnglishPreview": "download-progress",
+      "expectedSourceXml": "download-progress",
+      "translations": {
+        "zh-TW": "download-progress",
+        "ja": "download-progress"
+      },
+      "reviewRisk": "UNCHANGED_SOURCE_NEEDS_CONTEXT_OR_IDENTIFIER_REVIEW"
+    },
+    {
+      "key": "string:youtube_rooster_crow_alarm",
+      "expectedEnglishPreview": "rooster crow alarm",
+      "expectedSourceXml": "rooster crow alarm",
+      "translations": {
+        "zh-TW": "公雞啼叫鬧鐘",
+        "ja": "雄鶏の鳴き声アラーム"
+      },
+      "reviewRisk": "SEMANTIC_AND_CONTEXT_REVIEW"
+    }
+  ]
+}
