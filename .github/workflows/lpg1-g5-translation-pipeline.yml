@@ -27,6 +27,7 @@ on:
       - feature/acx-l12-structural-semantic-evidence-20261122
       - feature/acx-l11-b7-remaining-visible-20261122
       - feature/acx-l11b7-l12b2-integrated-qa-20261122
+      - feature/acx-l11-b8-challenges-share-20261122
     paths:
       - "scripts/localization/**"
       - "localization/governance/**"
@@ -151,6 +152,7 @@ jobs:
           node --test scripts/localization/l11-b5-sensitive-ui-drafts.test.mjs
           node --test scripts/localization/l11-b6-stats-bedtime.test.mjs
           node --test scripts/localization/l11-b7-visible-residual.test.mjs
+          node --test scripts/localization/l11-b8-challenges-share.test.mjs
           node scripts/localization/l11-translation-worklist.mjs --out-dir build/localization/B0_FULL_APP_INVENTORY
       - name: L12 - Mechanically check all candidate sources and build semantic review evidence
         run: |
