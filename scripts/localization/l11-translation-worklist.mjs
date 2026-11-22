@@ -63,7 +63,7 @@ function validatePack(catalog,packs){
   }
 }
 
-export function buildL11({graph,catalog,packs,curated,batch2=[],batch3=[],batch4=[],batch5=[],batch6=[]}){
+export function buildL11({graph,catalog,packs,curated,batch2=[],batch3=[],batch4=[],batch5=[],batch6=[],batch7=[]}){
   if(curated.schema!=="acx-l11-priority-translation-drafts/1" ||
      curated.independentApproval!==false)throw Error("Untrusted curated draft schema/authority");
   validatePack(catalog,packs);
@@ -102,6 +102,13 @@ export function buildL11({graph,catalog,packs,curated,batch2=[],batch3=[],batch4
        !Array.isArray(pack.records))
       throw Error("Untrusted L11-B6 draft batch schema/authority");
   }
+  for(const pack of batch7){
+    if(pack.schema!=="acx-l11-batch7-drafts/1" ||
+       pack.independentApproval!==false ||
+       pack.status!=="MODEL_PRELIMINARY_NOT_APPROVED" ||
+       !Array.isArray(pack.records))
+      throw Error("Untrusted L11-B7 draft batch schema/authority");
+  }
   const base=new Map(graph.sources.map(row=>[row.key,row]));
   const g6=new Map(catalog.entries.map(x=>["string:"+x.key,x]));
   const authored=new Map();
@@ -116,7 +123,9 @@ export function buildL11({graph,catalog,packs,curated,batch2=[],batch3=[],batch4
     ...batch5.flatMap(pack=>pack.records.map(r=>({...r,
       batchOrigin:"L11_B5_MODEL_DRAFT_UNREVIEWED"}))),
     ...batch6.flatMap(pack=>pack.records.map(r=>({...r,
-      batchOrigin:"L11_B6_MODEL_DRAFT_UNREVIEWED"})))
+      batchOrigin:"L11_B6_MODEL_DRAFT_UNREVIEWED"}))),
+    ...batch7.flatMap(pack=>pack.records.map(r=>({...r,
+      batchOrigin:"L11_B7_MODEL_DRAFT_UNREVIEWED"})))
   ];
   for(const r of drafts){
     const key="string:"+r.key;
@@ -136,6 +145,7 @@ export function buildL11({graph,catalog,packs,curated,batch2=[],batch3=[],batch4
     batch4Keys:batch4.reduce((n,x)=>n+x.records.length,0),batch4LocaleRows:0,
     batch5Keys:batch5.reduce((n,x)=>n+x.records.length,0),batch5LocaleRows:0,
     batch6Keys:batch6.reduce((n,x)=>n+x.records.length,0),batch6LocaleRows:0,
+    batch7Keys:batch7.reduce((n,x)=>n+x.records.length,0),batch7LocaleRows:0,
     reusedG6LocaleRows:0,existingLocaleProtected:0,
     sourceDriftHolds:0,untranslatedLocaleRows:0,
     officialApproved:0,androidXmlModified:false
@@ -163,7 +173,9 @@ export function buildL11({graph,catalog,packs,curated,batch2=[],batch3=[],batch4
         record.translationOrigin=candidate.batchOrigin;
         record.reviewRisk=candidate.reviewRisk??"UNASSESSED";
         record.candidateState="DRAFT_NEEDS_SEMANTIC_REVIEW";
-        if(candidate.batchOrigin==="L11_B6_MODEL_DRAFT_UNREVIEWED")
+        if(candidate.batchOrigin==="L11_B7_MODEL_DRAFT_UNREVIEWED")
+          summary.batch7LocaleRows++;
+        else if(candidate.batchOrigin==="L11_B6_MODEL_DRAFT_UNREVIEWED")
           summary.batch6LocaleRows++;
         else if(candidate.batchOrigin==="L11_B5_MODEL_DRAFT_UNREVIEWED")
           summary.batch5LocaleRows++;
@@ -260,6 +272,7 @@ export function summaryMd(data){
     "- L11-B4 source-pinned unreviewed rows: "+s.batch4LocaleRows+" ("+s.batch4Keys+" keys)",
     "- L11-B5 source-pinned unreviewed rows: "+s.batch5LocaleRows+" ("+s.batch5Keys+" keys)",
     "- L11-B6 source-pinned unreviewed rows: "+s.batch6LocaleRows+" ("+s.batch6Keys+" keys)",
+    "- L11-B7 source-pinned unreviewed rows: "+s.batch7LocaleRows+" ("+s.batch7Keys+" keys)",
     "- Reused existing G6 unreviewed rows: "+s.reusedG6LocaleRows,
     "- G6 source/format mismatches on proposed reuse: "+s.sourceDriftHolds,
     "- Remaining untranslated locale rows: "+s.untranslatedLocaleRows,
@@ -309,6 +322,10 @@ export function loadL11Inputs(root,sourceSha){
     batch6:[
       read("localization/candidates/l11-b6-statistics-drafts-20261122.json"),
       read("localization/candidates/l11-b6-bedtime-drafts-20261122.json")
+    ],
+    batch7:[
+      read("localization/candidates/l11-b7-stats-settings-drafts-20261122.json"),
+      read("localization/candidates/l11-b7-bedtime-sonar-drafts-20261122.json")
     ]
   };
 }
