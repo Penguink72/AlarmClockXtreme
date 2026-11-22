@@ -62,14 +62,26 @@ function validatePack(catalog,packs){
   }
 }
 
-export function buildL11({graph,catalog,packs,curated}){
+export function buildL11({graph,catalog,packs,curated,batch2=[]}){
   if(curated.schema!=="acx-l11-priority-translation-drafts/1" ||
      curated.independentApproval!==false)throw Error("Untrusted curated draft schema/authority");
   validatePack(catalog,packs);
+  for(const pack of batch2){
+    if(pack.schema!=="acx-l11-batch2-drafts/1" ||
+       pack.independentApproval!==false ||
+       pack.status!=="MODEL_PRELIMINARY_NOT_APPROVED" ||
+       !Array.isArray(pack.records))
+      throw Error("Untrusted L11-B2 draft batch schema/authority");
+  }
   const base=new Map(graph.sources.map(row=>[row.key,row]));
   const g6=new Map(catalog.entries.map(x=>["string:"+x.key,x]));
   const authored=new Map();
-  for(const r of curated.records){
+  const drafts=[
+    ...curated.records.map(r=>({...r,batchOrigin:"L11_MODEL_DRAFT_UNREVIEWED"})),
+    ...batch2.flatMap(pack=>pack.records.map(r=>({...r,
+      batchOrigin:"L11_B2_MODEL_DRAFT_UNREVIEWED"})))
+  ];
+  for(const r of drafts){
     const key="string:"+r.key;
     if(authored.has(key))throw Error("Duplicate curated draft: "+key);
     const src=base.get(key);
@@ -81,7 +93,8 @@ export function buildL11({graph,catalog,packs,curated}){
   const summary={
     baseKeys:graph.summary.sourceKeys,translatableKeys:graph.summary.translatableKeys,
     missingByLocale:{"zh-TW":0,ja:0},
-    curatedKeys:authored.size,curatedLocaleRows:0,
+    curatedKeys:curated.records.length,curatedLocaleRows:0,
+    batch2Keys:batch2.reduce((n,x)=>n+x.records.length,0),batch2LocaleRows:0,
     reusedG6LocaleRows:0,existingLocaleProtected:0,
     sourceDriftHolds:0,untranslatedLocaleRows:0,
     officialApproved:0,androidXmlModified:false
@@ -101,14 +114,17 @@ export function buildL11({graph,catalog,packs,curated}){
         actionSemantic:"NOT_VERIFIED_BY_L11",reviewStatus:"UNREVIEWED",
         humanApproval:false,independentApproval:false,
         translation:null,translationOrigin:"NONE",candidateState:"MISSING",
-        g6OldCandidate:null};
+        g6OldCandidate:null,reviewRisk:"UNASSESSED"};
       const candidate=authored.get(row.key);
       const old=g6.get(row.key);
       if(candidate){
         record.translation=candidate.translations[locale];
-        record.translationOrigin="L11_MODEL_DRAFT_UNREVIEWED";
+        record.translationOrigin=candidate.batchOrigin;
+        record.reviewRisk=candidate.reviewRisk??"UNASSESSED";
         record.candidateState="DRAFT_NEEDS_SEMANTIC_REVIEW";
-        summary.curatedLocaleRows++;
+        if(candidate.batchOrigin==="L11_B2_MODEL_DRAFT_UNREVIEWED")
+          summary.batch2LocaleRows++;
+        else summary.curatedLocaleRows++;
         if(old && norm(old.source)===norm(row.sourcePreview)){
           record.g6OldCandidate=packs[locale].translations[old.key]||null;
           if(record.g6OldCandidate && record.g6OldCandidate!==record.translation)
@@ -181,7 +197,7 @@ export function draftTsv(data){
 export function summaryMd(data){
   const s=data.summary;
   return [
-    "# L11｜繁中／日文完整缺漏分類與第一批未核准譯文候選",
+    "# L11｜繁中／日文完整缺漏分類與多批次未核准譯文候選",
     "",
     "> L11 drafts do not modify official Android XML, G4/G5 approval, or App runtime.",
     "",
@@ -190,6 +206,7 @@ export function summaryMd(data){
     "- Base keys: "+s.baseKeys+"; translatable "+s.translatableKeys,
     "- Missing dedicated XML: zh-TW "+s.missingByLocale["zh-TW"]+"; ja "+s.missingByLocale.ja,
     "- New source-pinned curated rows: "+s.curatedLocaleRows+" ("+s.curatedKeys+" keys)",
+    "- L11-B2 source-pinned unreviewed rows: "+s.batch2LocaleRows+" ("+s.batch2Keys+" keys)",
     "- Reused existing G6 unreviewed rows: "+s.reusedG6LocaleRows,
     "- G6 source/format mismatches on proposed reuse: "+s.sourceDriftHolds,
     "- Remaining untranslated locale rows: "+s.untranslatedLocaleRows,
@@ -224,7 +241,11 @@ if(process.argv[1] && import.meta.url===pathToFileURL(resolve(process.argv[1])).
     catalog:read("app/src/debug/assets/lp2/catalog.json"),
     packs:{"zh-TW":read("app/src/debug/assets/lp2/packs/zh-TW.json"),
       ja:read("app/src/debug/assets/lp2/packs/ja.json")},
-    curated:read("localization/candidates/l11-priority-unreviewed-drafts-20261122.json")
+    curated:read("localization/candidates/l11-priority-unreviewed-drafts-20261122.json"),
+    batch2:[
+      read("localization/candidates/l11-b2-settings-drafts-20261122.json"),
+      read("localization/candidates/l11-b2-alarm-notification-drafts-20261122.json")
+    ]
   });
   mkdirSync(out,{recursive:true});
   const write=(name,item)=>writeFileSync(join(out,name),JSON.stringify(item,null,2)+"\n");

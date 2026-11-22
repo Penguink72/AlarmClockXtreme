@@ -1,0 +1,981 @@
+{
+  "schema": "acx-l11-batch2-drafts/1",
+  "topic": "SETTINGS_CORE_AND_RELIABILITY",
+  "status": "MODEL_PRELIMINARY_NOT_APPROVED",
+  "independentApproval": false,
+  "sourceRef": "app/src/main/res/values/strings.xml",
+  "records": [
+    {
+      "key": "settings_24h_description",
+      "expectedEnglishPreview": "Use military time everywhere in the app.",
+      "translations": {
+        "zh-TW": "在 App 的所有畫面使用 24 小時制。",
+        "ja": "アプリ全体で24時間表記を使用します。"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_alarm_status_icon",
+      "expectedEnglishPreview": "Show next-alarm status icon",
+      "translations": {
+        "zh-TW": "顯示下一個鬧鐘狀態圖示",
+        "ja": "次のアラームの状態アイコンを表示"
+      },
+      "reviewRisk": "BEHAVIOR_OR_PRIVACY_REVIEW"
+    },
+    {
+      "key": "settings_alarm_status_icon_description",
+      "expectedEnglishPreview": "Keeps the next alarm visible in the status bar. Turn it off for a quieter status bar; exact idle scheduling remains enabled.",
+      "translations": {
+        "zh-TW": "在狀態列持續顯示下一個鬧鐘。關閉後狀態列較簡潔，但精準排程仍會運作。",
+        "ja": "次のアラームをステータスバーに表示します。オフにしても正確なスケジュール設定は維持されます。"
+      },
+      "reviewRisk": "BEHAVIOR_OR_PRIVACY_REVIEW"
+    },
+    {
+      "key": "settings_hide_public_labels",
+      "expectedEnglishPreview": "Hide public alarm and timer labels",
+      "translations": {
+        "zh-TW": "隱藏公開顯示的鬧鐘與計時器標籤",
+        "ja": "公開画面のアラーム・タイマー名を隠す"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_hide_public_labels_description",
+      "expectedEnglishPreview": "Use neutral text on lock screen, timer notifications, widget, quick settings, and Wear surfaces.",
+      "translations": {
+        "zh-TW": "在鎖定畫面、計時器通知、小工具、快速設定和 Wear 畫面改用中性文字。",
+        "ja": "ロック画面、タイマー通知、ウィジェット、クイック設定、Wear では一般的な文言を表示します。"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_phone_speakers",
+      "expectedEnglishPreview": "Use phone speakers",
+      "translations": {
+        "zh-TW": "使用手機喇叭",
+        "ja": "端末のスピーカーを使用"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_phone_speakers_description",
+      "expectedEnglishPreview": "Route alarm playback through the loudspeaker even with accessories connected.",
+      "translations": {
+        "zh-TW": "即使連接其他音訊配件，仍透過手機擴音喇叭播放鬧鐘。",
+        "ja": "音声アクセサリーが接続されていても、端末のスピーカーからアラームを鳴らします。"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_flip_snooze_description",
+      "expectedEnglishPreview": "A quick face-down gesture can snooze instead of tapping the screen.",
+      "translations": {
+        "zh-TW": "將手機快速翻成螢幕朝下，即可貪睡而不必點選螢幕。",
+        "ja": "端末を素早く画面を下に向けると、画面をタップせずにスヌーズできます。"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_default_snooze",
+      "expectedEnglishPreview": "Default snooze",
+      "translations": {
+        "zh-TW": "預設貪睡時間",
+        "ja": "スヌーズの既定時間"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_default_volume_ramp",
+      "expectedEnglishPreview": "Default volume ramp",
+      "translations": {
+        "zh-TW": "預設音量漸增",
+        "ja": "音量フェードインの既定値"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_default_volume_ramp_description",
+      "expectedEnglishPreview": "Controls how gently new alarms fade in before reaching full volume.",
+      "translations": {
+        "zh-TW": "設定新鬧鐘逐漸提高音量、直到全音量的速度。",
+        "ja": "新しいアラームの音量を最大音量まで徐々に上げる速さを設定します。"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_auto_silence_description",
+      "expectedEnglishPreview": "Fail-safe timeout for alarms that keep ringing unattended.",
+      "translations": {
+        "zh-TW": "鬧鐘長時間響鈴且無人處理時的安全停止時間。",
+        "ja": "操作されずに鳴り続けるアラームを安全のために停止するまでの時間です。"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_show_weather_description",
+      "expectedEnglishPreview": "Current conditions and a short forecast.",
+      "translations": {
+        "zh-TW": "顯示目前天氣與簡短預報。",
+        "ja": "現在の天気と短い予報を表示します。"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_show_calendar_description",
+      "expectedEnglishPreview": "Display today’s events and meeting times.",
+      "translations": {
+        "zh-TW": "顯示今天的行程與會議時間。",
+        "ja": "今日の予定と会議時刻を表示します。"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_post_dismiss_summary",
+      "expectedEnglishPreview": "After-dismiss day summary",
+      "translations": {
+        "zh-TW": "解除後的今日摘要",
+        "ja": "停止後の一日サマリー"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_first_meeting_alarm",
+      "expectedEnglishPreview": "First-meeting auto-alarm",
+      "translations": {
+        "zh-TW": "第一場會議自動鬧鐘",
+        "ja": "最初の会議の自動アラーム"
+      },
+      "reviewRisk": "BEHAVIOR_OR_PRIVACY_REVIEW"
+    },
+    {
+      "key": "settings_first_meeting_enabled_description",
+      "expectedEnglishPreview": "Keeps one Calendar alarm shifted to tomorrow’s first timed event.",
+      "translations": {
+        "zh-TW": "將一個行事曆鬧鐘移到明天第一個有指定時間的事件。",
+        "ja": "カレンダー用アラームを1つ、翌日の最初の時刻指定予定に合わせて移動します。"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_first_meeting_disabled_description",
+      "expectedEnglishPreview": "Create one reusable alarm before tomorrow’s first timed event.",
+      "translations": {
+        "zh-TW": "在明天第一個有指定時間的事件之前，建立一個可重複使用的鬧鐘。",
+        "ja": "翌日の最初の時刻指定予定の前に、再利用できるアラームを1つ作成します。"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_meeting_lead_time",
+      "expectedEnglishPreview": "Meeting lead time",
+      "translations": {
+        "zh-TW": "會議提前提醒時間",
+        "ja": "会議の事前通知時間"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_meeting_lead_description",
+      "expectedEnglishPreview": "How early the Calendar alarm fires before the first meeting.",
+      "translations": {
+        "zh-TW": "設定第一場會議開始前多久觸發行事曆鬧鐘。",
+        "ja": "最初の会議の何分前にカレンダー用アラームを鳴らすか設定します。"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_commute_aware",
+      "expectedEnglishPreview": "Commute-aware auto-alarm",
+      "translations": {
+        "zh-TW": "考慮通勤時間的自動鬧鐘",
+        "ja": "通勤時間を考慮した自動アラーム"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_commute_aware_description",
+      "expectedEnglishPreview": "For first meetings with a location, add transit/weather buffer before the calendar lead time.",
+      "translations": {
+        "zh-TW": "第一場會議有地點時，在原本的行事曆提前時間之外，另外加入交通與天氣緩衝。",
+        "ja": "最初の会議に場所がある場合、カレンダーの事前通知時間に交通・天候の余裕時間を追加します。"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_normal_commute",
+      "expectedEnglishPreview": "Normal commute",
+      "translations": {
+        "zh-TW": "平常通勤時間",
+        "ja": "通常の通勤時間"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_use_lead_time",
+      "expectedEnglishPreview": "Use lead time",
+      "translations": {
+        "zh-TW": "使用提前提醒時間",
+        "ja": "事前通知時間を使用"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_use_meeting_lead",
+      "expectedEnglishPreview": "Use meeting lead time",
+      "translations": {
+        "zh-TW": "使用會議提前提醒時間",
+        "ja": "会議の事前通知時間を使用"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_normal_commute_description",
+      "expectedEnglishPreview": "Route estimates above this baseline shift the auto-alarm earlier.",
+      "translations": {
+        "zh-TW": "估計路線時間超過此基準時，將自動鬧鐘提前。",
+        "ja": "経路の推定所要時間がこの基準を超えた場合、自動アラームを早めます。"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_weather_buffer",
+      "expectedEnglishPreview": "Bad-weather buffer",
+      "translations": {
+        "zh-TW": "惡劣天氣緩衝時間",
+        "ja": "悪天候の余裕時間"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_weather_buffer_description",
+      "expectedEnglishPreview": "Added when the event day forecast has snow, ice, storms, or heavy precipitation.",
+      "translations": {
+        "zh-TW": "活動當天預報下雪、結冰、暴風雨或強降雨時，額外提前提醒。",
+        "ja": "予定日の予報が雪・凍結・嵐・大雨の場合に余裕時間を追加します。"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_no_weather_buffer",
+      "expectedEnglishPreview": "No weather buffer",
+      "translations": {
+        "zh-TW": "不加入天氣緩衝時間",
+        "ja": "天候による余裕時間なし"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_routes_api_key",
+      "expectedEnglishPreview": "Google Routes API key",
+      "translations": {
+        "zh-TW": "Google Routes API 金鑰",
+        "ja": "Google Routes API キー"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_routes_api_placeholder",
+      "expectedEnglishPreview": "Optional for transit ETA",
+      "translations": {
+        "zh-TW": "可選填，用於交通到達時間估算",
+        "ja": "交通機関の到着予定時刻に使用（任意）"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_commute_fallback",
+      "expectedEnglishPreview": "Offline commute fallback",
+      "translations": {
+        "zh-TW": "離線通勤時間備援",
+        "ja": "オフラインの通勤時間代替"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_commute_fallback_description",
+      "expectedEnglishPreview": "After three successful route estimates, failures can use a conservative 45-day on-device history plus the weather buffer.",
+      "translations": {
+        "zh-TW": "成功估算路線三次後，若後續查詢失敗，可使用裝置上保留 45 天的保守歷史估計與天氣緩衝。",
+        "ja": "経路推定に3回成功した後は、取得に失敗した場合に端末内の過去45日間の控えめな推定値と天候の余裕時間を使用できます。"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_commute_history",
+      "expectedEnglishPreview": "Learned commute history",
+      "translations": {
+        "zh-TW": "已學習的通勤時間紀錄",
+        "ja": "学習済みの通勤時間履歴"
+      },
+      "reviewRisk": "BEHAVIOR_OR_PRIVACY_REVIEW"
+    },
+    {
+      "key": "settings_temperature_description",
+      "expectedEnglishPreview": "Applied across the dashboard and weather cards.",
+      "translations": {
+        "zh-TW": "套用至首頁摘要和天氣資訊卡。",
+        "ja": "ダッシュボードと天気カードに適用します。"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_clear_commute_title",
+      "expectedEnglishPreview": "Clear learned commute history?",
+      "translations": {
+        "zh-TW": "要清除已學習的通勤時間紀錄嗎？",
+        "ja": "学習済みの通勤時間履歴を消去しますか？"
+      },
+      "reviewRisk": "BEHAVIOR_OR_PRIVACY_REVIEW"
+    },
+    {
+      "key": "settings_clear_commute_message",
+      "expectedEnglishPreview": "Calendar auto-alarms will use live Routes estimates or your manual baseline until enough new local samples are learned.",
+      "translations": {
+        "zh-TW": "在重新累積足夠本機資料前，行事曆自動鬧鐘將使用即時 Routes 估計或你手動設定的基準。",
+        "ja": "端末内に十分な履歴が再び蓄積されるまで、カレンダーの自動アラームは最新の Routes 推定値か手動の基準値を使います。"
+      },
+      "reviewRisk": "BEHAVIOR_OR_PRIVACY_REVIEW"
+    },
+    {
+      "key": "settings_bottom_navigation",
+      "expectedEnglishPreview": "Bottom navigation",
+      "translations": {
+        "zh-TW": "底部分頁導覽",
+        "ja": "下部ナビゲーション"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_bottom_navigation_description",
+      "expectedEnglishPreview": "Hide tabs you never use. Alarms and Settings always stay available.",
+      "translations": {
+        "zh-TW": "隱藏不常使用的分頁；鬧鐘與設定分頁會持續保留。",
+        "ja": "使わないタブを非表示にできます。アラームと設定は常に利用できます。"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_show_today_description",
+      "expectedEnglishPreview": "Daily overview: conditions, hourly, UV, sunrise, sunset and live radar.",
+      "translations": {
+        "zh-TW": "每日概覽：目前天氣、逐時預報、紫外線、日出、日落與即時雷達。",
+        "ja": "日々の概要：現在の天気、時間別予報、UV、日の出、日の入り、ライブレーダー。"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_show_timer_tab",
+      "expectedEnglishPreview": "Show Timer tab",
+      "translations": {
+        "zh-TW": "顯示計時器分頁",
+        "ja": "タイマータブを表示"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_show_timer_description",
+      "expectedEnglishPreview": "Countdown timers with multiple lanes.",
+      "translations": {
+        "zh-TW": "支援多個計時區段的倒數計時器。",
+        "ja": "複数のタイマーを同時に扱えるカウントダウン。"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_show_world_tab",
+      "expectedEnglishPreview": "Show World tab",
+      "translations": {
+        "zh-TW": "顯示世界時鐘分頁",
+        "ja": "世界時計タブを表示"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_show_world_description",
+      "expectedEnglishPreview": "Track time zones for cities you care about.",
+      "translations": {
+        "zh-TW": "查看你關心的城市時區。",
+        "ja": "気になる都市のタイムゾーンを確認します。"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_show_news_tab",
+      "expectedEnglishPreview": "Show News tab",
+      "translations": {
+        "zh-TW": "顯示新聞分頁",
+        "ja": "ニュースタブを表示"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_show_news_description",
+      "expectedEnglishPreview": "Public RSS feeds: Google News, BBC, NPR and Hacker News.",
+      "translations": {
+        "zh-TW": "公開 RSS 訂閱來源：Google 新聞、BBC、NPR 與 Hacker News。",
+        "ja": "公開 RSS フィード：Google ニュース、BBC、NPR、Hacker News。"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_radar_tab",
+      "expectedEnglishPreview": "Live radar on Weather tab",
+      "translations": {
+        "zh-TW": "在天氣分頁顯示即時雷達",
+        "ja": "天気タブにライブレーダーを表示"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_radar_description",
+      "expectedEnglishPreview": "Embed Windy.com’s animated precipitation radar below the conditions card.",
+      "translations": {
+        "zh-TW": "在天氣概況卡下方嵌入 Windy.com 的動態降水雷達。",
+        "ja": "天気カードの下に Windy.com の降水アニメーションレーダーを埋め込みます。"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_bedtime_description",
+      "expectedEnglishPreview": "Set a sleep goal and keep your routine feeling intentional.",
+      "translations": {
+        "zh-TW": "設定睡眠目標，協助維持有規律的作息。",
+        "ja": "睡眠目標を設定して、規則正しい生活習慣を保ちます。"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_night_clock",
+      "expectedEnglishPreview": "Night clock",
+      "translations": {
+        "zh-TW": "夜間時鐘",
+        "ja": "ナイトクロック"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_night_clock_description",
+      "expectedEnglishPreview": "Full-screen bedside clock with a warm low-light glow for bedside use.",
+      "translations": {
+        "zh-TW": "全螢幕床頭時鐘，使用暖色調低亮度顯示，適合床邊查看。",
+        "ja": "暖かい色の低輝度表示を備えた、ベッドサイド向け全画面時計です。"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_export_support_bundle",
+      "expectedEnglishPreview": "Export support bundle",
+      "translations": {
+        "zh-TW": "匯出支援資料包",
+        "ja": "サポート用データをエクスポート"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_packaging_diagnostics",
+      "expectedEnglishPreview": "Packaging local crash logs and redacted diagnostics…",
+      "translations": {
+        "zh-TW": "正在封裝本機當機紀錄與去識別化診斷資料…",
+        "ja": "端末内のクラッシュログと機密情報を除いた診断データをまとめています…"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_support_bundle_description",
+      "expectedEnglishPreview": "Share local crash logs plus redacted wake, incident, and alarm diagnostics.",
+      "translations": {
+        "zh-TW": "分享本機當機紀錄及已遮蔽敏感資訊的喚醒、事件與鬧鐘診斷資料。",
+        "ja": "端末内のクラッシュログと、機密情報を除いた起床・イベント・アラームの診断データを共有します。"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_packaging_export",
+      "expectedEnglishPreview": "Packaging local diagnostic export",
+      "translations": {
+        "zh-TW": "正在封裝本機診斷資料匯出檔",
+        "ja": "端末内の診断データをエクスポート用にまとめています"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_support_export_failed",
+      "expectedEnglishPreview": "Support export failed",
+      "translations": {
+        "zh-TW": "支援資料匯出失敗",
+        "ja": "サポート用データのエクスポートに失敗しました"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_support_bundle_ready",
+      "expectedEnglishPreview": "Support bundle ready",
+      "translations": {
+        "zh-TW": "支援資料包已備妥",
+        "ja": "サポート用データの準備ができました"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_export_ready",
+      "expectedEnglishPreview": "Export ready",
+      "translations": {
+        "zh-TW": "匯出檔已備妥",
+        "ja": "エクスポートの準備ができました"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_share_crash_log",
+      "expectedEnglishPreview": "Share crash log",
+      "translations": {
+        "zh-TW": "分享當機紀錄",
+        "ja": "クラッシュログを共有"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_share_crash_log_description",
+      "expectedEnglishPreview": "Redact and share local crash logs. Nothing is uploaded automatically.",
+      "translations": {
+        "zh-TW": "遮蔽敏感資訊後分享本機當機紀錄；不會自動上傳任何內容。",
+        "ja": "機密情報を除いて端末内のクラッシュログを共有します。自動アップロードは行いません。"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_crash_log_subject",
+      "expectedEnglishPreview": "AlarmClockXtreme crash log",
+      "translations": {
+        "zh-TW": "AlarmClockXtreme 當機紀錄",
+        "ja": "AlarmClockXtreme クラッシュログ"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_about_description",
+      "expectedEnglishPreview": "A quick reference for what’s running on this device.",
+      "translations": {
+        "zh-TW": "查看這台裝置目前執行的 App 相關資訊。",
+        "ja": "この端末で動作しているアプリの情報を確認できます。"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_version",
+      "expectedEnglishPreview": "Version",
+      "translations": {
+        "zh-TW": "版本",
+        "ja": "バージョン"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_device",
+      "expectedEnglishPreview": "Device",
+      "translations": {
+        "zh-TW": "裝置",
+        "ja": "端末"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_diagnostics",
+      "expectedEnglishPreview": "Alarm diagnostics",
+      "translations": {
+        "zh-TW": "鬧鐘診斷",
+        "ja": "アラーム診断"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_diagnostics_description",
+      "expectedEnglishPreview": "Recent redacted incident codes explain alarm delivery without storing labels, URLs, contacts, or locations.",
+      "translations": {
+        "zh-TW": "近期已遮蔽敏感資訊的事件代碼可協助瞭解鬧鐘觸發情況，不會儲存標籤、網址、聯絡人或位置。",
+        "ja": "最近の機密情報を除いたイベントコードでアラームの動作を確認できます。ラベル、URL、連絡先、位置情報は保存しません。"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_incident_history",
+      "expectedEnglishPreview": "Incident history",
+      "translations": {
+        "zh-TW": "事件紀錄",
+        "ja": "イベント履歴"
+      },
+      "reviewRisk": "BEHAVIOR_OR_PRIVACY_REVIEW"
+    },
+    {
+      "key": "settings_incident_empty",
+      "expectedEnglishPreview": "No incident events yet. New alarm fires will add compact local diagnostic codes here.",
+      "translations": {
+        "zh-TW": "目前沒有事件紀錄。新鬧鐘響起後，會在此加入精簡的本機診斷代碼。",
+        "ja": "イベント履歴はまだありません。今後アラームが鳴ると、簡潔な端末内診断コードがここに追加されます。"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_incident_retention",
+      "expectedEnglishPreview": "This history is separate from Statistics and is bounded to the newest 100 rows or 30 days.",
+      "translations": {
+        "zh-TW": "此紀錄與統計資料分開，最多保留最新 100 筆或最近 30 天的事件。",
+        "ja": "この履歴は統計とは別に管理され、最新100件または過去30日間に制限されます。"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_latest_degraded",
+      "expectedEnglishPreview": "Latest degraded event",
+      "translations": {
+        "zh-TW": "最近的功能降級事件",
+        "ja": "直近の機能低下イベント"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_latest_incident",
+      "expectedEnglishPreview": "Latest incident event",
+      "translations": {
+        "zh-TW": "最近的事件",
+        "ja": "直近のイベント"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_reason_code",
+      "expectedEnglishPreview": "Reason code",
+      "translations": {
+        "zh-TW": "原因代碼",
+        "ja": "理由コード"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_clear_diagnostics_hint",
+      "expectedEnglishPreview": "Clearing diagnostics removes only incident rows. Alarm statistics and support-export crash logs are kept separate.",
+      "translations": {
+        "zh-TW": "清除診斷資料只會移除事件紀錄，不影響鬧鐘統計與支援匯出的當機紀錄。",
+        "ja": "診断データを消去するとイベント履歴のみが削除され、アラーム統計やサポート用クラッシュログには影響しません。"
+      },
+      "reviewRisk": "BEHAVIOR_OR_PRIVACY_REVIEW"
+    },
+    {
+      "key": "settings_clear_diagnostics",
+      "expectedEnglishPreview": "Clear diagnostics",
+      "translations": {
+        "zh-TW": "清除診斷資料",
+        "ja": "診断データを消去"
+      },
+      "reviewRisk": "BEHAVIOR_OR_PRIVACY_REVIEW"
+    },
+    {
+      "key": "settings_clear_diagnostics_title",
+      "expectedEnglishPreview": "Clear alarm diagnostics?",
+      "translations": {
+        "zh-TW": "要清除鬧鐘診斷資料嗎？",
+        "ja": "アラームの診断データを消去しますか？"
+      },
+      "reviewRisk": "BEHAVIOR_OR_PRIVACY_REVIEW"
+    },
+    {
+      "key": "settings_clear_diagnostics_message",
+      "expectedEnglishPreview": "This deletes the redacted incident timeline only. Alarm statistics, alarms, backups, and crash logs are not changed.",
+      "translations": {
+        "zh-TW": "只刪除已遮蔽敏感資訊的事件時間線，不會修改鬧鐘統計、鬧鐘、備份或當機紀錄。",
+        "ja": "機密情報を除いたイベント履歴のみを削除します。アラーム統計、アラーム、バックアップ、クラッシュログは変更されません。"
+      },
+      "reviewRisk": "BEHAVIOR_OR_PRIVACY_REVIEW"
+    },
+    {
+      "key": "settings_at_a_glance",
+      "expectedEnglishPreview": "At a glance",
+      "translations": {
+        "zh-TW": "重點總覽",
+        "ja": "概要"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_at_a_glance_description",
+      "expectedEnglishPreview": "The highest-impact preferences, without digging through every category.",
+      "translations": {
+        "zh-TW": "不必深入每個分類，也能查看最重要的偏好設定。",
+        "ja": "各カテゴリを詳しく開かなくても、重要な設定をまとめて確認できます。"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_reliability",
+      "expectedEnglishPreview": "Reliability",
+      "translations": {
+        "zh-TW": "可靠性",
+        "ja": "信頼性"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_needs_review",
+      "expectedEnglishPreview": "Needs review",
+      "translations": {
+        "zh-TW": "需要檢查",
+        "ja": "要確認"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_dashboard_overview_description",
+      "expectedEnglishPreview": "Visibility and calendar automation",
+      "translations": {
+        "zh-TW": "顯示內容與行事曆自動化",
+        "ja": "表示内容とカレンダーの自動化"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_24_hour",
+      "expectedEnglishPreview": "24-hour",
+      "translations": {
+        "zh-TW": "24 小時制",
+        "ja": "24時間表記"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_12_hour",
+      "expectedEnglishPreview": "12-hour",
+      "translations": {
+        "zh-TW": "12 小時制",
+        "ja": "12時間表記"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_default_snooze_summary",
+      "expectedEnglishPreview": "Default snooze %1$d min",
+      "translations": {
+        "zh-TW": "預設貪睡 %1$d 分鐘",
+        "ja": "既定のスヌーズ %1$d 分"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_ready_count",
+      "expectedEnglishPreview": "%1$d of %2$d ready",
+      "translations": {
+        "zh-TW": "已就緒 %1$d／%2$d",
+        "ja": "準備完了 %1$d / %2$d"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_alarm_notifications",
+      "expectedEnglishPreview": "Alarm notifications",
+      "translations": {
+        "zh-TW": "鬧鐘通知",
+        "ja": "アラーム通知"
+      },
+      "reviewRisk": "BEHAVIOR_OR_PRIVACY_REVIEW"
+    },
+    {
+      "key": "settings_fullscreen_access",
+      "expectedEnglishPreview": "Full-screen alarm access",
+      "translations": {
+        "zh-TW": "全螢幕鬧鐘存取權",
+        "ja": "全画面アラームのアクセス権"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_open_battery",
+      "expectedEnglishPreview": "Open battery settings",
+      "translations": {
+        "zh-TW": "開啟電池設定",
+        "ja": "バッテリー設定を開く"
+      },
+      "reviewRisk": "BEHAVIOR_OR_PRIVACY_REVIEW"
+    },
+    {
+      "key": "settings_open_manufacturer_battery",
+      "expectedEnglishPreview": "Open %1$s reliability settings",
+      "translations": {
+        "zh-TW": "開啟 %1$s 的可靠性設定",
+        "ja": "%1$s の動作安定性設定を開く"
+      },
+      "reviewRisk": "BEHAVIOR_OR_PRIVACY_REVIEW"
+    },
+    {
+      "key": "settings_open_dnd",
+      "expectedEnglishPreview": "Open Do Not Disturb settings",
+      "translations": {
+        "zh-TW": "開啟勿擾模式設定",
+        "ja": "おやすみモードの設定を開く"
+      },
+      "reviewRisk": "BEHAVIOR_OR_PRIVACY_REVIEW"
+    },
+    {
+      "key": "settings_refresh",
+      "expectedEnglishPreview": "Refresh",
+      "translations": {
+        "zh-TW": "重新整理",
+        "ja": "更新"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_review",
+      "expectedEnglishPreview": "Review",
+      "translations": {
+        "zh-TW": "檢查",
+        "ja": "確認"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_off",
+      "expectedEnglishPreview": "Off",
+      "translations": {
+        "zh-TW": "關閉",
+        "ja": "オフ"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_pause_alarms",
+      "expectedEnglishPreview": "Pause alarms",
+      "translations": {
+        "zh-TW": "暫停所有鬧鐘",
+        "ja": "アラームを一時停止"
+      },
+      "reviewRisk": "BEHAVIOR_OR_PRIVACY_REVIEW"
+    },
+    {
+      "key": "settings_pause_until",
+      "expectedEnglishPreview": "All alarms suspended until end of %1$s.",
+      "translations": {
+        "zh-TW": "所有鬧鐘已暫停，直到 %1$s 結束。",
+        "ja": "%1$s の終了まで、すべてのアラームを一時停止します。"
+      },
+      "reviewRisk": "BEHAVIOR_OR_PRIVACY_REVIEW"
+    },
+    {
+      "key": "settings_pause_description",
+      "expectedEnglishPreview": "One-tap suspend for an unplanned interruption. Works for one-shot alarms too.",
+      "translations": {
+        "zh-TW": "遇到臨時狀況時，可一鍵暫停所有鬧鐘，單次鬧鐘也適用。",
+        "ja": "急な予定変更時にワンタップですべてのアラームを一時停止できます。単発アラームにも適用されます。"
+      },
+      "reviewRisk": "BEHAVIOR_OR_PRIVACY_REVIEW"
+    },
+    {
+      "key": "settings_tonight",
+      "expectedEnglishPreview": "Tonight",
+      "translations": {
+        "zh-TW": "今晚",
+        "ja": "今夜"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_resume_now",
+      "expectedEnglishPreview": "Resume now",
+      "translations": {
+        "zh-TW": "立即恢復",
+        "ja": "今すぐ再開"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_choose_start_date",
+      "expectedEnglishPreview": "Choose start date",
+      "translations": {
+        "zh-TW": "選擇開始日期",
+        "ja": "開始日を選択"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_choose_end_date",
+      "expectedEnglishPreview": "Choose end date",
+      "translations": {
+        "zh-TW": "選擇結束日期",
+        "ja": "終了日を選択"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_vacation_description",
+      "expectedEnglishPreview": "Silence repeating alarms during a time away without turning them off permanently.",
+      "translations": {
+        "zh-TW": "外出期間暫停週期性鬧鐘，不必永久關閉。",
+        "ja": "外出期間中は繰り返しアラームを鳴らさず、完全に無効にする必要はありません。"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_active",
+      "expectedEnglishPreview": "Active",
+      "translations": {
+        "zh-TW": "使用中",
+        "ja": "有効"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_enable_vacation",
+      "expectedEnglishPreview": "Enable vacation schedule",
+      "translations": {
+        "zh-TW": "啟用休假排程",
+        "ja": "休暇スケジュールを有効にする"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_enable_vacation_description",
+      "expectedEnglishPreview": "Repeating alarms stay enabled but skip dates inside the range below.",
+      "translations": {
+        "zh-TW": "週期性鬧鐘保持啟用，但在下方指定的日期範圍內略過響鈴。",
+        "ja": "繰り返しアラームは有効のまま、下の期間内は鳴らしません。"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_starts",
+      "expectedEnglishPreview": "Starts",
+      "translations": {
+        "zh-TW": "開始",
+        "ja": "開始"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_ends",
+      "expectedEnglishPreview": "Ends",
+      "translations": {
+        "zh-TW": "結束",
+        "ja": "終了"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_action_recommended",
+      "expectedEnglishPreview": "Action recommended",
+      "translations": {
+        "zh-TW": "建議採取措施",
+        "ja": "対応を推奨"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_manufacturer_battery_steps",
+      "expectedEnglishPreview": "%1$s battery steps",
+      "translations": {
+        "zh-TW": "%1$s 電池設定步驟",
+        "ja": "%1$s のバッテリー設定手順"
+      },
+      "reviewRisk": "BEHAVIOR_OR_PRIVACY_REVIEW"
+    }
+  ]
+}
