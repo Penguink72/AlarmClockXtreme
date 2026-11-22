@@ -87,9 +87,9 @@ export const PROBES=[
    claim:"DAO clear operation targets alarm_events, not alarm definition table",
    limit:"Cannot rule out other side effects from callers without integration tests"}
 ];
-function findLine(src,needle){
-  const idx=src.indexOf(needle);if(idx<0)return null;
-  return src.slice(0,idx).split("\n").length;
+function findLocation(src,needle,from=0){
+  const idx=src.indexOf(needle,from);if(idx<0)return null;
+  return {index:idx,line:src.slice(0,idx).split("\n").length};
 }
 /** Supports in-memory mutation testing, and fails before emitting any approval. */
 export function inspectBehavior(root,l12,matrix,probes=PROBES,reader=null){
@@ -106,12 +106,14 @@ export function inspectBehavior(root,l12,matrix,probes=PROBES,reader=null){
     const raw=reader?reader(p.path):readFileSync(join(root,p.path),"utf8");
     if(typeof raw!=="string")throw Error("No Kotlin file "+p.path);
     const code=maskNonCode(raw),hits=[];
+    let from=0;
     for(const token of p.anchors){
       // Masking confirms evidence is executable source, not just a comment/string.
       const permitted=token.includes('"')?raw:code;
-      const line=findLine(permitted,token);
-      if(line===null)throw Error("Missing L12-2 source anchor "+p.id+" / "+token);
-      hits.push({token,line});
+      const found=findLocation(permitted,token,from);
+      if(found===null)throw Error("Missing or out-of-order L12-2 source anchor "+p.id+" / "+token);
+      hits.push({token,line:found.line});
+      from=found.index+token.length;
     }
     for(let i=1;i<hits.length;i++){
       if(hits[i].line<hits[i-1].line)
