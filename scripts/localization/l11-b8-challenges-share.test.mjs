@@ -10,7 +10,7 @@ import {buildL12} from "./l12-structural-semantic-evidence.mjs";
 import {generateMatrix} from "./b0-t1-canonical-matrix.mjs";
 const ROOT=resolve(dirname(fileURLToPath(import.meta.url)),"../..");
 let cached;
-const inputs=()=>cached??=loadL11Inputs(ROOT,"L11-B8-SOURCE-FIXTURE");
+const inputs=()=>cached??=({...loadL11Inputs(ROOT,"L11-B8-SOURCE-FIXTURE"),batch9:[]});
 test("L11-B8 reconciles 187 new source-locked keys and 374 locale drafts, preserving all old rows",()=>{
   const x=buildL11(inputs()),s=x.summary;
   assert.deepEqual(inputs().batch8.map(b=>b.records.length),[79,32,76]);
