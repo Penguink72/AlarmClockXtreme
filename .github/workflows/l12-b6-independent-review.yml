@@ -1,0 +1,38 @@
+name: ACX L12-6 protected human review intake preflight
+on:
+  push:
+    branches:
+      - feature/acx-l12-b6-independent-review-intake-20261122
+    paths:
+      - "scripts/localization/**"
+      - "localization/**"
+      - "docs/localization/ACX-L12-B6*"
+      - ".github/workflows/l12-b6-independent-review.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  review-packet:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: L12-6 structural, integrity and cryptographic negative tests
+        run: |
+          node --test scripts/localization/l12-b6-independent-review.test.mjs
+          node scripts/localization/l12-b6-independent-review.mjs --out-dir build/localization/L12_B6_EXTERNAL_REVIEW_REQUIRED
+      - name: Reject missing protected trust anchor and review signature
+        run: |
+          if node scripts/localization/l12-b6-independent-review.mjs --review-envelope build/NOT_PROVIDED.json; then
+            echo "SECURITY FAILURE: self-approved release intake" >&2
+            exit 1
+          fi
+          echo "Protected review correctly blocked in ordinary branch CI."
+      - name: Save unsigned independent human review work packet
+        uses: actions/upload-artifact@v4
+        with:
+          name: acx-l12-b6-independent-human-review-required
+          path: build/localization/L12_B6_EXTERNAL_REVIEW_REQUIRED/
+          retention-days: 14
