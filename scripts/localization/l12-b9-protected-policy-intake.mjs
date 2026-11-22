@@ -6,13 +6,14 @@
  */
 import assert from "node:assert/strict";
 import {createHash,createPublicKey,verify} from "node:crypto";
-import {readFileSync} from "node:fs";
+import {readFileSync,mkdirSync,writeFileSync} from "node:fs";
 import {resolve,dirname,join,isAbsolute} from "node:path";
 import {fileURLToPath,pathToFileURL} from "node:url";
 import {loadRiskPlan,buildRiskTieredPlan,validatePolicy} from "./l12-b8b-risk-tiered-policy.mjs";
 
 const ROOT=resolve(dirname(fileURLToPath(import.meta.url)),"../..");
 const sha=x=>"sha256:"+createHash("sha256").update(JSON.stringify(x),"utf8").digest("hex");
+const rawFileDigest=x=>"sha256:"+createHash("sha256").update(x,"utf8").digest("hex");
 const rowId=r=>r.key+"\0"+r.locale;
 const policySchema="acx-l12-b9-signed-policy-envelope/1";
 const reviewSchema="acx-l12-b9-signed-tiered-review-envelope/1";
@@ -88,7 +89,7 @@ export function policyApprovalSubject({packet,riskPlan,policy,glossary,g4Ledger}
 }
 export function compilerProofSubject({stage,packet,policySubject,policyEnvelope,reviewEnvelope}){
   const officialFilesSha256=Object.fromEntries(Object.entries(stage.files).map(([path,data])=>[
-    path,sha(data.replace(
+    path,rawFileDigest(data.replace(
       "<!-- MODEL UNREVIEWED. ISOLATED L13-B STAGING ONLY, NEVER COPY INTO APP. -->",
       "<!-- Reviewed through protected L12-9 risk-tiered authorizations and L13-B source validation. -->"))
   ]));
@@ -101,6 +102,61 @@ export function compilerProofSubject({stage,packet,policySubject,policyEnvelope,
     officialFilesSha256
   };
 }
+/**
+ * The exported worklist is deliberately UNSIGNED. A reviewer must examine
+ * the concrete source text and UI effects before generating real decisions.
+ * No "APPROVED" flag, release command, private key or signature is produced.
+ */
+export function makeUnsignedReviewRequirements({packet,riskPlan,policy,glossary,g4Ledger}){
+  const subject=policyApprovalSubject({packet,riskPlan,policy,glossary,g4Ledger});
+  const byId=new Map(packet.rows.map(r=>[rowId(r),r]));
+  const mandatoryIds=riskPlan.mandatoryFullReview.flatMap(c=>c.localeRows.map(rowId));
+  const sampledIds=riskPlan.strata.flatMap(s=>s.sampledKeys.flatMap(k=>
+    ["zh-TW","ja"].map(locale=>k+"\0"+locale)));
+  const reviewIds=[...new Set([...mandatoryIds,...sampledIds])];
+  const rows=reviewIds.map(id=>{
+    const r=byId.get(id);
+    if(!r)throw Error("L12-9 missing required full/sample row "+id);
+    return {key:r.key,locale:r.locale,type:r.type,
+      sourceHash:r.sourceHash,translationHash:r.translationHash,
+      reviewRevision:r.reviewRevision,english:r.english,
+      sourcePath:r.sourcePath,sourceLine:r.sourceLine,
+      candidate:r.candidate,risks:r.risks,issues:r.issues,
+      reviewStatus:"PENDING_INDEPENDENT_HUMAN_SEMANTIC_REVIEW",
+      decisionsToCollect:["MEANING","CALLSITE_CONTEXT","ANDROID_FORMAT",
+        "OPERATION_CONSEQUENCE","IDENTITY_TIMESTAMP_RATIONALE"],
+      independentApproved:false};
+  });
+  return {
+    schema:"acx-l12-b9-unsigned-protected-review-requirements/1",
+    status:"REVIEW_REQUIRED_NOT_AN_AUTHORIZATION",
+    policySubjectDraft:subject,
+    rowReviewRequirements:rows,
+    stratumReviewRequirements:riskPlan.strata.map(s=>{
+      const digests=receiptDigest(riskPlan,s);
+      return {
+        stratumId:s.stratumId,featureFamily:s.featureFamily,
+        sampledKeys:s.sampledKeys,unselectedKeys:s.unselectedKeys,
+        sampledKeysDigest:sha(s.sampledKeys),
+        residualKeysDigest:sha(s.unselectedKeys),
+        selectedRowDigest:digests.selected,
+        residualRowDigest:digests.residual,
+        selectedRowCount:s.sampledKeys.length*2,
+        residualRowCount:s.unselectedKeys.length*2,
+        reviewStatus:"AWAITING_INDEPENDENT_SIGNED_STRATUM_DISPOSITION",
+        allowedDecisions:["ACCEPT_RESIDUAL_UNDER_PROTECTED_POLICY",
+          "ESCALATED_FULL_STRATUM_REVIEW","ALL_KEYS_INDEPENDENTLY_REVIEWED"],
+        mandatoryReviewerEvidence:["REVIEWER_ID","REVIEWED_AT",
+          "EXPLICIT_RESIDUAL_ACCOUNTABILITY","ACCEPTANCE_REASON"]
+      };
+    }),
+    requiredIndividualLocaleRows:rows.length,
+    nonSampledResidualLocaleRows:packet.rows.length-rows.length,
+    independentApproved:0,
+    noAutomaticPolicyRelease:true
+  };
+}
+
 function checkReviewRows({packet,riskPlan,envelope,errors}){
   const p=envelope?.payload??{};
   const packetMap=new Map(packet.rows.map(r=>[rowId(r),r]));
@@ -277,6 +333,26 @@ export function readExternalProtectedKeys(env=process.env,root=ROOT){
 if(process.argv[1]&&import.meta.url===pathToFileURL(resolve(process.argv[1])).href){
   const has=flag=>{const i=process.argv.indexOf(flag);return i<0?null:resolve(process.argv[i+1]??"");};
   if(!process.argv.includes("--verify-protected")){
+    const out=has("--out-dir");
+    if(out){
+      if(!out.startsWith(join(ROOT,"build")+"/"))
+        throw Error("L12-9 unsigned requirements only under build/");
+      const x=loadRiskPlan(ROOT,"PROPOSED_UNSIGNABLE_WORKLIST");
+      const content=makeUnsignedReviewRequirements({packet:x.data.packet,
+        riskPlan:x.riskPlan,policy:x.policy,glossary:x.data.glossary,
+        g4Ledger:x.data.g4Ledger});
+      mkdirSync(out,{recursive:true});
+      writeFileSync(join(out,"unsigned-review-requirements.json"),JSON.stringify(content,null,2)+"
+");
+      writeFileSync(join(out,"protected-gate-status.json"),JSON.stringify({
+        schema:"acx-l12-b9-gate-status/1",status:"BLOCKED",
+        policyAuthorized:false,independentApproved:0,
+        actualOfficialXmlWritten:0,requiredReviewRows:content.requiredIndividualLocaleRows,
+        uninspectedResidualRows:content.nonSampledResidualLocaleRows,
+        releasePath:"INACTIVE_UNTIL_SEPARATE_REAL_SIGNED_AUTHORITY_AND_G1_G4"
+      },null,2)+"
+");
+    }
     console.log("L12_9_NO_SELF_APPROVAL "+JSON.stringify({
       status:"BLOCKED_PENDING_PROTECTED_POLICY_AND_REVIEWER_AUTHORITY",
       instructions:"Use --verify-protected and THREE external trust anchors after protected authorization. This command never produces signatures."
