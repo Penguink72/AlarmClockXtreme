@@ -1,0 +1,738 @@
+{
+  "schema": "acx-l11-batch6-drafts/1",
+  "topic": "BEDTIME_AND_JETLAG_PLANNING",
+  "status": "MODEL_PRELIMINARY_NOT_APPROVED",
+  "independentApproval": false,
+  "sourceRef": "app/src/main/res/values/strings.xml",
+  "records": [
+    {
+      "key": "bedtime_jetlag_title",
+      "expectedEnglishPreview": "Jet lag planner",
+      "translations": {
+        "zh-TW": "時差調整規劃",
+        "ja": "時差ぼけ調整プラン"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_jetlag_aligned_description",
+      "expectedEnglishPreview": "Target wake already matches the linked wake time; keep light cues steady.",
+      "translations": {
+        "zh-TW": "目標起床時間已與連結的起床時間一致，請維持穩定的光線提示。",
+        "ja": "目標の起床時刻は連携した時刻と一致しています。光のタイミングを一定に保ちましょう。"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_jetlag_shift_description",
+      "expectedEnglishPreview": "Shift wake and bedtime gradually, then use bright-light and dim-light windows as timing cues.",
+      "translations": {
+        "zh-TW": "逐步調整起床與就寢時間，並以明亮與昏暗的光線時段作為時間提示。",
+        "ja": "起床・就寝時刻を少しずつずらし、明るい光と暗い光の時間帯を手がかりにします。"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_jetlag_current_chip",
+      "expectedEnglishPreview": "Current %1$s",
+      "translations": {
+        "zh-TW": "目前 %1$s",
+        "ja": "現在 %1$s"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_jetlag_target_chip",
+      "expectedEnglishPreview": "Target %1$s",
+      "translations": {
+        "zh-TW": "目標 %1$s",
+        "ja": "目標 %1$s"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_jetlag_current_title",
+      "expectedEnglishPreview": "Current",
+      "translations": {
+        "zh-TW": "目前",
+        "ja": "現在"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_jetlag_target_title",
+      "expectedEnglishPreview": "Target",
+      "translations": {
+        "zh-TW": "目標",
+        "ja": "目標"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_jetlag_daily_move_title",
+      "expectedEnglishPreview": "Daily move",
+      "translations": {
+        "zh-TW": "每日調整幅度",
+        "ja": "1日あたりの調整量"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_jetlag_helper_next_alarm",
+      "expectedEnglishPreview": "Next alarm",
+      "translations": {
+        "zh-TW": "下一個鬧鐘",
+        "ja": "次のアラーム"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_jetlag_helper_sleep_target",
+      "expectedEnglishPreview": "Sleep target",
+      "translations": {
+        "zh-TW": "睡眠目標",
+        "ja": "睡眠目標"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_jetlag_helper_tap_to_edit",
+      "expectedEnglishPreview": "Tap to edit",
+      "translations": {
+        "zh-TW": "點選以編輯",
+        "ja": "タップして編集"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_jetlag_direction",
+      "expectedEnglishPreview": "Direction",
+      "translations": {
+        "zh-TW": "調整方向",
+        "ja": "調整する方向"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_jetlag_direction_auto",
+      "expectedEnglishPreview": "Auto",
+      "translations": {
+        "zh-TW": "自動",
+        "ja": "自動"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_jetlag_direction_earlier",
+      "expectedEnglishPreview": "Earlier",
+      "translations": {
+        "zh-TW": "提早",
+        "ja": "早める"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_jetlag_direction_later",
+      "expectedEnglishPreview": "Later",
+      "translations": {
+        "zh-TW": "延後",
+        "ja": "遅らせる"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_jetlag_adjustment_days",
+      "expectedEnglishPreview": "Adjustment days",
+      "translations": {
+        "zh-TW": "調整天數",
+        "ja": "調整日数"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_jetlag_day_number",
+      "expectedEnglishPreview": "Day %1$d",
+      "translations": {
+        "zh-TW": "第 %1$d 天",
+        "ja": "%1$d 日目"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_jetlag_wake_chip",
+      "expectedEnglishPreview": "Wake %1$s",
+      "translations": {
+        "zh-TW": "起床 %1$s",
+        "ja": "起床 %1$s"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_jetlag_bed_chip",
+      "expectedEnglishPreview": "Bed %1$s",
+      "translations": {
+        "zh-TW": "就寢 %1$s",
+        "ja": "就寝 %1$s"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_jetlag_bright_chip",
+      "expectedEnglishPreview": "Bright %1$s",
+      "translations": {
+        "zh-TW": "明亮光線 %1$s",
+        "ja": "明るい光 %1$s"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_jetlag_dim_chip",
+      "expectedEnglishPreview": "Dim %1$s",
+      "translations": {
+        "zh-TW": "昏暗光線 %1$s",
+        "ja": "暗い光 %1$s"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_jetlag_time_range",
+      "expectedEnglishPreview": "%1$s-%2$s",
+      "translations": {
+        "zh-TW": "%1$s～%2$s",
+        "ja": "%1$s～%2$s"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_jetlag_no_shift",
+      "expectedEnglishPreview": "No shift",
+      "translations": {
+        "zh-TW": "不調整",
+        "ja": "調整なし"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_jetlag_shift_earlier",
+      "expectedEnglishPreview": "%1$s earlier",
+      "translations": {
+        "zh-TW": "提早 %1$s",
+        "ja": "%1$s 早める"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_jetlag_shift_later",
+      "expectedEnglishPreview": "%1$s later",
+      "translations": {
+        "zh-TW": "延後 %1$s",
+        "ja": "%1$s 遅らせる"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_jetlag_duration_hours_minutes",
+      "expectedEnglishPreview": "%1$dh %2$dm",
+      "translations": {
+        "zh-TW": "%1$d 小時 %2$d 分鐘",
+        "ja": "%1$d 時間 %2$d 分"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_jetlag_duration_hours",
+      "expectedEnglishPreview": "%1$dh",
+      "translations": {
+        "zh-TW": "%1$d 小時",
+        "ja": "%1$d 時間"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_jetlag_duration_minutes",
+      "expectedEnglishPreview": "%1$dm",
+      "translations": {
+        "zh-TW": "%1$d 分鐘",
+        "ja": "%1$d 分"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_jetlag_save_target",
+      "expectedEnglishPreview": "Save target",
+      "translations": {
+        "zh-TW": "儲存目標",
+        "ja": "目標を保存"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_picker_keep_current",
+      "expectedEnglishPreview": "Keep current",
+      "translations": {
+        "zh-TW": "保留目前設定",
+        "ja": "現在の設定を維持"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_jetlag_travel_target",
+      "expectedEnglishPreview": "Travel target",
+      "translations": {
+        "zh-TW": "旅行目標時間",
+        "ja": "旅行先の目標時刻"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_jetlag_choose_target_wake",
+      "expectedEnglishPreview": "Choose target wake time",
+      "translations": {
+        "zh-TW": "選擇目標起床時間",
+        "ja": "目標の起床時刻を選択"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_grant_dnd_access",
+      "expectedEnglishPreview": "Grant DND access",
+      "translations": {
+        "zh-TW": "授予勿擾模式存取權",
+        "ja": "おやすみモードへのアクセスを許可"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_save_bedtime",
+      "expectedEnglishPreview": "Save bedtime",
+      "translations": {
+        "zh-TW": "儲存就寢時間",
+        "ja": "就寝時刻を保存"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_choose_bedtime",
+      "expectedEnglishPreview": "Choose bedtime",
+      "translations": {
+        "zh-TW": "選擇就寢時間",
+        "ja": "就寝時刻を選択"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_close_bedtime",
+      "expectedEnglishPreview": "Close bedtime",
+      "translations": {
+        "zh-TW": "關閉就寢畫面",
+        "ja": "就寝画面を閉じる"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_bedtime_reminder",
+      "expectedEnglishPreview": "Bedtime reminder",
+      "translations": {
+        "zh-TW": "就寢提醒",
+        "ja": "就寝リマインダー"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_alarms_only",
+      "expectedEnglishPreview": "Alarms only",
+      "translations": {
+        "zh-TW": "僅允許鬧鐘",
+        "ja": "アラームのみ"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_do_not_disturb_at_bedtime",
+      "expectedEnglishPreview": "Do Not Disturb at bedtime",
+      "translations": {
+        "zh-TW": "就寢時開啟勿擾模式",
+        "ja": "就寝時におやすみモードを有効化"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_delay_tonight_s_bedtime_reminder",
+      "expectedEnglishPreview": "Delay tonight’s bedtime reminder",
+      "translations": {
+        "zh-TW": "延後今晚的就寢提醒",
+        "ja": "今夜の就寝リマインダーを遅らせる"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_tonight_s_sleep_window",
+      "expectedEnglishPreview": "Tonight’s sleep window",
+      "translations": {
+        "zh-TW": "今晚的睡眠時段",
+        "ja": "今夜の睡眠時間帯"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_use_current_goal_next_alarm",
+      "expectedEnglishPreview": "Use your current goal and next alarm to see when sleep should start.",
+      "translations": {
+        "zh-TW": "依目前睡眠目標與下一個鬧鐘，查看建議開始睡覺的時間。",
+        "ja": "現在の睡眠目標と次のアラームから、寝始める時刻の目安を確認できます。"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_current_sleep_target",
+      "expectedEnglishPreview": "Current sleep target",
+      "translations": {
+        "zh-TW": "目前睡眠目標",
+        "ja": "現在の睡眠目標"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_wake",
+      "expectedEnglishPreview": "Wake",
+      "translations": {
+        "zh-TW": "起床",
+        "ja": "起床"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_reminder",
+      "expectedEnglishPreview": "Reminder",
+      "translations": {
+        "zh-TW": "提醒",
+        "ja": "リマインダー"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_room",
+      "expectedEnglishPreview": "Room",
+      "translations": {
+        "zh-TW": "房間",
+        "ja": "部屋"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_no_upcoming_alarm",
+      "expectedEnglishPreview": "No upcoming alarm",
+      "translations": {
+        "zh-TW": "沒有即將響起的鬧鐘",
+        "ja": "次のアラームはありません"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_set_alarm_unlock_suggested_bedtimes",
+      "expectedEnglishPreview": "Set an alarm to unlock suggested bedtimes and cycle-friendly options.",
+      "translations": {
+        "zh-TW": "設定鬧鐘後即可查看建議就寢時間及符合睡眠週期的選項。",
+        "ja": "アラームを設定すると、おすすめの就寝時刻や睡眠サイクルに合わせた選択肢が表示されます。"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_suggestion",
+      "expectedEnglishPreview": "Suggestion",
+      "translations": {
+        "zh-TW": "建議",
+        "ja": "提案"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_suggested_bedtime",
+      "expectedEnglishPreview": "Suggested bedtime",
+      "translations": {
+        "zh-TW": "建議就寢時間",
+        "ja": "おすすめの就寝時刻"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_sleep_goal_reminder_timing",
+      "expectedEnglishPreview": "Sleep goal and reminder timing",
+      "translations": {
+        "zh-TW": "睡眠目標與提醒時間",
+        "ja": "睡眠目標と通知のタイミング"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_adjust_30_minute_steps_pick",
+      "expectedEnglishPreview": "Adjust in 30-minute steps and pick how early you want the reminder.",
+      "translations": {
+        "zh-TW": "以 30 分鐘為單位調整，並選擇要提前多久提醒。",
+        "ja": "30分単位で調整し、何分前に通知するか選びます。"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_less",
+      "expectedEnglishPreview": "Less",
+      "translations": {
+        "zh-TW": "減少",
+        "ja": "減らす"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_more",
+      "expectedEnglishPreview": "More",
+      "translations": {
+        "zh-TW": "增加",
+        "ja": "増やす"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_reminder_lead_time",
+      "expectedEnglishPreview": "Reminder lead time",
+      "translations": {
+        "zh-TW": "提前提醒時間",
+        "ja": "通知するまでの余裕時間"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_cycle_friendly_options",
+      "expectedEnglishPreview": "Cycle-friendly options",
+      "translations": {
+        "zh-TW": "符合睡眠週期的選項",
+        "ja": "睡眠サイクルに合わせた選択肢"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_based_90_minute_sleep_cycles",
+      "expectedEnglishPreview": "Based on 90-minute sleep cycles and a short fall-asleep buffer.",
+      "translations": {
+        "zh-TW": "根據 90 分鐘睡眠週期及短暫入睡緩衝時間計算。",
+        "ja": "90分の睡眠サイクルと、寝つくまでの短い余裕時間をもとにしています。"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_waiting_next_alarm",
+      "expectedEnglishPreview": "Waiting for your next alarm",
+      "translations": {
+        "zh-TW": "等待設定下一個鬧鐘",
+        "ja": "次のアラームの設定待ち"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_once_alarm_set_bedtime_will",
+      "expectedEnglishPreview": "Once an alarm is set, bedtime will suggest easier cycle-aligned sleep times.",
+      "translations": {
+        "zh-TW": "設定鬧鐘後，將會建議更容易配合睡眠週期的就寢時間。",
+        "ja": "アラームを設定すると、睡眠サイクルに合わせやすい就寝時刻を提案します。"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_wind_down_target",
+      "expectedEnglishPreview": "Wind-down target",
+      "translations": {
+        "zh-TW": "放鬆準備目標",
+        "ja": "就寝準備の目標"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_tracking_pre_sleep_factors",
+      "expectedEnglishPreview": "Pre-sleep factors",
+      "translations": {
+        "zh-TW": "睡前影響因素",
+        "ja": "就寝前の要因"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_tracking_local_chart_appears_after_tagged",
+      "expectedEnglishPreview": "Local chart appears after tagged nights overlap Sonar or smart-wake summaries.",
+      "translations": {
+        "zh-TW": "當標記的夜晚與 Sonar 或智慧喚醒摘要有所重疊後，將顯示本機圖表。",
+        "ja": "タグ付きの夜と Sonar やスマート起床の要約が重なると、端末内にグラフが表示されます。"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_tracking_sonar_sleep_tracking",
+      "expectedEnglishPreview": "Sonar sleep tracking",
+      "translations": {
+        "zh-TW": "Sonar 睡眠追蹤",
+        "ja": "Sonar 睡眠トラッキング"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_tracking_no_audio_saved",
+      "expectedEnglishPreview": "No audio saved",
+      "translations": {
+        "zh-TW": "不儲存音訊",
+        "ja": "音声は保存されません"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_tracking_health_connect_sleep",
+      "expectedEnglishPreview": "Health Connect sleep",
+      "translations": {
+        "zh-TW": "Health Connect 睡眠資料",
+        "ja": "Health Connect の睡眠データ"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_dnd_sync_error",
+      "expectedEnglishPreview": "Do Not Disturb sync needs attention: %1$s",
+      "translations": {
+        "zh-TW": "勿擾模式同步需要處理：%1$s",
+        "ja": "おやすみモードの同期に対応が必要です：%1$s"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_battery_warning",
+      "expectedEnglishPreview": "Battery at %1$d%%. Plug in before sleep so the alarm cannot fail.",
+      "translations": {
+        "zh-TW": "電量為 %1$d%%。請在睡前充電，以降低鬧鐘失效風險。",
+        "ja": "電池残量は %1$d%% です。アラームが動作しなくなるリスクを下げるため、就寝前に充電してください。"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_aim_for_bedtime",
+      "expectedEnglishPreview": "Aim for %1$s to protect %2$s before your next alarm.",
+      "translations": {
+        "zh-TW": "目標在 %1$s 就寢，以便在下一個鬧鐘前保留 %2$s 的睡眠時間。",
+        "ja": "次のアラームまで %2$s の睡眠時間を確保するには、%1$s に就寝しましょう。"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_last_session",
+      "expectedEnglishPreview": "Last session: %1$s",
+      "translations": {
+        "zh-TW": "上一次紀錄：%1$s",
+        "ja": "前回のセッション：%1$s"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_title",
+      "expectedEnglishPreview": "Bedtime",
+      "translations": {
+        "zh-TW": "就寢時間",
+        "ja": "就寝時間"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_done",
+      "expectedEnglishPreview": "Done",
+      "translations": {
+        "zh-TW": "完成",
+        "ja": "完了"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_left",
+      "expectedEnglishPreview": "%1$s left",
+      "translations": {
+        "zh-TW": "剩餘 %1$s",
+        "ja": "残り %1$s"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_pause_guided_breathing",
+      "expectedEnglishPreview": "Pause guided breathing",
+      "translations": {
+        "zh-TW": "暫停引導式呼吸",
+        "ja": "呼吸ガイドを一時停止"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_start_guided_breathing",
+      "expectedEnglishPreview": "Start guided breathing",
+      "translations": {
+        "zh-TW": "開始引導式呼吸",
+        "ja": "呼吸ガイドを開始"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_sleep_planning",
+      "expectedEnglishPreview": "Sleep planning",
+      "translations": {
+        "zh-TW": "睡眠規劃",
+        "ja": "睡眠の計画"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_reminder_on",
+      "expectedEnglishPreview": "Reminder on",
+      "translations": {
+        "zh-TW": "提醒已開啟",
+        "ja": "リマインダーはオン"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_reminder_off",
+      "expectedEnglishPreview": "Reminder off",
+      "translations": {
+        "zh-TW": "提醒已關閉",
+        "ja": "リマインダーはオフ"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_no_alarm_linked",
+      "expectedEnglishPreview": "No alarm linked",
+      "translations": {
+        "zh-TW": "尚未連結鬧鐘",
+        "ja": "アラーム未連携"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_min_early",
+      "expectedEnglishPreview": "%1$s min early",
+      "translations": {
+        "zh-TW": "提前 %1$s 分鐘",
+        "ja": "%1$s 分前"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_linked_to_alarm",
+      "expectedEnglishPreview": "Linked to alarm",
+      "translations": {
+        "zh-TW": "已連結鬧鐘",
+        "ja": "アラームと連携中"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "bedtime_needs_alarm",
+      "expectedEnglishPreview": "Needs alarm",
+      "translations": {
+        "zh-TW": "需要先設定鬧鐘",
+        "ja": "アラームの設定が必要"
+      },
+      "reviewRisk": "SLEEP_TIME_AND_PERMISSION_SEMANTIC_REVIEW"
+    }
+  ]
+}
