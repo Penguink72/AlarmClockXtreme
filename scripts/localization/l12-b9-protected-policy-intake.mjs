@@ -48,11 +48,11 @@ function verifyEnvelope(envelope,schema,pem,role,errors){
   try{
     const key=createPublicKey(pem);
     if(key.asymmetricKeyType!=="ed25519")throw Error("Non-Ed25519 key");
+    const fingerprint=sha(key.export({format:"der",type:"spki"}).toString("base64"));
     const raw=Buffer.from(envelope.signatureBase64,"base64");
-    if(raw.length!==64||!verify(null,Buffer.from(JSON.stringify(envelope.payload),"utf8"),key,raw)){
-      errors.push(role+"_SIGNATURE_INVALID");return null;
-    }
-    return sha(key.export({format:"der",type:"spki"}).toString("base64"));
+    if(raw.length!==64||!verify(null,Buffer.from(JSON.stringify(envelope.payload),"utf8"),key,raw))
+      errors.push(role+"_SIGNATURE_INVALID");
+    return fingerprint;
   }catch{errors.push(role+"_SIGNATURE_OR_KEY_INVALID");return null;}
 }
 function lines(rows){
