@@ -1,0 +1,39 @@
+name: ACX L13-A native locale adapter preflight (no release)
+on:
+  push:
+    branches:
+      - feature/acx-l13-a-locale-runtime-preflight-20261122
+    paths:
+      - "app/src/main/java/com/sysadmindoc/alarmclock/util/Locale*"
+      - "app/src/test/java/com/sysadmindoc/alarmclock/util/Locale*"
+      - "docs/localization/ACX-L13-A*"
+      - ".github/workflows/l13-a-native-context-preflight.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  locale-runtime-unit-test:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v4
+      - name: Install Android 36 SDK
+        run: sdkmanager --install "platforms;android-36" "build-tools;36.0.0"
+      - name: Test locale selection and non-mutating native Context adaptation
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash ./gradlew :app:testFdroidDebugUnitTest \
+            --tests "com.sysadmindoc.alarmclock.util.LocaleSelectionContractTest" \
+            --tests "com.sysadmindoc.alarmclock.util.LocaleContextTextAdapterTest" \
+            --no-daemon --stacktrace
+      - name: Report exact status
+        run: |
+          echo "L13-A has NO official candidate XML writer and NO Runtime UI/Service wiring approval."
