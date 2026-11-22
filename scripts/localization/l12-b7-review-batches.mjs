@@ -204,6 +204,9 @@ export function validateUntrustedReviewNotes(plan,notes){
      notes.reviewSetDigest!==plan.summary.reviewSetDigest||
      notes.batchPlanDigest!==plan.summary.batchPlanDigest)
     return {status:"INVALID",errors:["INVALID_SCHEMA_OR_STALE_PLAN"]};
+  if(notes.status!=="PROVISIONAL_UNTRUSTED_NO_APPROVAL"||
+     Object.keys(notes).some(k=>forbiddenDraftFields.includes(k)))
+    return {status:"INVALID",errors:["REVIEW_NOTES_MUST_REMAIN_UNTRUSTED"]};
   if(!Array.isArray(notes.entries))return {status:"INVALID",errors:["ENTRIES_REQUIRED"]};
   if(notes.entries.length>3100)return {status:"INVALID",errors:["TOO_MANY_NOTES"]};
   const rows=new Map(plan.batches.flatMap(b=>b.cards.flatMap(c=>c.localeRows))
