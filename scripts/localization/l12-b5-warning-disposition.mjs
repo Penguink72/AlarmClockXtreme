@@ -18,9 +18,15 @@ function classify(w){
   const categories=[];
   if(w.flags.includes("UNCHANGED_ENGLISH_REVIEW")){
     const normalized=w.candidateText.trim();
-    const identifier=/^(?:[A-Z][A-Z0-9/_.+-]*|(?:https?:\/\/|[A-Za-z0-9_.+-]+\.(?:com|org|net|io|dev))\S*|[A-Z]{2,}(?:[ -][A-Z]{2,})*)$/;
-    categories.push(identifier.test(normalized)?
-      "POSSIBLE_IDENTIFIER_RETENTION_NEEDS_EVIDENCE":"LIKELY_UNTRANSLATED_ENGLISH_NEEDS_REVIEW");
+    // Keep structure-only format strings distinct from prose that was never translated.
+    // These classifications are NOT permission to keep English in production.
+    const formatOnly=normalized.replace(/%(?:[1-9]\d*\$)?[-+# 0,(]*\d*(?:\.\d+)?[a-zA-Z%]/g,"")
+      .replace(/[\s:;,.•+\-—()\\/'"%]+/g,"").length===0;
+    const brandOrTechnical=/^(?:Wi-Fi|Philips Hue|Spotify|Health Connect|Webhook|DDNNO|DuPont|Panama|Pitman)$/i.test(normalized) ||
+      /^(?:https?:\/\/\S+|[A-Z_][A-Z0-9_.-]{2,})$/.test(normalized);
+    categories.push(formatOnly?"FORMAT_ONLY_NO_PROSE_REVIEW":
+      brandOrTechnical?"POSSIBLE_IDENTIFIER_RETENTION_NEEDS_EVIDENCE":
+      "LIKELY_UNTRANSLATED_ENGLISH_NEEDS_REVIEW");
   }
   if(w.flags.includes("LITERAL_PERCENT_REVIEW"))
     categories.push("ANDROID_PERCENT_FORMAT_RUNTIME_USAGE_REVIEW");
