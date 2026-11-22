@@ -1,0 +1,29 @@
+name: ACX L11-10 residual candidates (unapproved)
+on:
+  push:
+    branches:
+      - feature/acx-l11-b10-residual-candidates-20261122
+    paths:
+      - "scripts/localization/**"
+      - "localization/**"
+      - ".github/workflows/l11-b10-residual.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  residual-inventory:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Validate L11-10 gap source and existing guards
+        run: |
+          node --test scripts/localization/l11-b10-residual-closure.test.mjs
+          node scripts/localization/l11-b10-residual-closure.mjs --out-dir build/localization/L11_B10_RESIDUAL --list
+      - name: Save review-only residual source evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: acx-l11-b10-unreviewed-residual
+          path: build/localization/L11_B10_RESIDUAL/
