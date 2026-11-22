@@ -1,0 +1,51 @@
+name: ACX L12-8B proposed risk-tiered translation review
+on:
+  push:
+    branches:
+      - feature/acx-l12-b8-risk-tiered-policy-20261123
+    paths:
+      - "scripts/localization/**"
+      - "localization/policies/**"
+      - "docs/localization/ACX-L12-B8*"
+      - ".github/workflows/l12-b8b-risk-tiered-review.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  risk-tiered-diagnostic:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Original L12-6 and L12-7 integrity tests
+        run: |
+          node --test scripts/localization/l12-b6-independent-review.test.mjs
+          node --test scripts/localization/l12-b7-review-batches.test.mjs
+      - name: L12-8B policy, deterministic strata, sample escalation and blocked release
+        run: |
+          node --test scripts/localization/l12-b8b-risk-tiered-policy.test.mjs
+          node scripts/localization/l12-b8b-risk-tiered-policy.mjs --out-dir build/localization/L12_B8B_UNAUTHORIZED_DIAGNOSTIC_REVIEW
+      - name: Verify policy and unsigned notes cannot bypass L12-6 review
+        shell: bash
+        run: |
+          set -euo pipefail
+          if node scripts/localization/l12-b6-independent-review.mjs --review-envelope build/NOT_PROVIDED.json; then
+            echo "SECURITY FAILURE: L12-8B bypassed external independent approval" >&2
+            exit 1
+          fi
+          if node scripts/localization/l12-b8b-risk-tiered-policy.mjs --notes localization/governance/l12/independent-review-ledger.json; then
+            echo "SECURITY FAILURE: unrelated review ledger accepted as L12-8B sampling notes" >&2
+            exit 1
+          fi
+          echo "L12-8B policy remains proposed and has no release authority."
+      - name: Store risk-tiered diagnostic worklist (no signed authorization)
+        uses: actions/upload-artifact@v4
+        with:
+          name: acx-l12-b8b-proposed-risk-tiered-review
+          path: build/localization/L12_B8B_UNAUTHORIZED_DIAGNOSTIC_REVIEW/
+          retention-days: 14
