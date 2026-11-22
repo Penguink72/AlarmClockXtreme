@@ -25,6 +25,7 @@ on:
     paths:
       - "scripts/localization/**"
       - "localization/governance/**"
+      - "localization/candidates/**"
       - "docs/localization/**"
       - "docs/tcl/P31-LPG1-G5*"
       - ".github/workflows/lpg1-g5-translation-pipeline.yml"
