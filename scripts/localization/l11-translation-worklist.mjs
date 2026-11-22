@@ -278,18 +278,10 @@ export function summaryMd(data){
   ].join("\n");
 }
 
-if(process.argv[1] && import.meta.url===pathToFileURL(resolve(process.argv[1])).href){
-  const at=process.argv.indexOf("--out-dir");
-  const out=at<0?join(ROOT,"build/localization/B0_FULL_APP_INVENTORY"):
-    resolve(process.argv[at+1]??"");
-  if(!out.startsWith(ROOT+(process.platform==="win32"?"\\":"/")))
-    throw Error("Output dir must stay inside repo");
-  let sourceSha="unavailable";
-  try{sourceSha=execFileSync("git",["rev-parse","HEAD"],{cwd:ROOT,encoding:"utf8"}).trim();}
-  catch{/* Non-Git snapshot is kept explicitly unverified. */}
-  const read=p=>JSON.parse(readFileSync(join(ROOT,p),"utf8"));
-  const graph=buildL10(ROOT,sourceSha);
-  const data=buildL11({
+export function loadL11Inputs(root,sourceSha){
+  const read=p=>JSON.parse(readFileSync(join(root,p),"utf8"));
+  const graph=buildL10(root,sourceSha);
+  return {
     graph,
     catalog:read("app/src/debug/assets/lp2/catalog.json"),
     packs:{"zh-TW":read("app/src/debug/assets/lp2/packs/zh-TW.json"),
@@ -318,7 +310,21 @@ if(process.argv[1] && import.meta.url===pathToFileURL(resolve(process.argv[1])).
       read("localization/candidates/l11-b6-statistics-drafts-20261122.json"),
       read("localization/candidates/l11-b6-bedtime-drafts-20261122.json")
     ]
-  });
+  };
+}
+
+if(process.argv[1] && import.meta.url===pathToFileURL(resolve(process.argv[1])).href){
+  const at=process.argv.indexOf("--out-dir");
+  const out=at<0?join(ROOT,"build/localization/B0_FULL_APP_INVENTORY"):
+    resolve(process.argv[at+1]??"");
+  if(!out.startsWith(ROOT+(process.platform==="win32"?"\\":"/")))
+    throw Error("Output dir must stay inside repo");
+  let sourceSha="unavailable";
+  try{sourceSha=execFileSync("git",["rev-parse","HEAD"],{cwd:ROOT,encoding:"utf8"}).trim();}
+  catch{/* Non-Git snapshot is kept explicitly unverified. */}
+  const inputs=loadL11Inputs(ROOT,sourceSha);
+  const graph=inputs.graph;
+  const data=buildL11(inputs);
   mkdirSync(out,{recursive:true});
   const write=(name,item)=>writeFileSync(join(out,name),JSON.stringify(item,null,2)+"\n");
   write("l11-full-translation-queue.json",{
