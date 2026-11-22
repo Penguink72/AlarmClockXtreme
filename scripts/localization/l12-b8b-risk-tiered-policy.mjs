@@ -196,9 +196,11 @@ export function buildRiskTieredPlan(batchPlan,policy){
   };
   return {summary,mandatoryFullReview:full.map(c=>({
       key:c.key,priority:c.priority,featureFamily:c.featureFamily,
+      english:c.english,sourcePath:c.sourcePath,sourceLine:c.sourceLine,
       policyDisposition:c.policyDisposition,localeRows:c.localeRows.map(r=>({
         key:r.key,locale:r.locale,type:r.type,sourceHash:r.sourceHash,
-        translationHash:r.translationHash,reviewRevision:r.reviewRevision
+        translationHash:r.translationHash,reviewRevision:r.reviewRevision,
+        candidate:r.candidate,risks:r.risks,issues:r.issues
       }))
     })),
     p3Overrides:overrides,
@@ -215,8 +217,6 @@ export function evaluateProvisionalNotes(riskPlan,batchPlan,notes){
       actualApprovedLocaleRows:0,releasePermitted:false};
   const cardMap=new Map(cardsFromPlan(batchPlan).map(c=>[c.key,c]));
   const stratumByFamily=new Map(riskPlan.strata.map(s=>[s.featureFamily,s]));
-  const sampleKeyToFamily=new Map(riskPlan.strata.flatMap(s=>
-    s.sampledKeys.map(key=>[key,s.featureFamily])));
   const byId=new Map(notes.entries.map(n=>[id(n),n]));
   const escalations=new Map();
   const positive=new Set(),remaining=new Set();
@@ -291,7 +291,8 @@ function tsv(plan){
   const rows=[
     ...plan.mandatoryFullReview.flatMap(c=>c.localeRows.map(r=>({
       mode:"MANDATORY_FULL",tier:c.priority,family:c.featureFamily,stratum:"",
-      r,english:"",candidate:""
+      r,english:c.english,candidate:
+        typeof r.candidate==="string"?r.candidate:JSON.stringify(r.candidate)
     }))),
     ...plan.diagnosticSampleCards.flatMap(c=>c.localeRows.map(r=>({
       mode:"DIAGNOSTIC_SAMPLE",tier:c.priority,family:c.featureFamily,
@@ -305,7 +306,7 @@ function tsv(plan){
     x.candidate,"NOT_APPROVED"
   ].map(y=>JSON.stringify(y)).join("\t")).join("\n")+"\n";
 }
-function sampleHtml(riskPlan){
+export function renderSamplingDesk(riskPlan){
   const html=renderDesk(riskPlan.sampleDeskPlan);
   return html.replace("L12-7 翻譯分批審閱工作台（未批准）",
     "L12-8B 診斷抽樣工作台（未批准）")
@@ -352,12 +353,11 @@ if(process.argv[1] && import.meta.url===pathToFileURL(resolve(process.argv[1])).
       "mandatory-full-review-queue.json":risk.mandatoryFullReview,
       "p3-risk-rechecks.json":risk.p3Overrides,
       "diagnostic-strata.json":risk.strata,
-      "human-focus-worklist.tsv":tsv(risk)
     };
     for(const [name,content] of Object.entries(exports))
       writeFileSync(join(dest,name),JSON.stringify(content,null,2)+"\n");
     writeFileSync(join(dest,"human-focus-worklist.tsv"),tsv(risk));
-    writeFileSync(join(dest,"p3-diagnostic-sample-desk.html"),sampleHtml(risk));
+    writeFileSync(join(dest,"p3-diagnostic-sample-desk.html"),renderSamplingDesk(risk));
   }
   console.log("L12_B8B_RISK_TIERED_PLAN "+JSON.stringify(x.riskPlan.summary));
 }
