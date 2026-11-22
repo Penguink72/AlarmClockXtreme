@@ -46,3 +46,11 @@ test("L12-5 preserves brand/proper-name candidates for independent verification"
   assert(r.items[0].reviewCategories.includes("POSSIBLE_IDENTIFIER_RETENTION_NEEDS_EVIDENCE"));
   assert.equal(r.items[0].independentApproval,false);
 });
+
+test("L12-5 identifies middle-dot-only positional template as format not prose",()=>{
+  const x=make();x.triage.rows[0].sourcePreview="%1$s · %2$s";
+  x.triage.rows[0].candidateText="%1$s · %2$s";
+  const r=buildWarningDispositions(x.triage,x.preflight);
+  assert(r.items[0].reviewCategories.includes("FORMAT_ONLY_NO_PROSE_REVIEW"));
+  assert(!r.items[0].reviewCategories.includes("LIKELY_UNTRANSLATED_ENGLISH_NEEDS_REVIEW"));
+});
