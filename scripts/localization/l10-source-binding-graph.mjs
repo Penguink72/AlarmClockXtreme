@@ -95,16 +95,18 @@ function nearestSymbol(lines, n) {
   return "UNRESOLVED_SYMBOL";
 }
 
-function textApi(window, ext) {
+function textApi(line, window, ext) {
   if (ext === ".xml") return "ANDROID_XML_RESOURCE_CANDIDATE";
-  if (/\b(?:getQuantityString|pluralStringResource|getQuantityText)\s*\(/.test(window))
+  if (/\b(?:getQuantityString|pluralStringResource|getQuantityText)\s*\(/.test(line))
     return "QUANTITY_RESOURCE_API_CANDIDATE";
-  if (/\b(?:getString|stringResource|getText)\s*\(/.test(window))
+  if (/\b(?:getString|stringResource|getText)\s*\(/.test(line))
     return "DIRECT_RESOURCE_API_CANDIDATE";
-  if (/\b(?:titleRes|descriptionRes|labelRes|textForResource|resId|resourceId|iconTextRes)\b/.test(window))
+  if (/\b(?:titleRes|descriptionRes|labelRes|textForResource|resId|resourceId|iconTextRes)\b/.test(line))
     return "INDIRECT_ID_CANDIDATE";
-  if (/\b(?:getIdentifier|Class\.forName)\s*\(/.test(window))
+  if (/\b(?:getIdentifier|Class\.forName)\s*\(/.test(line))
     return "DYNAMIC_ID_NEEDS_REVIEW";
+  if (/\b(?:getQuantityString|pluralStringResource|getQuantityText|getString|stringResource)\s*\(/.test(window))
+    return "MULTILINE_RESOURCE_API_CANDIDATE";
   return "STATIC_RESOURCE_REFERENCE_ONLY";
 }
 
@@ -132,7 +134,7 @@ export function scanBindings(root) {
       for (const hit of code.matchAll(REF)) {
         const type=hit[1]||hit[3], name=hit[2]||hit[4];
         const key=type+":"+name, symbol=nearestSymbol(codeLines,n);
-        const api=textApi(localWindow,ext);
+        const api=textApi(code,localWindow,ext);
         const fingerprint=sha(JSON.stringify([path,symbol,key,raw.trim()]));
         const duplicate=fingerprints.get(fingerprint)||0;
         fingerprints.set(fingerprint,duplicate+1);
