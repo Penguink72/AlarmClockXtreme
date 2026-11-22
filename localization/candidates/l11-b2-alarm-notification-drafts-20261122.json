@@ -1,0 +1,828 @@
+{
+  "schema": "acx-l11-batch2-drafts/1",
+  "topic": "NOTIFICATIONS_ALARM_EDITOR_CHALLENGES",
+  "status": "MODEL_PRELIMINARY_NOT_APPROVED",
+  "independentApproval": false,
+  "sourceRef": "app/src/main/res/values/strings.xml",
+  "records": [
+    {
+      "key": "notif_channel_database_downgrade",
+      "expectedEnglishPreview": "Restore problems",
+      "translations": {
+        "zh-TW": "還原問題",
+        "ja": "復元に関する問題"
+      },
+      "reviewRisk": "BEHAVIOR_AND_SAFETY_REVIEW"
+    },
+    {
+      "key": "notif_database_downgrade_title",
+      "expectedEnglishPreview": "Alarms could not be restored",
+      "translations": {
+        "zh-TW": "無法還原鬧鐘",
+        "ja": "アラームを復元できませんでした"
+      },
+      "reviewRisk": "BEHAVIOR_AND_SAFETY_REVIEW"
+    },
+    {
+      "key": "notif_database_downgrade_text",
+      "expectedEnglishPreview": "The restored data came from a newer version of the app, which this version cannot read. Your alarms were not kept and nothing is scheduled. Add them again, or install the newer version and restore once more.",
+      "translations": {
+        "zh-TW": "還原的資料來自較新版 App，目前版本無法讀取。鬧鐘未保留，也沒有排定任何鬧鐘。請重新新增，或安裝較新版本後再還原一次。",
+        "ja": "復元データは新しいバージョンのアプリで作成されており、このバージョンでは読み込めません。アラームは保存されず、何も予約されていません。再度追加するか、新しいバージョンをインストールして復元してください。"
+      },
+      "reviewRisk": "BEHAVIOR_AND_SAFETY_REVIEW"
+    },
+    {
+      "key": "notif_smart_alarm_title",
+      "expectedEnglishPreview": "Smart alarm active",
+      "translations": {
+        "zh-TW": "智慧鬧鐘已啟用",
+        "ja": "スマートアラームが有効です"
+      },
+      "reviewRisk": "BEHAVIOR_AND_SAFETY_REVIEW"
+    },
+    {
+      "key": "notif_smart_alarm_text",
+      "expectedEnglishPreview": "Monitoring sleep quality…",
+      "translations": {
+        "zh-TW": "正在監測睡眠品質…",
+        "ja": "睡眠の質を監視しています…"
+      },
+      "reviewRisk": "BEHAVIOR_AND_SAFETY_REVIEW"
+    },
+    {
+      "key": "notif_timers_canceled_title",
+      "expectedEnglishPreview": "Timers canceled after restart",
+      "translations": {
+        "zh-TW": "裝置重新啟動後已取消計時器",
+        "ja": "再起動後にタイマーをキャンセルしました"
+      },
+      "reviewRisk": "BEHAVIOR_AND_SAFETY_REVIEW"
+    },
+    {
+      "key": "notif_channel_alarm_desc",
+      "expectedEnglishPreview": "Alarm notifications",
+      "translations": {
+        "zh-TW": "鬧鐘通知",
+        "ja": "アラーム通知"
+      },
+      "reviewRisk": "BEHAVIOR_AND_SAFETY_REVIEW"
+    },
+    {
+      "key": "notif_channel_upcoming_desc",
+      "expectedEnglishPreview": "Shows upcoming alarm information",
+      "translations": {
+        "zh-TW": "顯示即將響起的鬧鐘資訊",
+        "ja": "今後のアラーム情報を表示します"
+      },
+      "reviewRisk": "BEHAVIOR_AND_SAFETY_REVIEW"
+    },
+    {
+      "key": "notif_channel_missed_desc",
+      "expectedEnglishPreview": "Notifications for alarms that were auto-silenced",
+      "translations": {
+        "zh-TW": "自動靜音的鬧鐘通知",
+        "ja": "自動停止されたアラームの通知"
+      },
+      "reviewRisk": "BEHAVIOR_AND_SAFETY_REVIEW"
+    },
+    {
+      "key": "notif_channel_timer_finished",
+      "expectedEnglishPreview": "Timer finished",
+      "translations": {
+        "zh-TW": "計時器已結束",
+        "ja": "タイマー終了"
+      },
+      "reviewRisk": "BEHAVIOR_AND_SAFETY_REVIEW"
+    },
+    {
+      "key": "notif_channel_timer_finished_desc",
+      "expectedEnglishPreview": "Notifies when one of your countdown timers reaches zero.",
+      "translations": {
+        "zh-TW": "倒數計時器歸零時發出通知。",
+        "ja": "カウントダウンタイマーがゼロになったときに通知します。"
+      },
+      "reviewRisk": "BEHAVIOR_AND_SAFETY_REVIEW"
+    },
+    {
+      "key": "notif_channel_bedtime_countdown",
+      "expectedEnglishPreview": "Bedtime countdown",
+      "translations": {
+        "zh-TW": "就寢倒數",
+        "ja": "就寝までのカウントダウン"
+      },
+      "reviewRisk": "BEHAVIOR_AND_SAFETY_REVIEW"
+    },
+    {
+      "key": "notif_channel_bedtime_countdown_desc",
+      "expectedEnglishPreview": "Shows the final-hour countdown before the bedtime reminder",
+      "translations": {
+        "zh-TW": "顯示就寢提醒前最後一小時的倒數計時",
+        "ja": "就寝通知まで残り1時間のカウントダウンを表示します"
+      },
+      "reviewRisk": "BEHAVIOR_AND_SAFETY_REVIEW"
+    },
+    {
+      "key": "notif_channel_snooze_countdown",
+      "expectedEnglishPreview": "Snooze countdown",
+      "translations": {
+        "zh-TW": "貪睡倒數",
+        "ja": "スヌーズのカウントダウン"
+      },
+      "reviewRisk": "BEHAVIOR_AND_SAFETY_REVIEW"
+    },
+    {
+      "key": "notif_channel_snooze_countdown_desc",
+      "expectedEnglishPreview": "Shows the time until a snoozed alarm rings again",
+      "translations": {
+        "zh-TW": "顯示貪睡鬧鐘再次響起前的剩餘時間",
+        "ja": "スヌーズしたアラームが再び鳴るまでの時間を表示します"
+      },
+      "reviewRisk": "BEHAVIOR_AND_SAFETY_REVIEW"
+    },
+    {
+      "key": "notif_external_alarm_title",
+      "expectedEnglishPreview": "An alarm was added",
+      "translations": {
+        "zh-TW": "已新增鬧鐘",
+        "ja": "アラームが追加されました"
+      },
+      "reviewRisk": "BEHAVIOR_AND_SAFETY_REVIEW"
+    },
+    {
+      "key": "notif_external_alarm_text_named",
+      "expectedEnglishPreview": "%1$s added an alarm without opening the app. Tap to review it.",
+      "translations": {
+        "zh-TW": "%1$s 未開啟本 App 就新增了鬧鐘。點選以檢查。",
+        "ja": "%1$s がこのアプリを開かずにアラームを追加しました。タップして確認してください。"
+      },
+      "reviewRisk": "BEHAVIOR_AND_SAFETY_REVIEW"
+    },
+    {
+      "key": "notif_external_alarm_text",
+      "expectedEnglishPreview": "Another app added an alarm without opening the app. Tap to review it.",
+      "translations": {
+        "zh-TW": "其他 App 未開啟本 App 就新增了鬧鐘。點選以檢查。",
+        "ja": "別のアプリがこのアプリを開かずにアラームを追加しました。タップして確認してください。"
+      },
+      "reviewRisk": "BEHAVIOR_AND_SAFETY_REVIEW"
+    },
+    {
+      "key": "notif_direct_boot_channel_name",
+      "expectedEnglishPreview": "Direct Boot Alarm",
+      "translations": {
+        "zh-TW": "開機未解鎖鬧鐘",
+        "ja": "ダイレクトブートアラーム"
+      },
+      "reviewRisk": "BEHAVIOR_AND_SAFETY_REVIEW"
+    },
+    {
+      "key": "notif_direct_boot_channel_description",
+      "expectedEnglishPreview": "Fallback alarm before the device is unlocked after reboot",
+      "translations": {
+        "zh-TW": "重新開機後，裝置尚未解鎖時使用的備援鬧鐘",
+        "ja": "再起動後、端末のロックが解除される前に鳴る代替アラーム"
+      },
+      "reviewRisk": "BEHAVIOR_AND_SAFETY_REVIEW"
+    },
+    {
+      "key": "notif_missed_auto_silenced",
+      "expectedEnglishPreview": "%1$s at %2$s was auto-silenced after %3$d minutes",
+      "translations": {
+        "zh-TW": "%1$s 的鬧鐘預定於 %2$s 響起，%3$d 分鐘後已自動靜音",
+        "ja": "%1$s のアラーム（%2$s）は、%3$d 分後に自動停止しました"
+      },
+      "reviewRisk": "BEHAVIOR_AND_SAFETY_REVIEW"
+    },
+    {
+      "key": "notif_next_alarm_channel_name",
+      "expectedEnglishPreview": "Next Alarm",
+      "translations": {
+        "zh-TW": "下一個鬧鐘",
+        "ja": "次のアラーム"
+      },
+      "reviewRisk": "BEHAVIOR_AND_SAFETY_REVIEW"
+    },
+    {
+      "key": "notif_next_alarm_channel_description",
+      "expectedEnglishPreview": "Shows when the next alarm will fire",
+      "translations": {
+        "zh-TW": "顯示下一個鬧鐘預定響起的時間",
+        "ja": "次のアラームが鳴る予定時刻を表示します"
+      },
+      "reviewRisk": "BEHAVIOR_AND_SAFETY_REVIEW"
+    },
+    {
+      "key": "notif_next_alarm_body",
+      "expectedEnglishPreview": "%1$s · %2$s remaining",
+      "translations": {
+        "zh-TW": "%1$s · 剩餘 %2$s",
+        "ja": "%1$s · 残り %2$s"
+      },
+      "reviewRisk": "BEHAVIOR_AND_SAFETY_REVIEW"
+    },
+    {
+      "key": "notif_next_alarm_subtext",
+      "expectedEnglishPreview": "Alarm countdown",
+      "translations": {
+        "zh-TW": "鬧鐘倒數",
+        "ja": "アラームまでのカウントダウン"
+      },
+      "reviewRisk": "BEHAVIOR_AND_SAFETY_REVIEW"
+    },
+    {
+      "key": "notif_smart_alarm_channel_name",
+      "expectedEnglishPreview": "Smart Alarm",
+      "translations": {
+        "zh-TW": "智慧鬧鐘",
+        "ja": "スマートアラーム"
+      },
+      "reviewRisk": "BEHAVIOR_AND_SAFETY_REVIEW"
+    },
+    {
+      "key": "notif_smart_alarm_channel_description",
+      "expectedEnglishPreview": "Smart sleep phase detection",
+      "translations": {
+        "zh-TW": "智慧睡眠階段偵測",
+        "ja": "睡眠段階のスマート検出"
+      },
+      "reviewRisk": "BEHAVIOR_AND_SAFETY_REVIEW"
+    },
+    {
+      "key": "notif_sonar_channel_name",
+      "expectedEnglishPreview": "Sonar Sleep Tracking",
+      "translations": {
+        "zh-TW": "聲納睡眠追蹤",
+        "ja": "ソナー睡眠トラッキング"
+      },
+      "reviewRisk": "BEHAVIOR_AND_SAFETY_REVIEW"
+    },
+    {
+      "key": "notif_sonar_channel_description",
+      "expectedEnglishPreview": "Overnight sleep quality monitoring (experimental)",
+      "translations": {
+        "zh-TW": "夜間睡眠品質監測（實驗性功能）",
+        "ja": "夜間の睡眠品質モニタリング（試験的機能）"
+      },
+      "reviewRisk": "BEHAVIOR_AND_SAFETY_REVIEW"
+    },
+    {
+      "key": "notif_sonar_title",
+      "expectedEnglishPreview": "Sleep tracking active",
+      "translations": {
+        "zh-TW": "睡眠追蹤進行中",
+        "ja": "睡眠トラッキング中"
+      },
+      "reviewRisk": "BEHAVIOR_AND_SAFETY_REVIEW"
+    },
+    {
+      "key": "notif_sonar_text",
+      "expectedEnglishPreview": "Sonar monitoring in progress",
+      "translations": {
+        "zh-TW": "正在進行聲納監測",
+        "ja": "ソナーによる監視中"
+      },
+      "reviewRisk": "BEHAVIOR_AND_SAFETY_REVIEW"
+    },
+    {
+      "key": "notif_alarm_health_title",
+      "expectedEnglishPreview": "Alarm reliability warning",
+      "translations": {
+        "zh-TW": "鬧鐘可靠性警告",
+        "ja": "アラームの信頼性に関する警告"
+      },
+      "reviewRisk": "BEHAVIOR_AND_SAFETY_REVIEW"
+    },
+    {
+      "key": "notif_hue_sunrise_title",
+      "expectedEnglishPreview": "Sunrise in progress",
+      "translations": {
+        "zh-TW": "日出燈光進行中",
+        "ja": "日の出演出中"
+      },
+      "reviewRisk": "BEHAVIOR_AND_SAFETY_REVIEW"
+    },
+    {
+      "key": "notif_hue_sunrise_text",
+      "expectedEnglishPreview": "Hue lights are brightening before your alarm",
+      "translations": {
+        "zh-TW": "Hue 燈光會在鬧鐘響起前逐漸變亮",
+        "ja": "アラームが鳴る前に Hue のライトが徐々に明るくなります"
+      },
+      "reviewRisk": "BEHAVIOR_AND_SAFETY_REVIEW"
+    },
+    {
+      "key": "notif_hue_sunrise_subtext",
+      "expectedEnglishPreview": "Hue sunrise",
+      "translations": {
+        "zh-TW": "Hue 日出燈光",
+        "ja": "Hue の日の出演出"
+      },
+      "reviewRisk": "BEHAVIOR_AND_SAFETY_REVIEW"
+    },
+    {
+      "key": "notif_hue_channel_name",
+      "expectedEnglishPreview": "Hue sunrise",
+      "translations": {
+        "zh-TW": "Hue 日出燈光",
+        "ja": "Hue の日の出演出"
+      },
+      "reviewRisk": "BEHAVIOR_AND_SAFETY_REVIEW"
+    },
+    {
+      "key": "notif_hue_channel_description",
+      "expectedEnglishPreview": "Shows progress while Hue lights brighten before an alarm",
+      "translations": {
+        "zh-TW": "顯示鬧鐘響起前 Hue 燈光逐漸變亮的進度",
+        "ja": "アラーム前に Hue のライトが徐々に明るくなる進行状況を表示します"
+      },
+      "reviewRisk": "BEHAVIOR_AND_SAFETY_REVIEW"
+    },
+    {
+      "key": "notif_wake_confirm_channel_name",
+      "expectedEnglishPreview": "Wake Confirmation",
+      "translations": {
+        "zh-TW": "清醒確認",
+        "ja": "起床確認"
+      },
+      "reviewRisk": "BEHAVIOR_AND_SAFETY_REVIEW"
+    },
+    {
+      "key": "notif_wake_confirm_channel_description",
+      "expectedEnglishPreview": "Asks you to confirm you are awake after dismissing an alarm",
+      "translations": {
+        "zh-TW": "解除鬧鐘後要求確認是否已清醒",
+        "ja": "アラーム停止後に起きているか確認を求めます"
+      },
+      "reviewRisk": "BEHAVIOR_AND_SAFETY_REVIEW"
+    },
+    {
+      "key": "alarm_edit_minutes_before_short",
+      "expectedEnglishPreview": "%1$d min before",
+      "translations": {
+        "zh-TW": "提前 %1$d 分鐘",
+        "ja": "%1$d 分前"
+      },
+      "reviewRisk": "TERM_AND_FORMAT_REVIEW"
+    },
+    {
+      "key": "alarm_edit_vacation_skip_date",
+      "expectedEnglishPreview": "%1$s %2$s (vacation skip)",
+      "translations": {
+        "zh-TW": "%1$s %2$s（休假期間略過）",
+        "ja": "%1$s %2$s（休暇中はスキップ）"
+      },
+      "reviewRisk": "TERM_AND_FORMAT_REVIEW"
+    },
+    {
+      "key": "alarm_edit_will_not_ring",
+      "expectedEnglishPreview": "This alarm will not ring with the current settings.",
+      "translations": {
+        "zh-TW": "按照目前設定，這個鬧鐘不會響起。",
+        "ja": "現在の設定では、このアラームは鳴りません。"
+      },
+      "reviewRisk": "BEHAVIOR_AND_SAFETY_REVIEW"
+    },
+    {
+      "key": "alarm_edit_feature_flash",
+      "expectedEnglishPreview": "Flash",
+      "translations": {
+        "zh-TW": "閃光",
+        "ja": "フラッシュ"
+      },
+      "reviewRisk": "TERM_AND_FORMAT_REVIEW"
+    },
+    {
+      "key": "alarm_edit_feature_sunrise",
+      "expectedEnglishPreview": "Sunrise",
+      "translations": {
+        "zh-TW": "日出燈光",
+        "ja": "日の出演出"
+      },
+      "reviewRisk": "TERM_AND_FORMAT_REVIEW"
+    },
+    {
+      "key": "alarm_edit_feature_announcement",
+      "expectedEnglishPreview": "Announcement",
+      "translations": {
+        "zh-TW": "語音播報",
+        "ja": "音声アナウンス"
+      },
+      "reviewRisk": "TERM_AND_FORMAT_REVIEW"
+    },
+    {
+      "key": "alarm_edit_feature_routine",
+      "expectedEnglishPreview": "Routine",
+      "translations": {
+        "zh-TW": "例行流程",
+        "ja": "ルーティン"
+      },
+      "reviewRisk": "TERM_AND_FORMAT_REVIEW"
+    },
+    {
+      "key": "alarm_edit_feature_profile",
+      "expectedEnglishPreview": "Profile",
+      "translations": {
+        "zh-TW": "情境設定檔",
+        "ja": "プロファイル"
+      },
+      "reviewRisk": "TERM_AND_FORMAT_REVIEW"
+    },
+    {
+      "key": "alarm_edit_feature_shift",
+      "expectedEnglishPreview": "Shift pattern",
+      "translations": {
+        "zh-TW": "輪班模式",
+        "ja": "シフトパターン"
+      },
+      "reviewRisk": "TERM_AND_FORMAT_REVIEW"
+    },
+    {
+      "key": "alarm_edit_feature_solar",
+      "expectedEnglishPreview": "Solar timing",
+      "translations": {
+        "zh-TW": "太陽時刻",
+        "ja": "太陽時刻"
+      },
+      "reviewRisk": "TERM_AND_FORMAT_REVIEW"
+    },
+    {
+      "key": "alarm_edit_schedule_specific",
+      "expectedEnglishPreview": "%1$s • Specific date set",
+      "translations": {
+        "zh-TW": "%1$s • 已指定日期",
+        "ja": "%1$s • 日付指定"
+      },
+      "reviewRisk": "TERM_AND_FORMAT_REVIEW"
+    },
+    {
+      "key": "alarm_edit_schedule_smart",
+      "expectedEnglishPreview": "%1$s • Smart %2$d min window",
+      "translations": {
+        "zh-TW": "%1$s • 智慧時間區間 %2$d 分鐘",
+        "ja": "%1$s • スマート時間帯 %2$d 分"
+      },
+      "reviewRisk": "TERM_AND_FORMAT_REVIEW"
+    },
+    {
+      "key": "alarm_edit_schedule_fixed",
+      "expectedEnglishPreview": "%1$s • Fixed wake time",
+      "translations": {
+        "zh-TW": "%1$s • 固定喚醒時間",
+        "ja": "%1$s • 固定起床時刻"
+      },
+      "reviewRisk": "TERM_AND_FORMAT_REVIEW"
+    },
+    {
+      "key": "alarm_edit_schedule_zone",
+      "expectedEnglishPreview": "%1$s • %2$s",
+      "translations": {
+        "zh-TW": "%1$s • %2$s",
+        "ja": "%1$s • %2$s"
+      },
+      "reviewRisk": "TERM_AND_FORMAT_REVIEW"
+    },
+    {
+      "key": "alarm_edit_schedule_device_zone",
+      "expectedEnglishPreview": "%1$s • Follows device zone",
+      "translations": {
+        "zh-TW": "%1$s • 跟隨裝置時區",
+        "ja": "%1$s • 端末のタイムゾーンに従う"
+      },
+      "reviewRisk": "TERM_AND_FORMAT_REVIEW"
+    },
+    {
+      "key": "alarm_edit_invalid_fixed_zone",
+      "expectedEnglishPreview": "Invalid fixed zone",
+      "translations": {
+        "zh-TW": "固定時區無效",
+        "ja": "固定タイムゾーンが無効です"
+      },
+      "reviewRisk": "TERM_AND_FORMAT_REVIEW"
+    },
+    {
+      "key": "alarm_edit_sound_category_summary",
+      "expectedEnglishPreview": "%1$s • %2$s",
+      "translations": {
+        "zh-TW": "%1$s • %2$s",
+        "ja": "%1$s • %2$s"
+      },
+      "reviewRisk": "TERM_AND_FORMAT_REVIEW"
+    },
+    {
+      "key": "alarm_edit_dismiss_category_summary",
+      "expectedEnglishPreview": "%1$s • %2$d min snooze",
+      "translations": {
+        "zh-TW": "%1$s • 貪睡 %2$d 分鐘",
+        "ja": "%1$s • スヌーズ %2$d 分"
+      },
+      "reviewRisk": "BEHAVIOR_AND_SAFETY_REVIEW"
+    },
+    {
+      "key": "alarm_edit_chain_picker_description",
+      "expectedEnglishPreview": "Pick the wake-up tasks in the order they should happen. The first item appears first when the alarm rings.",
+      "translations": {
+        "zh-TW": "請依執行順序挑選喚醒任務。鬧鐘響起時會先顯示第一項。",
+        "ja": "起床タスクを実行する順番に選択してください。アラームが鳴ると最初の項目が表示されます。"
+      },
+      "reviewRisk": "TERM_AND_FORMAT_REVIEW"
+    },
+    {
+      "key": "alarm_edit_chain_picker_empty_hint",
+      "expectedEnglishPreview": "Start with two or more challenges when you want dismissal to feel more deliberate than a single math or shake task.",
+      "translations": {
+        "zh-TW": "若希望解除鬧鐘時不只完成一次數學題或搖晃手機，可以加入兩項以上的挑戰。",
+        "ja": "計算や端末を振る動作だけで停止したくない場合は、2つ以上のチャレンジを追加できます。"
+      },
+      "reviewRisk": "TERM_AND_FORMAT_REVIEW"
+    },
+    {
+      "key": "alarm_edit_move_earlier",
+      "expectedEnglishPreview": "Move %1$s earlier",
+      "translations": {
+        "zh-TW": "將 %1$s 往前移",
+        "ja": "%1$s を前に移動"
+      },
+      "reviewRisk": "TERM_AND_FORMAT_REVIEW"
+    },
+    {
+      "key": "alarm_edit_move_later",
+      "expectedEnglishPreview": "Move %1$s later",
+      "translations": {
+        "zh-TW": "將 %1$s 往後移",
+        "ja": "%1$s を後ろに移動"
+      },
+      "reviewRisk": "TERM_AND_FORMAT_REVIEW"
+    },
+    {
+      "key": "alarm_edit_remove_challenge",
+      "expectedEnglishPreview": "Remove %1$s",
+      "translations": {
+        "zh-TW": "移除 %1$s 挑戰",
+        "ja": "%1$s のチャレンジを外す"
+      },
+      "reviewRisk": "BEHAVIOR_AND_SAFETY_REVIEW"
+    },
+    {
+      "key": "alarm_edit_challenge_math_easy_description",
+      "expectedEnglishPreview": "Solve a simple math problem to dismiss.",
+      "translations": {
+        "zh-TW": "解出簡單數學題後才能解除鬧鐘。",
+        "ja": "簡単な計算問題を解いてからアラームを停止します。"
+      },
+      "reviewRisk": "BEHAVIOR_AND_SAFETY_REVIEW"
+    },
+    {
+      "key": "alarm_edit_challenge_math_medium_description",
+      "expectedEnglishPreview": "Solve a two-operation problem before the alarm stops.",
+      "translations": {
+        "zh-TW": "完成一道需要兩步運算的題目後，才能停止鬧鐘。",
+        "ja": "2つの演算を含む問題を解いてからアラームを停止します。"
+      },
+      "reviewRisk": "BEHAVIOR_AND_SAFETY_REVIEW"
+    },
+    {
+      "key": "alarm_edit_challenge_math_hard_description",
+      "expectedEnglishPreview": "Use larger numbers and more focus when you need a stronger wake-up.",
+      "translations": {
+        "zh-TW": "以較大的數字與更集中的思考，增加喚醒挑戰難度。",
+        "ja": "大きな数値と集中力を要する問題で、起床チャレンジを難しくします。"
+      },
+      "reviewRisk": "BEHAVIOR_AND_SAFETY_REVIEW"
+    },
+    {
+      "key": "alarm_edit_challenge_shake_description",
+      "expectedEnglishPreview": "Shake the phone repeatedly to prove you are actually moving.",
+      "translations": {
+        "zh-TW": "反覆搖晃手機，以動作確認自己已清醒。",
+        "ja": "端末を繰り返し振り、体を動かしていることを確認します。"
+      },
+      "reviewRisk": "BEHAVIOR_AND_SAFETY_REVIEW"
+    },
+    {
+      "key": "alarm_edit_challenge_sequence_description",
+      "expectedEnglishPreview": "Tap numbers in ascending order without missing a step.",
+      "translations": {
+        "zh-TW": "依照遞增順序點選數字，不能漏掉步驟。",
+        "ja": "数字を昇順に、順番を飛ばさずタップします。"
+      },
+      "reviewRisk": "BEHAVIOR_AND_SAFETY_REVIEW"
+    },
+    {
+      "key": "alarm_edit_challenge_memory_description",
+      "expectedEnglishPreview": "Memorize and recreate a short visual pattern.",
+      "translations": {
+        "zh-TW": "記住並重現一小段視覺圖案。",
+        "ja": "短い視覚パターンを覚えて再現します。"
+      },
+      "reviewRisk": "BEHAVIOR_AND_SAFETY_REVIEW"
+    },
+    {
+      "key": "alarm_edit_challenge_typing_description",
+      "expectedEnglishPreview": "Type a wake-up phrase accurately before dismissal.",
+      "translations": {
+        "zh-TW": "正確輸入喚醒短句，才能解除鬧鐘。",
+        "ja": "起床用の短いフレーズを正しく入力してから停止します。"
+      },
+      "reviewRisk": "BEHAVIOR_AND_SAFETY_REVIEW"
+    },
+    {
+      "key": "alarm_edit_challenge_handwriting_description",
+      "expectedEnglishPreview": "Draw a wake-up word with on-device handwriting recognition and typed fallback.",
+      "translations": {
+        "zh-TW": "以裝置端手寫辨識寫出喚醒詞，也可以改用文字輸入。",
+        "ja": "端末内の手書き認識で起床用の単語を書きます。文字入力でも代用できます。"
+      },
+      "reviewRisk": "BEHAVIOR_AND_SAFETY_REVIEW"
+    },
+    {
+      "key": "alarm_edit_challenge_walk_description",
+      "expectedEnglishPreview": "Walk a set number of steps to get fully upright.",
+      "translations": {
+        "zh-TW": "走完指定步數，讓身體確實起身活動。",
+        "ja": "指定された歩数を歩いて、実際に体を動かします。"
+      },
+      "reviewRisk": "BEHAVIOR_AND_SAFETY_REVIEW"
+    },
+    {
+      "key": "alarm_edit_challenge_nfc_description",
+      "expectedEnglishPreview": "Scan a specific NFC tag placed somewhere away from bed.",
+      "translations": {
+        "zh-TW": "掃描放在床邊以外位置的指定 NFC 標籤。",
+        "ja": "ベッドから離れた場所に置いた指定の NFC タグを読み取ります。"
+      },
+      "reviewRisk": "BEHAVIOR_AND_SAFETY_REVIEW"
+    },
+    {
+      "key": "alarm_edit_challenge_barcode_description",
+      "expectedEnglishPreview": "Scan a saved barcode to finish the challenge.",
+      "translations": {
+        "zh-TW": "掃描已儲存的條碼以完成挑戰。",
+        "ja": "保存済みのバーコードを読み取ってチャレンジを完了します。"
+      },
+      "reviewRisk": "BEHAVIOR_AND_SAFETY_REVIEW"
+    },
+    {
+      "key": "alarm_edit_challenge_photo_description",
+      "expectedEnglishPreview": "Match a reference photo so you need to move to the right spot.",
+      "translations": {
+        "zh-TW": "比對參考照片，必須移動到指定位置才能完成。",
+        "ja": "基準写真と照合するため、指定の場所に移動する必要があります。"
+      },
+      "reviewRisk": "BEHAVIOR_AND_SAFETY_REVIEW"
+    },
+    {
+      "key": "alarm_edit_challenge_squat_description",
+      "expectedEnglishPreview": "Complete a quick squat set while holding the phone.",
+      "translations": {
+        "zh-TW": "手持手機完成一組簡短深蹲動作。",
+        "ja": "端末を持ちながら短いスクワットのセットを完了します。"
+      },
+      "reviewRisk": "BEHAVIOR_AND_SAFETY_REVIEW"
+    },
+    {
+      "key": "alarm_edit_challenge_pushup_description",
+      "expectedEnglishPreview": "Do push-ups over the phone placed face-down on the floor.",
+      "translations": {
+        "zh-TW": "將手機螢幕朝下放在地板上，於手機上方完成伏地挺身。",
+        "ja": "端末を画面を下にして床に置き、その上で腕立て伏せを行います。"
+      },
+      "reviewRisk": "BEHAVIOR_AND_SAFETY_REVIEW"
+    },
+    {
+      "key": "alarm_edit_challenge_plank_description",
+      "expectedEnglishPreview": "Hold the phone level in a plank position for 30 seconds.",
+      "translations": {
+        "zh-TW": "維持棒式姿勢，讓手機保持水平達 30 秒。",
+        "ja": "プランク姿勢で端末を水平に30秒間保ちます。"
+      },
+      "reviewRisk": "BEHAVIOR_AND_SAFETY_REVIEW"
+    },
+    {
+      "key": "alarm_edit_challenge_wifi_description",
+      "expectedEnglishPreview": "Connect to a specific Wi-Fi network before the alarm stops.",
+      "translations": {
+        "zh-TW": "在鬧鐘停止前，連上指定的 Wi-Fi 網路。",
+        "ja": "アラームを停止する前に指定の Wi-Fi ネットワークに接続します。"
+      },
+      "reviewRisk": "BEHAVIOR_AND_SAFETY_REVIEW"
+    },
+    {
+      "key": "alarm_edit_challenge_maze_description",
+      "expectedEnglishPreview": "Finish a simple maze to prevent sleepy autopilot taps.",
+      "translations": {
+        "zh-TW": "完成簡單迷宮，避免半睡半醒時無意識地亂點。",
+        "ja": "簡単な迷路を解き、寝ぼけて無意識にタップするのを防ぎます。"
+      },
+      "reviewRisk": "BEHAVIOR_AND_SAFETY_REVIEW"
+    },
+    {
+      "key": "alarm_edit_challenge_sheep_description",
+      "expectedEnglishPreview": "Tap only the sheep to complete the challenge.",
+      "translations": {
+        "zh-TW": "只點選羊，即可完成挑戰。",
+        "ja": "羊だけをタップしてチャレンジを完了します。"
+      },
+      "reviewRisk": "BEHAVIOR_AND_SAFETY_REVIEW"
+    },
+    {
+      "key": "alarm_edit_challenge_simon_description",
+      "expectedEnglishPreview": "Watch the color sequence, then repeat it in order.",
+      "translations": {
+        "zh-TW": "先觀察顏色順序，再依原順序重複操作。",
+        "ja": "色の順番を見て、同じ順番で操作します。"
+      },
+      "reviewRisk": "BEHAVIOR_AND_SAFETY_REVIEW"
+    },
+    {
+      "key": "alarm_edit_challenge_date_description",
+      "expectedEnglishPreview": "Type the displayed date backwards exactly.",
+      "translations": {
+        "zh-TW": "將畫面上的日期完全倒序輸入。",
+        "ja": "画面に表示された日付を逆順に正確に入力します。"
+      },
+      "reviewRisk": "BEHAVIOR_AND_SAFETY_REVIEW"
+    },
+    {
+      "key": "alarm_edit_challenge_stroop_description",
+      "expectedEnglishPreview": "Pick the ink color while ignoring the word.",
+      "translations": {
+        "zh-TW": "忽略文字內容，只選擇文字顯示的顏色。",
+        "ja": "文字の意味を無視して、文字の色を選びます。"
+      },
+      "reviewRisk": "BEHAVIOR_AND_SAFETY_REVIEW"
+    },
+    {
+      "key": "alarm_edit_challenge_rps_description",
+      "expectedEnglishPreview": "Win 3 rounds of RPS against the computer to dismiss.",
+      "translations": {
+        "zh-TW": "和電腦猜拳贏三回合，才能解除鬧鐘。",
+        "ja": "コンピューターとじゃんけんで3回勝つとアラームを停止できます。"
+      },
+      "reviewRisk": "BEHAVIOR_AND_SAFETY_REVIEW"
+    },
+    {
+      "key": "alarm_edit_challenge_emoji_description",
+      "expectedEnglishPreview": "Memorize 8 pairs on a 4x4 grid, then find them all face-down.",
+      "translations": {
+        "zh-TW": "記住 4×4 格中的 8 組配對，再翻開全部配對。",
+        "ja": "4×4のマスにある8組の絵柄を覚えて、すべてのペアを見つけます。"
+      },
+      "reviewRisk": "BEHAVIOR_AND_SAFETY_REVIEW"
+    },
+    {
+      "key": "alarm_edit_challenge_speed_description",
+      "expectedEnglishPreview": "Type a short phrase at 15+ wpm with at most 2 word errors.",
+      "translations": {
+        "zh-TW": "以每分鐘至少 15 字的速度輸入短句，且最多只能有 2 個單字錯誤。",
+        "ja": "短いフレーズを毎分15語以上で入力し、単語の誤りは最大2個までにします。"
+      },
+      "reviewRisk": "BEHAVIOR_AND_SAFETY_REVIEW"
+    },
+    {
+      "key": "alarm_edit_challenge_wordle_description",
+      "expectedEnglishPreview": "Guess a hidden 5-letter word in up to 6 tries.",
+      "translations": {
+        "zh-TW": "最多嘗試六次，猜出隱藏的五字母單字。",
+        "ja": "6回以内に隠された5文字の単語を当てます。"
+      },
+      "reviewRisk": "BEHAVIOR_AND_SAFETY_REVIEW"
+    },
+    {
+      "key": "alarm_edit_challenge_pvt_description",
+      "expectedEnglishPreview": "Tap a target 5 times as fast as you can. Average under 500 ms to dismiss.",
+      "translations": {
+        "zh-TW": "盡快點選目標五次，平均反應時間低於 500 毫秒才能解除。",
+        "ja": "ターゲットを5回できるだけ速くタップします。平均反応時間が500ミリ秒未満で停止できます。"
+      },
+      "reviewRisk": "BEHAVIOR_AND_SAFETY_REVIEW"
+    },
+    {
+      "key": "alarm_edit_challenge_difference_description",
+      "expectedEnglishPreview": "Compare two color grids and tap the single changed tile.",
+      "translations": {
+        "zh-TW": "比較兩個色塊網格，找出唯一變化的方格並點選。",
+        "ja": "2つの色のグリッドを比較し、1か所だけ変わったマスをタップします。"
+      },
+      "reviewRisk": "BEHAVIOR_AND_SAFETY_REVIEW"
+    },
+    {
+      "key": "alarm_edit_challenge_chess_description",
+      "expectedEnglishPreview": "Pick the mate-in-1 move from a small chess position.",
+      "translations": {
+        "zh-TW": "在小型西洋棋局面中，選出一步將死的走法。",
+        "ja": "小さなチェスの局面から、1手でチェックメイトできる手を選びます。"
+      },
+      "reviewRisk": "BEHAVIOR_AND_SAFETY_REVIEW"
+    },
+    {
+      "key": "alarm_edit_challenge_rsvp_description",
+      "expectedEnglishPreview": "Read a rapid word stream, then identify a word that appeared.",
+      "translations": {
+        "zh-TW": "快速閱讀連續出現的單字，再辨認其中出現過的單字。",
+        "ja": "単語を高速で順番に読み、その中に出てきた単語を識別します。"
+      },
+      "reviewRisk": "BEHAVIOR_AND_SAFETY_REVIEW"
+    }
+  ]
+}
