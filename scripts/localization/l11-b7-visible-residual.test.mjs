@@ -9,7 +9,7 @@ import {buildDispositionQueue} from "./l11-b3-source-dispositions.mjs";
 import {generateMatrix} from "./b0-t1-canonical-matrix.mjs";
 const root=resolve(dirname(fileURLToPath(import.meta.url)),"../..");
 let cached;
-function fixtures(){return cached??=({...loadL11Inputs(root,"L11-B7-TEST-SHA"),batch8:[]});}
+function fixtures(){return cached??=({...loadL11Inputs(root,"L11-B7-TEST-SHA"),batch8:[],batch9:[]});}
 test("L11-B7 adds 116 source-locked bilingual keys and accounts for complete locale gaps",()=>{
   const d=buildL11(fixtures()),s=d.summary;
   assert.equal(s.batch7Keys,116);

@@ -1,0 +1,306 @@
+{
+  "schema": "acx-l11-batch9-drafts/1",
+  "topic": "YOUTUBE_SEARCH_DOWNLOAD_NETWORK_ERRORS",
+  "status": "MODEL_PRELIMINARY_NOT_APPROVED",
+  "independentApproval": false,
+  "sourceRef": "app/src/main/res/values/strings.xml",
+  "records": [
+    {
+      "key": "youtube_search_youtube",
+      "expectedEnglishPreview": "Search YouTube",
+      "translations": {
+        "zh-TW": "搜尋 YouTube",
+        "ja": "YouTube を検索"
+      },
+      "reviewRisk": "MEDIA_SEARCH_UI_REVIEW"
+    },
+    {
+      "key": "youtube_paste_url",
+      "expectedEnglishPreview": "Paste URL",
+      "translations": {
+        "zh-TW": "貼上網址",
+        "ja": "URL を貼り付け"
+      },
+      "reviewRisk": "MEDIA_SEARCH_UI_REVIEW"
+    },
+    {
+      "key": "youtube_download",
+      "expectedEnglishPreview": "Download",
+      "translations": {
+        "zh-TW": "下載",
+        "ja": "ダウンロード"
+      },
+      "reviewRisk": "DOWNLOAD_ENGINE_CAPABILITY_AND_NETWORK_REVIEW"
+    },
+    {
+      "key": "youtube_update",
+      "expectedEnglishPreview": "Update",
+      "translations": {
+        "zh-TW": "更新",
+        "ja": "更新"
+      },
+      "reviewRisk": "MEDIA_SEARCH_UI_REVIEW"
+    },
+    {
+      "key": "youtube_search",
+      "expectedEnglishPreview": "Search",
+      "translations": {
+        "zh-TW": "搜尋",
+        "ja": "検索"
+      },
+      "reviewRisk": "MEDIA_SEARCH_UI_REVIEW"
+    },
+    {
+      "key": "youtube_searching_youtube",
+      "expectedEnglishPreview": "Searching YouTube...",
+      "translations": {
+        "zh-TW": "正在搜尋 YouTube…",
+        "ja": "YouTube を検索中…"
+      },
+      "reviewRisk": "MEDIA_SEARCH_UI_REVIEW"
+    },
+    {
+      "key": "youtube_search_again",
+      "expectedEnglishPreview": "Search again",
+      "translations": {
+        "zh-TW": "重新搜尋",
+        "ja": "再検索"
+      },
+      "reviewRisk": "MEDIA_SEARCH_UI_REVIEW"
+    },
+    {
+      "key": "youtube_loading_preview",
+      "expectedEnglishPreview": "Loading preview…",
+      "translations": {
+        "zh-TW": "正在載入試聽…",
+        "ja": "試聴を読み込み中…"
+      },
+      "reviewRisk": "MEDIA_SEARCH_UI_REVIEW"
+    },
+    {
+      "key": "youtube_downloader_engine",
+      "expectedEnglishPreview": "Downloader engine",
+      "translations": {
+        "zh-TW": "下載引擎",
+        "ja": "ダウンロードエンジン"
+      },
+      "reviewRisk": "DOWNLOAD_ENGINE_CAPABILITY_AND_NETWORK_REVIEW"
+    },
+    {
+      "key": "youtube_no_matching_clips",
+      "expectedEnglishPreview": "No matching clips",
+      "translations": {
+        "zh-TW": "沒有符合的影片",
+        "ja": "一致する動画がありません"
+      },
+      "reviewRisk": "MEDIA_SEARCH_UI_REVIEW"
+    },
+    {
+      "key": "youtube_loading_preview_tap_cancel",
+      "expectedEnglishPreview": "Loading preview, tap to cancel",
+      "translations": {
+        "zh-TW": "正在載入試聽，點選可取消",
+        "ja": "試聴を読み込み中です。タップするとキャンセルできます"
+      },
+      "reviewRisk": "MEDIA_SEARCH_UI_REVIEW"
+    },
+    {
+      "key": "youtube_take_10_60_seconds_depending",
+      "expectedEnglishPreview": "This can take 10-60 seconds depending on the clip and your connection.",
+      "translations": {
+        "zh-TW": "依影片與網路狀況，這可能需要 10～60 秒。",
+        "ja": "動画と接続状況によっては 10～60 秒かかることがあります。"
+      },
+      "reviewRisk": "MEDIA_SEARCH_UI_REVIEW"
+    },
+    {
+      "key": "youtube_search_hint",
+      "expectedEnglishPreview": "Try “rooster crow”, “piano bell”, or “forest birds”. Preview first, then save the result that feels right.",
+      "translations": {
+        "zh-TW": "試試搜尋「公雞啼叫」、「鋼琴鈴聲」或「森林鳥鳴」。請先試聽，再儲存適合的聲音。",
+        "ja": "「鶏の鳴き声」「ピアノのベル」「森の鳥」などを検索してみてください。先に試聴し、好みの音を保存してください。"
+      },
+      "reviewRisk": "MEDIA_SEARCH_UI_REVIEW"
+    },
+    {
+      "key": "youtube_error_unavailable_build",
+      "expectedEnglishPreview": "YouTube downloads are not available in this build.",
+      "translations": {
+        "zh-TW": "此版本不支援從 YouTube 下載。",
+        "ja": "このビルドでは YouTube からダウンロードできません。"
+      },
+      "reviewRisk": "DOWNLOAD_ENGINE_CAPABILITY_AND_NETWORK_REVIEW"
+    },
+    {
+      "key": "youtube_error_no_connection",
+      "expectedEnglishPreview": "Check your connection and try again.",
+      "translations": {
+        "zh-TW": "請檢查網路連線後再試一次。",
+        "ja": "接続状況を確認して再試行してください。"
+      },
+      "reviewRisk": "DOWNLOAD_ENGINE_CAPABILITY_AND_NETWORK_REVIEW"
+    },
+    {
+      "key": "youtube_error_timeout",
+      "expectedEnglishPreview": "YouTube took too long to respond. Try again later.",
+      "translations": {
+        "zh-TW": "YouTube 回應時間過長，請稍後再試。",
+        "ja": "YouTube の応答に時間がかかりすぎました。後ほど再試行してください。"
+      },
+      "reviewRisk": "DOWNLOAD_ENGINE_CAPABILITY_AND_NETWORK_REVIEW"
+    },
+    {
+      "key": "youtube_error_tls",
+      "expectedEnglishPreview": "Could not connect securely to YouTube. Try again later.",
+      "translations": {
+        "zh-TW": "無法安全連線到 YouTube，請稍後再試。",
+        "ja": "YouTube に安全に接続できませんでした。後ほど再試行してください。"
+      },
+      "reviewRisk": "DOWNLOAD_ENGINE_CAPABILITY_AND_NETWORK_REVIEW"
+    },
+    {
+      "key": "youtube_error_blocked",
+      "expectedEnglishPreview": "YouTube is blocking this request right now. Try updating the downloader engine or try again later.",
+      "translations": {
+        "zh-TW": "YouTube 目前封鎖此請求。請嘗試更新下載引擎，或稍後再試。",
+        "ja": "現在 YouTube によってこのリクエストがブロックされています。ダウンロードエンジンを更新するか、後で再試行してください。"
+      },
+      "reviewRisk": "DOWNLOAD_ENGINE_CAPABILITY_AND_NETWORK_REVIEW"
+    },
+    {
+      "key": "youtube_error_no_audio_stream",
+      "expectedEnglishPreview": "YouTube did not return a usable audio stream. Try another result or try again later.",
+      "translations": {
+        "zh-TW": "YouTube 未提供可用的音訊串流，請嘗試其他結果或稍後再試。",
+        "ja": "YouTube から利用可能な音声ストリームが返されませんでした。別の結果を選ぶか、後で再試行してください。"
+      },
+      "reviewRisk": "DOWNLOAD_ENGINE_CAPABILITY_AND_NETWORK_REVIEW"
+    },
+    {
+      "key": "youtube_error_extractor",
+      "expectedEnglishPreview": "YouTube changed how this video is served. Update the downloader engine and try again.",
+      "translations": {
+        "zh-TW": "YouTube 已變更影片傳送方式，請更新下載引擎再試一次。",
+        "ja": "YouTube の動画配信方式が変更されました。ダウンロードエンジンを更新して再試行してください。"
+      },
+      "reviewRisk": "DOWNLOAD_ENGINE_CAPABILITY_AND_NETWORK_REVIEW"
+    },
+    {
+      "key": "youtube_error_invalid_link",
+      "expectedEnglishPreview": "Enter a valid YouTube link.",
+      "translations": {
+        "zh-TW": "請輸入有效的 YouTube 連結。",
+        "ja": "有効な YouTube リンクを入力してください。"
+      },
+      "reviewRisk": "DOWNLOAD_ENGINE_CAPABILITY_AND_NETWORK_REVIEW"
+    },
+    {
+      "key": "youtube_error_io",
+      "expectedEnglishPreview": "The YouTube request could not be completed. Check your connection and try again.",
+      "translations": {
+        "zh-TW": "無法完成 YouTube 請求，請檢查連線後再試。",
+        "ja": "YouTube のリクエストを完了できませんでした。接続状況を確認して再試行してください。"
+      },
+      "reviewRisk": "DOWNLOAD_ENGINE_CAPABILITY_AND_NETWORK_REVIEW"
+    },
+    {
+      "key": "youtube_error_preview",
+      "expectedEnglishPreview": "Could not get a preview stream. Try another result.",
+      "translations": {
+        "zh-TW": "無法取得試聽串流，請嘗試其他結果。",
+        "ja": "試聴用ストリームを取得できませんでした。別の結果を試してください。"
+      },
+      "reviewRisk": "DOWNLOAD_ENGINE_CAPABILITY_AND_NETWORK_REVIEW"
+    },
+    {
+      "key": "youtube_error_search",
+      "expectedEnglishPreview": "Search failed. Try a shorter phrase or try again later.",
+      "translations": {
+        "zh-TW": "搜尋失敗。請使用較短的關鍵字或稍後再試。",
+        "ja": "検索に失敗しました。短い語句にするか、後で再試行してください。"
+      },
+      "reviewRisk": "DOWNLOAD_ENGINE_CAPABILITY_AND_NETWORK_REVIEW"
+    },
+    {
+      "key": "youtube_error_download",
+      "expectedEnglishPreview": "Download failed. Try another link or update the downloader engine.",
+      "translations": {
+        "zh-TW": "下載失敗。請嘗試其他連結或更新下載引擎。",
+        "ja": "ダウンロードに失敗しました。別のリンクを試すか、ダウンロードエンジンを更新してください。"
+      },
+      "reviewRisk": "DOWNLOAD_ENGINE_CAPABILITY_AND_NETWORK_REVIEW"
+    },
+    {
+      "key": "youtube_error_engine_update",
+      "expectedEnglishPreview": "Update failed. Your current engine was kept. Check your connection and try again.",
+      "translations": {
+        "zh-TW": "更新失敗。已保留原有引擎，請檢查連線後再試。",
+        "ja": "更新に失敗しました。現在のエンジンは維持されています。接続状況を確認して再試行してください。"
+      },
+      "reviewRisk": "DOWNLOAD_ENGINE_CAPABILITY_AND_NETWORK_REVIEW"
+    },
+    {
+      "key": "youtube_downloading",
+      "expectedEnglishPreview": "Downloading “%1$s”…",
+      "translations": {
+        "zh-TW": "正在下載「%1$s」…",
+        "ja": "「%1$s」をダウンロード中…"
+      },
+      "reviewRisk": "DOWNLOAD_ENGINE_CAPABILITY_AND_NETWORK_REVIEW"
+    },
+    {
+      "key": "youtube_fallback_sound_name",
+      "expectedEnglishPreview": "alarm sound",
+      "translations": {
+        "zh-TW": "鬧鐘聲音",
+        "ja": "アラーム音"
+      },
+      "reviewRisk": "MEDIA_SEARCH_UI_REVIEW"
+    },
+    {
+      "key": "youtube_updating_engine",
+      "expectedEnglishPreview": "Updating downloader engine…",
+      "translations": {
+        "zh-TW": "正在更新下載引擎…",
+        "ja": "ダウンロードエンジンを更新中…"
+      },
+      "reviewRisk": "DOWNLOAD_ENGINE_CAPABILITY_AND_NETWORK_REVIEW"
+    },
+    {
+      "key": "youtube_engine_updated_to",
+      "expectedEnglishPreview": "Downloader engine updated to %1$s.",
+      "translations": {
+        "zh-TW": "下載引擎已更新至 %1$s。",
+        "ja": "ダウンロードエンジンを %1$s に更新しました。"
+      },
+      "reviewRisk": "DOWNLOAD_ENGINE_CAPABILITY_AND_NETWORK_REVIEW"
+    },
+    {
+      "key": "youtube_engine_updated",
+      "expectedEnglishPreview": "Downloader engine updated.",
+      "translations": {
+        "zh-TW": "下載引擎已更新。",
+        "ja": "ダウンロードエンジンを更新しました。"
+      },
+      "reviewRisk": "DOWNLOAD_ENGINE_CAPABILITY_AND_NETWORK_REVIEW"
+    },
+    {
+      "key": "youtube_engine_current",
+      "expectedEnglishPreview": "Downloader engine is current (%1$s).",
+      "translations": {
+        "zh-TW": "目前下載引擎版本：%1$s。",
+        "ja": "現在のダウンロードエンジン：%1$s。"
+      },
+      "reviewRisk": "DOWNLOAD_ENGINE_CAPABILITY_AND_NETWORK_REVIEW"
+    },
+    {
+      "key": "youtube_engine_already_current",
+      "expectedEnglishPreview": "Downloader engine is already current.",
+      "translations": {
+        "zh-TW": "下載引擎已是最新版本。",
+        "ja": "ダウンロードエンジンは最新です。"
+      },
+      "reviewRisk": "DOWNLOAD_ENGINE_CAPABILITY_AND_NETWORK_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,486 @@
+{
+  "schema": "acx-l11-batch9-drafts/1",
+  "topic": "MORNING_BRIEFING_CALENDAR_SHIFT_OEM_RELEASE_UI",
+  "status": "MODEL_PRELIMINARY_NOT_APPROVED",
+  "independentApproval": false,
+  "sourceRef": "app/src/main/res/values/strings.xml",
+  "records": [
+    {
+      "key": "briefing_good_morning",
+      "expectedEnglishPreview": "Good morning",
+      "translations": {
+        "zh-TW": "早安",
+        "ja": "おはようございます"
+      },
+      "reviewRisk": "VISIBLE_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "briefing_re_clear_alarm_here_s",
+      "expectedEnglishPreview": "You’re clear of the alarm. Here’s the shortest path into the day.",
+      "translations": {
+        "zh-TW": "鬧鐘已解除，以下是今天開始前的重點。",
+        "ja": "アラームを停止しました。今日を始めるための要点です。"
+      },
+      "reviewRisk": "VISIBLE_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "briefing_morning_briefing",
+      "expectedEnglishPreview": "Morning briefing",
+      "translations": {
+        "zh-TW": "晨間摘要",
+        "ja": "朝のブリーフィング"
+      },
+      "reviewRisk": "VISIBLE_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "briefing_quick_snapshot_start_moving_context",
+      "expectedEnglishPreview": "A quick snapshot so you can start moving with context.",
+      "translations": {
+        "zh-TW": "快速查看目前資訊，方便開始今天的行程。",
+        "ja": "今日の活動を始める前に情報を手早く確認できます。"
+      },
+      "reviewRisk": "VISIBLE_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "briefing_nothing_urgent_queued_right_now",
+      "expectedEnglishPreview": "Nothing urgent is queued right now. Enjoy a calmer start to the day.",
+      "translations": {
+        "zh-TW": "目前沒有緊急事項，慢慢展開新的一天。",
+        "ja": "現在、急ぎの予定はありません。落ち着いて一日を始めましょう。"
+      },
+      "reviewRisk": "VISIBLE_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "briefing_short_checklist_get_momentum_without",
+      "expectedEnglishPreview": "A short checklist to get momentum without decision fatigue.",
+      "translations": {
+        "zh-TW": "簡短的待辦清單，協助你不用想太多就開始行動。",
+        "ja": "考えすぎずに動き出すための短いチェックリストです。"
+      },
+      "reviewRisk": "VISIBLE_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "briefing_close_briefing",
+      "expectedEnglishPreview": "Close briefing",
+      "translations": {
+        "zh-TW": "關閉晨間摘要",
+        "ja": "朝のブリーフィングを閉じる"
+      },
+      "reviewRisk": "VISIBLE_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "briefing_morning_routine",
+      "expectedEnglishPreview": "Morning routine",
+      "translations": {
+        "zh-TW": "早晨例行事項",
+        "ja": "朝のルーティン"
+      },
+      "reviewRisk": "VISIBLE_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "briefing_calendar_event",
+      "expectedEnglishPreview": "Calendar event",
+      "translations": {
+        "zh-TW": "行事曆活動",
+        "ja": "カレンダーの予定"
+      },
+      "reviewRisk": "DEVICE_SCHEDULE_CALENDAR_CONTEXT_REVIEW"
+    },
+    {
+      "key": "briefing_calendar_all_day",
+      "expectedEnglishPreview": "%1$s · All day",
+      "translations": {
+        "zh-TW": "%1$s · 全天",
+        "ja": "%1$s · 終日"
+      },
+      "reviewRisk": "DEVICE_SCHEDULE_CALENDAR_CONTEXT_REVIEW"
+    },
+    {
+      "key": "briefing_calendar_at",
+      "expectedEnglishPreview": "%1$s · %2$s",
+      "translations": {
+        "zh-TW": "%1$s · %2$s",
+        "ja": "%1$s · %2$s"
+      },
+      "reviewRisk": "DEVICE_SCHEDULE_CALENDAR_CONTEXT_REVIEW"
+    },
+    {
+      "key": "briefing_spoken_time_and_date",
+      "expectedEnglishPreview": "It is %1$s. Today is %2$s, %3$s %4$d.",
+      "translations": {
+        "zh-TW": "現在時間 %1$s。今天是 %2$s，%3$s %4$d 日。",
+        "ja": "現在の時刻は %1$s です。今日は %2$s、%3$s %4$d 日です。"
+      },
+      "reviewRisk": "DEVICE_SCHEDULE_CALENDAR_CONTEXT_REVIEW"
+    },
+    {
+      "key": "calendar_event_fallback_title",
+      "expectedEnglishPreview": "Calendar Event",
+      "translations": {
+        "zh-TW": "行事曆活動",
+        "ja": "カレンダーの予定"
+      },
+      "reviewRisk": "DEVICE_SCHEDULE_CALENDAR_CONTEXT_REVIEW"
+    },
+    {
+      "key": "calendar_all_day",
+      "expectedEnglishPreview": "All day",
+      "translations": {
+        "zh-TW": "全天",
+        "ja": "終日"
+      },
+      "reviewRisk": "DEVICE_SCHEDULE_CALENDAR_CONTEXT_REVIEW"
+    },
+    {
+      "key": "calendar_time_range",
+      "expectedEnglishPreview": "%1$s to %2$s",
+      "translations": {
+        "zh-TW": "%1$s 至 %2$s",
+        "ja": "%1$s から %2$s まで"
+      },
+      "reviewRisk": "DEVICE_SCHEDULE_CALENDAR_CONTEXT_REVIEW"
+    },
+    {
+      "key": "calendar_untitled_event",
+      "expectedEnglishPreview": "Untitled",
+      "translations": {
+        "zh-TW": "無標題活動",
+        "ja": "無題の予定"
+      },
+      "reviewRisk": "DEVICE_SCHEDULE_CALENDAR_CONTEXT_REVIEW"
+    },
+    {
+      "key": "chronotype_chronotype_estimate",
+      "expectedEnglishPreview": "Chronotype estimate",
+      "translations": {
+        "zh-TW": "作息類型估計",
+        "ja": "クロノタイプの推定"
+      },
+      "reviewRisk": "DEVICE_SCHEDULE_CALENDAR_CONTEXT_REVIEW"
+    },
+    {
+      "key": "chronotype_early_type",
+      "expectedEnglishPreview": "Early type",
+      "translations": {
+        "zh-TW": "早起型",
+        "ja": "朝型"
+      },
+      "reviewRisk": "DEVICE_SCHEDULE_CALENDAR_CONTEXT_REVIEW"
+    },
+    {
+      "key": "chronotype_balanced",
+      "expectedEnglishPreview": "Balanced",
+      "translations": {
+        "zh-TW": "平衡型",
+        "ja": "中間型"
+      },
+      "reviewRisk": "DEVICE_SCHEDULE_CALENDAR_CONTEXT_REVIEW"
+    },
+    {
+      "key": "chronotype_late_type",
+      "expectedEnglishPreview": "Late type",
+      "translations": {
+        "zh-TW": "晚睡型",
+        "ja": "夜型"
+      },
+      "reviewRisk": "DEVICE_SCHEDULE_CALENDAR_CONTEXT_REVIEW"
+    },
+    {
+      "key": "oem_samsung_title",
+      "expectedEnglishPreview": "Prevent Samsung from killing alarms",
+      "translations": {
+        "zh-TW": "避免 Samsung 限制鬧鐘背景執行",
+        "ja": "Samsung によるアラームのバックグラウンド制限を防ぐ"
+      },
+      "reviewRisk": "DEVICE_SCHEDULE_CALENDAR_CONTEXT_REVIEW"
+    },
+    {
+      "key": "oem_xiaomi_title",
+      "expectedEnglishPreview": "Enable Autostart on Xiaomi",
+      "translations": {
+        "zh-TW": "在 Xiaomi 開啟自動啟動",
+        "ja": "Xiaomi の自動起動を有効にする"
+      },
+      "reviewRisk": "DEVICE_SCHEDULE_CALENDAR_CONTEXT_REVIEW"
+    },
+    {
+      "key": "oem_oneplus_title",
+      "expectedEnglishPreview": "Disable battery optimization on OnePlus",
+      "translations": {
+        "zh-TW": "在 OnePlus 關閉電池最佳化",
+        "ja": "OnePlus のバッテリー最適化を無効にする"
+      },
+      "reviewRisk": "DEVICE_SCHEDULE_CALENDAR_CONTEXT_REVIEW"
+    },
+    {
+      "key": "oem_huawei_title",
+      "expectedEnglishPreview": "Allow background activity on Huawei",
+      "translations": {
+        "zh-TW": "允許 Huawei 的背景活動",
+        "ja": "Huawei でバックグラウンド動作を許可"
+      },
+      "reviewRisk": "DEVICE_SCHEDULE_CALENDAR_CONTEXT_REVIEW"
+    },
+    {
+      "key": "oem_coloros_title",
+      "expectedEnglishPreview": "Allow background activity on ColorOS",
+      "translations": {
+        "zh-TW": "允許 ColorOS 的背景活動",
+        "ja": "ColorOS でバックグラウンド動作を許可"
+      },
+      "reviewRisk": "DEVICE_SCHEDULE_CALENDAR_CONTEXT_REVIEW"
+    },
+    {
+      "key": "oem_vivo_title",
+      "expectedEnglishPreview": "Allow background activity on Vivo",
+      "translations": {
+        "zh-TW": "允許 Vivo 的背景活動",
+        "ja": "Vivo でバックグラウンド動作を許可"
+      },
+      "reviewRisk": "DEVICE_SCHEDULE_CALENDAR_CONTEXT_REVIEW"
+    },
+    {
+      "key": "shift_ddnno_title",
+      "expectedEnglishPreview": "DDNNO",
+      "translations": {
+        "zh-TW": "DDNNO 輪班",
+        "ja": "DDNNO シフト"
+      },
+      "reviewRisk": "DEVICE_SCHEDULE_CALENDAR_CONTEXT_REVIEW"
+    },
+    {
+      "key": "shift_ddnno_short",
+      "expectedEnglishPreview": "DDNNO",
+      "translations": {
+        "zh-TW": "DDNNO",
+        "ja": "DDNNO"
+      },
+      "reviewRisk": "DEVICE_SCHEDULE_CALENDAR_CONTEXT_REVIEW"
+    },
+    {
+      "key": "shift_four_title",
+      "expectedEnglishPreview": "4-on-4-off",
+      "translations": {
+        "zh-TW": "上四休四",
+        "ja": "4日勤務・4日休み"
+      },
+      "reviewRisk": "DEVICE_SCHEDULE_CALENDAR_CONTEXT_REVIEW"
+    },
+    {
+      "key": "shift_four_short",
+      "expectedEnglishPreview": "4 on / 4 off",
+      "translations": {
+        "zh-TW": "上 4 天／休 4 天",
+        "ja": "4日勤務／4日休み"
+      },
+      "reviewRisk": "DEVICE_SCHEDULE_CALENDAR_CONTEXT_REVIEW"
+    },
+    {
+      "key": "shift_panama_title",
+      "expectedEnglishPreview": "Panama (2-2-3)",
+      "translations": {
+        "zh-TW": "Panama 輪班（2-2-3）",
+        "ja": "パナマシフト（2-2-3）"
+      },
+      "reviewRisk": "DEVICE_SCHEDULE_CALENDAR_CONTEXT_REVIEW"
+    },
+    {
+      "key": "shift_panama_short",
+      "expectedEnglishPreview": "Panama",
+      "translations": {
+        "zh-TW": "Panama",
+        "ja": "パナマ"
+      },
+      "reviewRisk": "DEVICE_SCHEDULE_CALENDAR_CONTEXT_REVIEW"
+    },
+    {
+      "key": "shift_dupont_title",
+      "expectedEnglishPreview": "DuPont",
+      "translations": {
+        "zh-TW": "DuPont 輪班",
+        "ja": "デュポンシフト"
+      },
+      "reviewRisk": "DEVICE_SCHEDULE_CALENDAR_CONTEXT_REVIEW"
+    },
+    {
+      "key": "shift_dupont_short",
+      "expectedEnglishPreview": "DuPont",
+      "translations": {
+        "zh-TW": "DuPont",
+        "ja": "デュポン"
+      },
+      "reviewRisk": "DEVICE_SCHEDULE_CALENDAR_CONTEXT_REVIEW"
+    },
+    {
+      "key": "shift_pitman_title",
+      "expectedEnglishPreview": "Pitman (2-3-2)",
+      "translations": {
+        "zh-TW": "Pitman 輪班（2-3-2）",
+        "ja": "ピットマンシフト（2-3-2）"
+      },
+      "reviewRisk": "DEVICE_SCHEDULE_CALENDAR_CONTEXT_REVIEW"
+    },
+    {
+      "key": "shift_pitman_short",
+      "expectedEnglishPreview": "Pitman",
+      "translations": {
+        "zh-TW": "Pitman",
+        "ja": "ピットマン"
+      },
+      "reviewRisk": "DEVICE_SCHEDULE_CALENDAR_CONTEXT_REVIEW"
+    },
+    {
+      "key": "whats_new_continue",
+      "expectedEnglishPreview": "Continue",
+      "translations": {
+        "zh-TW": "繼續",
+        "ja": "続行"
+      },
+      "reviewRisk": "VISIBLE_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "whats_new_what_s_next",
+      "expectedEnglishPreview": "What’s next",
+      "translations": {
+        "zh-TW": "接下來",
+        "ja": "次へ"
+      },
+      "reviewRisk": "VISIBLE_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "whats_new_what_s_new",
+      "expectedEnglishPreview": "What’s new",
+      "translations": {
+        "zh-TW": "新功能",
+        "ja": "新機能"
+      },
+      "reviewRisk": "VISIBLE_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "whats_new_quick_tour_biggest_additions_release",
+      "expectedEnglishPreview": "A quick tour of the biggest additions in this release.",
+      "translations": {
+        "zh-TW": "快速瀏覽本次版本的主要新增功能。",
+        "ja": "今回のリリースの主な追加機能を手短に紹介します。"
+      },
+      "reviewRisk": "VISIBLE_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "whats_new_updated_to",
+      "expectedEnglishPreview": "Updated to v%1$s",
+      "translations": {
+        "zh-TW": "已更新至 v%1$s",
+        "ja": "v%1$s に更新しました"
+      },
+      "reviewRisk": "VISIBLE_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "components_action_needed",
+      "expectedEnglishPreview": "Action needed",
+      "translations": {
+        "zh-TW": "需要處理",
+        "ja": "対応が必要"
+      },
+      "reviewRisk": "VISIBLE_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "components_downloader_status",
+      "expectedEnglishPreview": "Downloader status",
+      "translations": {
+        "zh-TW": "下載器狀態",
+        "ja": "ダウンローダーの状態"
+      },
+      "reviewRisk": "VISIBLE_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "components_update_yt_dlp_only_if_youtube",
+      "expectedEnglishPreview": "Update yt-dlp only if YouTube search or downloads stop working.",
+      "translations": {
+        "zh-TW": "只有在 YouTube 搜尋或下載故障時才更新 yt-dlp。",
+        "ja": "YouTube の検索やダウンロードが動かなくなった場合にのみ yt-dlp を更新してください。"
+      },
+      "reviewRisk": "VISIBLE_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "components_tap_row_to_save_this_preview",
+      "expectedEnglishPreview": "Tap row to save this preview",
+      "translations": {
+        "zh-TW": "點選這列儲存試聽內容",
+        "ja": "この行をタップして試聴内容を保存"
+      },
+      "reviewRisk": "VISIBLE_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "components_tap_row_to_save",
+      "expectedEnglishPreview": "Tap row to save",
+      "translations": {
+        "zh-TW": "點選這列儲存",
+        "ja": "この行をタップして保存"
+      },
+      "reviewRisk": "VISIBLE_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "night_clock_exit_night_clock",
+      "expectedEnglishPreview": "Exit night clock",
+      "translations": {
+        "zh-TW": "離開夜間時鐘",
+        "ja": "ナイトクロックを終了"
+      },
+      "reviewRisk": "VISIBLE_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "night_clock_bedside_mode",
+      "expectedEnglishPreview": "Bedside mode",
+      "translations": {
+        "zh-TW": "床邊模式",
+        "ja": "ベッドサイドモード"
+      },
+      "reviewRisk": "VISIBLE_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "night_clock_long_press_anywhere_exit",
+      "expectedEnglishPreview": "Long press anywhere to exit",
+      "translations": {
+        "zh-TW": "長按任意位置即可離開",
+        "ja": "どこかを長押しして終了"
+      },
+      "reviewRisk": "VISIBLE_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "radar_open_windy",
+      "expectedEnglishPreview": "Open in Windy",
+      "translations": {
+        "zh-TW": "在 Windy 開啟",
+        "ja": "Windy で開く"
+      },
+      "reviewRisk": "VISIBLE_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "radar_animated_precipitation",
+      "expectedEnglishPreview": "Animated precipitation near %1$s · Windy",
+      "translations": {
+        "zh-TW": "%1$s 附近的動態降水圖 · Windy",
+        "ja": "%1$s 周辺の降水アニメーション · Windy"
+      },
+      "reviewRisk": "VISIBLE_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "worldclock_no_city_matches_that_search",
+      "expectedEnglishPreview": "No city matches that search",
+      "translations": {
+        "zh-TW": "找不到符合搜尋的城市",
+        "ja": "検索に一致する都市がありません"
+      },
+      "reviewRisk": "VISIBLE_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "roadmap_link_failed",
+      "expectedEnglishPreview": "Unable to open the roadmap link.",
+      "translations": {
+        "zh-TW": "無法開啟開發規劃連結。",
+        "ja": "ロードマップのリンクを開けませんでした。"
+      },
+      "reviewRisk": "DEVICE_SCHEDULE_CALENDAR_CONTEXT_REVIEW"
+    }
+  ]
+}
