@@ -60,7 +60,7 @@ test("L12-B4 staging fails closed on mismatched source version, unexpected local
     /hard structural holds/);
   assert.throws(()=>buildStagingResources({...f,stats:{...f.stats,androidArgumentMismatches:1}}),
     /source or positional format drift/);
-  const dup={...f,review:[f.review[0],...f.review]};
+  const dup={...f,review:[f.review[0],...f.review],stats:{...f.stats,candidateLocaleRows:f.stats.candidateLocaleRows+1}};
   assert.throws(()=>buildStagingResources(dup),/Duplicate resource/);
   const unknown={...f,review:[{...f.review[0],locale:"es"},...f.review.slice(1)]};
   assert.throws(()=>buildStagingResources(unknown),/Unsupported stage locale/);
