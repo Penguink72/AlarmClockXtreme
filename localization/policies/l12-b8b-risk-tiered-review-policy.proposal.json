@@ -1,0 +1,49 @@
+{
+  "schema": "acx-l12-b8-risk-tiered-policy-proposal/1",
+  "policyId": "L12-8B-RISK-TIERED-PROPOSAL",
+  "policyRevision": "l12-b8b-v0.1-draft-20261123",
+  "status": "PROPOSED_NOT_AUTHORIZED",
+  "authorization": "NONE_NO_POLICY_RELEASE_AUTHORITY",
+  "scope": "B0_T1_FULL_APP_3100_MISSING_LOCALE_ROWS",
+  "sourceReviewContract": "acx-l12-b6-independent-review-packet/1",
+  "processingRules": {
+    "alwaysManualRiskTiers": [
+      "P0_OPERATION_SECURITY_DATA",
+      "P1_MEDIA_PLAYBACK",
+      "P2_FORMAT_AND_WARNING"
+    ],
+    "additionalEscalationEnglishRegex": "\\b(?:delete|remove|clear|erase|reset|restore|import|export|save|schedule|snooze|dismiss|disable|enable|cancel|stop|start|revoke|permissions?|privacy|secure|payment|purchase|subscribe|refund|backup|overwrite|confirm|uninstall|grant|lock|unlock)\\b",
+    "diagnosticSampleTier": "P3_GENERAL_UI",
+    "samplingUnit": "BILINGUAL_KEY_CARD_BOTH_LOCALES_ALWAYS_IN_SAMPLE",
+    "strata": [
+      "featureFamily"
+    ],
+    "initialFraction": 0.1,
+    "minCardsPerNonemptyStratum": 2,
+    "sampler": "SHA256_SORTED_REVIEW_SET_DIGEST_BOUND_DETERMINISTIC_QUEUE",
+    "seed": "acx-l12-b8b-reproducible-sample-v1",
+    "onSampleFailure": "FULL_REVIEW_OF_FEATURE_FAMILY_STRATUM",
+    "onUndeterminedSample": "REMAIN_PENDING_NO_RELEASE",
+    "onSourceCandidateOrPolicyRevisionChange": "INVALIDATE_AND_REGENERATE",
+    "onCrossFeatureSafetyMisclassification": "ESCALATE_ALL_AFFECTED_ROWS_TO_FULL_REVIEW",
+    "noteSemantics": "UNTRUSTED_TRIAGE_ONLY_NEVER_INDEPENDENT_APPROVAL"
+  },
+  "releaseGate": {
+    "existingL12B6FullPerRowHumanReviewRequired": true,
+    "existingL13BProtectedWriterUnchanged": true,
+    "policyProposalMayApproveRows": false,
+    "policyProposalMayWriteOfficialXml": false,
+    "requiresNewExplicitPolicyAuthorization": true,
+    "requiresProtectedReviewerProvenance": true,
+    "requiresRevisedL12B6AndL13BContractsBeforeRelease": true,
+    "requiresG1AndG4IndependentGovernance": true,
+    "requiresAndroidRuntimeValidation": true
+  },
+  "notes": [
+    "This policy file is an engineering proposal, not a signer or a trusted policy authority.",
+    "Sampling identifies where to inspect first; it does not imply uninspected strings are semantically correct.",
+    "One paired key card can save UI navigation, but has two independent locale decisions.",
+    "A single observed issue escalates its entire stratum; uncertain samples remain pending.",
+    "Changing ratios, regexes, seed, source candidates or review policy requires a new digest and explicitly reviewed policy."
+  ]
+}
