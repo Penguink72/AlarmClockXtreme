@@ -1,0 +1,49 @@
+name: ACX L13-B CI-only full Android resource link of unapproved translations
+on:
+  push:
+    branches:
+      - feature/acx-l13-b-protected-resource-writer-20261122
+    paths:
+      - "scripts/localization/**"
+      - "localization/candidates/**"
+      - "docs/localization/ACX-L13-B*"
+      - ".github/workflows/l13-b-merged-resource-link.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  ephemeral-merge-only:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install Android 36
+        run: sdkmanager --install "platforms;android-36" "build-tools;36.0.0"
+      - name: L13-B test-only merge staged 3100 candidate rows into ephemeral checkout
+        shell: bash
+        run: |
+          set -euo pipefail
+          STAGE="build/localization/L13_B_CI_UNAPPROVED"
+          node scripts/localization/l13-b-protected-xml-writer.mjs --mode staging --out-dir "$STAGE"
+          SRC_ZH="$STAGE/res/values-b+zh+Hant+TW/strings_l13_reviewed.xml"
+          SRC_JA="$STAGE/res/values-ja/strings_l13_reviewed.xml"
+          TARGET_ZH="app/src/main/res/values-b+zh+Hant+TW/strings_l13_ci_only_unapproved.xml"
+          TARGET_JA="app/src/main/res/values-ja/strings_l13_ci_only_unapproved.xml"
+          test ! -e "$TARGET_ZH"
+          test ! -e "$TARGET_JA"
+          trap 'rm -f "$TARGET_ZH" "$TARGET_JA"' EXIT
+          cp "$SRC_ZH" "$TARGET_ZH"
+          cp "$SRC_JA" "$TARGET_JA"
+          echo "CI ONLY: added unreviewed resources to throwaway checkout, no branch commit and no APK build."
+          bash ./gradlew :app:processFdroidDebugResources :app:compileFdroidDebugKotlin --no-daemon --stacktrace
+          echo "CI ONLY: full resource linking and Kotlin compilation finished; ephemeral translation XML will be deleted."
