@@ -28,6 +28,10 @@ jobs:
         run: sdkmanager --install "platforms;android-36" "build-tools;36.0.0"
       - name: Test locale selection and non-mutating native Context adaptation
         shell: bash
+        env:
+          # Robolectric fetches android-all-instrumented in the forked test JVM.
+          # The default repo1.maven.org has produced HTTP failures on CI.
+          JAVA_TOOL_OPTIONS: -Drobolectric.dependency.repo.url=https://repo.maven.apache.org/maven2
         run: |
           set -euo pipefail
           bash ./gradlew :app:testFdroidDebugUnitTest \
