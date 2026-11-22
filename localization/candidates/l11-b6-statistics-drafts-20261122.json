@@ -1,0 +1,612 @@
+{
+  "schema": "acx-l11-batch6-drafts/1",
+  "topic": "STATISTICS_HISTORY_SLEEP_SUMMARY",
+  "status": "MODEL_PRELIMINARY_NOT_APPROVED",
+  "independentApproval": false,
+  "sourceRef": "app/src/main/res/values/strings.xml",
+  "records": [
+    {
+      "key": "stats_removes_recorded_alarm_outcomes_resets",
+      "expectedEnglishPreview": "This removes recorded alarm outcomes and resets the statistics shown on this screen. It does not delete your actual alarms.",
+      "translations": {
+        "zh-TW": "這會移除已記錄的鬧鐘結果，並重設此畫面的統計資料，但不會刪除實際鬧鐘。",
+        "ja": "記録されたアラームの結果とこの画面の統計を消去します。実際のアラームは削除しません。"
+      },
+      "reviewRisk": "STATISTICS_AND_DATA_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "stats_search_label_challenge_action_day",
+      "expectedEnglishPreview": "Search label, challenge, action, or day",
+      "translations": {
+        "zh-TW": "搜尋標籤、挑戰、動作或日期",
+        "ja": "ラベル・チャレンジ・操作・日付を検索"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "stats_statistics",
+      "expectedEnglishPreview": "Statistics",
+      "translations": {
+        "zh-TW": "統計資料",
+        "ja": "統計"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "stats_close_statistics",
+      "expectedEnglishPreview": "Close statistics",
+      "translations": {
+        "zh-TW": "關閉統計資料",
+        "ja": "統計を閉じる"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "stats_loading_alarm_statistics",
+      "expectedEnglishPreview": "Loading alarm statistics",
+      "translations": {
+        "zh-TW": "正在載入鬧鐘統計",
+        "ja": "アラームの統計を読み込み中"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "stats_streak",
+      "expectedEnglishPreview": "Streak",
+      "translations": {
+        "zh-TW": "連續紀錄",
+        "ja": "連続記録"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "stats_week",
+      "expectedEnglishPreview": "This week",
+      "translations": {
+        "zh-TW": "本週",
+        "ja": "今週"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "stats_average_wake_up_time",
+      "expectedEnglishPreview": "Average wake-up time",
+      "translations": {
+        "zh-TW": "平均起床時間",
+        "ja": "平均起床時刻"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "stats_how_long_usually_takes_dismiss",
+      "expectedEnglishPreview": "How long it usually takes to dismiss an alarm after it starts.",
+      "translations": {
+        "zh-TW": "鬧鐘開始響鈴後，通常需要多久才會解除。",
+        "ja": "アラームが鳴り始めてから停止するまでの通常の所要時間です。"
+      },
+      "reviewRisk": "STATISTICS_AND_DATA_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "stats_average_response",
+      "expectedEnglishPreview": "average response",
+      "translations": {
+        "zh-TW": "平均反應時間",
+        "ja": "平均応答時間"
+      },
+      "reviewRisk": "STATISTICS_AND_DATA_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "stats_outcome_mix",
+      "expectedEnglishPreview": "Outcome mix",
+      "translations": {
+        "zh-TW": "結果分布",
+        "ja": "結果の内訳"
+      },
+      "reviewRisk": "STATISTICS_AND_DATA_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "stats_how_alarms_usually_resolve",
+      "expectedEnglishPreview": "How alarms usually resolve.",
+      "translations": {
+        "zh-TW": "鬧鐘通常如何結束。",
+        "ja": "アラームが普段どのように終了するかを示します。"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "stats_busiest_day",
+      "expectedEnglishPreview": "Busiest day",
+      "translations": {
+        "zh-TW": "鬧鐘最多的一天",
+        "ja": "アラームが最も多い曜日"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "stats_where_alarms_cluster_most_often",
+      "expectedEnglishPreview": "Where alarms cluster most often.",
+      "translations": {
+        "zh-TW": "鬧鐘最常集中在哪些日子。",
+        "ja": "アラームが特に集中する曜日を示します。"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "stats_alarms_by_day",
+      "expectedEnglishPreview": "Alarms by day",
+      "translations": {
+        "zh-TW": "每日鬧鐘數",
+        "ja": "曜日別のアラーム"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "stats_quick_visual_read_which_days",
+      "expectedEnglishPreview": "A quick visual read on which days carry the most alarm load.",
+      "translations": {
+        "zh-TW": "快速查看哪些日子的鬧鐘最密集。",
+        "ja": "アラームが多い曜日をひと目で確認できます。"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "stats_last_few_alarm_outcomes_useful",
+      "expectedEnglishPreview": "The last few alarm outcomes, useful for spotting patterns.",
+      "translations": {
+        "zh-TW": "最近幾次鬧鐘的結果，可用來觀察模式。",
+        "ja": "最近のアラームの結果から傾向を確認できます。"
+      },
+      "reviewRisk": "STATISTICS_AND_DATA_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "stats_dismissed_snoozed_skipped_missed_alarms",
+      "expectedEnglishPreview": "Dismissed, snoozed, skipped, and missed alarms will appear here once the app has something to learn from.",
+      "translations": {
+        "zh-TW": "開始累積資料後，這裡會顯示已解除、貪睡、略過及錯過的鬧鐘。",
+        "ja": "記録が増えると、停止・スヌーズ・スキップ・見逃したアラームが表示されます。"
+      },
+      "reviewRisk": "STATISTICS_AND_DATA_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "stats_clear_filters_try_another_alarm",
+      "expectedEnglishPreview": "Clear filters or try another alarm label, challenge, action, or day.",
+      "translations": {
+        "zh-TW": "清除篩選條件，或改用其他鬧鐘標籤、挑戰、動作或日期搜尋。",
+        "ja": "フィルターを解除するか、別のラベル・チャレンジ・操作・日付で検索してください。"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "stats_find_patterns",
+      "expectedEnglishPreview": "Find patterns",
+      "translations": {
+        "zh-TW": "查看模式",
+        "ja": "傾向を確認"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "stats_clear_search",
+      "expectedEnglishPreview": "Clear search",
+      "translations": {
+        "zh-TW": "清除搜尋",
+        "ja": "検索をクリア"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "stats_outcome",
+      "expectedEnglishPreview": "Outcome",
+      "translations": {
+        "zh-TW": "結果",
+        "ja": "結果"
+      },
+      "reviewRisk": "STATISTICS_AND_DATA_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "stats_day",
+      "expectedEnglishPreview": "Day",
+      "translations": {
+        "zh-TW": "日期",
+        "ja": "日付"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "stats_wake_streak",
+      "expectedEnglishPreview": "Wake streak",
+      "translations": {
+        "zh-TW": "連續起床紀錄",
+        "ja": "連続起床記録"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "stats_next_streak_badge",
+      "expectedEnglishPreview": "Next streak badge",
+      "translations": {
+        "zh-TW": "下一個連續紀錄徽章",
+        "ja": "次の連続記録バッジ"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "stats_sleep_context",
+      "expectedEnglishPreview": "Sleep context",
+      "translations": {
+        "zh-TW": "睡眠背景資訊",
+        "ja": "睡眠の状況"
+      },
+      "reviewRisk": "STATISTICS_AND_DATA_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "stats_wake_consistency",
+      "expectedEnglishPreview": "Wake consistency",
+      "translations": {
+        "zh-TW": "起床時間規律程度",
+        "ja": "起床時刻の規則性"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "stats_how_steady_wake_up_times",
+      "expectedEnglishPreview": "How steady your wake-up times have been, computed on-device from your recent dismisses.",
+      "translations": {
+        "zh-TW": "根據最近的鬧鐘解除紀錄，在裝置本機計算起床時間是否穩定。",
+        "ja": "最近のアラーム停止履歴を端末内で集計し、起床時刻の安定性を示します。"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "stats_dismiss_few_more_alarms_see",
+      "expectedEnglishPreview": "Dismiss a few more alarms to see how consistent your wake times are.",
+      "translations": {
+        "zh-TW": "再解除幾次鬧鐘後，即可查看起床時間的規律程度。",
+        "ja": "あと数回アラームを停止すると、起床時刻の規則性を確認できます。"
+      },
+      "reviewRisk": "STATISTICS_AND_DATA_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "stats_sleep_wake_patterns",
+      "expectedEnglishPreview": "Sleep and wake patterns",
+      "translations": {
+        "zh-TW": "睡眠與起床模式",
+        "ja": "睡眠と起床の傾向"
+      },
+      "reviewRisk": "STATISTICS_AND_DATA_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "stats_no_sleep_wake_trend_yet",
+      "expectedEnglishPreview": "No sleep or wake trend yet",
+      "translations": {
+        "zh-TW": "尚無睡眠或起床趨勢",
+        "ja": "睡眠・起床の傾向はまだありません"
+      },
+      "reviewRisk": "STATISTICS_AND_DATA_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "stats_sleep_motion_buckets",
+      "expectedEnglishPreview": "Sleep motion buckets",
+      "translations": {
+        "zh-TW": "睡眠動作分類",
+        "ja": "睡眠中の動作の分類"
+      },
+      "reviewRisk": "STATISTICS_AND_DATA_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "stats_no_sleep_motion_sessions_yet",
+      "expectedEnglishPreview": "No sleep-motion sessions yet",
+      "translations": {
+        "zh-TW": "尚無睡眠動作紀錄",
+        "ja": "睡眠中の動作記録はまだありません"
+      },
+      "reviewRisk": "STATISTICS_AND_DATA_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "stats_enable_smart_alarm_window_start",
+      "expectedEnglishPreview": "Enable a smart alarm window or start Sonar from Bedtime to collect compact local summaries.",
+      "translations": {
+        "zh-TW": "啟用智慧鬧鐘時段，或從就寢畫面啟動 Sonar，以累積精簡的本機摘要。",
+        "ja": "スマートアラームの時間帯を有効にするか、就寝画面から Sonar を開始すると、端末内に簡潔な要約が蓄積されます。"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "stats_streak_next",
+      "expectedEnglishPreview": "Next %1$s",
+      "translations": {
+        "zh-TW": "下一個目標 %1$s",
+        "ja": "次の目標 %1$s"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "stats_sleep_last",
+      "expectedEnglishPreview": "Last %1$s",
+      "translations": {
+        "zh-TW": "最近一次 %1$s",
+        "ja": "直近 %1$s"
+      },
+      "reviewRisk": "STATISTICS_AND_DATA_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "stats_sleep_deep",
+      "expectedEnglishPreview": "Deep %1$s",
+      "translations": {
+        "zh-TW": "深層睡眠 %1$s",
+        "ja": "深い睡眠 %1$s"
+      },
+      "reviewRisk": "STATISTICS_AND_DATA_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "stats_sleep_rem",
+      "expectedEnglishPreview": "REM %1$s",
+      "translations": {
+        "zh-TW": "REM 睡眠 %1$s",
+        "ja": "レム睡眠 %1$s"
+      },
+      "reviewRisk": "STATISTICS_AND_DATA_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "stats_sleep_average",
+      "expectedEnglishPreview": "Sleep %1$s avg",
+      "translations": {
+        "zh-TW": "平均睡眠 %1$s",
+        "ja": "平均睡眠 %1$s"
+      },
+      "reviewRisk": "STATISTICS_AND_DATA_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "stats_sleep_score",
+      "expectedEnglishPreview": "Sleep score %1$s",
+      "translations": {
+        "zh-TW": "睡眠分數 %1$s",
+        "ja": "睡眠スコア %1$s"
+      },
+      "reviewRisk": "STATISTICS_AND_DATA_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "stats_sleep_debt",
+      "expectedEnglishPreview": "Sleep debt %1$s",
+      "translations": {
+        "zh-TW": "睡眠不足 %1$s",
+        "ja": "睡眠不足 %1$s"
+      },
+      "reviewRisk": "STATISTICS_AND_DATA_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "stats_response_avg",
+      "expectedEnglishPreview": "Response %1$s avg",
+      "translations": {
+        "zh-TW": "平均反應 %1$s",
+        "ja": "平均応答 %1$s"
+      },
+      "reviewRisk": "STATISTICS_AND_DATA_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "stats_collecting_history_and_response_patterns",
+      "expectedEnglishPreview": "Collecting history and response patterns.",
+      "translations": {
+        "zh-TW": "正在累積歷史及反應模式。",
+        "ja": "履歴と応答の傾向を収集中です。"
+      },
+      "reviewRisk": "STATISTICS_AND_DATA_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "stats_your_alarm_habits_will_start_to",
+      "expectedEnglishPreview": "Your alarm habits will start to appear once you build some history.",
+      "translations": {
+        "zh-TW": "累積一些紀錄後，就能開始查看鬧鐘使用習慣。",
+        "ja": "履歴が増えるとアラームの利用傾向が表示されます。"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "stats_this_week",
+      "expectedEnglishPreview": "%1$s this week",
+      "translations": {
+        "zh-TW": "本週 %1$s",
+        "ja": "今週 %1$s"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "stats_no_data",
+      "expectedEnglishPreview": "No data",
+      "translations": {
+        "zh-TW": "沒有資料",
+        "ja": "データなし"
+      },
+      "reviewRisk": "STATISTICS_AND_DATA_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "stats_alarm_history_will_fill_this_in",
+      "expectedEnglishPreview": "Alarm history will fill this in.",
+      "translations": {
+        "zh-TW": "鬧鐘歷史紀錄會逐步補上這裡的資料。",
+        "ja": "アラーム履歴が増えると、ここに情報が表示されます。"
+      },
+      "reviewRisk": "STATISTICS_AND_DATA_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "stats_need_more_dismiss_history_for_day",
+      "expectedEnglishPreview": "Need more dismiss history for day-by-day response trends.",
+      "translations": {
+        "zh-TW": "需要更多解除鬧鐘的紀錄，才能比較每日反應趨勢。",
+        "ja": "曜日別の応答傾向を確認するには、アラーム停止履歴がさらに必要です。"
+      },
+      "reviewRisk": "STATISTICS_AND_DATA_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "stats_update_health_connect_before_sleep_sessions",
+      "expectedEnglishPreview": "Update Health Connect before sleep sessions can be included.",
+      "translations": {
+        "zh-TW": "請更新 Health Connect，才能納入睡眠紀錄。",
+        "ja": "睡眠セッションを含めるには Health Connect を更新してください。"
+      },
+      "reviewRisk": "STATISTICS_AND_DATA_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "stats_grant_sleep_data_access_in_settings",
+      "expectedEnglishPreview": "Grant sleep data access in Settings to compare your wake behaviour with recent sleep.",
+      "translations": {
+        "zh-TW": "請在設定中授予睡眠資料存取權，才能比較起床行為與最近的睡眠。",
+        "ja": "最近の睡眠と起床行動を比較するには、設定で睡眠データへのアクセスを許可してください。"
+      },
+      "reviewRisk": "STATISTICS_AND_DATA_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "stats_sleep_data_access_is_granted_but",
+      "expectedEnglishPreview": "Sleep data access is granted, but no recent sleep sessions were found.",
+      "translations": {
+        "zh-TW": "已授予睡眠資料存取權，但找不到近期睡眠紀錄。",
+        "ja": "睡眠データへのアクセスは許可されていますが、最近の睡眠セッションは見つかりませんでした。"
+      },
+      "reviewRisk": "STATISTICS_AND_DATA_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "stats_retries",
+      "expectedEnglishPreview": "%1$s retries",
+      "translations": {
+        "zh-TW": "重試 %1$s 次",
+        "ja": "再試行 %1$s 回"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "stats_sonar_session",
+      "expectedEnglishPreview": "Sonar session",
+      "translations": {
+        "zh-TW": "Sonar 紀錄",
+        "ja": "Sonar セッション"
+      },
+      "reviewRisk": "STATISTICS_AND_DATA_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "stats_fired_early",
+      "expectedEnglishPreview": "Fired early",
+      "translations": {
+        "zh-TW": "提前響鈴",
+        "ja": "予定より早く鳴動"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "stats_reached_target",
+      "expectedEnglishPreview": "Reached target",
+      "translations": {
+        "zh-TW": "已達目標",
+        "ja": "目標に到達"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "stats_movement",
+      "expectedEnglishPreview": "Movement",
+      "translations": {
+        "zh-TW": "動作",
+        "ja": "動き"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "stats_motion",
+      "expectedEnglishPreview": "Motion",
+      "translations": {
+        "zh-TW": "活動量",
+        "ja": "動作"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "stats_awake_motion",
+      "expectedEnglishPreview": "Awake motion",
+      "translations": {
+        "zh-TW": "清醒動作",
+        "ja": "覚醒時の動き"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "stats_restless",
+      "expectedEnglishPreview": "Restless",
+      "translations": {
+        "zh-TW": "躁動",
+        "ja": "落ち着かない動き"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "stats_light_motion",
+      "expectedEnglishPreview": "Light motion",
+      "translations": {
+        "zh-TW": "輕微動作",
+        "ja": "小さな動き"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "stats_still",
+      "expectedEnglishPreview": "Still",
+      "translations": {
+        "zh-TW": "靜止",
+        "ja": "静止"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "stats_still_motion",
+      "expectedEnglishPreview": "Still motion",
+      "translations": {
+        "zh-TW": "靜止狀態",
+        "ja": "静止状態"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "stats_action_dismissed",
+      "expectedEnglishPreview": "Dismissed",
+      "translations": {
+        "zh-TW": "已解除",
+        "ja": "停止"
+      },
+      "reviewRisk": "STATISTICS_AND_DATA_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "stats_action_snoozed",
+      "expectedEnglishPreview": "Snoozed",
+      "translations": {
+        "zh-TW": "已貪睡",
+        "ja": "スヌーズ"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "stats_action_skipped",
+      "expectedEnglishPreview": "Skipped",
+      "translations": {
+        "zh-TW": "已略過",
+        "ja": "スキップ"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "stats_action_missed",
+      "expectedEnglishPreview": "Missed",
+      "translations": {
+        "zh-TW": "已錯過",
+        "ja": "見逃し"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "stats_dismiss_one_alarm_to_start_building",
+      "expectedEnglishPreview": "Dismiss one alarm to start building a visible morning streak.",
+      "translations": {
+        "zh-TW": "解除一次鬧鐘，就能開始累積可見的早晨連續紀錄。",
+        "ja": "アラームを1回停止すると、朝の連続記録が始まります。"
+      },
+      "reviewRisk": "STATISTICS_AND_DATA_SEMANTIC_REVIEW"
+    }
+  ]
+}
