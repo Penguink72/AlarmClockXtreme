@@ -24,6 +24,7 @@ on:
       - feature/acx-l11-b4-visible-ui-drafts-20261122
       - feature/acx-l11-b5-backup-integrations-20261122
       - feature/acx-l11-b6-stats-bedtime-20261122
+      - feature/acx-l12-structural-semantic-evidence-20261122
     paths:
       - "scripts/localization/**"
       - "localization/governance/**"
@@ -148,6 +149,16 @@ jobs:
           node --test scripts/localization/l11-b5-sensitive-ui-drafts.test.mjs
           node --test scripts/localization/l11-b6-stats-bedtime.test.mjs
           node scripts/localization/l11-translation-worklist.mjs --out-dir build/localization/B0_FULL_APP_INVENTORY
+      - name: L12 - Mechanically check all candidate sources and build semantic review evidence
+        run: |
+          node --test scripts/localization/l12-structural-semantic-evidence.test.mjs
+          node scripts/localization/l12-structural-semantic-evidence.mjs --out-dir build/localization/L12_PRELIMINARY_QA_NOT_APPROVED
+      - name: Publish L12 unapproved QA and semantic evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: acx-l12-preliminary-qa-review-evidence-not-approved
+          path: build/localization/L12_PRELIMINARY_QA_NOT_APPROVED/
+          retention-days: 14
       - name: Publish B0 full-app inventory evidence
         uses: actions/upload-artifact@v4
         with:
