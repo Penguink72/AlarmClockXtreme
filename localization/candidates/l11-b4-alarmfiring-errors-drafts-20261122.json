@@ -1,0 +1,315 @@
+{
+  "schema": "acx-l11-batch4-drafts/1",
+  "topic": "RINGING_VOICE_HANDWRITING_NFC_ERROR_STATES",
+  "status": "MODEL_PRELIMINARY_NOT_APPROVED",
+  "independentApproval": false,
+  "sourceRef": "app/src/main/res/values/strings.xml",
+  "records": [
+    {
+      "key": "alarmfiring_complete_2",
+      "expectedEnglishPreview": "%1$s%% complete",
+      "translations": {
+        "zh-TW": "已完成 %1$s%%",
+        "ja": "%1$s%% 完了"
+      },
+      "reviewRisk": "WAKE_CHALLENGE_ERROR_AND_ACCESSIBILITY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_pad",
+      "expectedEnglishPreview": "%1$s pad",
+      "translations": {
+        "zh-TW": "%1$s 位數的輸入欄",
+        "ja": "%1$s 桁の入力欄"
+      },
+      "reviewRisk": "WAKE_CHALLENGE_ERROR_AND_ACCESSIBILITY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_too_slow_ntry_again",
+      "expectedEnglishPreview": "Too slow\\nTry again",
+      "translations": {
+        "zh-TW": "太慢了\\n請重試",
+        "ja": "遅すぎます\\nもう一度お試しください"
+      },
+      "reviewRisk": "WAKE_CHALLENGE_ERROR_AND_ACCESSIBILITY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_microphone_permission_is_missing_grant_it",
+      "expectedEnglishPreview": "Microphone permission is missing. Grant it or type the phrase.",
+      "translations": {
+        "zh-TW": "缺少麥克風權限。請授予權限，或改用文字輸入短句。",
+        "ja": "マイクの権限がありません。許可するか、フレーズを文字入力してください。"
+      },
+      "reviewRisk": "WAKE_CHALLENGE_ERROR_AND_ACCESSIBILITY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_speech_recognition_network_error_offline_fallback",
+      "expectedEnglishPreview": "Speech recognition network error. Offline fallback may be unavailable.",
+      "translations": {
+        "zh-TW": "語音辨識發生網路錯誤，可能無法使用離線備援。",
+        "ja": "音声認識でネットワークエラーが発生しました。オフラインの代替機能も利用できない場合があります。"
+      },
+      "reviewRisk": "WAKE_CHALLENGE_ERROR_AND_ACCESSIBILITY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_speech_recognition_timed_out_try_again",
+      "expectedEnglishPreview": "Speech recognition timed out. Try again or type the phrase.",
+      "translations": {
+        "zh-TW": "語音辨識逾時。請重試，或改用文字輸入短句。",
+        "ja": "音声認識がタイムアウトしました。再試行するか、フレーズを入力してください。"
+      },
+      "reviewRisk": "WAKE_CHALLENGE_ERROR_AND_ACCESSIBILITY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_no_matching_speech_was_detected_say",
+      "expectedEnglishPreview": "No matching speech was detected. Say the phrase again.",
+      "translations": {
+        "zh-TW": "未辨識到符合的語音，請再說一次短句。",
+        "ja": "一致する音声を認識できませんでした。フレーズをもう一度話してください。"
+      },
+      "reviewRisk": "WAKE_CHALLENGE_ERROR_AND_ACCESSIBILITY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_speech_recognition_is_busy_wait_a",
+      "expectedEnglishPreview": "Speech recognition is busy. Wait a moment and retry.",
+      "translations": {
+        "zh-TW": "語音辨識正在忙碌，請稍候再試。",
+        "ja": "音声認識を使用中です。少し待ってから再試行してください。"
+      },
+      "reviewRisk": "WAKE_CHALLENGE_ERROR_AND_ACCESSIBILITY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_speech_service_error_type_the_phrase",
+      "expectedEnglishPreview": "Speech service error. Type the phrase if it keeps happening.",
+      "translations": {
+        "zh-TW": "語音服務發生錯誤。如果持續發生，請改用文字輸入短句。",
+        "ja": "音声サービスでエラーが発生しました。繰り返す場合はフレーズを入力してください。"
+      },
+      "reviewRisk": "WAKE_CHALLENGE_ERROR_AND_ACCESSIBILITY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_no_speech_was_heard_try_again",
+      "expectedEnglishPreview": "No speech was heard. Try again or type the phrase.",
+      "translations": {
+        "zh-TW": "沒有收到語音。請重試，或改用文字輸入短句。",
+        "ja": "音声が聞き取れませんでした。再試行するか、フレーズを入力してください。"
+      },
+      "reviewRisk": "WAKE_CHALLENGE_ERROR_AND_ACCESSIBILITY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_speech_recognition_failed_try_again_or",
+      "expectedEnglishPreview": "Speech recognition failed. Try again or type the phrase.",
+      "translations": {
+        "zh-TW": "語音辨識失敗。請重試，或改用文字輸入短句。",
+        "ja": "音声認識に失敗しました。再試行するか、フレーズを入力してください。"
+      },
+      "reviewRisk": "WAKE_CHALLENGE_ERROR_AND_ACCESSIBILITY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_voice_matched",
+      "expectedEnglishPreview": "Voice phrase matched.",
+      "translations": {
+        "zh-TW": "語音短句符合要求。",
+        "ja": "音声フレーズが一致しました。"
+      },
+      "reviewRisk": "WAKE_CHALLENGE_ERROR_AND_ACCESSIBILITY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_voice_no_phrase",
+      "expectedEnglishPreview": "No phrase was detected. Try again or use the typed fallback.",
+      "translations": {
+        "zh-TW": "沒有辨識到短句。請重試或改用文字輸入。",
+        "ja": "フレーズを認識できませんでした。再試行するか、文字入力してください。"
+      },
+      "reviewRisk": "WAKE_CHALLENGE_ERROR_AND_ACCESSIBILITY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_voice_heard",
+      "expectedEnglishPreview": "Heard \\\"%1$s\\\". Say the phrase shown below.",
+      "translations": {
+        "zh-TW": "辨識到「%1$s」。請說出下方顯示的短句。",
+        "ja": "「%1$s」と認識しました。以下に表示されたフレーズを話してください。"
+      },
+      "reviewRisk": "WAKE_CHALLENGE_ERROR_AND_ACCESSIBILITY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_voice_listening",
+      "expectedEnglishPreview": "Listening. Say the phrase shown below.",
+      "translations": {
+        "zh-TW": "正在聆聽，請說出下方顯示的短句。",
+        "ja": "認識中です。以下に表示されたフレーズを話してください。"
+      },
+      "reviewRisk": "WAKE_CHALLENGE_ERROR_AND_ACCESSIBILITY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_voice_speech_detected",
+      "expectedEnglishPreview": "Speech detected.",
+      "translations": {
+        "zh-TW": "已偵測到語音。",
+        "ja": "音声を検出しました。"
+      },
+      "reviewRisk": "WAKE_CHALLENGE_ERROR_AND_ACCESSIBILITY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_voice_checking",
+      "expectedEnglishPreview": "Checking what was heard…",
+      "translations": {
+        "zh-TW": "正在檢查辨識結果…",
+        "ja": "認識結果を確認中…"
+      },
+      "reviewRisk": "WAKE_CHALLENGE_ERROR_AND_ACCESSIBILITY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_voice_hearing",
+      "expectedEnglishPreview": "Hearing: %1$s",
+      "translations": {
+        "zh-TW": "聽到：%1$s",
+        "ja": "認識した音声：%1$s"
+      },
+      "reviewRisk": "WAKE_CHALLENGE_ERROR_AND_ACCESSIBILITY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_voice_recognition_unavailable",
+      "expectedEnglishPreview": "Android speech recognition is unavailable here. Type the phrase below.",
+      "translations": {
+        "zh-TW": "此處無法使用 Android 語音辨識，請改用下方文字輸入。",
+        "ja": "ここでは Android の音声認識を利用できません。以下にフレーズを入力してください。"
+      },
+      "reviewRisk": "WAKE_CHALLENGE_ERROR_AND_ACCESSIBILITY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_voice_starting_mic",
+      "expectedEnglishPreview": "Starting microphone…",
+      "translations": {
+        "zh-TW": "正在啟動麥克風…",
+        "ja": "マイクを起動中…"
+      },
+      "reviewRisk": "WAKE_CHALLENGE_ERROR_AND_ACCESSIBILITY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_voice_could_not_start",
+      "expectedEnglishPreview": "Could not start speech recognition. Type the phrase below.",
+      "translations": {
+        "zh-TW": "無法啟動語音辨識，請改用下方文字輸入。",
+        "ja": "音声認識を開始できませんでした。以下にフレーズを入力してください。"
+      },
+      "reviewRisk": "WAKE_CHALLENGE_ERROR_AND_ACCESSIBILITY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_voice_stopped",
+      "expectedEnglishPreview": "Stopped listening.",
+      "translations": {
+        "zh-TW": "已停止聆聽。",
+        "ja": "音声の認識を停止しました。"
+      },
+      "reviewRisk": "WAKE_CHALLENGE_ERROR_AND_ACCESSIBILITY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_voice_mic_ready",
+      "expectedEnglishPreview": "Microphone ready. Start listening again.",
+      "translations": {
+        "zh-TW": "麥克風已就緒，請再次開始聆聽。",
+        "ja": "マイクの準備ができました。もう一度認識を開始してください。"
+      },
+      "reviewRisk": "WAKE_CHALLENGE_ERROR_AND_ACCESSIBILITY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_voice_mic_denied",
+      "expectedEnglishPreview": "Microphone permission was denied. Type the phrase below to finish.",
+      "translations": {
+        "zh-TW": "麥克風權限遭拒。請改用下方文字輸入完成挑戰。",
+        "ja": "マイクの権限が拒否されました。チャレンジを終えるには以下にフレーズを入力してください。"
+      },
+      "reviewRisk": "WAKE_CHALLENGE_ERROR_AND_ACCESSIBILITY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_handwriting_draw_first",
+      "expectedEnglishPreview": "Draw the word before checking it.",
+      "translations": {
+        "zh-TW": "請先寫出單字再檢查。",
+        "ja": "確認する前に単語を書いてください。"
+      },
+      "reviewRisk": "WAKE_CHALLENGE_ERROR_AND_ACCESSIBILITY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_handwriting_checking",
+      "expectedEnglishPreview": "Checking handwriting…",
+      "translations": {
+        "zh-TW": "正在檢查手寫內容…",
+        "ja": "手書き内容を確認中…"
+      },
+      "reviewRisk": "WAKE_CHALLENGE_ERROR_AND_ACCESSIBILITY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_handwriting_matched",
+      "expectedEnglishPreview": "Handwriting matched.",
+      "translations": {
+        "zh-TW": "手寫內容符合要求。",
+        "ja": "手書き内容が一致しました。"
+      },
+      "reviewRisk": "WAKE_CHALLENGE_ERROR_AND_ACCESSIBILITY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_handwriting_typed_matched",
+      "expectedEnglishPreview": "Typed word matched.",
+      "translations": {
+        "zh-TW": "輸入的單字符合要求。",
+        "ja": "入力した単語が一致しました。"
+      },
+      "reviewRisk": "WAKE_CHALLENGE_ERROR_AND_ACCESSIBILITY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_handwriting_type_or_draw",
+      "expectedEnglishPreview": "Type the displayed word or draw it again.",
+      "translations": {
+        "zh-TW": "請輸入畫面上的單字，或重新手寫。",
+        "ja": "表示された単語を入力するか、もう一度手書きしてください。"
+      },
+      "reviewRisk": "WAKE_CHALLENGE_ERROR_AND_ACCESSIBILITY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_handwriting_typed_mismatch",
+      "expectedEnglishPreview": "Typed \\\"%1$s\\\". Match %2$s exactly.",
+      "translations": {
+        "zh-TW": "輸入的是「%1$s」，請與 %2$s 完全相同。",
+        "ja": "「%1$s」と入力されました。%2$s と完全に一致させてください。"
+      },
+      "reviewRisk": "WAKE_CHALLENGE_ERROR_AND_ACCESSIBILITY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_photo_no_match",
+      "expectedEnglishPreview": "Not a match, try again (%1$d%% similar)",
+      "translations": {
+        "zh-TW": "照片不符合，請重試（相似度 %1$d%%）。",
+        "ja": "写真が一致しません。再試行してください（類似度 %1$d%%）。"
+      },
+      "reviewRisk": "WAKE_CHALLENGE_ERROR_AND_ACCESSIBILITY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_nfc_wrong_tag",
+      "expectedEnglishPreview": "Wrong tag. Try the registered tag.",
+      "translations": {
+        "zh-TW": "標籤不符，請掃描已登錄的 NFC 標籤。",
+        "ja": "タグが違います。登録済みの NFC タグを読み取ってください。"
+      },
+      "reviewRisk": "WAKE_CHALLENGE_ERROR_AND_ACCESSIBILITY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_barcode_wrong_code",
+      "expectedEnglishPreview": "Wrong code. Scan the registered barcode.",
+      "translations": {
+        "zh-TW": "條碼不符，請掃描已登錄的條碼。",
+        "ja": "バーコードが違います。登録済みのバーコードを読み取ってください。"
+      },
+      "reviewRisk": "WAKE_CHALLENGE_ERROR_AND_ACCESSIBILITY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_location_not_locked",
+      "expectedEnglishPreview": "No saved place is set, so location dismissal is not locked.",
+      "translations": {
+        "zh-TW": "沒有設定儲存地點，因此解除鬧鐘不受位置限制。",
+        "ja": "保存場所が設定されていないため、場所によるアラーム停止の制限はありません。"
+      },
+      "reviewRisk": "WAKE_CHALLENGE_ERROR_AND_ACCESSIBILITY_REVIEW"
+    }
+  ]
+}
