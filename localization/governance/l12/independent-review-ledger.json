@@ -1,0 +1,19 @@
+{
+  "schema": "acx-l12-b3-independent-review/1",
+  "status": "AWAITING_EXTERNAL_INDEPENDENT_REVIEW",
+  "catalogueScope": "FULL_APP_B0_T1_ALL_MISSING_LOCALE_ROWS",
+  "approvalAuthority": "NONE_UNTIL_VERIFIED_IN_PROTECTED_REVIEW_INTAKE",
+  "allowedLocales": [
+    "zh-TW",
+    "ja"
+  ],
+  "reviewRequirements": [
+    "Human-independent meaning, action/operation, glossary, source-context and Android formatting checks",
+    "Exact sourceHash, translationHash and reviewRevision for every approved row",
+    "Reviewer identity and reviewedAt plus written rationale",
+    "Separate protected intake with verified provenance; model/CI generated records are never independent human approval"
+  ],
+  "approvals": [],
+  "rejections": [],
+  "note": "Intentionally empty. This file cannot be populated by L11/L12 model output; reviewed decisions must enter via separately authorized process."
+}
