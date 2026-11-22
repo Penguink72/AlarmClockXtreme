@@ -1,0 +1,432 @@
+{
+  "schema": "acx-l11-batch4-drafts/1",
+  "topic": "QUICK_TEMPLATES_READINESS_AND_WAKE",
+  "status": "MODEL_PRELIMINARY_NOT_APPROVED",
+  "independentApproval": false,
+  "sourceRef": "app/src/main/res/values/strings.xml",
+  "records": [
+    {
+      "key": "template_quick_start_templates",
+      "expectedEnglishPreview": "Quick-start templates",
+      "translations": {
+        "zh-TW": "快速開始模板",
+        "ja": "クイックスタートのテンプレート"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "template_start_thoughtful_preset_common_routines",
+      "expectedEnglishPreview": "Start with a thoughtful preset for common routines, then fine-tune the details afterward.",
+      "translations": {
+        "zh-TW": "先選擇適合常見作息的預設方案，之後仍可微調各項設定。",
+        "ja": "よくある生活リズム向けのプリセットから始め、後から細かく調整できます。"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "template_creates_draft_alarm",
+      "expectedEnglishPreview": "Creates a draft alarm",
+      "translations": {
+        "zh-TW": "建立鬧鐘草稿",
+        "ja": "アラームの下書きを作成"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "template_fully_editable",
+      "expectedEnglishPreview": "Fully editable",
+      "translations": {
+        "zh-TW": "所有設定皆可編輯",
+        "ja": "すべて編集可能"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "template_early_bird_name",
+      "expectedEnglishPreview": "Early Bird",
+      "translations": {
+        "zh-TW": "早起鳥",
+        "ja": "早起き"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "template_early_bird_description",
+      "expectedEnglishPreview": "5:30 AM weekdays, gentle wake",
+      "translations": {
+        "zh-TW": "平日早上 5:30，溫和喚醒",
+        "ja": "平日午前5:30、やさしく起こす"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "template_work_alarm_name",
+      "expectedEnglishPreview": "Work Alarm",
+      "translations": {
+        "zh-TW": "上班鬧鐘",
+        "ja": "仕事用アラーム"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "template_work_alarm_description",
+      "expectedEnglishPreview": "7:00 AM weekdays, math challenge",
+      "translations": {
+        "zh-TW": "平日早上 7:00，數學挑戰",
+        "ja": "平日午前7:00、計算チャレンジ"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "template_weekend_sleep_in_name",
+      "expectedEnglishPreview": "Weekend Sleep-In",
+      "translations": {
+        "zh-TW": "週末睡晚一點",
+        "ja": "週末の朝寝坊"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "template_weekend_sleep_in_description",
+      "expectedEnglishPreview": "9:00 AM weekends, gentle",
+      "translations": {
+        "zh-TW": "週末早上 9:00，溫和喚醒",
+        "ja": "週末午前9:00、やさしく起こす"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "template_power_nap_name",
+      "expectedEnglishPreview": "Power Nap",
+      "translations": {
+        "zh-TW": "短暫小睡",
+        "ja": "パワーナップ"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "template_power_nap_description",
+      "expectedEnglishPreview": "Rings 20 minutes from now, shake to dismiss",
+      "translations": {
+        "zh-TW": "20 分鐘後響鈴，搖晃手機解除",
+        "ja": "20分後に鳴り、端末を振って停止"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "template_heavy_sleeper_name",
+      "expectedEnglishPreview": "Heavy Sleeper",
+      "translations": {
+        "zh-TW": "重度賴床者",
+        "ja": "なかなか起きられない人向け"
+      },
+      "reviewRisk": "READINESS_OR_BEHAVIOR_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "template_heavy_sleeper_description",
+      "expectedEnglishPreview": "6:00 AM daily, hard math, max volume",
+      "translations": {
+        "zh-TW": "每天早上 6:00，困難數學題，最大音量",
+        "ja": "毎日午前6:00、難しい計算、最大音量"
+      },
+      "reviewRisk": "READINESS_OR_BEHAVIOR_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "template_medication_reminder_name",
+      "expectedEnglishPreview": "Medication Reminder",
+      "translations": {
+        "zh-TW": "服藥提醒",
+        "ja": "服薬リマインダー"
+      },
+      "reviewRisk": "READINESS_OR_BEHAVIOR_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "template_medication_reminder_description",
+      "expectedEnglishPreview": "8:00 AM daily, gentle nudge",
+      "translations": {
+        "zh-TW": "每天早上 8:00，輕柔提醒",
+        "ja": "毎日午前8:00、やさしい通知"
+      },
+      "reviewRisk": "READINESS_OR_BEHAVIOR_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "template_repeat_one_time",
+      "expectedEnglishPreview": "One-time",
+      "translations": {
+        "zh-TW": "單次",
+        "ja": "1回のみ"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "template_repeat_daily",
+      "expectedEnglishPreview": "Daily",
+      "translations": {
+        "zh-TW": "每天",
+        "ja": "毎日"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "template_repeat_weekdays",
+      "expectedEnglishPreview": "Weekdays",
+      "translations": {
+        "zh-TW": "平日",
+        "ja": "平日"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "template_repeat_weekends",
+      "expectedEnglishPreview": "Weekends",
+      "translations": {
+        "zh-TW": "週末",
+        "ja": "週末"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "template_wake_instant",
+      "expectedEnglishPreview": "Instant ring",
+      "translations": {
+        "zh-TW": "立即響鈴",
+        "ja": "すぐに鳴らす"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "template_wake_gentle",
+      "expectedEnglishPreview": "Gentle wake",
+      "translations": {
+        "zh-TW": "溫和喚醒",
+        "ja": "やさしく起こす"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "template_wake_balanced",
+      "expectedEnglishPreview": "Balanced wake",
+      "translations": {
+        "zh-TW": "平衡喚醒",
+        "ja": "バランスよく起こす"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "template_time_now_plus",
+      "expectedEnglishPreview": "Now + %1$d min",
+      "translations": {
+        "zh-TW": "現在起 %1$d 分鐘後",
+        "ja": "今から %1$d 分後"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "readiness_no_motion_sensor_shake",
+      "expectedEnglishPreview": "This device has no motion sensor for the shake challenge.",
+      "translations": {
+        "zh-TW": "此裝置沒有可供搖晃挑戰使用的動作感測器。",
+        "ja": "この端末には振るチャレンジに使用できるモーションセンサーがありません。"
+      },
+      "reviewRisk": "READINESS_OR_BEHAVIOR_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "readiness_no_motion_sensor_squat",
+      "expectedEnglishPreview": "This device has no motion sensor for the squat challenge.",
+      "translations": {
+        "zh-TW": "此裝置沒有可供深蹲挑戰使用的動作感測器。",
+        "ja": "この端末にはスクワットのチャレンジに使用できるモーションセンサーがありません。"
+      },
+      "reviewRisk": "READINESS_OR_BEHAVIOR_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "readiness_no_motion_sensor_pushup",
+      "expectedEnglishPreview": "This device has no motion sensor for the push-up challenge.",
+      "translations": {
+        "zh-TW": "此裝置沒有可供伏地挺身挑戰使用的動作感測器。",
+        "ja": "この端末には腕立て伏せのチャレンジに使用できるモーションセンサーがありません。"
+      },
+      "reviewRisk": "READINESS_OR_BEHAVIOR_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "readiness_no_motion_sensor_plank",
+      "expectedEnglishPreview": "This device has no motion sensor for the plank hold challenge.",
+      "translations": {
+        "zh-TW": "此裝置沒有可供棒式挑戰使用的動作感測器。",
+        "ja": "この端末にはプランクのチャレンジに使用できるモーションセンサーがありません。"
+      },
+      "reviewRisk": "READINESS_OR_BEHAVIOR_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "readiness_no_step_counter",
+      "expectedEnglishPreview": "This device has no step-counter sensor for the walk challenge.",
+      "translations": {
+        "zh-TW": "此裝置沒有步行挑戰所需的計步感測器。",
+        "ja": "この端末には歩行チャレンジに必要な歩数センサーがありません。"
+      },
+      "reviewRisk": "READINESS_OR_BEHAVIOR_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "readiness_no_speech_recognition",
+      "expectedEnglishPreview": "Android speech recognition is unavailable. The typed fallback still works.",
+      "translations": {
+        "zh-TW": "無法使用 Android 語音辨識，但仍可透過文字輸入完成挑戰。",
+        "ja": "Android の音声認識は利用できませんが、代わりに文字入力できます。"
+      },
+      "reviewRisk": "READINESS_OR_BEHAVIOR_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "readiness_needs_microphone",
+      "expectedEnglishPreview": "Grant microphone permission so the phrase can be recognized.",
+      "translations": {
+        "zh-TW": "請授予麥克風權限，才能辨識所說的短句。",
+        "ja": "フレーズを認識するにはマイクの権限を許可してください。"
+      },
+      "reviewRisk": "READINESS_OR_BEHAVIOR_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "readiness_no_handwriting",
+      "expectedEnglishPreview": "Handwriting recognition is unavailable in this build. The typed fallback still works.",
+      "translations": {
+        "zh-TW": "此版本沒有手寫辨識功能，但仍可使用文字輸入。",
+        "ja": "このビルドでは手書き認識を利用できませんが、文字入力は使えます。"
+      },
+      "reviewRisk": "READINESS_OR_BEHAVIOR_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "readiness_no_nfc",
+      "expectedEnglishPreview": "This device has no NFC hardware for the tag challenge.",
+      "translations": {
+        "zh-TW": "此裝置沒有 NFC 硬體，無法使用標籤挑戰。",
+        "ja": "この端末には NFC がないため、タグのチャレンジは利用できません。"
+      },
+      "reviewRisk": "READINESS_OR_BEHAVIOR_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "readiness_needs_nfc_tag",
+      "expectedEnglishPreview": "Register an NFC tag before saving.",
+      "translations": {
+        "zh-TW": "儲存前請先登錄 NFC 標籤。",
+        "ja": "保存する前に NFC タグを登録してください。"
+      },
+      "reviewRisk": "READINESS_OR_BEHAVIOR_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "readiness_nfc_off",
+      "expectedEnglishPreview": "Turn on NFC before this alarm fires.",
+      "translations": {
+        "zh-TW": "鬧鐘響起前請先開啟 NFC。",
+        "ja": "アラームが鳴る前に NFC をオンにしてください。"
+      },
+      "reviewRisk": "READINESS_OR_BEHAVIOR_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "readiness_no_camera_barcode",
+      "expectedEnglishPreview": "This device has no camera to scan the barcode.",
+      "translations": {
+        "zh-TW": "此裝置沒有可供掃描條碼的相機。",
+        "ja": "この端末にはバーコードを読み取るためのカメラがありません。"
+      },
+      "reviewRisk": "READINESS_OR_BEHAVIOR_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "readiness_needs_barcode",
+      "expectedEnglishPreview": "Register a barcode value before saving.",
+      "translations": {
+        "zh-TW": "儲存前請先登錄條碼內容。",
+        "ja": "保存する前にバーコードの値を登録してください。"
+      },
+      "reviewRisk": "READINESS_OR_BEHAVIOR_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "readiness_needs_camera_barcode",
+      "expectedEnglishPreview": "Grant camera permission to scan the barcode.",
+      "translations": {
+        "zh-TW": "請授予相機權限才能掃描條碼。",
+        "ja": "バーコードを読み取るにはカメラの権限を許可してください。"
+      },
+      "reviewRisk": "READINESS_OR_BEHAVIOR_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "readiness_no_camera_photo",
+      "expectedEnglishPreview": "This device has no camera for the photo-match challenge.",
+      "translations": {
+        "zh-TW": "此裝置沒有可供照片比對挑戰使用的相機。",
+        "ja": "この端末には写真照合チャレンジに使用できるカメラがありません。"
+      },
+      "reviewRisk": "READINESS_OR_BEHAVIOR_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "readiness_needs_camera_photo",
+      "expectedEnglishPreview": "Grant camera permission to match the photo.",
+      "translations": {
+        "zh-TW": "請授予相機權限才能比對照片。",
+        "ja": "写真を照合するにはカメラの権限を許可してください。"
+      },
+      "reviewRisk": "READINESS_OR_BEHAVIOR_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "readiness_no_wifi",
+      "expectedEnglishPreview": "This device has no Wi-Fi for the network challenge.",
+      "translations": {
+        "zh-TW": "此裝置沒有 Wi-Fi，無法使用網路挑戰。",
+        "ja": "この端末には Wi-Fi がないため、ネットワークのチャレンジは利用できません。"
+      },
+      "reviewRisk": "READINESS_OR_BEHAVIOR_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "readiness_needs_ssid",
+      "expectedEnglishPreview": "Enter the Wi-Fi network name before saving.",
+      "translations": {
+        "zh-TW": "儲存前請先輸入 Wi-Fi 網路名稱。",
+        "ja": "保存する前に Wi-Fi ネットワーク名を入力してください。"
+      },
+      "reviewRisk": "READINESS_OR_BEHAVIOR_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "readiness_needs_location_wifi",
+      "expectedEnglishPreview": "Grant location permission so the Wi-Fi network can be detected.",
+      "translations": {
+        "zh-TW": "請授予位置權限，才能偵測 Wi-Fi 網路。",
+        "ja": "Wi-Fi ネットワークを検出するには位置情報へのアクセスを許可してください。"
+      },
+      "reviewRisk": "READINESS_OR_BEHAVIOR_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "wake_consistency_very",
+      "expectedEnglishPreview": "Very consistent",
+      "translations": {
+        "zh-TW": "非常規律",
+        "ja": "非常に規則的"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "wake_consistency_fairly",
+      "expectedEnglishPreview": "Fairly consistent",
+      "translations": {
+        "zh-TW": "相當規律",
+        "ja": "比較的規則的"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "wake_consistency_somewhat",
+      "expectedEnglishPreview": "Somewhat variable",
+      "translations": {
+        "zh-TW": "有些不規律",
+        "ja": "多少ばらつきがある"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "wake_consistency_highly",
+      "expectedEnglishPreview": "Highly variable",
+      "translations": {
+        "zh-TW": "非常不規律",
+        "ja": "ばらつきが非常に大きい"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    }
+  ]
+}

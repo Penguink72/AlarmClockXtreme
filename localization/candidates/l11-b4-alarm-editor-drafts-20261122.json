@@ -1,0 +1,657 @@
+{
+  "schema": "acx-l11-batch4-drafts/1",
+  "topic": "ALARM_EDITOR_SCHEDULING_AND_ALARM_LIST",
+  "status": "MODEL_PRELIMINARY_NOT_APPROVED",
+  "independentApproval": false,
+  "sourceRef": "app/src/main/res/values/strings.xml",
+  "records": [
+    {
+      "key": "alarm_edit_blur_image",
+      "expectedEnglishPreview": "Blur image on Android 12+",
+      "translations": {
+        "zh-TW": "在 Android 12 以上模糊化圖片",
+        "ja": "Android 12 以降で画像をぼかす"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarm_edit_speak_context",
+      "expectedEnglishPreview": "Speak time, date & weather",
+      "translations": {
+        "zh-TW": "播報時間、日期與天氣",
+        "ja": "時刻・日付・天気を読み上げる"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarm_edit_speak_context_hint",
+      "expectedEnglishPreview": "Uses on-device text-to-speech to announce the time, date, and weather after dismissal.",
+      "translations": {
+        "zh-TW": "解除鬧鐘後，使用裝置內建的文字轉語音功能播報時間、日期及天氣。",
+        "ja": "アラーム停止後に、端末内の音声読み上げで時刻・日付・天気を案内します。"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarm_edit_spotify_uri",
+      "expectedEnglishPreview": "Spotify URI (for example, spotify:track:…)",
+      "translations": {
+        "zh-TW": "Spotify URI（例如 spotify:track:…）",
+        "ja": "Spotify URI（例：spotify:track:…）"
+      },
+      "reviewRisk": "ACTION_OR_SCHEDULING_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "alarm_edit_spotify_hint",
+      "expectedEnglishPreview": "Needs the Spotify app installed and signed in. Paste a track, album or playlist link. If Spotify has not started playing within a few seconds, your default alarm tone takes over.",
+      "translations": {
+        "zh-TW": "必須安裝 Spotify App 並登入。請貼上歌曲、專輯或播放清單連結。如果 Spotify 在數秒內沒有開始播放，會改用預設鬧鐘鈴聲。",
+        "ja": "Spotify アプリのインストールとログインが必要です。曲、アルバム、プレイリストのリンクを貼り付けてください。数秒以内に再生が始まらない場合は既定のアラーム音に切り替わります。"
+      },
+      "reviewRisk": "ACTION_OR_SCHEDULING_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "alarm_edit_hue_sunrise",
+      "expectedEnglishPreview": "Sunrise light simulation",
+      "translations": {
+        "zh-TW": "日出燈光模擬",
+        "ja": "日の出演出"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarm_edit_hue_start",
+      "expectedEnglishPreview": "Start lights before alarm",
+      "translations": {
+        "zh-TW": "在鬧鐘響起前開燈",
+        "ja": "アラーム前に照明を点灯する"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarm_edit_hue_hint",
+      "expectedEnglishPreview": "Requires Hue bridge IP and API key configured in Settings → Philips Hue.",
+      "translations": {
+        "zh-TW": "須先在「設定 → Philips Hue」設定 Hue 橋接器 IP 與 API 金鑰。",
+        "ja": "「設定 → Philips Hue」でブリッジの IP アドレスと API キーを設定してください。"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarm_edit_screen_sunrise",
+      "expectedEnglishPreview": "Screen sunrise (color transition)",
+      "translations": {
+        "zh-TW": "螢幕模擬日出（色彩漸變）",
+        "ja": "画面で日の出を再現（色の変化）"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarm_edit_duration",
+      "expectedEnglishPreview": "Duration",
+      "translations": {
+        "zh-TW": "持續時間",
+        "ja": "時間"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarm_edit_sunrise_hint",
+      "expectedEnglishPreview": "Transitions the screen from deep red to warm yellow to simulate sunrise.",
+      "translations": {
+        "zh-TW": "螢幕顏色會從深紅逐漸轉為暖黃，以模擬日出。",
+        "ja": "画面の色を濃い赤から暖かい黄色へ徐々に変化させ、日の出を再現します。"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarm_edit_emergency_alert",
+      "expectedEnglishPreview": "Emergency contact alert",
+      "translations": {
+        "zh-TW": "緊急聯絡人警示",
+        "ja": "緊急連絡先への通知"
+      },
+      "reviewRisk": "ACTION_OR_SCHEDULING_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "alarm_edit_alert_after",
+      "expectedEnglishPreview": "Alert after",
+      "translations": {
+        "zh-TW": "多久後發出警示",
+        "ja": "通知するまでの時間"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarm_edit_guardian_call_granted",
+      "expectedEnglishPreview": "Direct call permission is granted.",
+      "translations": {
+        "zh-TW": "已取得直接撥打電話的權限。",
+        "ja": "直接発信する権限が許可されています。"
+      },
+      "reviewRisk": "ACTION_OR_SCHEDULING_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "alarm_edit_guardian_call_dialer",
+      "expectedEnglishPreview": "Call fallback opens the dialer because CALL_PHONE is not granted.",
+      "translations": {
+        "zh-TW": "因未取得 CALL_PHONE 權限，備援通話會改為開啟撥號程式。",
+        "ja": "CALL_PHONE 権限がないため、代わりに電話アプリのダイヤル画面を開きます。"
+      },
+      "reviewRisk": "ACTION_OR_SCHEDULING_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "alarm_edit_guardian_inactive",
+      "expectedEnglishPreview": "Guardian Angel is off for this alarm.",
+      "translations": {
+        "zh-TW": "此鬧鐘未啟用 Guardian Angel 功能。",
+        "ja": "このアラームでは Guardian Angel が無効です。"
+      },
+      "reviewRisk": "ACTION_OR_SCHEDULING_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "alarm_edit_guardian_direct_sms",
+      "expectedEnglishPreview": "Sends an emergency SMS automatically, then opens the call path if the alarm is not dismissed. %1$s",
+      "translations": {
+        "zh-TW": "如果鬧鐘未被解除，會自動傳送緊急簡訊，然後開啟通話流程。%1$s",
+        "ja": "アラームが停止されなかった場合は緊急 SMS を自動送信し、その後に通話処理を開始します。%1$s"
+      },
+      "reviewRisk": "ACTION_OR_SCHEDULING_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "alarm_edit_guardian_needs_sms",
+      "expectedEnglishPreview": "F-Droid can send automatic SMS after SEND_SMS is allowed. Until then, it opens a prefilled SMS composer. %1$s",
+      "translations": {
+        "zh-TW": "允許 SEND_SMS 權限後，F-Droid 版本可自動傳送簡訊。在此之前會開啟已填入內容的簡訊編輯畫面。%1$s",
+        "ja": "SEND_SMS 権限を許可すると、F-Droid 版では SMS を自動送信できます。それまでは、内容を入力済みの SMS 作成画面が開きます。%1$s"
+      },
+      "reviewRisk": "ACTION_OR_SCHEDULING_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "alarm_edit_guardian_composer",
+      "expectedEnglishPreview": "Opens a prefilled emergency SMS composer if the alarm is not dismissed, then falls back to call or dialer. %1$s",
+      "translations": {
+        "zh-TW": "如果鬧鐘未被解除，會開啟預先填好的緊急簡訊編輯畫面，再使用通話或撥號程式作為備援。%1$s",
+        "ja": "アラームが停止されなかった場合は、緊急 SMS の下書き画面を開き、通話またはダイヤル画面を代替手段として使用します。%1$s"
+      },
+      "reviewRisk": "ACTION_OR_SCHEDULING_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "alarm_edit_checklist_label",
+      "expectedEnglishPreview": "Checklist items (one per line)",
+      "translations": {
+        "zh-TW": "檢查清單項目（每行一項）",
+        "ja": "チェックリストの項目（1行に1項目）"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarm_edit_checklist_hint",
+      "expectedEnglishPreview": "Shown as a checklist after dismissal on the morning briefing screen.",
+      "translations": {
+        "zh-TW": "解除鬧鐘後，會在早晨摘要畫面顯示為檢查清單。",
+        "ja": "アラーム停止後、朝のブリーフィング画面にチェックリストとして表示されます。"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarm_edit_profile",
+      "expectedEnglishPreview": "Alarm profile",
+      "translations": {
+        "zh-TW": "鬧鐘設定檔",
+        "ja": "アラームのプロファイル"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarm_edit_profile_placeholder",
+      "expectedEnglishPreview": "For example: Work, Travel, Weekend",
+      "translations": {
+        "zh-TW": "例如：上班、旅行、週末",
+        "ja": "例：仕事、旅行、週末"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarm_edit_specific_date",
+      "expectedEnglishPreview": "Specific date (YYYY-MM-DD, leave blank for repeat days)",
+      "translations": {
+        "zh-TW": "指定日期（YYYY-MM-DD；若要依星期重複則留空）",
+        "ja": "指定日（YYYY-MM-DD。曜日で繰り返す場合は空欄）"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarm_edit_time_zone",
+      "expectedEnglishPreview": "Time zone",
+      "translations": {
+        "zh-TW": "時區",
+        "ja": "タイムゾーン"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarm_edit_fixed_zone",
+      "expectedEnglishPreview": "Fixed zone",
+      "translations": {
+        "zh-TW": "固定時區",
+        "ja": "固定タイムゾーン"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarm_edit_follow_device",
+      "expectedEnglishPreview": "Follow device",
+      "translations": {
+        "zh-TW": "跟隨裝置",
+        "ja": "端末に従う"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarm_edit_follow_device_zone",
+      "expectedEnglishPreview": "Follow device time zone",
+      "translations": {
+        "zh-TW": "跟隨裝置時區",
+        "ja": "端末のタイムゾーンに従う"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarm_edit_keep_fixed_zone",
+      "expectedEnglishPreview": "Keep time in a fixed zone",
+      "translations": {
+        "zh-TW": "維持固定時區的時間",
+        "ja": "固定タイムゾーンの時刻を維持"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarm_edit_iana_zone",
+      "expectedEnglishPreview": "IANA time zone (for example, America/New_York)",
+      "translations": {
+        "zh-TW": "IANA 時區（例如 America/New_York）",
+        "ja": "IANA タイムゾーン（例：America/New_York）"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarm_edit_fixed_zone_hint",
+      "expectedEnglishPreview": "The alarm stays at %1$s:%2$s in this zone when you travel.",
+      "translations": {
+        "zh-TW": "旅行時，鬧鐘仍會按照此時區的 %1$s:%2$s 響起。",
+        "ja": "旅行中も、このタイムゾーンの %1$s:%2$s にアラームが鳴ります。"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarm_edit_unknown_zone",
+      "expectedEnglishPreview": "Unknown zone; saving will safely fall back to following the device.",
+      "translations": {
+        "zh-TW": "無法辨識的時區；儲存時將安全地改為跟隨裝置時區。",
+        "ja": "不明なタイムゾーンです。保存時は安全のため端末のタイムゾーンに従います。"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarm_edit_shift_start",
+      "expectedEnglishPreview": "Shift cycle start date (YYYY-MM-DD)",
+      "translations": {
+        "zh-TW": "輪班週期開始日期（YYYY-MM-DD）",
+        "ja": "シフト周期の開始日（YYYY-MM-DD）"
+      },
+      "reviewRisk": "ACTION_OR_SCHEDULING_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "alarm_edit_shift_hint",
+      "expectedEnglishPreview": "Day, night, and work entries ring; off days are skipped. Weekday picks still narrow the pattern.",
+      "translations": {
+        "zh-TW": "日班、夜班及工作日會響鈴；休假日會略過。選定星期仍會進一步限制排程。",
+        "ja": "日勤・夜勤・勤務日のアラームは鳴り、休日はスキップします。曜日の選択でも対象日を絞り込みます。"
+      },
+      "reviewRisk": "ACTION_OR_SCHEDULING_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "alarm_edit_shift_ddnno_description",
+      "expectedEnglishPreview": "2 day shifts, 2 night shifts, 1 off day.",
+      "translations": {
+        "zh-TW": "日班 2 天、夜班 2 天、休假 1 天。",
+        "ja": "日勤2日、夜勤2日、休日1日。"
+      },
+      "reviewRisk": "ACTION_OR_SCHEDULING_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "alarm_edit_shift_four_description",
+      "expectedEnglishPreview": "4 work days followed by 4 off days.",
+      "translations": {
+        "zh-TW": "工作 4 天後休假 4 天。",
+        "ja": "4日勤務した後に4日休み。"
+      },
+      "reviewRisk": "ACTION_OR_SCHEDULING_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "alarm_edit_shift_panama_description",
+      "expectedEnglishPreview": "2 on, 2 off, 3 on, then 2 off, 2 on, 3 off.",
+      "translations": {
+        "zh-TW": "工作 2 天、休 2 天、工作 3 天；接著休 2 天、工作 2 天、休 3 天。",
+        "ja": "2日勤務、2日休み、3日勤務、その後2日休み、2日勤務、3日休み。"
+      },
+      "reviewRisk": "ACTION_OR_SCHEDULING_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "alarm_edit_shift_dupont_description",
+      "expectedEnglishPreview": "4 nights, 3 off, 3 days, 1 off, 3 nights, 3 off, 4 days, 7 off.",
+      "translations": {
+        "zh-TW": "夜班 4 天、休 3 天、日班 3 天、休 1 天、夜班 3 天、休 3 天、日班 4 天、休 7 天。",
+        "ja": "夜勤4日、休み3日、日勤3日、休み1日、夜勤3日、休み3日、日勤4日、休み7日。"
+      },
+      "reviewRisk": "ACTION_OR_SCHEDULING_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "alarm_edit_shift_pitman_description",
+      "expectedEnglishPreview": "2 on, 2 off, 3 on, 2 off, 2 on, 3 off.",
+      "translations": {
+        "zh-TW": "工作 2 天、休 2 天、工作 3 天、休 2 天、工作 2 天、休 3 天。",
+        "ja": "2日勤務、2日休み、3日勤務、2日休み、2日勤務、3日休み。"
+      },
+      "reviewRisk": "ACTION_OR_SCHEDULING_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "alarm_edit_shift_default_description",
+      "expectedEnglishPreview": "Custom shift pattern.",
+      "translations": {
+        "zh-TW": "自訂輪班模式。",
+        "ja": "カスタムシフトパターン。"
+      },
+      "reviewRisk": "ACTION_OR_SCHEDULING_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "alarm_edit_weather_early",
+      "expectedEnglishPreview": "Weather early fire",
+      "translations": {
+        "zh-TW": "遇惡劣天氣提早響鈴",
+        "ja": "悪天候時に早めに鳴らす"
+      },
+      "reviewRisk": "ACTION_OR_SCHEDULING_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "alarm_edit_weather_early_hint",
+      "expectedEnglishPreview": "Fire this alarm earlier when snow, freezing rain, or ice is forecast. Uses cached weather data.",
+      "translations": {
+        "zh-TW": "如果預報有降雪、凍雨或結冰，鬧鐘將提早響起。使用已快取的天氣資料。",
+        "ja": "雪・着氷性の雨・凍結が予報されている場合、保存済みの天気データを利用してアラームを早めに鳴らします。"
+      },
+      "reviewRisk": "ACTION_OR_SCHEDULING_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "alarm_edit_hardware_action",
+      "expectedEnglishPreview": "Hardware-button action",
+      "translations": {
+        "zh-TW": "實體按鍵動作",
+        "ja": "ハードウェアボタンの動作"
+      },
+      "reviewRisk": "ACTION_OR_SCHEDULING_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "alarm_edit_hardware_none",
+      "expectedEnglishPreview": "None (default)",
+      "translations": {
+        "zh-TW": "無（預設）",
+        "ja": "なし（既定）"
+      },
+      "reviewRisk": "ACTION_OR_SCHEDULING_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "alarm_edit_hardware_hint",
+      "expectedEnglishPreview": "Volume, camera, or headset keys during the alarm trigger the chosen action. NONE leaves normal volume control intact.",
+      "translations": {
+        "zh-TW": "鬧鐘響鈴時按下音量、相機或耳機按鍵，即執行所選動作。「無」不影響一般音量控制。",
+        "ja": "アラーム中に音量・カメラ・ヘッドセットのキーを押すと、選択した操作を実行します。「なし」の場合は通常どおり音量を調整できます。"
+      },
+      "reviewRisk": "ACTION_OR_SCHEDULING_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "alarm_edit_solar_anchor",
+      "expectedEnglishPreview": "Solar anchor",
+      "translations": {
+        "zh-TW": "太陽時刻基準",
+        "ja": "太陽時刻の基準"
+      },
+      "reviewRisk": "ACTION_OR_SCHEDULING_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "alarm_edit_solar_sunrise",
+      "expectedEnglishPreview": "Sunrise",
+      "translations": {
+        "zh-TW": "日出",
+        "ja": "日の出"
+      },
+      "reviewRisk": "ACTION_OR_SCHEDULING_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "alarm_edit_solar_sunset",
+      "expectedEnglishPreview": "Sunset",
+      "translations": {
+        "zh-TW": "日落",
+        "ja": "日の入り"
+      },
+      "reviewRisk": "ACTION_OR_SCHEDULING_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "alarm_edit_solar_offset",
+      "expectedEnglishPreview": "Solar offset",
+      "translations": {
+        "zh-TW": "相對太陽時刻的偏移",
+        "ja": "太陽時刻からのずれ"
+      },
+      "reviewRisk": "ACTION_OR_SCHEDULING_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "alarm_edit_solar_off",
+      "expectedEnglishPreview": "Off (use clock time)",
+      "translations": {
+        "zh-TW": "關閉（使用時鐘時間）",
+        "ja": "オフ（時計の時刻を使用）"
+      },
+      "reviewRisk": "ACTION_OR_SCHEDULING_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "alarm_edit_positive_minutes_short",
+      "expectedEnglishPreview": "+%1$d min",
+      "translations": {
+        "zh-TW": "+%1$d 分鐘",
+        "ja": "+%1$d 分"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarm_edit_solar_after",
+      "expectedEnglishPreview": "+%1$d min (after %2$s)",
+      "translations": {
+        "zh-TW": "+%1$d 分鐘（%2$s 後）",
+        "ja": "+%1$d 分（%2$s の後）"
+      },
+      "reviewRisk": "ACTION_OR_SCHEDULING_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "alarm_edit_solar_before",
+      "expectedEnglishPreview": "%1$d min (before %2$s)",
+      "translations": {
+        "zh-TW": "%2$s 前 %1$d 分鐘",
+        "ja": "%2$s の %1$d 分前"
+      },
+      "reviewRisk": "ACTION_OR_SCHEDULING_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "alarm_edit_solar_hint",
+      "expectedEnglishPreview": "When the offset is non-zero, the alarm fires relative to the selected sunrise or sunset event at your last known location.",
+      "translations": {
+        "zh-TW": "偏移時間不為零時，將依據最後已知位置的日出或日落時刻決定鬧鐘響鈴時間。",
+        "ja": "時間のずれがゼロでない場合、最後に確認された位置の日の出または日の入りを基準にアラームを鳴らします。"
+      },
+      "reviewRisk": "ACTION_OR_SCHEDULING_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "alarm_edit_silent_wake",
+      "expectedEnglishPreview": "Silent wake",
+      "translations": {
+        "zh-TW": "靜音喚醒",
+        "ja": "無音で起こす"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarm_edit_custom_tone",
+      "expectedEnglishPreview": "Custom tone",
+      "translations": {
+        "zh-TW": "自訂鈴聲",
+        "ja": "カスタム着信音"
+      },
+      "reviewRisk": "ACTION_OR_SCHEDULING_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "alarm_edit_save_error_missing_refs",
+      "expectedEnglishPreview": "Finish the challenge setup first: missing %1$s.",
+      "translations": {
+        "zh-TW": "請先完成挑戰設定：缺少 %1$s。",
+        "ja": "先にチャレンジの設定を完了してください：%1$s がありません。"
+      },
+      "reviewRisk": "ACTION_OR_SCHEDULING_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "alarm_edit_save_error_location",
+      "expectedEnglishPreview": "Save your current place before enabling location dismissal.",
+      "translations": {
+        "zh-TW": "啟用定位解除前，請先儲存目前位置。",
+        "ja": "位置による停止を有効にする前に、現在地を保存してください。"
+      },
+      "reviewRisk": "ACTION_OR_SCHEDULING_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "alarm_edit_save_error_generic",
+      "expectedEnglishPreview": "Could not save this alarm. Check the details and try again.",
+      "translations": {
+        "zh-TW": "無法儲存此鬧鐘，請檢查設定後重試。",
+        "ja": "このアラームを保存できませんでした。内容を確認して再試行してください。"
+      },
+      "reviewRisk": "ACTION_OR_SCHEDULING_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "alarm_edit_challenge_ref_nfc",
+      "expectedEnglishPreview": "an NFC tag",
+      "translations": {
+        "zh-TW": "一個 NFC 標籤",
+        "ja": "NFC タグ"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarm_edit_challenge_ref_barcode",
+      "expectedEnglishPreview": "a barcode value",
+      "translations": {
+        "zh-TW": "一個條碼值",
+        "ja": "バーコードの値"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarm_edit_challenge_ref_photo",
+      "expectedEnglishPreview": "a reference photo",
+      "translations": {
+        "zh-TW": "一張參考照片",
+        "ja": "参照写真"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarm_edit_challenge_ref_wifi",
+      "expectedEnglishPreview": "a Wi-Fi network name",
+      "translations": {
+        "zh-TW": "一個 Wi-Fi 網路名稱",
+        "ja": "Wi-Fi ネットワーク名"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarmlist_release_to_delete",
+      "expectedEnglishPreview": "Release to delete",
+      "translations": {
+        "zh-TW": "放開以刪除",
+        "ja": "離すと削除"
+      },
+      "reviewRisk": "ACTION_OR_SCHEDULING_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "alarmlist_copy",
+      "expectedEnglishPreview": "Copy",
+      "translations": {
+        "zh-TW": "複製",
+        "ja": "コピー"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarmlist_template_scheduled_for",
+      "expectedEnglishPreview": "%1$s scheduled for %2$s",
+      "translations": {
+        "zh-TW": "%1$s 已排定於 %2$s",
+        "ja": "%1$s を %2$s に設定しました"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarmlist_quick_alarm_label",
+      "expectedEnglishPreview": "%1$dm quick alarm",
+      "translations": {
+        "zh-TW": "%1$d 分鐘快速鬧鐘",
+        "ja": "%1$d 分後のクイックアラーム"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarmlist_copy_of",
+      "expectedEnglishPreview": "%1$s (copy)",
+      "translations": {
+        "zh-TW": "%1$s（副本）",
+        "ja": "%1$s（コピー）"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarm_repeat_once",
+      "expectedEnglishPreview": "Once",
+      "translations": {
+        "zh-TW": "一次",
+        "ja": "1回"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarm_repeat_every_day",
+      "expectedEnglishPreview": "Every day",
+      "translations": {
+        "zh-TW": "每天",
+        "ja": "毎日"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarm_repeat_weekdays",
+      "expectedEnglishPreview": "Weekdays",
+      "translations": {
+        "zh-TW": "平日",
+        "ja": "平日"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarm_repeat_weekend",
+      "expectedEnglishPreview": "Weekend",
+      "translations": {
+        "zh-TW": "週末",
+        "ja": "週末"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,585 @@
+{
+  "schema": "acx-l11-batch4-drafts/1",
+  "topic": "DASHBOARD_WEATHER_CALENDAR",
+  "status": "MODEL_PRELIMINARY_NOT_APPROVED",
+  "independentApproval": false,
+  "sourceRef": "app/src/main/res/values/strings.xml",
+  "records": [
+    {
+      "key": "dashboard_retry",
+      "expectedEnglishPreview": "Retry",
+      "translations": {
+        "zh-TW": "重試",
+        "ja": "再試行"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "dashboard_retry_weather",
+      "expectedEnglishPreview": "Retry weather",
+      "translations": {
+        "zh-TW": "重新取得天氣",
+        "ja": "天気情報を再取得"
+      },
+      "reviewRisk": "WEATHER_AND_DATA_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "dashboard_next_few_hours",
+      "expectedEnglishPreview": "Next few hours",
+      "translations": {
+        "zh-TW": "接下來幾小時",
+        "ja": "今後数時間"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "dashboard_next_3_days",
+      "expectedEnglishPreview": "Next 3 days",
+      "translations": {
+        "zh-TW": "未來三天",
+        "ja": "今後3日間"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "dashboard_pollen",
+      "expectedEnglishPreview": "Pollen",
+      "translations": {
+        "zh-TW": "花粉",
+        "ja": "花粉"
+      },
+      "reviewRisk": "WEATHER_AND_DATA_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "dashboard_source_open_meteo_cams",
+      "expectedEnglishPreview": "Source: Open-Meteo + CAMS",
+      "translations": {
+        "zh-TW": "資料來源：Open-Meteo + CAMS",
+        "ja": "情報源：Open-Meteo + CAMS"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "dashboard_schedule",
+      "expectedEnglishPreview": "Schedule",
+      "translations": {
+        "zh-TW": "行程",
+        "ja": "予定"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "dashboard_city_region_zip_code",
+      "expectedEnglishPreview": "City, region, or ZIP code",
+      "translations": {
+        "zh-TW": "城市、地區或郵遞區號",
+        "ja": "都市・地域・郵便番号"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "dashboard_use_current_device_location",
+      "expectedEnglishPreview": "Use current device location",
+      "translations": {
+        "zh-TW": "使用裝置目前位置",
+        "ja": "端末の現在地を使用"
+      },
+      "reviewRisk": "WEATHER_AND_DATA_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "dashboard_today_quiet",
+      "expectedEnglishPreview": "Today is quiet",
+      "translations": {
+        "zh-TW": "今天沒有特別行程",
+        "ja": "今日は予定が少ない日です"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "dashboard_weather_calendar_cards_are_off",
+      "expectedEnglishPreview": "Weather and calendar cards are off. Toggle them on in Settings.",
+      "translations": {
+        "zh-TW": "天氣與行事曆資訊卡已關閉。請前往設定開啟。",
+        "ja": "天気とカレンダーのカードがオフになっています。設定からオンにしてください。"
+      },
+      "reviewRisk": "WEATHER_AND_DATA_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "dashboard_view",
+      "expectedEnglishPreview": "View",
+      "translations": {
+        "zh-TW": "查看",
+        "ja": "表示"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "dashboard_today",
+      "expectedEnglishPreview": "Today",
+      "translations": {
+        "zh-TW": "今天",
+        "ja": "今日"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "dashboard_tornado_warning",
+      "expectedEnglishPreview": "Tornado warning",
+      "translations": {
+        "zh-TW": "龍捲風警報",
+        "ja": "竜巻警報"
+      },
+      "reviewRisk": "WEATHER_AND_DATA_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "dashboard_loading_current_weather",
+      "expectedEnglishPreview": "Loading current weather",
+      "translations": {
+        "zh-TW": "正在載入目前天氣",
+        "ja": "現在の天気を読み込み中"
+      },
+      "reviewRisk": "WEATHER_AND_DATA_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "dashboard_showing_saved_forecast",
+      "expectedEnglishPreview": "Showing saved forecast",
+      "translations": {
+        "zh-TW": "顯示已儲存的預報",
+        "ja": "保存済みの予報を表示中"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "dashboard_change_weather_location",
+      "expectedEnglishPreview": "Change weather location",
+      "translations": {
+        "zh-TW": "變更天氣位置",
+        "ja": "天気情報の地域を変更"
+      },
+      "reviewRisk": "WEATHER_AND_DATA_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "dashboard_high",
+      "expectedEnglishPreview": "High",
+      "translations": {
+        "zh-TW": "最高溫",
+        "ja": "最高"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "dashboard_low",
+      "expectedEnglishPreview": "Low",
+      "translations": {
+        "zh-TW": "最低溫",
+        "ja": "最低"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "dashboard_rain",
+      "expectedEnglishPreview": "Rain",
+      "translations": {
+        "zh-TW": "降雨",
+        "ja": "降雨"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "dashboard_humidity",
+      "expectedEnglishPreview": "Humidity",
+      "translations": {
+        "zh-TW": "濕度",
+        "ja": "湿度"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "dashboard_wind",
+      "expectedEnglishPreview": "Wind",
+      "translations": {
+        "zh-TW": "風速",
+        "ja": "風"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "dashboard_uv",
+      "expectedEnglishPreview": "UV",
+      "translations": {
+        "zh-TW": "紫外線",
+        "ja": "紫外線"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "dashboard_pollen_unavailable",
+      "expectedEnglishPreview": "Pollen unavailable",
+      "translations": {
+        "zh-TW": "無法取得花粉資訊",
+        "ja": "花粉情報を取得できません"
+      },
+      "reviewRisk": "WEATHER_AND_DATA_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "dashboard_calendar_access",
+      "expectedEnglishPreview": "Calendar access",
+      "translations": {
+        "zh-TW": "行事曆存取權",
+        "ja": "カレンダーへのアクセス"
+      },
+      "reviewRisk": "WEATHER_AND_DATA_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "dashboard_tap_allow_calendar_access_see",
+      "expectedEnglishPreview": "Tap to allow calendar access and see today’s events.",
+      "translations": {
+        "zh-TW": "點選以允許存取行事曆，查看今天的行程。",
+        "ja": "タップしてカレンダーへのアクセスを許可すると、今日の予定を確認できます。"
+      },
+      "reviewRisk": "WEATHER_AND_DATA_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "dashboard_nothing_scheduled_today",
+      "expectedEnglishPreview": "Nothing scheduled today",
+      "translations": {
+        "zh-TW": "今天沒有排定的行程",
+        "ja": "今日の予定はありません"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "dashboard_day_clear",
+      "expectedEnglishPreview": "Your day is clear.",
+      "translations": {
+        "zh-TW": "今天的行程是空的。",
+        "ja": "今日の予定は空いています。"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "dashboard_choose_weather_location",
+      "expectedEnglishPreview": "Choose weather location",
+      "translations": {
+        "zh-TW": "選擇天氣位置",
+        "ja": "天気情報の地域を選択"
+      },
+      "reviewRisk": "WEATHER_AND_DATA_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "dashboard_optional",
+      "expectedEnglishPreview": "Optional",
+      "translations": {
+        "zh-TW": "選填",
+        "ja": "任意"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "dashboard_use_city_zip_code_device",
+      "expectedEnglishPreview": "Use a city, ZIP code, or device location so the dashboard can stay accurate without extra setup later.",
+      "translations": {
+        "zh-TW": "使用城市、郵遞區號或裝置位置，之後首頁就能維持準確資訊，不必重複設定。",
+        "ja": "都市・郵便番号・端末の位置を指定すると、次回以降は追加設定なしでダッシュボードに正確な情報を表示できます。"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "dashboard_searching_locations",
+      "expectedEnglishPreview": "Searching locations",
+      "translations": {
+        "zh-TW": "正在搜尋地點",
+        "ja": "地点を検索中"
+      },
+      "reviewRisk": "WEATHER_AND_DATA_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "dashboard_search_city",
+      "expectedEnglishPreview": "Search for a city",
+      "translations": {
+        "zh-TW": "搜尋城市",
+        "ja": "都市を検索"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "dashboard_type_at_least_two_characters",
+      "expectedEnglishPreview": "Type at least two characters to find a location, or use your current device location.",
+      "translations": {
+        "zh-TW": "請至少輸入兩個字元搜尋地點，或使用裝置目前位置。",
+        "ja": "地点を探すには2文字以上入力するか、端末の現在地を使用してください。"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "dashboard_no_matching_places",
+      "expectedEnglishPreview": "No matching places",
+      "translations": {
+        "zh-TW": "沒有符合的地點",
+        "ja": "一致する場所がありません"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "dashboard_try_broader_city_name_postal",
+      "expectedEnglishPreview": "Try a broader city name, postal code, or nearby region.",
+      "translations": {
+        "zh-TW": "請改用較廣泛的城市名稱、郵遞區號或鄰近地區搜尋。",
+        "ja": "より広い都市名、郵便番号、近隣地域で検索してください。"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "dashboard_weather",
+      "expectedEnglishPreview": "Weather",
+      "translations": {
+        "zh-TW": "天氣",
+        "ja": "天気"
+      },
+      "reviewRisk": "WEATHER_AND_DATA_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "dashboard_air_quality",
+      "expectedEnglishPreview": "Air quality",
+      "translations": {
+        "zh-TW": "空氣品質",
+        "ja": "大気質"
+      },
+      "reviewRisk": "WEATHER_AND_DATA_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "dashboard_radar",
+      "expectedEnglishPreview": "Live radar",
+      "translations": {
+        "zh-TW": "即時雷達",
+        "ja": "ライブレーダー"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "dashboard_open_meteo_does_not_report_pollen",
+      "expectedEnglishPreview": "Open-Meteo does not report pollen for this location yet.",
+      "translations": {
+        "zh-TW": "Open-Meteo 尚未提供此地區的花粉資訊。",
+        "ja": "Open-Meteo では、この地域の花粉情報はまだ提供されていません。"
+      },
+      "reviewRisk": "WEATHER_AND_DATA_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "dashboard_search_a_city",
+      "expectedEnglishPreview": "Search a city",
+      "translations": {
+        "zh-TW": "搜尋城市",
+        "ja": "都市を検索"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "dashboard_matches",
+      "expectedEnglishPreview": "%1$s matches",
+      "translations": {
+        "zh-TW": "符合 %1$s 項",
+        "ja": "一致：%1$s 件"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "dashboard_unknown_location",
+      "expectedEnglishPreview": "Unknown location",
+      "translations": {
+        "zh-TW": "未知位置",
+        "ja": "不明な場所"
+      },
+      "reviewRisk": "WEATHER_AND_DATA_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "dashboard_now",
+      "expectedEnglishPreview": "Now",
+      "translations": {
+        "zh-TW": "現在",
+        "ja": "現在"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "dashboard_very_high",
+      "expectedEnglishPreview": "very high",
+      "translations": {
+        "zh-TW": "非常高",
+        "ja": "非常に高い"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "dashboard_aqi_unavailable",
+      "expectedEnglishPreview": "AQI unavailable",
+      "translations": {
+        "zh-TW": "沒有 AQI 資料",
+        "ja": "AQI 情報がありません"
+      },
+      "reviewRisk": "WEATHER_AND_DATA_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "dashboard_good",
+      "expectedEnglishPreview": "Good",
+      "translations": {
+        "zh-TW": "良好",
+        "ja": "良好"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "dashboard_moderate",
+      "expectedEnglishPreview": "Moderate",
+      "translations": {
+        "zh-TW": "普通",
+        "ja": "普通"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "dashboard_sensitive_groups",
+      "expectedEnglishPreview": "Sensitive groups",
+      "translations": {
+        "zh-TW": "敏感族群",
+        "ja": "敏感な人"
+      },
+      "reviewRisk": "WEATHER_AND_DATA_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "dashboard_unhealthy",
+      "expectedEnglishPreview": "Unhealthy",
+      "translations": {
+        "zh-TW": "不健康",
+        "ja": "健康に悪い"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "dashboard_very_unhealthy",
+      "expectedEnglishPreview": "Very unhealthy",
+      "translations": {
+        "zh-TW": "非常不健康",
+        "ja": "非常に健康に悪い"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "dashboard_hazardous",
+      "expectedEnglishPreview": "Hazardous",
+      "translations": {
+        "zh-TW": "危害等級",
+        "ja": "危険"
+      },
+      "reviewRisk": "WEATHER_AND_DATA_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "dashboard_very_high_2",
+      "expectedEnglishPreview": "Very high",
+      "translations": {
+        "zh-TW": "非常高",
+        "ja": "非常に高い"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "dashboard_earlier",
+      "expectedEnglishPreview": "earlier",
+      "translations": {
+        "zh-TW": "較早前",
+        "ja": "以前"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "dashboard_showing_the_last_saved_forecast",
+      "expectedEnglishPreview": "Showing the last saved forecast.",
+      "translations": {
+        "zh-TW": "顯示上次儲存的天氣預報。",
+        "ja": "最後に保存した天気予報を表示しています。"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "dashboard_m_ago",
+      "expectedEnglishPreview": "%1$sm ago",
+      "translations": {
+        "zh-TW": "%1$s 分鐘前",
+        "ja": "%1$s 分前"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "dashboard_h_ago",
+      "expectedEnglishPreview": "%1$sh ago",
+      "translations": {
+        "zh-TW": "%1$s 小時前",
+        "ja": "%1$s 時間前"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "dashboard_d_ago",
+      "expectedEnglishPreview": "%1$sd ago",
+      "translations": {
+        "zh-TW": "%1$s 天前",
+        "ja": "%1$s 日前"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "dashboard_stale_forecast_line",
+      "expectedEnglishPreview": "%1$s Last updated %2$s.",
+      "translations": {
+        "zh-TW": "%1$s，上次更新：%2$s。",
+        "ja": "%1$s、最終更新：%2$s。"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "dashboard_your_area",
+      "expectedEnglishPreview": "your area",
+      "translations": {
+        "zh-TW": "你的所在地區",
+        "ja": "お住まいの地域"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "dashboard_weather_fallback_title",
+      "expectedEnglishPreview": "Weather",
+      "translations": {
+        "zh-TW": "天氣",
+        "ja": "天気"
+      },
+      "reviewRisk": "WEATHER_AND_DATA_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "dashboard_last_location",
+      "expectedEnglishPreview": "Last Location",
+      "translations": {
+        "zh-TW": "上次使用的位置",
+        "ja": "前回の位置"
+      },
+      "reviewRisk": "WEATHER_AND_DATA_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "dashboard_pollen_not_reported",
+      "expectedEnglishPreview": "Not reported",
+      "translations": {
+        "zh-TW": "沒有回報資料",
+        "ja": "報告なし"
+      },
+      "reviewRisk": "WEATHER_AND_DATA_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "dashboard_pollen_band_unavailable",
+      "expectedEnglishPreview": "Unavailable",
+      "translations": {
+        "zh-TW": "無法取得",
+        "ja": "取得不可"
+      },
+      "reviewRisk": "WEATHER_AND_DATA_SEMANTIC_REVIEW"
+    }
+  ]
+}
