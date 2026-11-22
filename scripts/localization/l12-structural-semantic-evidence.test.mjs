@@ -26,10 +26,10 @@ function result(){
 
 test("L12 consumes the exact current L11 review queue without publishing or approving resources",()=>{
   const d=result();
-  assert.equal(d.stats.totalCandidates,2306);
-  assert.equal(d.records.length,2306);
-  assert.equal(d.stats.byLocale["zh-TW"],1153);
-  assert.equal(d.stats.byLocale.ja,1153);
+  assert.equal(d.stats.totalCandidates,2680);
+  assert.equal(d.records.length,2680);
+  assert.equal(d.stats.byLocale["zh-TW"],1340);
+  assert.equal(d.stats.byLocale.ja,1340);
   assert.equal(d.stats.officialReleaseEligible,0);
   assert.equal(d.stats.independentSemanticApproved,0);
   assert(d.records.every(r=>r.independentSemanticApproval===false));

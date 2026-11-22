@@ -1,0 +1,693 @@
+{
+  "schema": "acx-l11-batch8-drafts/1",
+  "topic": "STOPWATCH_WORLD_CLOCK_WEATHER_BREATHING_SHORTCUTS",
+  "status": "MODEL_PRELIMINARY_NOT_APPROVED",
+  "independentApproval": false,
+  "sourceRef": "app/src/main/res/values/strings.xml",
+  "records": [
+    {
+      "key": "stopwatch_close_stopwatch",
+      "expectedEnglishPreview": "Close stopwatch",
+      "translations": {
+        "zh-TW": "關閉碼錶",
+        "ja": "ストップウォッチを閉じる"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "stopwatch_current_run",
+      "expectedEnglishPreview": "Current run",
+      "translations": {
+        "zh-TW": "本次計時",
+        "ja": "今回の計測"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "stopwatch_high_contrast_display_built_quick",
+      "expectedEnglishPreview": "A high-contrast display built for quick glances.",
+      "translations": {
+        "zh-TW": "高對比顯示，方便快速查看。",
+        "ja": "ひと目で確認しやすい高コントラスト表示です。"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "stopwatch_no_laps_recorded_yet",
+      "expectedEnglishPreview": "No laps recorded yet",
+      "translations": {
+        "zh-TW": "尚無圈數紀錄",
+        "ja": "ラップ記録はまだありません"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "stopwatch_tap_lap_while_stopwatch_running",
+      "expectedEnglishPreview": "Tap Lap while the stopwatch is running to capture split times and compare pace.",
+      "translations": {
+        "zh-TW": "碼錶運行時點選「計圈」，可記錄分段時間並比較速度。",
+        "ja": "計測中に「ラップ」をタップすると、区間タイムを記録してペースを比較できます。"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "stopwatch_best_slowest_splits_are_highlighted",
+      "expectedEnglishPreview": "Best and slowest splits are highlighted automatically.",
+      "translations": {
+        "zh-TW": "最快與最慢的分段時間會自動標示。",
+        "ja": "最速と最も遅い区間タイムが自動的に強調表示されます。"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "stopwatch_start_stopwatch",
+      "expectedEnglishPreview": "Start stopwatch",
+      "translations": {
+        "zh-TW": "啟動碼錶",
+        "ja": "ストップウォッチを開始"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "stopwatch_lap",
+      "expectedEnglishPreview": "Lap",
+      "translations": {
+        "zh-TW": "計圈",
+        "ja": "ラップ"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "stopwatch_reset",
+      "expectedEnglishPreview": "Reset",
+      "translations": {
+        "zh-TW": "重設",
+        "ja": "リセット"
+      },
+      "reviewRisk": "ACTION_LABEL_OR_WEATHER_DOMAIN_REVIEW"
+    },
+    {
+      "key": "stopwatch_resume",
+      "expectedEnglishPreview": "Resume",
+      "translations": {
+        "zh-TW": "繼續",
+        "ja": "再開"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "stopwatch_split_time",
+      "expectedEnglishPreview": "Split time",
+      "translations": {
+        "zh-TW": "分段時間",
+        "ja": "区間タイム"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "stopwatch_total",
+      "expectedEnglishPreview": "Total",
+      "translations": {
+        "zh-TW": "總時間",
+        "ja": "合計"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "stopwatch_lap_number",
+      "expectedEnglishPreview": "Lap %1$d",
+      "translations": {
+        "zh-TW": "第 %1$d 圈",
+        "ja": "ラップ %1$d"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "stopwatch_title",
+      "expectedEnglishPreview": "Stopwatch",
+      "translations": {
+        "zh-TW": "碼錶",
+        "ja": "ストップウォッチ"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "stopwatch_stopwatch_reset",
+      "expectedEnglishPreview": "Stopwatch reset",
+      "translations": {
+        "zh-TW": "碼錶已重設",
+        "ja": "ストップウォッチをリセットしました"
+      },
+      "reviewRisk": "ACTION_LABEL_OR_WEATHER_DOMAIN_REVIEW"
+    },
+    {
+      "key": "stopwatch_start_a_precise_running_timer_and",
+      "expectedEnglishPreview": "Start a precise running timer and mark laps whenever you need a split.",
+      "translations": {
+        "zh-TW": "啟動精確計時，並可在需要時記錄圈數與分段時間。",
+        "ja": "正確な計測を開始し、必要に応じてラップと区間タイムを記録できます。"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "stopwatch_timing_live_mark_laps_as_the",
+      "expectedEnglishPreview": "Timing live. Mark laps as the session unfolds.",
+      "translations": {
+        "zh-TW": "正在計時，可隨時記錄圈數。",
+        "ja": "計測中です。必要に応じてラップを記録してください。"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "stopwatch_paused_in_place_resume_when_you",
+      "expectedEnglishPreview": "Paused in place. Resume when you are ready or reset for a clean run.",
+      "translations": {
+        "zh-TW": "計時已暫停。準備好後可繼續，或重設再開始。",
+        "ja": "計測を一時停止しました。準備ができたら再開するか、リセットして新しく開始してください。"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "stopwatch_timing",
+      "expectedEnglishPreview": "Timing",
+      "translations": {
+        "zh-TW": "計時",
+        "ja": "計測"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "stopwatch_running",
+      "expectedEnglishPreview": "Running",
+      "translations": {
+        "zh-TW": "運行中",
+        "ja": "計測中"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "stopwatch_laps",
+      "expectedEnglishPreview": "%1$s laps",
+      "translations": {
+        "zh-TW": "%1$s 圈",
+        "ja": "%1$s ラップ"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "stopwatch_best_split",
+      "expectedEnglishPreview": "Best split",
+      "translations": {
+        "zh-TW": "最快分段",
+        "ja": "最速区間"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "stopwatch_slowest_split",
+      "expectedEnglishPreview": "Slowest split",
+      "translations": {
+        "zh-TW": "最慢分段",
+        "ja": "最も遅い区間"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "stopwatch_split",
+      "expectedEnglishPreview": "Split",
+      "translations": {
+        "zh-TW": "分段",
+        "ja": "区間"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "world_add_city",
+      "expectedEnglishPreview": "Add city",
+      "translations": {
+        "zh-TW": "新增城市",
+        "ja": "都市を追加"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "world_remove_city",
+      "expectedEnglishPreview": "Remove city",
+      "translations": {
+        "zh-TW": "移除城市",
+        "ja": "都市を削除"
+      },
+      "reviewRisk": "ACTION_LABEL_OR_WEATHER_DOMAIN_REVIEW"
+    },
+    {
+      "key": "world_keep_city",
+      "expectedEnglishPreview": "Keep city",
+      "translations": {
+        "zh-TW": "保留城市",
+        "ja": "都市を残す"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "world_add_city_2",
+      "expectedEnglishPreview": "Add a city",
+      "translations": {
+        "zh-TW": "新增一座城市",
+        "ja": "都市を追加"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "world_search_by_city_country_time",
+      "expectedEnglishPreview": "Search by city, country, or time-zone region, then tap a result to add it.",
+      "translations": {
+        "zh-TW": "輸入城市、國家或時區地區搜尋，再點選結果新增。",
+        "ja": "都市、国、タイムゾーンの地域で検索し、結果をタップして追加してください。"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "world_search_city_country_region",
+      "expectedEnglishPreview": "Search city, country, or region",
+      "translations": {
+        "zh-TW": "搜尋城市、國家或地區",
+        "ja": "都市・国・地域を検索"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "world_world_clock",
+      "expectedEnglishPreview": "World clock",
+      "translations": {
+        "zh-TW": "世界時鐘",
+        "ja": "世界時計"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "world_no_world_clocks_yet",
+      "expectedEnglishPreview": "No world clocks yet",
+      "translations": {
+        "zh-TW": "尚無世界時鐘",
+        "ja": "世界時計はまだありません"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "world_add_cities_check_most_often",
+      "expectedEnglishPreview": "Add the cities you check most often and keep them one tap away.",
+      "translations": {
+        "zh-TW": "新增你最常查看的城市，即可快速切換。",
+        "ja": "よく確認する都市を追加すれば、ワンタップで参照できます。"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "world_remove_city_title",
+      "expectedEnglishPreview": "Remove %1$s?",
+      "translations": {
+        "zh-TW": "移除 %1$s？",
+        "ja": "%1$s を削除しますか？"
+      },
+      "reviewRisk": "ACTION_LABEL_OR_WEATHER_DOMAIN_REVIEW"
+    },
+    {
+      "key": "world_remove_city_message",
+      "expectedEnglishPreview": "This removes the saved world clock for %1$s. You can add it again later.",
+      "translations": {
+        "zh-TW": "這會移除已儲存的 %1$s 世界時鐘，你之後仍可重新新增。",
+        "ja": "保存した %1$s の世界時計を削除します。あとで再追加できます。"
+      },
+      "reviewRisk": "ACTION_LABEL_OR_WEATHER_DOMAIN_REVIEW"
+    },
+    {
+      "key": "world_add_city_action",
+      "expectedEnglishPreview": "Add %1$s, %2$s, %3$s",
+      "translations": {
+        "zh-TW": "新增 %1$s、%2$s、%3$s",
+        "ja": "%1$s、%2$s、%3$s を追加"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "world_remove_city_action",
+      "expectedEnglishPreview": "Remove %1$s",
+      "translations": {
+        "zh-TW": "移除 %1$s",
+        "ja": "%1$s を削除"
+      },
+      "reviewRisk": "ACTION_LABEL_OR_WEATHER_DOMAIN_REVIEW"
+    },
+    {
+      "key": "world_same_time",
+      "expectedEnglishPreview": "Same time",
+      "translations": {
+        "zh-TW": "相同時間",
+        "ja": "同じ時刻"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "world_hours_ahead",
+      "expectedEnglishPreview": "%1$sh ahead",
+      "translations": {
+        "zh-TW": "快 %1$s 小時",
+        "ja": "%1$s 時間進んでいます"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "world_hours_behind",
+      "expectedEnglishPreview": "%1$sh behind",
+      "translations": {
+        "zh-TW": "慢 %1$s 小時",
+        "ja": "%1$s 時間遅れています"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "weather_tornado_warning",
+      "expectedEnglishPreview": "TORNADO WARNING",
+      "translations": {
+        "zh-TW": "龍捲風警報",
+        "ja": "竜巻警報"
+      },
+      "reviewRisk": "ACTION_LABEL_OR_WEATHER_DOMAIN_REVIEW"
+    },
+    {
+      "key": "weather_clear_sky",
+      "expectedEnglishPreview": "Clear sky",
+      "translations": {
+        "zh-TW": "晴朗",
+        "ja": "快晴"
+      },
+      "reviewRisk": "ACTION_LABEL_OR_WEATHER_DOMAIN_REVIEW"
+    },
+    {
+      "key": "weather_mainly_clear",
+      "expectedEnglishPreview": "Mainly clear",
+      "translations": {
+        "zh-TW": "大致晴朗",
+        "ja": "おおむね晴れ"
+      },
+      "reviewRisk": "ACTION_LABEL_OR_WEATHER_DOMAIN_REVIEW"
+    },
+    {
+      "key": "weather_partly_cloudy",
+      "expectedEnglishPreview": "Partly cloudy",
+      "translations": {
+        "zh-TW": "局部多雲",
+        "ja": "晴れ時々曇り"
+      },
+      "reviewRisk": "ACTION_LABEL_OR_WEATHER_DOMAIN_REVIEW"
+    },
+    {
+      "key": "weather_overcast",
+      "expectedEnglishPreview": "Overcast",
+      "translations": {
+        "zh-TW": "陰天",
+        "ja": "曇り"
+      },
+      "reviewRisk": "ACTION_LABEL_OR_WEATHER_DOMAIN_REVIEW"
+    },
+    {
+      "key": "weather_foggy",
+      "expectedEnglishPreview": "Foggy",
+      "translations": {
+        "zh-TW": "有霧",
+        "ja": "霧"
+      },
+      "reviewRisk": "ACTION_LABEL_OR_WEATHER_DOMAIN_REVIEW"
+    },
+    {
+      "key": "weather_drizzle",
+      "expectedEnglishPreview": "Drizzle",
+      "translations": {
+        "zh-TW": "毛毛雨",
+        "ja": "霧雨"
+      },
+      "reviewRisk": "ACTION_LABEL_OR_WEATHER_DOMAIN_REVIEW"
+    },
+    {
+      "key": "weather_freezing_drizzle",
+      "expectedEnglishPreview": "Freezing drizzle",
+      "translations": {
+        "zh-TW": "凍毛毛雨",
+        "ja": "着氷性の霧雨"
+      },
+      "reviewRisk": "ACTION_LABEL_OR_WEATHER_DOMAIN_REVIEW"
+    },
+    {
+      "key": "weather_rain",
+      "expectedEnglishPreview": "Rain",
+      "translations": {
+        "zh-TW": "下雨",
+        "ja": "雨"
+      },
+      "reviewRisk": "ACTION_LABEL_OR_WEATHER_DOMAIN_REVIEW"
+    },
+    {
+      "key": "weather_freezing_rain",
+      "expectedEnglishPreview": "Freezing rain",
+      "translations": {
+        "zh-TW": "凍雨",
+        "ja": "着氷性の雨"
+      },
+      "reviewRisk": "ACTION_LABEL_OR_WEATHER_DOMAIN_REVIEW"
+    },
+    {
+      "key": "weather_snow",
+      "expectedEnglishPreview": "Snow",
+      "translations": {
+        "zh-TW": "下雪",
+        "ja": "雪"
+      },
+      "reviewRisk": "ACTION_LABEL_OR_WEATHER_DOMAIN_REVIEW"
+    },
+    {
+      "key": "weather_snow_grains",
+      "expectedEnglishPreview": "Snow grains",
+      "translations": {
+        "zh-TW": "雪粒",
+        "ja": "雪あられ"
+      },
+      "reviewRisk": "ACTION_LABEL_OR_WEATHER_DOMAIN_REVIEW"
+    },
+    {
+      "key": "weather_rain_showers",
+      "expectedEnglishPreview": "Rain showers",
+      "translations": {
+        "zh-TW": "陣雨",
+        "ja": "にわか雨"
+      },
+      "reviewRisk": "ACTION_LABEL_OR_WEATHER_DOMAIN_REVIEW"
+    },
+    {
+      "key": "weather_snow_showers",
+      "expectedEnglishPreview": "Snow showers",
+      "translations": {
+        "zh-TW": "陣雪",
+        "ja": "にわか雪"
+      },
+      "reviewRisk": "ACTION_LABEL_OR_WEATHER_DOMAIN_REVIEW"
+    },
+    {
+      "key": "weather_thunderstorm",
+      "expectedEnglishPreview": "Thunderstorm",
+      "translations": {
+        "zh-TW": "雷雨",
+        "ja": "雷雨"
+      },
+      "reviewRisk": "ACTION_LABEL_OR_WEATHER_DOMAIN_REVIEW"
+    },
+    {
+      "key": "weather_thunderstorm_hail",
+      "expectedEnglishPreview": "Thunderstorm with hail",
+      "translations": {
+        "zh-TW": "雷雨伴隨冰雹",
+        "ja": "ひょうを伴う雷雨"
+      },
+      "reviewRisk": "ACTION_LABEL_OR_WEATHER_DOMAIN_REVIEW"
+    },
+    {
+      "key": "weather_unknown",
+      "expectedEnglishPreview": "Unknown",
+      "translations": {
+        "zh-TW": "未知",
+        "ja": "不明"
+      },
+      "reviewRisk": "ACTION_LABEL_OR_WEATHER_DOMAIN_REVIEW"
+    },
+    {
+      "key": "breathing_guided_breathing",
+      "expectedEnglishPreview": "Guided breathing",
+      "translations": {
+        "zh-TW": "引導式呼吸",
+        "ja": "呼吸ガイド"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "breathing_cycle_progress",
+      "expectedEnglishPreview": "Cycle %1$d/%2$d",
+      "translations": {
+        "zh-TW": "第 %1$d／%2$d 輪",
+        "ja": "サイクル %1$d／%2$d"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "breathing_phase_complete",
+      "expectedEnglishPreview": "Complete",
+      "translations": {
+        "zh-TW": "完成",
+        "ja": "完了"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "breathing_cue_complete",
+      "expectedEnglishPreview": "Let your breathing return to normal.",
+      "translations": {
+        "zh-TW": "讓呼吸自然恢復。",
+        "ja": "自然な呼吸に戻しましょう。"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "breathing_phase_inhale",
+      "expectedEnglishPreview": "Inhale",
+      "translations": {
+        "zh-TW": "吸氣",
+        "ja": "吸う"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "breathing_cue_inhale",
+      "expectedEnglishPreview": "Breathe in slowly through your nose.",
+      "translations": {
+        "zh-TW": "慢慢用鼻子吸氣。",
+        "ja": "鼻からゆっくり息を吸ってください。"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "breathing_phase_hold",
+      "expectedEnglishPreview": "Hold",
+      "translations": {
+        "zh-TW": "閉氣",
+        "ja": "止める"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "breathing_cue_hold_after_inhale",
+      "expectedEnglishPreview": "Keep your chest relaxed and still.",
+      "translations": {
+        "zh-TW": "讓胸口保持放鬆與穩定。",
+        "ja": "胸の力を抜き、動かさないでください。"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "breathing_phase_exhale",
+      "expectedEnglishPreview": "Exhale",
+      "translations": {
+        "zh-TW": "吐氣",
+        "ja": "吐く"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "breathing_cue_exhale",
+      "expectedEnglishPreview": "Release the breath slowly.",
+      "translations": {
+        "zh-TW": "慢慢吐出空氣。",
+        "ja": "ゆっくり息を吐いてください。"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "breathing_cue_hold_after_exhale",
+      "expectedEnglishPreview": "Stay soft before the next breath.",
+      "translations": {
+        "zh-TW": "下一次吸氣前保持放鬆。",
+        "ja": "次の呼吸まで力を抜いてください。"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "breathing_running_description",
+      "expectedEnglishPreview": "Follow the count and keep the phone nearby while you settle down.",
+      "translations": {
+        "zh-TW": "跟著計數呼吸，並將手機放在身邊，慢慢平靜下來。",
+        "ja": "カウントに合わせて呼吸し、スマートフォンを近くに置いて落ち着きましょう。"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "breathing_idle_description",
+      "expectedEnglishPreview": "Run a short 4-7-8 or box-breathing reset before sleep.",
+      "translations": {
+        "zh-TW": "睡前做一段簡短的 4-7-8 呼吸或方形呼吸，協助放鬆。",
+        "ja": "寝る前に短い 4-7-8 呼吸法やボックス呼吸で気持ちを整えましょう。"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "shortcut_new_alarm",
+      "expectedEnglishPreview": "New alarm",
+      "translations": {
+        "zh-TW": "新增鬧鐘",
+        "ja": "新しいアラーム"
+      },
+      "reviewRisk": "ACTION_LABEL_OR_WEATHER_DOMAIN_REVIEW"
+    },
+    {
+      "key": "shortcut_new_alarm_long",
+      "expectedEnglishPreview": "Create a new alarm",
+      "translations": {
+        "zh-TW": "建立新鬧鐘",
+        "ja": "新しいアラームを作成"
+      },
+      "reviewRisk": "ACTION_LABEL_OR_WEATHER_DOMAIN_REVIEW"
+    },
+    {
+      "key": "shortcut_timer",
+      "expectedEnglishPreview": "Timer",
+      "translations": {
+        "zh-TW": "計時器",
+        "ja": "タイマー"
+      },
+      "reviewRisk": "ACTION_LABEL_OR_WEATHER_DOMAIN_REVIEW"
+    },
+    {
+      "key": "shortcut_timer_long",
+      "expectedEnglishPreview": "Start a timer",
+      "translations": {
+        "zh-TW": "啟動計時器",
+        "ja": "タイマーを開始"
+      },
+      "reviewRisk": "ACTION_LABEL_OR_WEATHER_DOMAIN_REVIEW"
+    },
+    {
+      "key": "shortcut_bedtime",
+      "expectedEnglishPreview": "Bedtime",
+      "translations": {
+        "zh-TW": "就寢",
+        "ja": "就寝"
+      },
+      "reviewRisk": "ACTION_LABEL_OR_WEATHER_DOMAIN_REVIEW"
+    },
+    {
+      "key": "shortcut_bedtime_long",
+      "expectedEnglishPreview": "Open bedtime tracker",
+      "translations": {
+        "zh-TW": "開啟就寢追蹤",
+        "ja": "就寝トラッカーを開く"
+      },
+      "reviewRisk": "ACTION_LABEL_OR_WEATHER_DOMAIN_REVIEW"
+    }
+  ]
+}

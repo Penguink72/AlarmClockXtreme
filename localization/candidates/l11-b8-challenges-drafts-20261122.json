@@ -1,0 +1,720 @@
+{
+  "schema": "acx-l11-batch8-drafts/1",
+  "topic": "CHALLENGE_INTERACTION_AND_FALLBACK",
+  "status": "MODEL_PRELIMINARY_NOT_APPROVED",
+  "independentApproval": false,
+  "sourceRef": "app/src/main/res/values/strings.xml",
+  "records": [
+    {
+      "key": "challenge_strong_shake_helps_break_sleepy",
+      "expectedEnglishPreview": "A strong shake helps break sleepy autopilot before the alarm unlocks.",
+      "translations": {
+        "zh-TW": "用力搖晃手機，有助於打破半夢半醒的慣性，才能解除鬧鐘。",
+        "ja": "強く振ることで寝ぼけた状態から抜け出し、アラームを停止しやすくなります。"
+      },
+      "reviewRisk": "CHALLENGE_INTERACTION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "challenge_type_same_words_punctuation_letter",
+      "expectedEnglishPreview": "Type the same words and punctuation. Letter case does not matter.",
+      "translations": {
+        "zh-TW": "請輸入相同的文字與標點符號，不區分英文字母大小寫。",
+        "ja": "同じ単語と句読点を入力してください。英字の大文字・小文字は区別しません。"
+      },
+      "reviewRisk": "CHALLENGE_INTERACTION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "challenge_type_phrase_above",
+      "expectedEnglishPreview": "Type the phrase above…",
+      "translations": {
+        "zh-TW": "輸入上方的短句…",
+        "ja": "上のフレーズを入力…"
+      },
+      "reviewRisk": "CHALLENGE_INTERACTION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "challenge_check_phrase",
+      "expectedEnglishPreview": "Check phrase",
+      "translations": {
+        "zh-TW": "檢查短句",
+        "ja": "フレーズを確認"
+      },
+      "reviewRisk": "CHALLENGE_INTERACTION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "challenge_say_phrase_clearly_offline_recognition",
+      "expectedEnglishPreview": "Say the phrase clearly. Offline recognition is preferred when Android provides it.",
+      "translations": {
+        "zh-TW": "請清楚念出短句。若 Android 支援，將優先使用離線語音辨識。",
+        "ja": "フレーズをはっきり発声してください。Android が対応している場合、オフライン音声認識を優先します。"
+      },
+      "reviewRisk": "CHALLENGE_INTERACTION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "challenge_stop_listening",
+      "expectedEnglishPreview": "Stop listening",
+      "translations": {
+        "zh-TW": "停止聆聽",
+        "ja": "聞き取りを停止"
+      },
+      "reviewRisk": "CHALLENGE_INTERACTION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "challenge_typed_fallback_phrase",
+      "expectedEnglishPreview": "Typed fallback phrase",
+      "translations": {
+        "zh-TW": "備用文字輸入",
+        "ja": "代替の文字入力"
+      },
+      "reviewRisk": "CHALLENGE_INTERACTION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "challenge_check_typed_phrase",
+      "expectedEnglishPreview": "Check typed phrase",
+      "translations": {
+        "zh-TW": "檢查輸入短句",
+        "ja": "入力したフレーズを確認"
+      },
+      "reviewRisk": "CHALLENGE_INTERACTION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "challenge_draw_word_box_recognition_runs",
+      "expectedEnglishPreview": "Draw the word in the box. Recognition runs on-device after the handwriting model is available.",
+      "translations": {
+        "zh-TW": "在框內寫出指定文字。手寫模型可用後，辨識會在裝置本機進行。",
+        "ja": "枠内に指定された文字を書いてください。手書き認識モデルが利用可能になれば、端末内で認識します。"
+      },
+      "reviewRisk": "CHALLENGE_INTERACTION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "challenge_typed_fallback_word",
+      "expectedEnglishPreview": "Typed fallback word",
+      "translations": {
+        "zh-TW": "備用文字輸入",
+        "ja": "代替の文字入力"
+      },
+      "reviewRisk": "CHALLENGE_INTERACTION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "challenge_check_typed_word",
+      "expectedEnglishPreview": "Check typed word",
+      "translations": {
+        "zh-TW": "檢查輸入文字",
+        "ja": "入力した文字を確認"
+      },
+      "reviewRisk": "CHALLENGE_INTERACTION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "challenge_walking_few_steps_helps_make",
+      "expectedEnglishPreview": "Walking a few steps helps make sure you are genuinely up.",
+      "translations": {
+        "zh-TW": "走幾步路，有助於確認自己確實已起床。",
+        "ja": "数歩歩くことで、きちんと起きたことを確認しやすくなります。"
+      },
+      "reviewRisk": "CHALLENGE_INTERACTION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "challenge_continue_without_step_count",
+      "expectedEnglishPreview": "Continue without step count",
+      "translations": {
+        "zh-TW": "不計步繼續",
+        "ja": "歩数計測なしで続行"
+      },
+      "reviewRisk": "CHALLENGE_FALLBACK_OR_ALARM_CONTROL_REVIEW"
+    },
+    {
+      "key": "challenge_tap_saved_tag_against_back",
+      "expectedEnglishPreview": "Tap the saved tag against the back of your phone to clear this step.",
+      "translations": {
+        "zh-TW": "將已儲存的 NFC 標籤貼近手機背面，即可完成此步驟。",
+        "ja": "登録済みの NFC タグをスマートフォンの背面にかざすと、このステップを完了できます。"
+      },
+      "reviewRisk": "CHALLENGE_INTERACTION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "challenge_enter_saved_barcode_qr_payload",
+      "expectedEnglishPreview": "Enter the saved barcode or QR payload to unlock dismiss.",
+      "translations": {
+        "zh-TW": "輸入已儲存的條碼或 QR Code 內容，以解鎖解除鬧鐘的操作。",
+        "ja": "保存済みのバーコードまたは QR コードの内容を入力し、アラーム停止を解除してください。"
+      },
+      "reviewRisk": "CHALLENGE_FALLBACK_OR_ALARM_CONTROL_REVIEW"
+    },
+    {
+      "key": "challenge_continue_without_saved_code",
+      "expectedEnglishPreview": "Continue without saved code",
+      "translations": {
+        "zh-TW": "沒有已儲存的代碼也繼續",
+        "ja": "登録済みコードなしで続行"
+      },
+      "reviewRisk": "CHALLENGE_FALLBACK_OR_ALARM_CONTROL_REVIEW"
+    },
+    {
+      "key": "challenge_submit_code",
+      "expectedEnglishPreview": "Submit code",
+      "translations": {
+        "zh-TW": "送出代碼",
+        "ja": "コードを送信"
+      },
+      "reviewRisk": "CHALLENGE_FALLBACK_OR_ALARM_CONTROL_REVIEW"
+    },
+    {
+      "key": "challenge_take_fresh_photo_saved_location",
+      "expectedEnglishPreview": "Take a fresh photo from the saved location or angle to prove you made it there.",
+      "translations": {
+        "zh-TW": "從已儲存的位置或角度重新拍照，確認你已到達指定地點。",
+        "ja": "保存した場所や角度から新しい写真を撮影し、指定の場所に着いたことを確認します。"
+      },
+      "reviewRisk": "CHALLENGE_FALLBACK_OR_ALARM_CONTROL_REVIEW"
+    },
+    {
+      "key": "challenge_short_movement_burst_makes_harder",
+      "expectedEnglishPreview": "A short movement burst makes it harder to crawl back into bed.",
+      "translations": {
+        "zh-TW": "短時間的動作訓練，能讓你比較不容易立刻回去睡。",
+        "ja": "短い運動を挟むことで、すぐにベッドへ戻りにくくなります。"
+      },
+      "reviewRisk": "CHALLENGE_INTERACTION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "challenge_place_phone_face_down_floor",
+      "expectedEnglishPreview": "Place the phone face-down on the floor and do push-ups over it.",
+      "translations": {
+        "zh-TW": "將手機螢幕朝下放在地板上，並在手機上方做伏地挺身。",
+        "ja": "スマートフォンを画面を下にして床に置き、その上で腕立て伏せをしてください。"
+      },
+      "reviewRisk": "CHALLENGE_INTERACTION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "challenge_hold_phone_level_face_down",
+      "expectedEnglishPreview": "Hold the phone level and face-down in a plank position.",
+      "translations": {
+        "zh-TW": "做平板支撐時，讓手機維持水平且螢幕朝下。",
+        "ja": "プランク姿勢の間、スマートフォンを水平かつ画面を下に保ってください。"
+      },
+      "reviewRisk": "CHALLENGE_INTERACTION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "challenge_start_plank",
+      "expectedEnglishPreview": "Start plank",
+      "translations": {
+        "zh-TW": "開始平板支撐",
+        "ja": "プランクを開始"
+      },
+      "reviewRisk": "CHALLENGE_INTERACTION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "challenge_i_broke_form",
+      "expectedEnglishPreview": "I broke form",
+      "translations": {
+        "zh-TW": "我的姿勢沒保持好",
+        "ja": "姿勢を崩しました"
+      },
+      "reviewRisk": "CHALLENGE_INTERACTION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "challenge_tap_adjacent_cells_only_reach",
+      "expectedEnglishPreview": "Tap adjacent cells only. Reach the exit without hitting the walls.",
+      "translations": {
+        "zh-TW": "只能點選相鄰格子。請避開牆壁，走到出口。",
+        "ja": "隣接するマスだけをタップできます。壁を避けて出口まで進んでください。"
+      },
+      "reviewRisk": "CHALLENGE_INTERACTION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "challenge_reconnect_planned_wi_fi_network",
+      "expectedEnglishPreview": "Reconnect to the planned Wi-Fi network before dismiss becomes available.",
+      "translations": {
+        "zh-TW": "重新連上預先指定的 Wi-Fi 網路，才能解除鬧鐘。",
+        "ja": "アラームを停止するには、指定済みの Wi-Fi ネットワークに再接続してください。"
+      },
+      "reviewRisk": "CHALLENGE_FALLBACK_OR_ALARM_CONTROL_REVIEW"
+    },
+    {
+      "key": "challenge_type_reversed_date",
+      "expectedEnglishPreview": "Type the reversed date",
+      "translations": {
+        "zh-TW": "輸入反轉的日期",
+        "ja": "日付を逆順で入力"
+      },
+      "reviewRisk": "CHALLENGE_INTERACTION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "challenge_check_date",
+      "expectedEnglishPreview": "Check date",
+      "translations": {
+        "zh-TW": "檢查日期",
+        "ja": "日付を確認"
+      },
+      "reviewRisk": "CHALLENGE_INTERACTION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "challenge_tap_ink_color_word_not",
+      "expectedEnglishPreview": "Tap the INK COLOR of the word, not the word itself.",
+      "translations": {
+        "zh-TW": "點選文字的「字體顏色」，不是文字寫的顏色名稱。",
+        "ja": "単語の意味ではなく、文字の「インクの色」をタップしてください。"
+      },
+      "reviewRisk": "CHALLENGE_INTERACTION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "challenge_type_phrase",
+      "expectedEnglishPreview": "Type the phrase",
+      "translations": {
+        "zh-TW": "輸入短句",
+        "ja": "フレーズを入力"
+      },
+      "reviewRisk": "CHALLENGE_INTERACTION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "challenge_check_speed",
+      "expectedEnglishPreview": "Check speed",
+      "translations": {
+        "zh-TW": "檢查速度",
+        "ja": "速度を確認"
+      },
+      "reviewRisk": "CHALLENGE_INTERACTION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "challenge_submit_guess",
+      "expectedEnglishPreview": "Submit guess",
+      "translations": {
+        "zh-TW": "提交答案",
+        "ja": "回答を送信"
+      },
+      "reviewRisk": "CHALLENGE_INTERACTION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "challenge_reaction_test",
+      "expectedEnglishPreview": "Reaction Test",
+      "translations": {
+        "zh-TW": "反應速度測試",
+        "ja": "反応速度テスト"
+      },
+      "reviewRisk": "CHALLENGE_INTERACTION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "challenge_tap_green_square_as_fast",
+      "expectedEnglishPreview": "Tap the green square as fast as you can",
+      "translations": {
+        "zh-TW": "盡快點選綠色方塊",
+        "ja": "緑色の四角をできるだけ早くタップ"
+      },
+      "reviewRisk": "CHALLENGE_INTERACTION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "challenge_find_one_tile_changed_right",
+      "expectedEnglishPreview": "Find the one tile that changed on the right grid.",
+      "translations": {
+        "zh-TW": "找出右側格子中唯一變化的一格。",
+        "ja": "右側のグリッドで変化したタイルを一つ見つけてください。"
+      },
+      "reviewRisk": "CHALLENGE_INTERACTION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "challenge_read_rapid_word_stream_then",
+      "expectedEnglishPreview": "Read the rapid word stream, then pick the word you saw.",
+      "translations": {
+        "zh-TW": "閱讀快速出現的文字，接著選出剛才看過的單字。",
+        "ja": "高速で流れる単語を読み、表示された単語を選んでください。"
+      },
+      "reviewRisk": "CHALLENGE_INTERACTION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "challenge_one_was_off_try_next",
+      "expectedEnglishPreview": "That one was off. Try the next option.",
+      "translations": {
+        "zh-TW": "這個不對，請試下一個選項。",
+        "ja": "これは違います。次の選択肢を試してください。"
+      },
+      "reviewRisk": "CHALLENGE_INTERACTION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "challenge_shake_phone",
+      "expectedEnglishPreview": "Shake your phone",
+      "translations": {
+        "zh-TW": "搖動手機",
+        "ja": "スマートフォンを振る"
+      },
+      "reviewRisk": "CHALLENGE_INTERACTION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "challenge_not_quite_match_phrase_exactly",
+      "expectedEnglishPreview": "Not quite. Match the phrase exactly before trying again.",
+      "translations": {
+        "zh-TW": "還不正確。請完整對照短句後再試一次。",
+        "ja": "まだ一致していません。フレーズを正確に入力して再試行してください。"
+      },
+      "reviewRisk": "CHALLENGE_INTERACTION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "challenge_no_tag_registered_yet_any",
+      "expectedEnglishPreview": "No tag is registered yet. Any NFC tag will work for now.",
+      "translations": {
+        "zh-TW": "尚未登錄 NFC 標籤，目前任何 NFC 標籤都可使用。",
+        "ja": "NFC タグがまだ登録されていません。現在はどの NFC タグでも使用できます。"
+      },
+      "reviewRisk": "CHALLENGE_FALLBACK_OR_ALARM_CONTROL_REVIEW"
+    },
+    {
+      "key": "challenge_no_code_registered_yet_continue",
+      "expectedEnglishPreview": "No code is registered yet. Continue to complete this challenge.",
+      "translations": {
+        "zh-TW": "尚未登錄代碼，可以直接繼續完成挑戰。",
+        "ja": "コードがまだ登録されていません。そのまま続行してチャレンジを完了できます。"
+      },
+      "reviewRisk": "CHALLENGE_FALLBACK_OR_ALARM_CONTROL_REVIEW"
+    },
+    {
+      "key": "challenge_take_photo",
+      "expectedEnglishPreview": "Take photo",
+      "translations": {
+        "zh-TW": "拍照",
+        "ja": "写真を撮る"
+      },
+      "reviewRisk": "CHALLENGE_FALLBACK_OR_ALARM_CONTROL_REVIEW"
+    },
+    {
+      "key": "challenge_no_reference_photo_registered_yet",
+      "expectedEnglishPreview": "No reference photo is registered yet. Any photo will work for now.",
+      "translations": {
+        "zh-TW": "尚未登錄參考照片，目前任何照片都可以使用。",
+        "ja": "参照写真がまだ登録されていません。現在はどの写真でも使用できます。"
+      },
+      "reviewRisk": "CHALLENGE_FALLBACK_OR_ALARM_CONTROL_REVIEW"
+    },
+    {
+      "key": "challenge_open_camera",
+      "expectedEnglishPreview": "Open camera",
+      "translations": {
+        "zh-TW": "開啟相機",
+        "ja": "カメラを開く"
+      },
+      "reviewRisk": "CHALLENGE_FALLBACK_OR_ALARM_CONTROL_REVIEW"
+    },
+    {
+      "key": "challenge_timer_running_hold_steady",
+      "expectedEnglishPreview": "Timer is running. Hold steady.",
+      "translations": {
+        "zh-TW": "計時中，請保持穩定。",
+        "ja": "計測中です。姿勢を保ってください。"
+      },
+      "reviewRisk": "CHALLENGE_INTERACTION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "challenge_you",
+      "expectedEnglishPreview": "You",
+      "translations": {
+        "zh-TW": "你",
+        "ja": "あなた"
+      },
+      "reviewRisk": "CHALLENGE_INTERACTION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "challenge_start",
+      "expectedEnglishPreview": "Start",
+      "translations": {
+        "zh-TW": "起點",
+        "ja": "スタート"
+      },
+      "reviewRisk": "CHALLENGE_INTERACTION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "challenge_exit",
+      "expectedEnglishPreview": "Exit",
+      "translations": {
+        "zh-TW": "出口",
+        "ja": "出口"
+      },
+      "reviewRisk": "CHALLENGE_INTERACTION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "challenge_position",
+      "expectedEnglishPreview": "Your position",
+      "translations": {
+        "zh-TW": "你的位置",
+        "ja": "現在位置"
+      },
+      "reviewRisk": "CHALLENGE_INTERACTION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "challenge_only_adjacent_cells_are_reachable",
+      "expectedEnglishPreview": "Only adjacent cells are reachable. Tap a neighbor of your current position.",
+      "translations": {
+        "zh-TW": "只能走到相鄰格子。請點選目前位置旁邊的一格。",
+        "ja": "移動できるのは隣接するマスだけです。現在位置の隣のマスをタップしてください。"
+      },
+      "reviewRisk": "CHALLENGE_INTERACTION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "challenge_wi_fi",
+      "expectedEnglishPreview": "Wi-Fi",
+      "translations": {
+        "zh-TW": "Wi-Fi",
+        "ja": "Wi-Fi"
+      },
+      "reviewRisk": "CHALLENGE_INTERACTION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "challenge_no_network_specified_yet_any",
+      "expectedEnglishPreview": "No network is specified yet. Any Wi-Fi connection will work for now.",
+      "translations": {
+        "zh-TW": "尚未指定網路，目前連上任何 Wi-Fi 都可以。",
+        "ja": "ネットワークがまだ指定されていません。現在はどの Wi-Fi 接続でも使用できます。"
+      },
+      "reviewRisk": "CHALLENGE_FALLBACK_OR_ALARM_CONTROL_REVIEW"
+    },
+    {
+      "key": "challenge_watch_sequence_then_tap_back",
+      "expectedEnglishPreview": "Watch the sequence, then tap it back in order. One wrong tap restarts the round.",
+      "translations": {
+        "zh-TW": "記住出現的順序，再依序點選。點錯一次就會重新開始。",
+        "ja": "表示された順番を覚え、同じ順にタップしてください。一度でも間違えると最初からやり直しです。"
+      },
+      "reviewRisk": "CHALLENGE_INTERACTION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "challenge_too_slow_too_many_word",
+      "expectedEnglishPreview": "Too slow or too many word errors. Reset your pace and try again.",
+      "translations": {
+        "zh-TW": "速度太慢或文字錯誤太多。調整節奏後再試一次。",
+        "ja": "遅すぎるか単語の間違いが多すぎます。ペースを整えて再試行してください。"
+      },
+      "reviewRisk": "CHALLENGE_INTERACTION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "challenge_original",
+      "expectedEnglishPreview": "Original",
+      "translations": {
+        "zh-TW": "原始",
+        "ja": "元の状態"
+      },
+      "reviewRisk": "CHALLENGE_INTERACTION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "challenge_changed",
+      "expectedEnglishPreview": "Changed",
+      "translations": {
+        "zh-TW": "變化後",
+        "ja": "変化後"
+      },
+      "reviewRisk": "CHALLENGE_INTERACTION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "challenge_tile_matches_look_single_color",
+      "expectedEnglishPreview": "That tile matches. Look for the single color swap.",
+      "translations": {
+        "zh-TW": "這一格沒有變。請找出唯一顏色不同的一格。",
+        "ja": "このタイルは同じです。色が変わった一つのタイルを探してください。"
+      },
+      "reviewRisk": "CHALLENGE_INTERACTION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "challenge_not_mate_yet_find_move",
+      "expectedEnglishPreview": "Not mate yet. Find the move marked with checkmate.",
+      "translations": {
+        "zh-TW": "還不是將死。請找出標示為將死的走法。",
+        "ja": "まだチェックメイトではありません。チェックメイトと示された手を探してください。"
+      },
+      "reviewRisk": "CHALLENGE_INTERACTION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "challenge_rapid_reading",
+      "expectedEnglishPreview": "Rapid reading",
+      "translations": {
+        "zh-TW": "快速閱讀",
+        "ja": "速読"
+      },
+      "reviewRisk": "CHALLENGE_INTERACTION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "challenge_word_was_not_stream_pick",
+      "expectedEnglishPreview": "That word was not in this stream. Pick the word you remember seeing.",
+      "translations": {
+        "zh-TW": "這個單字沒有出現。請選擇你記得看過的單字。",
+        "ja": "その単語は表示されていません。見覚えのある単語を選んでください。"
+      },
+      "reviewRisk": "CHALLENGE_INTERACTION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "challenge_answer_choice",
+      "expectedEnglishPreview": "Answer: %1$s",
+      "translations": {
+        "zh-TW": "答案：%1$s",
+        "ja": "回答：%1$s"
+      },
+      "reviewRisk": "CHALLENGE_INTERACTION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "challenge_heard_transcript",
+      "expectedEnglishPreview": "Heard: %1$s",
+      "translations": {
+        "zh-TW": "聽到：%1$s",
+        "ja": "認識結果：%1$s"
+      },
+      "reviewRisk": "CHALLENGE_INTERACTION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "challenge_drawing_pad_for",
+      "expectedEnglishPreview": "Drawing pad for %1$s",
+      "translations": {
+        "zh-TW": "%1$s 的手寫區",
+        "ja": "%1$s の手書き入力欄"
+      },
+      "reviewRisk": "CHALLENGE_INTERACTION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "challenge_write_target",
+      "expectedEnglishPreview": "Write %1$s",
+      "translations": {
+        "zh-TW": "寫下 %1$s",
+        "ja": "%1$s を書く"
+      },
+      "reviewRisk": "CHALLENGE_INTERACTION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "challenge_required_network",
+      "expectedEnglishPreview": "Required network: %1$s",
+      "translations": {
+        "zh-TW": "指定網路：%1$s",
+        "ja": "指定ネットワーク：%1$s"
+      },
+      "reviewRisk": "CHALLENGE_FALLBACK_OR_ALARM_CONTROL_REVIEW"
+    },
+    {
+      "key": "challenge_sheep_progress",
+      "expectedEnglishPreview": "Sheep %1$d / %2$d",
+      "translations": {
+        "zh-TW": "羊：%1$d／%2$d",
+        "ja": "羊：%1$d／%2$d"
+      },
+      "reviewRisk": "CHALLENGE_INTERACTION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "challenge_sheep_missed",
+      "expectedEnglishPreview": "Missed %1$d",
+      "translations": {
+        "zh-TW": "漏掉 %1$d 隻",
+        "ja": "見逃し %1$d 匹"
+      },
+      "reviewRisk": "CHALLENGE_INTERACTION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "challenge_rps_you",
+      "expectedEnglishPreview": "You %1$d",
+      "translations": {
+        "zh-TW": "你的分數：%1$d",
+        "ja": "あなた：%1$d"
+      },
+      "reviewRisk": "CHALLENGE_INTERACTION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "challenge_emoji_memorise",
+      "expectedEnglishPreview": "Memorise the pairs! (%1$d s)",
+      "translations": {
+        "zh-TW": "記住配對！（%1$d 秒）",
+        "ja": "ペアを覚えてください！（%1$d 秒）"
+      },
+      "reviewRisk": "CHALLENGE_INTERACTION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "challenge_wordle_reveal",
+      "expectedEnglishPreview": "The word was %1$s. New word coming…",
+      "translations": {
+        "zh-TW": "答案是 %1$s，接著會出現新單字…",
+        "ja": "正解は %1$s でした。次の単語が表示されます…"
+      },
+      "reviewRisk": "CHALLENGE_INTERACTION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "challenge_pvt_trial",
+      "expectedEnglishPreview": "Trial %1$d of %2$d",
+      "translations": {
+        "zh-TW": "第 %1$d／%2$d 次測試",
+        "ja": "試行 %1$d／%2$d"
+      },
+      "reviewRisk": "CHALLENGE_INTERACTION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "challenge_pvt_average",
+      "expectedEnglishPreview": "Avg: %1$d ms",
+      "translations": {
+        "zh-TW": "平均：%1$d 毫秒",
+        "ja": "平均：%1$d ミリ秒"
+      },
+      "reviewRisk": "CHALLENGE_INTERACTION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "challenge_rps_cpu",
+      "expectedEnglishPreview": "%1$d CPU",
+      "translations": {
+        "zh-TW": "電腦：%1$d",
+        "ja": "CPU：%1$d"
+      },
+      "reviewRisk": "CHALLENGE_INTERACTION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "challenge_rps_you_won",
+      "expectedEnglishPreview": "You won that round!",
+      "translations": {
+        "zh-TW": "這回合你贏了！",
+        "ja": "このラウンドはあなたの勝ちです！"
+      },
+      "reviewRisk": "CHALLENGE_INTERACTION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "challenge_rps_computer_won",
+      "expectedEnglishPreview": "Computer won that round",
+      "translations": {
+        "zh-TW": "這回合電腦贏了",
+        "ja": "このラウンドはコンピューターの勝ちです"
+      },
+      "reviewRisk": "CHALLENGE_INTERACTION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "challenge_rps_draw",
+      "expectedEnglishPreview": "Draw",
+      "translations": {
+        "zh-TW": "平手",
+        "ja": "引き分け"
+      },
+      "reviewRisk": "CHALLENGE_INTERACTION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "challenge_sheep_instructions",
+      "expectedEnglishPreview": "Tap every sheep. Skip the goats, which subtract from your count.",
+      "translations": {
+        "zh-TW": "點選每隻羊，不要點到山羊；山羊會扣除數量。",
+        "ja": "羊をすべてタップしてください。ヤギをタップすると数が減ります。"
+      },
+      "reviewRisk": "CHALLENGE_INTERACTION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "challenge_date_backwards_instructions",
+      "expectedEnglishPreview": "Today is %1$s. Type it reversed character-by-character.",
+      "translations": {
+        "zh-TW": "今天是 %1$s。請逐字反向輸入。",
+        "ja": "今日は %1$s です。一文字ずつ逆順に入力してください。"
+      },
+      "reviewRisk": "CHALLENGE_INTERACTION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "challenge_emoji_pairs_found",
+      "expectedEnglishPreview": "%1$d of 8 pairs found. Tap two cards to match them.",
+      "translations": {
+        "zh-TW": "已找到 %1$d／8 組配對。點選兩張卡片進行配對。",
+        "ja": "8 組中 %1$d 組が見つかりました。2枚のカードをタップしてペアにしてください。"
+      },
+      "reviewRisk": "CHALLENGE_INTERACTION_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "challenge_typing_speed_instructions",
+      "expectedEnglishPreview": "Type the phrase at %1$d+ wpm with at most %2$d word errors.",
+      "translations": {
+        "zh-TW": "請以每分鐘至少 %1$d 字的速度輸入短句，最多允許 %2$d 個單字錯誤。",
+        "ja": "毎分 %1$d 語以上の速度でフレーズを入力してください。単語の誤りは %2$d 個まで許容されます。"
+      },
+      "reviewRisk": "CHALLENGE_INTERACTION_SEMANTIC_REVIEW"
+    }
+  ]
+}
