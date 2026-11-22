@@ -468,8 +468,8 @@
       "key": "alarm_edit_solar_after",
       "expectedEnglishPreview": "+%1$d min (after %2$s)",
       "translations": {
-        "zh-TW": "%2$s 後 %1$d 分鐘",
-        "ja": "%2$s の %1$d 分後"
+        "zh-TW": "+%1$d 分鐘（%2$s 後）",
+        "ja": "+%1$d 分（%2$s の後）"
       },
       "reviewRisk": "ACTION_OR_SCHEDULING_SEMANTIC_REVIEW"
     },
