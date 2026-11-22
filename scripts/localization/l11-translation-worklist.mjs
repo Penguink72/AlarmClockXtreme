@@ -63,7 +63,7 @@ function validatePack(catalog,packs){
   }
 }
 
-export function buildL11({graph,catalog,packs,curated,batch2=[],batch3=[]}){
+export function buildL11({graph,catalog,packs,curated,batch2=[],batch3=[],batch4=[]}){
   if(curated.schema!=="acx-l11-priority-translation-drafts/1" ||
      curated.independentApproval!==false)throw Error("Untrusted curated draft schema/authority");
   validatePack(catalog,packs);
@@ -81,6 +81,13 @@ export function buildL11({graph,catalog,packs,curated,batch2=[],batch3=[]}){
        !Array.isArray(pack.records))
       throw Error("Untrusted L11-B3 draft batch schema/authority");
   }
+  for(const pack of batch4){
+    if(pack.schema!=="acx-l11-batch4-drafts/1" ||
+       pack.independentApproval!==false ||
+       pack.status!=="MODEL_PRELIMINARY_NOT_APPROVED" ||
+       !Array.isArray(pack.records))
+      throw Error("Untrusted L11-B4 draft batch schema/authority");
+  }
   const base=new Map(graph.sources.map(row=>[row.key,row]));
   const g6=new Map(catalog.entries.map(x=>["string:"+x.key,x]));
   const authored=new Map();
@@ -89,7 +96,9 @@ export function buildL11({graph,catalog,packs,curated,batch2=[],batch3=[]}){
     ...batch2.flatMap(pack=>pack.records.map(r=>({...r,
       batchOrigin:"L11_B2_MODEL_DRAFT_UNREVIEWED"}))),
     ...batch3.flatMap(pack=>pack.records.map(r=>({...r,
-      batchOrigin:"L11_B3_MODEL_DRAFT_UNREVIEWED"})))
+      batchOrigin:"L11_B3_MODEL_DRAFT_UNREVIEWED"}))),
+    ...batch4.flatMap(pack=>pack.records.map(r=>({...r,
+      batchOrigin:"L11_B4_MODEL_DRAFT_UNREVIEWED"})))
   ];
   for(const r of drafts){
     const key="string:"+r.key;
@@ -106,6 +115,7 @@ export function buildL11({graph,catalog,packs,curated,batch2=[],batch3=[]}){
     curatedKeys:curated.records.length,curatedLocaleRows:0,
     batch2Keys:batch2.reduce((n,x)=>n+x.records.length,0),batch2LocaleRows:0,
     batch3Keys:batch3.reduce((n,x)=>n+x.records.length,0),batch3LocaleRows:0,
+    batch4Keys:batch4.reduce((n,x)=>n+x.records.length,0),batch4LocaleRows:0,
     reusedG6LocaleRows:0,existingLocaleProtected:0,
     sourceDriftHolds:0,untranslatedLocaleRows:0,
     officialApproved:0,androidXmlModified:false
@@ -133,7 +143,9 @@ export function buildL11({graph,catalog,packs,curated,batch2=[],batch3=[]}){
         record.translationOrigin=candidate.batchOrigin;
         record.reviewRisk=candidate.reviewRisk??"UNASSESSED";
         record.candidateState="DRAFT_NEEDS_SEMANTIC_REVIEW";
-        if(candidate.batchOrigin==="L11_B3_MODEL_DRAFT_UNREVIEWED")
+        if(candidate.batchOrigin==="L11_B4_MODEL_DRAFT_UNREVIEWED")
+          summary.batch4LocaleRows++;
+        else if(candidate.batchOrigin==="L11_B3_MODEL_DRAFT_UNREVIEWED")
           summary.batch3LocaleRows++;
         else if(candidate.batchOrigin==="L11_B2_MODEL_DRAFT_UNREVIEWED")
           summary.batch2LocaleRows++;
@@ -221,6 +233,7 @@ export function summaryMd(data){
     "- New source-pinned curated rows: "+s.curatedLocaleRows+" ("+s.curatedKeys+" keys)",
     "- L11-B2 source-pinned unreviewed rows: "+s.batch2LocaleRows+" ("+s.batch2Keys+" keys)",
     "- L11-B3 source-pinned unreviewed rows: "+s.batch3LocaleRows+" ("+s.batch3Keys+" keys)",
+    "- L11-B4 source-pinned unreviewed rows: "+s.batch4LocaleRows+" ("+s.batch4Keys+" keys)",
     "- Reused existing G6 unreviewed rows: "+s.reusedG6LocaleRows,
     "- G6 source/format mismatches on proposed reuse: "+s.sourceDriftHolds,
     "- Remaining untranslated locale rows: "+s.untranslatedLocaleRows,
@@ -263,6 +276,12 @@ if(process.argv[1] && import.meta.url===pathToFileURL(resolve(process.argv[1])).
     batch3:[
       read("localization/candidates/l11-b3-music-alarm-drafts-20261122.json"),
       read("localization/candidates/l11-b3-firing-permissions-drafts-20261122.json")
+    ],
+    batch4:[
+      read("localization/candidates/l11-b4-alarm-editor-drafts-20261122.json"),
+      read("localization/candidates/l11-b4-dashboard-drafts-20261122.json"),
+      read("localization/candidates/l11-b4-templates-readiness-drafts-20261122.json"),
+      read("localization/candidates/l11-b4-alarmfiring-errors-drafts-20261122.json")
     ]
   });
   mkdirSync(out,{recursive:true});
