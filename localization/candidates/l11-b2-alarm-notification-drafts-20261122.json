@@ -774,7 +774,7 @@
       "key": "alarm_edit_challenge_speed_description",
       "expectedEnglishPreview": "Type a short phrase at 15+ wpm with at most 2 word errors.",
       "translations": {
-        "zh-TW": "以每分鐘至少 15 字的速度輸入短句，且最多只能有 2 個單字錯誤。",
+        "zh-TW": "以每分鐘至少 15 個單字的速度輸入短句，且最多只能有 2 個單字錯誤。",
         "ja": "短いフレーズを毎分15語以上で入力し、単語の誤りは最大2個までにします。"
       },
       "reviewRisk": "BEHAVIOR_AND_SAFETY_REVIEW"
