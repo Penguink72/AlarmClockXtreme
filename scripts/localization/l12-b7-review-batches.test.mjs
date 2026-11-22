@@ -2,13 +2,14 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {readFileSync} from "node:fs";
+import {Script} from "node:vm";
 import {resolve,dirname,join} from "node:path";
 import {fileURLToPath} from "node:url";
 import {loadUnifiedInputs} from "./l12-b6-independent-review.mjs";
 import {stageSourceRows} from "./l12-b3-android-resource-preflight.mjs";
 import {triageWarnings} from "./l12-b4-aapt2-staging.mjs";
 import {buildWarningDispositions} from "./l12-b5-warning-disposition.mjs";
-import {buildReviewBatchPlan,validateUntrustedReviewNotes} from "./l12-b7-review-batches.mjs";
+import {buildReviewBatchPlan,validateUntrustedReviewNotes,renderDesk} from "./l12-b7-review-batches.mjs";
 const ROOT=resolve(dirname(fileURLToPath(import.meta.url)),"../..");
 let cached;
 function fixture(){
@@ -24,6 +25,7 @@ function validNote(r,p){
   return {schema:"acx-l12-b7-untrusted-review-notes/1",
     reviewSetDigest:p.summary.reviewSetDigest,
     batchPlanDigest:p.summary.batchPlanDigest,
+    status:"PROVISIONAL_UNTRUSTED_NO_APPROVAL",
     entries:[{
       key:r.key,locale:r.locale,sourceHash:r.sourceHash,
       translationHash:r.translationHash,reviewRevision:r.reviewRevision,
@@ -110,4 +112,27 @@ test("L12-7 offline desk avoids external scripts and never submits official auth
   assert(!t.includes("<button id=\"approve\""));
   assert(t.includes("PROVISIONAL_UNTRUSTED_NO_APPROVAL"));
   assert(t.includes("reviewSetDigest"));
+});
+
+test("L12-7 generated offline HTML contains the full safe data payload and parsable client script",()=>{
+  const plan=fixture().plan,html=renderDesk(plan,ROOT);
+  const marker='<script id="review-data" type="application/json">';
+  const at=html.indexOf(marker);
+  assert(at>0);
+  const end=html.indexOf("</script>",at);
+  const data=JSON.parse(html.slice(at+marker.length,end));
+  assert.equal(data.batches.length,plan.batches.length);
+  assert.equal(data.batches.reduce((n,b)=>n+b.localeRows,0),3100);
+  assert.equal(data.summary.reviewApprovedLocaleRows,0);
+  const js=html.slice(html.lastIndexOf("<script>")+8,html.lastIndexOf("</script>"));
+  assert.doesNotThrow(()=>new Script(js));
+  assert(!html.includes("<!--L12B7_DATA-->"));
+});
+test("L12-7 rejects self-certified top-level reviewer metadata and missing untrusted label",()=>{
+  const plan=fixture().plan,r=plan.batches[0].cards[0].localeRows[0];
+  const doc=validNote(r,plan),forged=structuredClone(doc);
+  forged.reviewMode="human-independent-semantic-review";
+  assert(validateUntrustedReviewNotes(plan,forged).errors.includes("REVIEW_NOTES_MUST_REMAIN_UNTRUSTED"));
+  const mislabeled=structuredClone(doc);mislabeled.status="APPROVED";
+  assert(validateUntrustedReviewNotes(plan,mislabeled).errors.includes("REVIEW_NOTES_MUST_REMAIN_UNTRUSTED"));
 });
