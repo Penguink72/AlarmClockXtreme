@@ -164,3 +164,15 @@ test("L11-B4 rejects duplicate keys, source drift, lost placeholder, locale over
     ...x.batch4.slice(2)
   ]}),/Duplicate curated draft/);
 });
+
+
+test("L11-B4 source preview follows B0-T1 entity decoding, never raw XML escaping",()=>{
+  const source=inputs().graph.sources.find(x=>x.key==="string:alarm_edit_speak_context");
+  const draft=inputs().batch4[0].records.find(x=>x.key==="alarm_edit_speak_context");
+  assert(source);
+  assert(draft);
+  assert.equal(source.sourcePreview,"Speak time, date & weather");
+  assert.equal(draft.expectedEnglishPreview,source.sourcePreview);
+  assert(verifyDraft(source,draft));
+  assert(!draft.expectedEnglishPreview.includes("&amp;"));
+});
