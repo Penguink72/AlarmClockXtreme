@@ -1,0 +1,597 @@
+{
+  "schema": "acx-l11-priority-translation-drafts/1",
+  "status": "MODEL_AUTHORED_UNREVIEWED_CANDIDATES",
+  "independentApproval": false,
+  "sourceReference": "English Android XML on L10 base; revalidated against B0-T1 sourcePreview and sourceHash before output",
+  "notes": [
+    "Exact source preview comparison is required; draft changes to any English source must be reviewed again.",
+    "Official Android XML and existing locale definitions are never overwritten.",
+    "High impact semantics and UI length remain unreviewed."
+  ],
+  "records": [
+    {
+      "key": "onboarding_set_up_later",
+      "expectedEnglishPreview": "Set up later",
+      "translations": {
+        "zh-TW": "稍後設定",
+        "ja": "後で設定"
+      }
+    },
+    {
+      "key": "onboarding_reliable_wake_ups",
+      "expectedEnglishPreview": "Reliable wake-ups",
+      "translations": {
+        "zh-TW": "可靠的喚醒提醒",
+        "ja": "確実に起きられるアラーム"
+      }
+    },
+    {
+      "key": "onboarding_alarmclockxtreme_built_stay_dependable_even",
+      "expectedEnglishPreview": "AlarmClockXtreme is built to stay dependable even when Android is trying to save power in the background.",
+      "translations": {
+        "zh-TW": "即使 Android 在背景執行省電管理，AlarmClockXtreme 也致力於維持可靠的鬧鐘提醒。",
+        "ja": "Android がバックグラウンドで省電力制御を行っていても、AlarmClockXtreme は確実にアラームを届けることを目指しています。"
+      }
+    },
+    {
+      "key": "onboarding_wake_up_real",
+      "expectedEnglishPreview": "Wake up for real",
+      "translations": {
+        "zh-TW": "確實清醒再起床",
+        "ja": "しっかり目を覚ます"
+      }
+    },
+    {
+      "key": "onboarding_challenge_based_dismiss_flows_help",
+      "expectedEnglishPreview": "Challenge-based dismiss flows help make sure you are actually awake before the alarm stops.",
+      "translations": {
+        "zh-TW": "透過喚醒挑戰才能解除鬧鐘，協助確認你確實已清醒。",
+        "ja": "アラームを停止する前にチャレンジを完了することで、確実に目が覚めたか確認できます。"
+      }
+    },
+    {
+      "key": "onboarding_start_day_informed",
+      "expectedEnglishPreview": "Start the day informed",
+      "translations": {
+        "zh-TW": "掌握資訊，開始新的一天",
+        "ja": "情報を確認して一日を始める"
+      }
+    },
+    {
+      "key": "onboarding_private_by_default",
+      "expectedEnglishPreview": "Private by default",
+      "translations": {
+        "zh-TW": "預設重視隱私",
+        "ja": "プライバシーを標準で保護"
+      }
+    },
+    {
+      "key": "onboarding_no_ads_no_tracking_no",
+      "expectedEnglishPreview": "No ads. No tracking. No account.",
+      "translations": {
+        "zh-TW": "無廣告、不追蹤、無須帳號。",
+        "ja": "広告なし。追跡なし。アカウント不要。"
+      }
+    },
+    {
+      "key": "onboarding_welcome",
+      "expectedEnglishPreview": "Welcome",
+      "translations": {
+        "zh-TW": "歡迎使用",
+        "ja": "ようこそ"
+      }
+    },
+    {
+      "key": "onboarding_dependable_mornings_less_friction",
+      "expectedEnglishPreview": "Dependable mornings with less friction",
+      "translations": {
+        "zh-TW": "減少操作負擔，讓每天早晨更可靠",
+        "ja": "手間を減らして、毎朝をもっと確実に"
+      }
+    },
+    {
+      "key": "onboarding_recommended_setup",
+      "expectedEnglishPreview": "Recommended setup",
+      "translations": {
+        "zh-TW": "建議設定",
+        "ja": "推奨設定"
+      }
+    },
+    {
+      "key": "onboarding_test_alarm",
+      "expectedEnglishPreview": "Test alarm",
+      "translations": {
+        "zh-TW": "測試鬧鐘",
+        "ja": "テストアラーム"
+      }
+    },
+    {
+      "key": "onboarding_step_of",
+      "expectedEnglishPreview": "Step %1$d of %2$d",
+      "translations": {
+        "zh-TW": "第 %1$d 步，共 %2$d 步",
+        "ja": "%1$d / %2$d ステップ"
+      }
+    },
+    {
+      "key": "onboarding_open",
+      "expectedEnglishPreview": "Open",
+      "translations": {
+        "zh-TW": "開啟",
+        "ja": "開く"
+      }
+    },
+    {
+      "key": "onboarding_run",
+      "expectedEnglishPreview": "Run",
+      "translations": {
+        "zh-TW": "執行",
+        "ja": "実行"
+      }
+    },
+    {
+      "key": "onboarding_could_not_schedule_the_test_alarm",
+      "expectedEnglishPreview": "Could not schedule the test alarm.",
+      "translations": {
+        "zh-TW": "無法排定測試鬧鐘。",
+        "ja": "テストアラームを予約できませんでした。"
+      }
+    },
+    {
+      "key": "onboarding_before_tonight",
+      "expectedEnglishPreview": "Before tonight",
+      "translations": {
+        "zh-TW": "今晚之前",
+        "ja": "今夜までに"
+      }
+    },
+    {
+      "key": "onboarding_test_alarm_scheduled",
+      "expectedEnglishPreview": "Test alarm scheduled",
+      "translations": {
+        "zh-TW": "已排定測試鬧鐘",
+        "ja": "テストアラームを予約しました"
+      }
+    },
+    {
+      "key": "onboarding_test_alarm_completed",
+      "expectedEnglishPreview": "Test alarm completed",
+      "translations": {
+        "zh-TW": "測試鬧鐘已完成",
+        "ja": "テストアラームが完了しました"
+      }
+    },
+    {
+      "key": "onboarding_test_alarm_unavailable",
+      "expectedEnglishPreview": "Test alarm unavailable",
+      "translations": {
+        "zh-TW": "無法使用測試鬧鐘",
+        "ja": "テストアラームを利用できません"
+      }
+    },
+    {
+      "key": "onboarding_finish_setup",
+      "expectedEnglishPreview": "Finish setup",
+      "translations": {
+        "zh-TW": "完成設定",
+        "ja": "設定を完了"
+      }
+    },
+    {
+      "key": "onboarding_enable_alarm_alerts",
+      "expectedEnglishPreview": "Enable alarm alerts",
+      "translations": {
+        "zh-TW": "啟用鬧鐘通知",
+        "ja": "アラーム通知を有効にする"
+      }
+    },
+    {
+      "key": "onboarding_finish_without_more_changes",
+      "expectedEnglishPreview": "Finish without more changes",
+      "translations": {
+        "zh-TW": "不再變更，直接完成",
+        "ja": "これ以上変更せずに完了"
+      }
+    },
+    {
+      "key": "onboarding_skip_permissions",
+      "expectedEnglishPreview": "Skip permissions",
+      "translations": {
+        "zh-TW": "略過權限設定",
+        "ja": "権限設定をスキップ"
+      }
+    },
+    {
+      "key": "onboarding_test_alarm_completed_detail",
+      "expectedEnglishPreview": "Test alarm completed. Your device opened the alarm screen successfully.",
+      "translations": {
+        "zh-TW": "測試鬧鐘已完成，裝置已成功開啟鬧鐘畫面。",
+        "ja": "テストアラームが完了し、端末でアラーム画面が正常に開きました。"
+      }
+    },
+    {
+      "key": "onboarding_test_alarm_scheduled_detail",
+      "expectedEnglishPreview": "Test alarm scheduled. It will ring in 10 seconds.",
+      "translations": {
+        "zh-TW": "已排定測試鬧鐘，將於 10 秒後響起。",
+        "ja": "テストアラームを予約しました。10 秒後に鳴ります。"
+      }
+    },
+    {
+      "key": "onboarding_readiness_review",
+      "expectedEnglishPreview": "Review exact alarms, notifications, battery access, and the test alarm before relying on an overnight wake-up.",
+      "translations": {
+        "zh-TW": "若要依靠鬧鐘在隔夜後準時喚醒，請先檢查精準鬧鐘、通知、電池權限與測試鬧鐘。",
+        "ja": "翌朝の起床をアラームに任せる前に、正確なアラーム、通知、バッテリー関連の権限、テストアラームを確認してください。"
+      }
+    },
+    {
+      "key": "settings_wake_style",
+      "expectedEnglishPreview": "Wake style",
+      "translations": {
+        "zh-TW": "喚醒方式",
+        "ja": "起床スタイル"
+      }
+    },
+    {
+      "key": "settings_wake_readiness",
+      "expectedEnglishPreview": "Wake readiness",
+      "translations": {
+        "zh-TW": "喚醒準備狀態",
+        "ja": "アラームの準備状況"
+      }
+    },
+    {
+      "key": "settings_battery_protection",
+      "expectedEnglishPreview": "Battery protection",
+      "translations": {
+        "zh-TW": "電池保護設定",
+        "ja": "バッテリー保護"
+      }
+    },
+    {
+      "key": "settings_battery_optimization",
+      "expectedEnglishPreview": "Battery optimization",
+      "translations": {
+        "zh-TW": "電池最佳化",
+        "ja": "バッテリー最適化"
+      }
+    },
+    {
+      "key": "settings_battery_ready_description",
+      "expectedEnglishPreview": "Your device is configured for reliable alarm delivery.",
+      "translations": {
+        "zh-TW": "裝置已完成設定，有助於可靠地觸發鬧鐘。",
+        "ja": "アラームを確実に通知できるように端末が設定されています。"
+      }
+    },
+    {
+      "key": "settings_battery_risk_description",
+      "expectedEnglishPreview": "Some Android vendors aggressively pause background work. This is the biggest reliability risk for alarms.",
+      "translations": {
+        "zh-TW": "部分 Android 裝置製造商會積極暫停背景作業，這是影響鬧鐘可靠性的主要風險。",
+        "ja": "一部の Android 端末ではバックグラウンド処理が強く制限され、アラームの確実性にとって大きなリスクになります。"
+      }
+    },
+    {
+      "key": "settings_battery_guide_link",
+      "expectedEnglishPreview": "View the up-to-date %1$s guide at dontkillmyapp.com",
+      "translations": {
+        "zh-TW": "前往 dontkillmyapp.com 查看最新的 %1$s 指南",
+        "ja": "最新の %1$s 向けガイドを dontkillmyapp.com で確認"
+      }
+    },
+    {
+      "key": "settings_webhook_integrations",
+      "expectedEnglishPreview": "Webhook integrations",
+      "translations": {
+        "zh-TW": "Webhook 整合",
+        "ja": "Webhook 連携"
+      }
+    },
+    {
+      "key": "settings_webhook_url",
+      "expectedEnglishPreview": "Webhook URL",
+      "translations": {
+        "zh-TW": "Webhook 網址",
+        "ja": "Webhook URL"
+      }
+    },
+    {
+      "key": "settings_webhook_include_labels",
+      "expectedEnglishPreview": "Include alarm labels",
+      "translations": {
+        "zh-TW": "包含鬧鐘標籤",
+        "ja": "アラームのラベルを含める"
+      }
+    },
+    {
+      "key": "settings_webhook_labels_description",
+      "expectedEnglishPreview": "When off, the payload says the label was withheld instead of sending it.",
+      "translations": {
+        "zh-TW": "關閉時，傳送內容會標示已略過鬧鐘標籤，而不會傳送標籤文字。",
+        "ja": "オフにすると、ラベル自体は送信せず、ラベルを省略したことをペイロードに記載します。"
+      }
+    },
+    {
+      "key": "settings_webhook_blocked",
+      "expectedEnglishPreview": "Webhook blocked",
+      "translations": {
+        "zh-TW": "Webhook 已封鎖",
+        "ja": "Webhook をブロックしました"
+      }
+    },
+    {
+      "key": "settings_webhook_blocked_description",
+      "expectedEnglishPreview": "Plain HTTP webhooks are blocked. Use an HTTPS endpoint or a local HTTPS bridge for Home Assistant or Tasker.",
+      "translations": {
+        "zh-TW": "不允許使用未加密的 HTTP Webhook。請使用 HTTPS 端點，或為 Home Assistant／Tasker 設定本機 HTTPS 橋接。",
+        "ja": "暗号化されていない HTTP Webhook はブロックされます。HTTPS エンドポイント、または Home Assistant／Tasker 用のローカル HTTPS ブリッジを使用してください。"
+      }
+    },
+    {
+      "key": "settings_webhook_network_description",
+      "expectedEnglishPreview": "Android 17+ requires local network access before this LAN webhook can be tested or fired.",
+      "translations": {
+        "zh-TW": "在 Android 17 以上版本，必須先取得區域網路存取權，才能測試或觸發此 LAN Webhook。",
+        "ja": "Android 17 以降では、この LAN Webhook をテストまたは送信する前にローカルネットワークへのアクセス許可が必要です。"
+      }
+    },
+    {
+      "key": "settings_webhook_payload_description",
+      "expectedEnglishPreview": "Every payload carries a schema version, an event id, when it happened, when the alarm was due, the display time and whether the label was included.",
+      "translations": {
+        "zh-TW": "每筆傳送資料都包含結構版本、事件 ID、事件發生時間、鬧鐘預定時間、顯示時間，以及是否包含標籤。",
+        "ja": "各ペイロードにはスキーマバージョン、イベント ID、発生時刻、予定されていたアラーム時刻、表示時刻、ラベルの有無が含まれます。"
+      }
+    },
+    {
+      "key": "settings_webhook_log_line",
+      "expectedEnglishPreview": "%1$s: %2$s",
+      "translations": {
+        "zh-TW": "%1$s：%2$s",
+        "ja": "%1$s: %2$s"
+      }
+    },
+    {
+      "key": "settings_webhook_log_empty",
+      "expectedEnglishPreview": "No deliveries yet. Events appear here after the next alarm or a test.",
+      "translations": {
+        "zh-TW": "尚無傳送紀錄。下次鬧鐘觸發或完成測試後，事件會顯示於此。",
+        "ja": "送信履歴はまだありません。次のアラームまたはテストの後にイベントが表示されます。"
+      }
+    },
+    {
+      "key": "settings_webhook_failed_add_an_https_url",
+      "expectedEnglishPreview": "Webhook failed. Add an HTTPS URL first.",
+      "translations": {
+        "zh-TW": "Webhook 失敗。請先輸入 HTTPS 網址。",
+        "ja": "Webhook に失敗しました。先に HTTPS URL を入力してください。"
+      }
+    },
+    {
+      "key": "settings_webhook_failed_use_https_cleartext_http",
+      "expectedEnglishPreview": "Webhook failed. Use HTTPS, because cleartext HTTP is blocked.",
+      "translations": {
+        "zh-TW": "Webhook 失敗。未加密的 HTTP 已遭封鎖，請改用 HTTPS。",
+        "ja": "Webhook に失敗しました。平文 HTTP はブロックされるため、HTTPS を使用してください。"
+      }
+    },
+    {
+      "key": "settings_webhook_failed_enter_a_valid_https",
+      "expectedEnglishPreview": "Webhook failed. Enter a valid HTTPS URL.",
+      "translations": {
+        "zh-TW": "Webhook 失敗。請輸入有效的 HTTPS 網址。",
+        "ja": "Webhook に失敗しました。有効な HTTPS URL を入力してください。"
+      }
+    },
+    {
+      "key": "settings_webhook_failed_allow_local_network_access",
+      "expectedEnglishPreview": "Webhook failed. Allow local network access first.",
+      "translations": {
+        "zh-TW": "Webhook 失敗。請先允許區域網路存取。",
+        "ja": "Webhook に失敗しました。先にローカルネットワークへのアクセスを許可してください。"
+      }
+    },
+    {
+      "key": "settings_webhook_ok",
+      "expectedEnglishPreview": "Webhook OK",
+      "translations": {
+        "zh-TW": "Webhook 正常",
+        "ja": "Webhook 正常"
+      }
+    },
+    {
+      "key": "settings_webhook_failed_endpoint_did_not_return",
+      "expectedEnglishPreview": "Webhook failed. The endpoint did not return 2xx.",
+      "translations": {
+        "zh-TW": "Webhook 失敗。端點未回傳 2xx 狀態碼。",
+        "ja": "Webhook に失敗しました。エンドポイントから 2xx ステータスが返されませんでした。"
+      }
+    },
+    {
+      "key": "settings_holiday_enabled_description",
+      "expectedEnglishPreview": "Holiday data comes from Nager.Date and is cached locally for a week.",
+      "translations": {
+        "zh-TW": "國定假日資料來自 Nager.Date，並在裝置上快取一週。",
+        "ja": "祝日データは Nager.Date から取得し、端末内に 1 週間キャッシュします。"
+      }
+    },
+    {
+      "key": "settings_holiday_disabled_description",
+      "expectedEnglishPreview": "Choose the country now if you want. Holiday skipping only activates when the toggle above is on.",
+      "translations": {
+        "zh-TW": "你可以先選擇國家；只有開啟上方開關後，才會啟用假日略過鬧鐘功能。",
+        "ja": "先に国を選択してもかまいません。祝日のアラームスキップは、上のスイッチをオンにした場合のみ有効になります。"
+      }
+    },
+    {
+      "key": "settings_on_call_mode",
+      "expectedEnglishPreview": "On-call mode",
+      "translations": {
+        "zh-TW": "待命模式",
+        "ja": "オンコールモード"
+      }
+    },
+    {
+      "key": "settings_on_call_mode_description",
+      "expectedEnglishPreview": "Use this with a rotating shift pattern when an on-call alarm must break total-silence Do Not Disturb.",
+      "translations": {
+        "zh-TW": "輪班待命期間，若鬧鐘必須在「勿擾」完全靜音時仍能響起，可使用此模式。",
+        "ja": "交代制のオンコール勤務で、完全無音の「サイレントモード」を解除してアラームを鳴らす必要がある場合に使用します。"
+      }
+    },
+    {
+      "key": "settings_on_call_mode_toggle_description",
+      "expectedEnglishPreview": "Temporarily changes total silence to Alarms-only while this device is ringing, then restores your previous DND choice.",
+      "translations": {
+        "zh-TW": "鬧鐘響鈴期間，暫時將「完全靜音」改成「僅鬧鐘」，響鈴結束後恢復先前的勿擾設定。",
+        "ja": "アラームが鳴っている間だけ完全無音から「アラームのみ」に切り替え、終了後に以前の「サイレントモード」設定へ戻します。"
+      }
+    },
+    {
+      "key": "settings_on_call_access_needed",
+      "expectedEnglishPreview": "DND access needed",
+      "translations": {
+        "zh-TW": "需要勿擾模式存取權",
+        "ja": "サイレントモードへのアクセス権が必要"
+      }
+    },
+    {
+      "key": "settings_on_call_access_description",
+      "expectedEnglishPreview": "Grant notification policy access so the app can switch total silence to alarms only while you are on call.",
+      "translations": {
+        "zh-TW": "請允許通知政策存取，讓 App 在待命期間可將完全靜音暫時切換為僅允許鬧鐘。",
+        "ja": "通知ポリシーへのアクセスを許可すると、オンコール中に完全無音からアラームのみへ一時的に切り替えられます。"
+      }
+    },
+    {
+      "key": "permissions_recommended_permissions",
+      "expectedEnglishPreview": "Recommended permissions",
+      "translations": {
+        "zh-TW": "建議授予的權限",
+        "ja": "推奨する権限"
+      }
+    },
+    {
+      "key": "permissions_context_permissions",
+      "expectedEnglishPreview": "Context permissions",
+      "translations": {
+        "zh-TW": "情境相關權限",
+        "ja": "状況に応じた権限"
+      }
+    },
+    {
+      "key": "permissions_of_ready",
+      "expectedEnglishPreview": "%1$s of %2$s ready",
+      "translations": {
+        "zh-TW": "已就緒 %1$s／%2$s",
+        "ja": "準備完了: %1$s / %2$s"
+      }
+    },
+    {
+      "key": "permissions_final_step",
+      "expectedEnglishPreview": "Final step",
+      "translations": {
+        "zh-TW": "最後一步",
+        "ja": "最後のステップ"
+      }
+    },
+    {
+      "key": "permissions_missing",
+      "expectedEnglishPreview": "%1$s missing",
+      "translations": {
+        "zh-TW": "缺少 %1$s 項",
+        "ja": "不足: %1$s"
+      }
+    },
+    {
+      "key": "settings_exact_alarm_access",
+      "expectedEnglishPreview": "Exact alarm access",
+      "translations": {
+        "zh-TW": "精準鬧鐘存取權",
+        "ja": "正確なアラームのアクセス権"
+      }
+    },
+    {
+      "key": "alarm_edit_holidays_hint",
+      "expectedEnglishPreview": "Requires holiday auto-skip and country code configured in Settings → Integrations.",
+      "translations": {
+        "zh-TW": "須先在「設定 → 整合服務」啟用假日自動略過，並設定國家代碼。",
+        "ja": "「設定 → 連携」で祝日の自動スキップを有効にし、国コードを設定する必要があります。"
+      }
+    },
+    {
+      "key": "settings_connections_data",
+      "expectedEnglishPreview": "Connections and data",
+      "translations": {
+        "zh-TW": "連線與資料",
+        "ja": "接続とデータ"
+      }
+    },
+    {
+      "key": "settings_connections_data_description",
+      "expectedEnglishPreview": "Optional network services and what they send. Nothing leaves the device unless you enable it.",
+      "translations": {
+        "zh-TW": "查看選用的網路服務及其傳送內容。除非你啟用，否則不會從裝置送出資料。",
+        "ja": "任意のネットワークサービスと送信される内容を確認できます。有効にしない限り、端末からデータは送信されません。"
+      }
+    },
+    {
+      "key": "settings_connection_webhook",
+      "expectedEnglishPreview": "Webhook",
+      "translations": {
+        "zh-TW": "Webhook",
+        "ja": "Webhook"
+      }
+    },
+    {
+      "key": "settings_connection_cached_holidays",
+      "expectedEnglishPreview": "Cached holidays; skip disabled",
+      "translations": {
+        "zh-TW": "假日資料已快取；略過功能停用",
+        "ja": "祝日データをキャッシュ済み・スキップ無効"
+      }
+    },
+    {
+      "key": "settings_connection_events_dropped",
+      "expectedEnglishPreview": "Events silently dropped",
+      "translations": {
+        "zh-TW": "事件未顯示提示即被捨棄",
+        "ja": "イベントが通知なく破棄されます"
+      }
+    },
+    {
+      "key": "settings_connection_on_device",
+      "expectedEnglishPreview": "On-device (no network)",
+      "translations": {
+        "zh-TW": "僅在裝置上處理（不使用網路）",
+        "ja": "端末内で処理（ネットワーク不使用）"
+      }
+    },
+    {
+      "key": "settings_connection_health_data",
+      "expectedEnglishPreview": "None, reads local sleep sessions",
+      "translations": {
+        "zh-TW": "不傳送；僅讀取本機睡眠紀錄",
+        "ja": "送信なし。端末内の睡眠セッションを読み取ります"
+      }
+    },
+    {
+      "key": "settings_connection_sends",
+      "expectedEnglishPreview": "Sends: %1$s",
+      "translations": {
+        "zh-TW": "傳送：%1$s",
+        "ja": "送信内容: %1$s"
+      }
+    },
+    {
+      "key": "settings_connection_offline",
+      "expectedEnglishPreview": "Offline: %1$s",
+      "translations": {
+        "zh-TW": "離線時：%1$s",
+        "ja": "オフライン時: %1$s"
+      }
+    }
+  ]
+}
