@@ -27,6 +27,7 @@ on:
       - feature/acx-l12-structural-semantic-evidence-20261122
       - feature/acx-l11-b7-remaining-visible-20261122
       - feature/acx-l11b7-l12b2-integrated-qa-20261122
+      - feature/acx-l12-b3-release-gates-20261122
     paths:
       - "scripts/localization/**"
       - "localization/governance/**"
@@ -160,6 +161,21 @@ jobs:
         run: |
           node --test scripts/localization/l12-b2-code-behavior-probes.test.mjs
           node scripts/localization/l12-b2-code-behavior-probes.mjs --out-dir build/localization/L12_B2_CODE_PROBES_NOT_APPROVED
+      - name: L12-3 - Stage full resource review preflight and reject unapproved official XML
+        run: |
+          node --test scripts/localization/l12-b3-android-resource-preflight.test.mjs
+          node scripts/localization/l12-b3-android-resource-preflight.mjs --out-dir build/localization/L12_B3_REVIEW_ONLY_NOT_RELEASE
+          if node scripts/localization/l12-b3-android-resource-preflight.mjs --mode release; then
+            echo "SECURITY FAILURE: L12-3 attempted official XML without verified approvals and Android compile attestation"
+            exit 1
+          fi
+          echo "L12-3 official release correctly blocked."
+      - name: Publish L12-3 full Android XML review preflight (not approved)
+        uses: actions/upload-artifact@v4
+        with:
+          name: acx-l12-b3-android-xml-preflight-not-release
+          path: build/localization/L12_B3_REVIEW_ONLY_NOT_RELEASE/
+          retention-days: 14
       - name: Publish L12-2 code-behavior evidence (not approval)
         uses: actions/upload-artifact@v4
         with:
