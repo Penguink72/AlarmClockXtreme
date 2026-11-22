@@ -12,6 +12,9 @@ import {fileURLToPath,pathToFileURL} from "node:url";
 import {execFileSync} from "node:child_process";
 import {androidXmlPreviewText} from "./l12-b3-android-resource-preflight.mjs";
 import {loadUnifiedInputs,validateSignedReviewIntake} from "./l12-b6-independent-review.mjs";
+import {loadRiskPlan} from "./l12-b8b-risk-tiered-policy.mjs";
+import {validateProtectedTieredRelease,readExternalProtectedKeys}
+  from "./l12-b9-protected-policy-intake.mjs";
 const ROOT=resolve(dirname(fileURLToPath(import.meta.url)),"../..");
 const HASH=s=>"sha256:"+createHash("sha256").update(s,"utf8").digest("hex");
 const LOCALES=["zh-TW","ja"];
@@ -97,7 +100,16 @@ export function buildTypedResourceStage(packet,matrix){
   return {files,manifest};
 }
 export function releaseViolations({stage,packet,envelope,trustedKeyPem,glossary,g4Ledger,
-  compilerAttestation,protectedRef}){
+  compilerAttestation,protectedRef,reviewMode="full-per-row",
+  policy,riskPlan,policyEnvelope,tieredReviewEnvelope,compilerEnvelope,
+  trustedPolicyKeyPem,trustedReviewerKeyPem,trustedCompilerKeyPem}){
+  if(reviewMode==="risk-tiered-policy"){
+    return validateProtectedTieredRelease({stage,packet,policy,riskPlan,
+      glossary,g4Ledger,policyEnvelope,reviewEnvelope:tieredReviewEnvelope,
+      compilerEnvelope,trustedPolicyKeyPem,trustedReviewerKeyPem,
+      trustedCompilerKeyPem,protectedRef}).errors;
+  }
+  if(reviewMode!=="full-per-row")return ["UNKNOWN_L13_B_REVIEW_MODE"];
   const errors=[];
   if(protectedRef!==true)errors.push("GITHUB_PROTECTED_REF_REQUIRED");
   const review=validateSignedReviewIntake({packet,envelope,trustedPublicKeyPem:trustedKeyPem,
@@ -119,9 +131,13 @@ export function releaseViolations({stage,packet,envelope,trustedKeyPem,glossary,
  * must commit the generated official assets; no normal CI invokes this path.
  */
 export function writeAuthorizedXml({stage,packet,envelope,trustedKeyPem,glossary,
-  g4Ledger,compilerAttestation,protectedRef,repoRoot=ROOT}){
+  g4Ledger,compilerAttestation,protectedRef,repoRoot=ROOT,
+  reviewMode="full-per-row",policy,riskPlan,policyEnvelope,tieredReviewEnvelope,
+  compilerEnvelope,trustedPolicyKeyPem,trustedReviewerKeyPem,trustedCompilerKeyPem}){
   const errors=releaseViolations({stage,packet,envelope,trustedKeyPem,glossary,
-    g4Ledger,compilerAttestation,protectedRef});
+    g4Ledger,compilerAttestation,protectedRef,reviewMode,policy,riskPlan,
+    policyEnvelope,tieredReviewEnvelope,compilerEnvelope,
+    trustedPolicyKeyPem,trustedReviewerKeyPem,trustedCompilerKeyPem});
   if(errors.length)throw Error("L13-B official writer BLOCKED: "+errors.join(", "));
   const paths=Object.keys(stage.files);
   const prepared=paths.map(rel=>{
@@ -129,6 +145,8 @@ export function writeAuthorizedXml({stage,packet,envelope,trustedKeyPem,glossary
     if(existsSync(target))throw Error("L13-B refuses to overwrite an existing XML file: "+rel);
     return {rel,target,data:stage.files[rel].replace(
       "<!-- MODEL UNREVIEWED. ISOLATED L13-B STAGING ONLY, NEVER COPY INTO APP. -->",
+      reviewMode==="risk-tiered-policy"?
+      "<!-- Reviewed through protected L12-9 risk-tiered authorizations and L13-B source validation. -->":
       "<!-- Reviewed through protected L12-6 authorizations and L13-B source validation. -->")};
   });
   // Store only on a protected, externally reviewed branch. Never publish to main automatically.
@@ -140,7 +158,7 @@ export function writeAuthorizedXml({stage,packet,envelope,trustedKeyPem,glossary
     renameSync(temp,f.target);
   }
   return {status:"PROTECTED_WRITER_OUTPUT_CREATED_REQUIRES_FULL_GRADLE_AND_RUNTIME_REVIEW",
-    files:prepared.map(x=>x.rel),digest:packet.reviewSetDigest};
+    reviewMode,files:prepared.map(x=>x.rel),digest:packet.reviewSetDigest};
 }
 if(process.argv[1]&&import.meta.url===pathToFileURL(resolve(process.argv[1])).href){
   let sha="unavailable";
@@ -165,6 +183,32 @@ if(process.argv[1]&&import.meta.url===pathToFileURL(resolve(process.argv[1])).hr
     writeFileSync(join(dest,"stage-manifest.json"),JSON.stringify(stage.manifest,null,2)+"\n");
     console.log("L13_B_ISOLATED_STAGE "+JSON.stringify(stage.manifest));
   }else{
+    const modeIndex=process.argv.indexOf("--review-mode");
+    const reviewMode=modeIndex<0?"full-per-row":process.argv[modeIndex+1];
+    if(reviewMode==="risk-tiered-policy"){
+      const arg=name=>{
+        const i=process.argv.indexOf(name);
+        return i<0?null:resolve(process.argv[i+1]??"");
+      };
+      const names=["--policy-envelope","--tiered-review-envelope","--compiler-envelope"].map(arg);
+      if(names.some(x=>!x))throw Error("L13-B L12-9 BLOCKED: THREE_SIGNED_EXTERNAL_ENVELOPES_REQUIRED");
+      const keys=readExternalProtectedKeys();
+      const parse=p=>JSON.parse(readFileSync(p,"utf8"));
+      const risk=loadRiskPlan(ROOT,sha);
+      if(risk.data.packet.reviewSetDigest!==packet.reviewSetDigest)
+        throw Error("L13-B L12-9 BLOCKED: UNPINNED_RISK_PLAN");
+      const result=writeAuthorizedXml({stage,packet,glossary,g4Ledger,reviewMode,
+        riskPlan:risk.riskPlan,policy:risk.policy,
+        policyEnvelope:parse(names[0]),tieredReviewEnvelope:parse(names[1]),
+        compilerEnvelope:parse(names[2]),
+        trustedPolicyKeyPem:keys.policy,trustedReviewerKeyPem:keys.reviewer,
+        trustedCompilerKeyPem:keys.compiler,
+        protectedRef:process.env.GITHUB_REF_PROTECTED==="true"});
+      console.log("L13_B_L12_9_PROTECTED_XML_ONLY "+JSON.stringify(result));
+      process.exit(0);
+    }
+    if(reviewMode!=="full-per-row")
+      throw Error("L13-B BLOCKED: UNKNOWN_REVIEW_MODE");
     const keyPath=process.env.ACX_L12_PROTECTED_REVIEW_PUBLIC_KEY_FILE??"";
     if(!isAbsolute(keyPath)||keyPath.startsWith(ROOT+"/")||keyPath.startsWith(ROOT+"\\"))
       throw Error("L13-B official writer BLOCKED: EXTERNAL_TRUST_ANCHOR_REQUIRED");
