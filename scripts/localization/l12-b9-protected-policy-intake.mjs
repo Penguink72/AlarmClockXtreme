@@ -12,7 +12,7 @@ import {fileURLToPath,pathToFileURL} from "node:url";
 import {loadRiskPlan,buildRiskTieredPlan,validatePolicy} from "./l12-b8b-risk-tiered-policy.mjs";
 
 const ROOT=resolve(dirname(fileURLToPath(import.meta.url)),"../..");
-const sha=x=>"sha256:"+createHash("sha256").update(JSON.stringify(x),"utf8").digest("hex");
+const sha=x=>"sha256:"+createHash("sha256").update(JSON.stringify(x===undefined?null:x),"utf8").digest("hex");
 const rawFileDigest=x=>"sha256:"+createHash("sha256").update(x,"utf8").digest("hex");
 const rowId=r=>r.key+"\0"+r.locale;
 const policySchema="acx-l12-b9-signed-policy-envelope/1";
