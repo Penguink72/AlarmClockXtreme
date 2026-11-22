@@ -46,7 +46,7 @@ test("L11-B2 full baseline retains complete missing rows, no Android locale writ
   assert(d.review.every(x=>x.humanApproval===false&&x.independentApproval===false));
   assert(d.queue.every(x=>x.actionSemantic==="NOT_VERIFIED_BY_L11"));
   assert(d.queue.every(x=>x.targetExists===false));
-  assert(draftTsv(d).includes("translation"));
+  assert(draftTsv(d).includes("candidate_text"));
   assert(summaryMd(d).includes("L11-B2"));
 });
 
