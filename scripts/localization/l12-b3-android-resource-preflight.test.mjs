@@ -30,11 +30,11 @@ test("L12-B3 supplies a complete per-locale review-only XML preflight with zero 
   const x=report();
   assert.equal(x.schema,"acx-l12-b3-resource-preflight/1");
   assert.equal(x.stats.totalMissingLocaleDefinitions,3100);
-  assert.equal(x.stats.candidateLocaleRows,2306);
-  assert.equal(x.stats.stillMissingCandidateRows,794);
-  assert.equal(x.stats.byLocale["zh-TW"],1153);
-  assert.equal(x.stats.byLocale.ja,1153);
-  assert.equal(x.review.length,2306);
+  assert.equal(x.stats.candidateLocaleRows,2680);
+  assert.equal(x.stats.stillMissingCandidateRows,420);
+  assert.equal(x.stats.byLocale["zh-TW"],1340);
+  assert.equal(x.stats.byLocale.ja,1340);
+  assert.equal(x.review.length,2680);
   assert.equal(x.stats.independentSemanticApproved,0);
   assert.equal(x.stats.officialXmlWritten,0);
   assert.equal(x.stats.resourceCompilerPassed,0);
