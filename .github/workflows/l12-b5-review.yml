@@ -1,0 +1,27 @@
+name: ACX L12-5 warning classification (review only)
+on:
+  push:
+    branches:
+      - feature/acx-l12-b5-warning-disposition-20261122
+    paths:
+      - "scripts/localization/**"
+      - ".github/workflows/l12-b5-review.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  warning-dispositions:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Validate L12-5 and regenerate review evidence
+        run: |
+          node --test scripts/localization/l12-b5-warning-disposition.test.mjs
+          node scripts/localization/l12-b5-warning-disposition.mjs --out-dir build/localization/L12_B5_REVIEW --list
+      - uses: actions/upload-artifact@v4
+        with:
+          name: acx-l12-b5-warning-review-only
+          path: build/localization/L12_B5_REVIEW/
