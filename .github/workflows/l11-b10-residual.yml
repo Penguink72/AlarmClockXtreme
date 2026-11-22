@@ -21,7 +21,24 @@ jobs:
       - name: Validate L11-10 gap source and existing guards
         run: |
           node --test scripts/localization/l11-b10-residual-closure.test.mjs
+          node --test scripts/localization/l11-b10-typed-candidates.test.mjs
           node scripts/localization/l11-b10-residual-closure.mjs --out-dir build/localization/L11_B10_RESIDUAL --list
+          node scripts/localization/l11-b10-typed-candidates.mjs --out-dir build/localization/L11_B10_RESIDUAL
+      - name: aapt2 compile L11-10 isolated unapproved typed resources
+        shell: bash
+        run: |
+          set -euo pipefail
+          STAGE="build/localization/L11_B10_RESIDUAL"
+          SDK_ROOT="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-}}"
+          AAPT2="$(find "$SDK_ROOT/build-tools" -mindepth 2 -maxdepth 2 -type f -name aapt2 | sort -V | tail -1)"
+          if [[ -z "$AAPT2" || ! -x "$AAPT2" ]]; then
+            echo "aapt2 unavailable; no compiler validation" >&2
+            exit 1
+          fi
+          "$AAPT2" version
+          "$AAPT2" compile --dir "$STAGE/res" -o "$STAGE/l11-b10-unapproved-typed-resources.zip"
+          sha256sum "$STAGE/l11-b10-unapproved-typed-resources.zip" > "$STAGE/l11-b10-compiled-sha256.txt"
+          echo "Only isolated unapproved L11-10 candidates compiled; no production XML or APK."
       - name: Save review-only residual source evidence
         uses: actions/upload-artifact@v4
         with:
