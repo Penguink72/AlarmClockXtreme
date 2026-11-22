@@ -51,6 +51,9 @@ test("L12-8B partitions all 1550 bilingual cards with no dropped/duplicated rows
   assert.equal(s.deferredKeyCards*2,s.deferredLocaleRows);
   assert.equal(s.mandatoryFullLocaleRows+s.sampleLocaleRows+s.deferredLocaleRows,3100);
   assert.equal(s.initialHumanFocusLocaleRows,s.mandatoryFullLocaleRows+s.sampleLocaleRows);
+  assert.equal(Object.values(s.byMandatoryReviewTier).reduce((sum,n)=>sum+n,0),s.mandatoryFullLocaleRows);
+  assert.equal(s.byMandatoryReviewTier.P3_CONSERVATIVE_OVERRIDE,s.p3ConservativeOverridesKeyCards*2);
+  assert(!("P3_GENERAL_UI" in s.byMandatoryReviewTier));
   assert(s.initialHumanFocusLocaleRows<3100);
   assert(s.sampleLocaleRows>0 && s.deferredLocaleRows>0);
   assert(s.p3ConservativeOverridesKeyCards>=0);
