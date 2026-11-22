@@ -8,6 +8,7 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { execFileSync } from "node:child_process";
 import { buildL10 } from "./l10-source-binding-graph.mjs";
+import { buildDispositionQueue,dispositionTsv } from "./l11-b3-source-dispositions.mjs";
 
 const ROOT=resolve(dirname(fileURLToPath(import.meta.url)),"../..");
 const LC=["zh-TW","ja"];
@@ -276,6 +277,20 @@ if(process.argv[1] && import.meta.url===pathToFileURL(resolve(process.argv[1])).
     reason:"Never reuse stale G6 drafts silently"
   });
   writeFileSync(join(out,"l11-priority-review.tsv"),draftTsv(data));
-  writeFileSync(join(out,"l11-summary.md"),summaryMd(data));
+  const triage=buildDispositionQueue(data,graph);
+  write("l11-b3-source-disposition-suggestions.json",triage);
+  writeFileSync(join(out,"l11-b3-source-disposition-suggestions.tsv"),dispositionTsv(triage));
+  writeFileSync(join(out,"l11-summary.md"),summaryMd(data)+[
+    "",
+    "## L11-3 candidate-only lexical disposition triage",
+    "",
+    "- Remaining untranslated locale rows: "+triage.stats.undecidedLocaleRows,
+    ...Object.entries(triage.stats.byDisposition).sort((a,b)=>a[0].localeCompare(b[0],"en"))
+      .map(([key,value])=>"- "+key+": "+value),
+    "- Nontranslatable base keys outside missing locale denominator: "+triage.stats.excludedNonTranslatableBaseKeys,
+    "- Approved fallbacks: 0. L11 cannot authorize official XML or review ledgers.",
+    ""
+  ].join("\n"));
   console.log("L11_TRANSLATION_DRAFTS "+JSON.stringify(data.summary));
+  console.log("L11_B3_DISPOSITION_CANDIDATES "+JSON.stringify(triage.stats));
 }
