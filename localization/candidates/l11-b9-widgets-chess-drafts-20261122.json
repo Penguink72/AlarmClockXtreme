@@ -1,0 +1,279 @@
+{
+  "schema": "acx-l11-batch9-drafts/1",
+  "topic": "CHESS_WIDGET_WINDDOWN_MISC_SHORT_LABELS",
+  "status": "MODEL_PRELIMINARY_NOT_APPROVED",
+  "independentApproval": false,
+  "sourceRef": "app/src/main/res/values/strings.xml",
+  "records": [
+    {
+      "key": "chess_puzzle_back_rank_net_title",
+      "expectedEnglishPreview": "Back-rank net",
+      "translations": {
+        "zh-TW": "底線將死陷阱",
+        "ja": "バックランクの詰み"
+      },
+      "reviewRisk": "FORMAT_AND_DOMAIN_CONTEXT_REVIEW"
+    },
+    {
+      "key": "chess_puzzle_back_rank_net_explanation",
+      "expectedEnglishPreview": "The queen removes the guard and the rook seals the back rank.",
+      "translations": {
+        "zh-TW": "后移除防守棋子，車則封鎖底線。",
+        "ja": "クイーンが守りを取り除き、ルークがバックランクを封じます。"
+      },
+      "reviewRisk": "FORMAT_AND_DOMAIN_CONTEXT_REVIEW"
+    },
+    {
+      "key": "chess_puzzle_corner_squeeze_title",
+      "expectedEnglishPreview": "Corner squeeze",
+      "translations": {
+        "zh-TW": "角落封鎖",
+        "ja": "隅への追い込み"
+      },
+      "reviewRisk": "FORMAT_AND_DOMAIN_CONTEXT_REVIEW"
+    },
+    {
+      "key": "chess_puzzle_corner_squeeze_explanation",
+      "expectedEnglishPreview": "Qb7 covers the escape squares while the king traps the corner.",
+      "translations": {
+        "zh-TW": "Qb7 控制逃脫格，國王則困在角落。",
+        "ja": "Qb7 が逃げ道を押さえ、キングを隅に閉じ込めます。"
+      },
+      "reviewRisk": "FORMAT_AND_DOMAIN_CONTEXT_REVIEW"
+    },
+    {
+      "key": "chess_puzzle_battery_finish_title",
+      "expectedEnglishPreview": "Battery finish",
+      "translations": {
+        "zh-TW": "后象聯合攻擊",
+        "ja": "クイーンとビショップの連携"
+      },
+      "reviewRisk": "FORMAT_AND_DOMAIN_CONTEXT_REVIEW"
+    },
+    {
+      "key": "chess_puzzle_battery_finish_explanation",
+      "expectedEnglishPreview": "The queen lands on f7 with bishop support and no king escape.",
+      "translations": {
+        "zh-TW": "后落在 f7，由象支援，國王已無處可逃。",
+        "ja": "クイーンが f7 に進み、ビショップの支援を受けてキングの逃げ道をなくします。"
+      },
+      "reviewRisk": "FORMAT_AND_DOMAIN_CONTEXT_REVIEW"
+    },
+    {
+      "key": "chess_side_white",
+      "expectedEnglishPreview": "White",
+      "translations": {
+        "zh-TW": "白方",
+        "ja": "白"
+      },
+      "reviewRisk": "FORMAT_AND_DOMAIN_CONTEXT_REVIEW"
+    },
+    {
+      "key": "widget_could_not_load",
+      "expectedEnglishPreview": "Couldn’t load alarms",
+      "translations": {
+        "zh-TW": "無法載入鬧鐘",
+        "ja": "アラームを読み込めませんでした"
+      },
+      "reviewRisk": "FORMAT_AND_DOMAIN_CONTEXT_REVIEW"
+    },
+    {
+      "key": "widget_no_alarms_set",
+      "expectedEnglishPreview": "No alarms set",
+      "translations": {
+        "zh-TW": "尚未設定鬧鐘",
+        "ja": "アラームが設定されていません"
+      },
+      "reviewRisk": "FORMAT_AND_DOMAIN_CONTEXT_REVIEW"
+    },
+    {
+      "key": "tile_no_alarm",
+      "expectedEnglishPreview": "No alarm",
+      "translations": {
+        "zh-TW": "沒有鬧鐘",
+        "ja": "アラームなし"
+      },
+      "reviewRisk": "FORMAT_AND_DOMAIN_CONTEXT_REVIEW"
+    },
+    {
+      "key": "tile_tap_to_recheck",
+      "expectedEnglishPreview": "Tap to re-check",
+      "translations": {
+        "zh-TW": "點選重新檢查",
+        "ja": "タップして再確認"
+      },
+      "reviewRisk": "FORMAT_AND_DOMAIN_CONTEXT_REVIEW"
+    },
+    {
+      "key": "tile_skip",
+      "expectedEnglishPreview": "Skip %1$s",
+      "translations": {
+        "zh-TW": "略過 %1$s",
+        "ja": "%1$s をスキップ"
+      },
+      "reviewRisk": "FORMAT_AND_DOMAIN_CONTEXT_REVIEW"
+    },
+    {
+      "key": "wind_down_reset_checklist",
+      "expectedEnglishPreview": "Reset checklist",
+      "translations": {
+        "zh-TW": "重設清單",
+        "ja": "チェックリストをリセット"
+      },
+      "reviewRisk": "GENERAL_UI_REVIEW"
+    },
+    {
+      "key": "wind_down_wind_down_checklist",
+      "expectedEnglishPreview": "Wind-down checklist",
+      "translations": {
+        "zh-TW": "睡前放鬆清單",
+        "ja": "就寝前のチェックリスト"
+      },
+      "reviewRisk": "GENERAL_UI_REVIEW"
+    },
+    {
+      "key": "wind_down_tick_each_step_as_settle",
+      "expectedEnglishPreview": "Tick each step as you settle in for the night.",
+      "translations": {
+        "zh-TW": "放鬆準備睡覺時，逐一勾選完成的步驟。",
+        "ja": "寝る準備をしながら、終えた項目にチェックを入れてください。"
+      },
+      "reviewRisk": "GENERAL_UI_REVIEW"
+    },
+    {
+      "key": "templates_ready_made_setups",
+      "expectedEnglishPreview": "%1$s ready-made setups",
+      "translations": {
+        "zh-TW": "%1$s 組現成設定",
+        "ja": "用意された設定 %1$s 件"
+      },
+      "reviewRisk": "FORMAT_AND_DOMAIN_CONTEXT_REVIEW"
+    },
+    {
+      "key": "templates_min_snooze",
+      "expectedEnglishPreview": "%1$s min snooze",
+      "translations": {
+        "zh-TW": "貪睡間隔 %1$s 分鐘",
+        "ja": "スヌーズ %1$s 分"
+      },
+      "reviewRisk": "FORMAT_AND_DOMAIN_CONTEXT_REVIEW"
+    },
+    {
+      "key": "stats_m_movement_m_restless_m_still",
+      "expectedEnglishPreview": "%1$sm movement · %2$sm restless · %3$sm still",
+      "translations": {
+        "zh-TW": "活動 %1$s 分鐘 · 躁動 %2$s 分鐘 · 靜止 %3$s 分鐘",
+        "ja": "動き %1$s 分 · 落ち着かない動き %2$s 分 · 静止 %3$s 分"
+      },
+      "reviewRisk": "FORMAT_AND_DOMAIN_CONTEXT_REVIEW"
+    },
+    {
+      "key": "stats_m_awake_motion_m_light_motion",
+      "expectedEnglishPreview": "%1$sm awake motion · %2$sm light motion · %3$sm still motion",
+      "translations": {
+        "zh-TW": "清醒活動 %1$s 分鐘 · 輕微動作 %2$s 分鐘 · 靜止動作 %3$s 分鐘",
+        "ja": "覚醒時の動き %1$s 分 · 小さな動き %2$s 分 · 静止した動き %3$s 分"
+      },
+      "reviewRisk": "FORMAT_AND_DOMAIN_CONTEXT_REVIEW"
+    },
+    {
+      "key": "show_weather",
+      "expectedEnglishPreview": "Show weather",
+      "translations": {
+        "zh-TW": "顯示天氣",
+        "ja": "天気を表示"
+      },
+      "reviewRisk": "GENERAL_UI_REVIEW"
+    },
+    {
+      "key": "show_calendar",
+      "expectedEnglishPreview": "Show calendar",
+      "translations": {
+        "zh-TW": "顯示行事曆",
+        "ja": "カレンダーを表示"
+      },
+      "reviewRisk": "GENERAL_UI_REVIEW"
+    },
+    {
+      "key": "qs_tile_skip_next_alarm",
+      "expectedEnglishPreview": "Skip next alarm",
+      "translations": {
+        "zh-TW": "略過下一個鬧鐘",
+        "ja": "次のアラームをスキップ"
+      },
+      "reviewRisk": "FORMAT_AND_DOMAIN_CONTEXT_REVIEW"
+    },
+    {
+      "key": "format_24h",
+      "expectedEnglishPreview": "24-hour format",
+      "translations": {
+        "zh-TW": "24 小時制",
+        "ja": "24時間形式"
+      },
+      "reviewRisk": "GENERAL_UI_REVIEW"
+    },
+    {
+      "key": "auto_silence",
+      "expectedEnglishPreview": "Auto-silence",
+      "translations": {
+        "zh-TW": "自動靜音",
+        "ja": "自動消音"
+      },
+      "reviewRisk": "GENERAL_UI_REVIEW"
+    },
+    {
+      "key": "temperature_unit",
+      "expectedEnglishPreview": "Temperature unit",
+      "translations": {
+        "zh-TW": "溫度單位",
+        "ja": "温度の単位"
+      },
+      "reviewRisk": "GENERAL_UI_REVIEW"
+    },
+    {
+      "key": "about",
+      "expectedEnglishPreview": "About",
+      "translations": {
+        "zh-TW": "關於",
+        "ja": "このアプリについて"
+      },
+      "reviewRisk": "GENERAL_UI_REVIEW"
+    },
+    {
+      "key": "save",
+      "expectedEnglishPreview": "Save",
+      "translations": {
+        "zh-TW": "儲存",
+        "ja": "保存"
+      },
+      "reviewRisk": "GENERAL_UI_REVIEW"
+    },
+    {
+      "key": "geocoding_unknown_place",
+      "expectedEnglishPreview": "Unknown",
+      "translations": {
+        "zh-TW": "未知地點",
+        "ja": "不明な場所"
+      },
+      "reviewRisk": "GENERAL_UI_REVIEW"
+    },
+    {
+      "key": "default_alarm_label",
+      "expectedEnglishPreview": "Wake Up",
+      "translations": {
+        "zh-TW": "起床",
+        "ja": "起床"
+      },
+      "reviewRisk": "GENERAL_UI_REVIEW"
+    },
+    {
+      "key": "guardian_default_alarm_label",
+      "expectedEnglishPreview": "Alarm",
+      "translations": {
+        "zh-TW": "鬧鐘",
+        "ja": "アラーム"
+      },
+      "reviewRisk": "FORMAT_AND_DOMAIN_CONTEXT_REVIEW"
+    }
+  ]
+}
