@@ -23,6 +23,7 @@ on:
       - feature/acx-l11-b3-context-dispositions-20261122
       - feature/acx-l11-b4-visible-ui-drafts-20261122
       - feature/acx-l11-b5-backup-integrations-20261122
+      - feature/acx-l11-b6-stats-bedtime-20261122
     paths:
       - "scripts/localization/**"
       - "localization/governance/**"
@@ -145,6 +146,7 @@ jobs:
           node --test scripts/localization/l11-b3-draft-disposition.test.mjs
           node --test scripts/localization/l11-b4-visible-ui-drafts.test.mjs
           node --test scripts/localization/l11-b5-sensitive-ui-drafts.test.mjs
+          node --test scripts/localization/l11-b6-stats-bedtime.test.mjs
           node scripts/localization/l11-translation-worklist.mjs --out-dir build/localization/B0_FULL_APP_INVENTORY
       - name: Publish B0 full-app inventory evidence
         uses: actions/upload-artifact@v4
