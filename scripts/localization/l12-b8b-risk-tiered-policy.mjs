@@ -146,8 +146,12 @@ export function buildRiskTieredPlan(batchPlan,policy){
     semanticApprovalCount:0
   }));
   const distribution={};
-  for(const c of full)distribution[c.priority]=(distribution[c.priority]??0)+2;
-  distribution["P3_CONSERVATIVE_OVERRIDE"]=overrides.length*2;
+  for(const c of full){
+    const bucket=c.policyEscalatedFromP3?"P3_CONSERVATIVE_OVERRIDE":c.priority;
+    distribution[bucket]=(distribution[bucket]??0)+2;
+  }
+  if(Object.values(distribution).reduce((sum,n)=>sum+n,0)!==full.length*2)
+    throw Error("L12-8B manual review distribution double count");
   const summary={
     schema:"acx-l12-b8b-risk-tiered-review-plan/1",
     policyId:policy.policyId,policyRevision:policy.policyRevision,
