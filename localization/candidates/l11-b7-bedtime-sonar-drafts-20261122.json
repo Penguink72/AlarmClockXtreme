@@ -1,0 +1,657 @@
+{
+  "schema": "acx-l11-batch7-drafts/1",
+  "topic": "BEDTIME_SONAR_RESIDUAL",
+  "status": "MODEL_PRELIMINARY_NOT_APPROVED",
+  "independentApproval": false,
+  "sourceRef": "app/src/main/res/values/strings.xml",
+  "records": [
+    {
+      "key": "bedtime_your_wind_down_reminder_is_set",
+      "expectedEnglishPreview": "Your wind-down reminder is set. Add an alarm to get a recommended bedtime.",
+      "translations": {
+        "zh-TW": "放鬆準備提醒已設定。設定鬧鐘後，即可取得建議就寢時間。",
+        "ja": "就寝準備のリマインダーを設定しました。アラームを設定すると、おすすめの就寝時刻が表示されます。"
+      },
+      "reviewRisk": "BEDTIME_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "bedtime_build_a_calmer_night_routine_with",
+      "expectedEnglishPreview": "Build a calmer night routine with a reminder, a target, and gentler wind-down cues.",
+      "translations": {
+        "zh-TW": "透過提醒、睡眠目標與溫和的放鬆提示，建立更平靜的夜間作息。",
+        "ja": "リマインダー、目標、穏やかな就寝準備の合図で落ち着いた夜の習慣を作りましょう。"
+      },
+      "reviewRisk": "BEDTIME_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "bedtime_grant_dnd_access_so_alarmclockxtreme_can",
+      "expectedEnglishPreview": "Grant DND access so AlarmClockXtreme can own an alarms-only sleep rule.",
+      "translations": {
+        "zh-TW": "授予勿擾模式存取權，讓 AlarmClockXtreme 能建立僅允許鬧鐘的睡眠規則。",
+        "ja": "AlarmClockXtreme がアラームのみを許可する睡眠ルールを作成できるよう、おやすみモードへのアクセスを許可してください。"
+      },
+      "reviewRisk": "SLEEP_TRACKING_PRIVACY_AND_PERMISSION_REVIEW"
+    },
+    {
+      "key": "bedtime_alarms_only_mode_is_active_for",
+      "expectedEnglishPreview": "Alarms-only mode is active for your sleep window.",
+      "translations": {
+        "zh-TW": "睡眠時段已啟用僅允許鬧鐘模式。",
+        "ja": "睡眠時間帯はアラームのみを許可するモードが有効です。"
+      },
+      "reviewRisk": "BEDTIME_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "bedtime_silences_interruptions_from_bedtime_until_your",
+      "expectedEnglishPreview": "Silences interruptions from bedtime until your next alarm.",
+      "translations": {
+        "zh-TW": "從就寢到下一個鬧鐘響起前，將干擾通知設為靜音。",
+        "ja": "就寝時刻から次のアラームまで、通知などによる割り込みを消音します。"
+      },
+      "reviewRisk": "BEDTIME_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "bedtime_create_an_app_owned_alarms_only",
+      "expectedEnglishPreview": "Create an app-owned alarms-only rule for your sleep window.",
+      "translations": {
+        "zh-TW": "為睡眠時段建立由此 App 管理、僅允許鬧鐘的規則。",
+        "ja": "睡眠時間帯に、このアプリが管理するアラームのみのルールを作成します。"
+      },
+      "reviewRisk": "BEDTIME_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "bedtime_staying_up_late_until",
+      "expectedEnglishPreview": "Staying up late until %1$s",
+      "translations": {
+        "zh-TW": "今晚延後就寢至 %1$s",
+        "ja": "今夜は %1$s まで夜更かし"
+      },
+      "reviewRisk": "BEDTIME_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "bedtime_stay_up_late_tonight",
+      "expectedEnglishPreview": "Stay up late tonight",
+      "translations": {
+        "zh-TW": "今晚晚點睡",
+        "ja": "今夜は夜更かし"
+      },
+      "reviewRisk": "BEDTIME_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "bedtime_before_bedtime",
+      "expectedEnglishPreview": "Before bedtime",
+      "translations": {
+        "zh-TW": "就寢前",
+        "ja": "就寝前"
+      },
+      "reviewRisk": "BEDTIME_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "bedtime_turn_on_above",
+      "expectedEnglishPreview": "Turn on above",
+      "translations": {
+        "zh-TW": "請先開啟上方設定",
+        "ja": "上の設定をオンにしてください"
+      },
+      "reviewRisk": "BEDTIME_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "bedtime_30_minute_steps",
+      "expectedEnglishPreview": "30-minute steps",
+      "translations": {
+        "zh-TW": "每次 30 分鐘",
+        "ja": "30分刻み"
+      },
+      "reviewRisk": "BEDTIME_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "bedtime_playing",
+      "expectedEnglishPreview": "Playing",
+      "translations": {
+        "zh-TW": "播放中",
+        "ja": "再生中"
+      },
+      "reviewRisk": "BEDTIME_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "bedtime_tap_to_preview",
+      "expectedEnglishPreview": "Tap to preview",
+      "translations": {
+        "zh-TW": "點選試聽",
+        "ja": "タップして試聴"
+      },
+      "reviewRisk": "BEDTIME_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "bedtime_tag_the_signals_that_may_shape",
+      "expectedEnglishPreview": "%1$s: tag the signals that may shape tomorrow\\'s wake-up friction.",
+      "translations": {
+        "zh-TW": "%1$s：標記可能影響明早醒來難易度的因素。",
+        "ja": "%1$s：明朝の目覚めやすさに影響するかもしれない要因を記録します。"
+      },
+      "reviewRisk": "BEDTIME_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "bedtime_no_sleep_data",
+      "expectedEnglishPreview": "No sleep data",
+      "translations": {
+        "zh-TW": "沒有睡眠資料",
+        "ja": "睡眠データがありません"
+      },
+      "reviewRisk": "SLEEP_TRACKING_PRIVACY_AND_PERMISSION_REVIEW"
+    },
+    {
+      "key": "bedtime_grant_read_sleep_in_settings_to",
+      "expectedEnglishPreview": "Grant READ_SLEEP in Settings to fold recent sessions into bedtime planning.",
+      "translations": {
+        "zh-TW": "在設定中授予 READ_SLEEP 權限，將近期睡眠紀錄納入就寢規劃。",
+        "ja": "最近の睡眠セッションを就寝計画に取り込むには、設定で READ_SLEEP を許可してください。"
+      },
+      "reviewRisk": "SLEEP_TRACKING_PRIVACY_AND_PERMISSION_REVIEW"
+    },
+    {
+      "key": "bedtime_recent_sessions_stay_local_and_help",
+      "expectedEnglishPreview": "Recent sessions stay local and help compare your target with actual sleep.",
+      "translations": {
+        "zh-TW": "近期睡眠紀錄保留在本機，可用來比較睡眠目標與實際時間。",
+        "ja": "最近の睡眠セッションは端末内に保存され、目標と実際の睡眠を比較する助けになります。"
+      },
+      "reviewRisk": "BEDTIME_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "bedtime_read_sleep_is_granted_but_no",
+      "expectedEnglishPreview": "READ_SLEEP is granted, but no recent sleep sessions were found in the last 14 days.",
+      "translations": {
+        "zh-TW": "已授予 READ_SLEEP 權限，但過去 14 天內找不到近期睡眠紀錄。",
+        "ja": "READ_SLEEP は許可されていますが、過去14日間に睡眠セッションが見つかりませんでした。"
+      },
+      "reviewRisk": "SLEEP_TRACKING_PRIVACY_AND_PERMISSION_REVIEW"
+    },
+    {
+      "key": "bedtime_read_sleep_granted",
+      "expectedEnglishPreview": "READ_SLEEP granted",
+      "translations": {
+        "zh-TW": "已授予 READ_SLEEP 權限",
+        "ja": "READ_SLEEP を許可済み"
+      },
+      "reviewRisk": "SLEEP_TRACKING_PRIVACY_AND_PERMISSION_REVIEW"
+    },
+    {
+      "key": "bedtime_sessions",
+      "expectedEnglishPreview": "%1$s sessions",
+      "translations": {
+        "zh-TW": "%1$s 筆紀錄",
+        "ja": "%1$s 件のセッション"
+      },
+      "reviewRisk": "BEDTIME_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "bedtime_best_match",
+      "expectedEnglishPreview": "Best match",
+      "translations": {
+        "zh-TW": "最符合",
+        "ja": "最も近い"
+      },
+      "reviewRisk": "BEDTIME_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "bedtime_done_2",
+      "expectedEnglishPreview": "%1$s/%2$s done",
+      "translations": {
+        "zh-TW": "已完成 %1$s／%2$s",
+        "ja": "完了 %1$s／%2$s"
+      },
+      "reviewRisk": "BEDTIME_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "bedtime_completed",
+      "expectedEnglishPreview": "Completed",
+      "translations": {
+        "zh-TW": "已完成",
+        "ja": "完了"
+      },
+      "reviewRisk": "BEDTIME_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "bedtime_not_done",
+      "expectedEnglishPreview": "Not done",
+      "translations": {
+        "zh-TW": "未完成",
+        "ja": "未完了"
+      },
+      "reviewRisk": "BEDTIME_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "bedtime_up_next",
+      "expectedEnglishPreview": "Up next",
+      "translations": {
+        "zh-TW": "接下來",
+        "ja": "次の項目"
+      },
+      "reviewRisk": "BEDTIME_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "bedtime_service_unavailable",
+      "expectedEnglishPreview": "service unavailable",
+      "translations": {
+        "zh-TW": "服務無法使用",
+        "ja": "サービスを利用できません"
+      },
+      "reviewRisk": "BEDTIME_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "bedtime_monitoring_movement_and_loud_sleep_sounds",
+      "expectedEnglishPreview": "Monitoring movement and loud sleep sounds. No raw audio is recorded.",
+      "translations": {
+        "zh-TW": "正在監測動作與較大的睡眠聲響，不錄製原始音訊。",
+        "ja": "体の動きや大きな睡眠音を監視しています。生の音声データは録音しません。"
+      },
+      "reviewRisk": "SLEEP_TRACKING_PRIVACY_AND_PERMISSION_REVIEW"
+    },
+    {
+      "key": "bedtime_last_sonar_session_saved_locally",
+      "expectedEnglishPreview": "Last sonar session saved locally.",
+      "translations": {
+        "zh-TW": "上一筆 Sonar 紀錄已儲存在本機。",
+        "ja": "前回の Sonar セッションは端末内に保存されました。"
+      },
+      "reviewRisk": "SLEEP_TRACKING_PRIVACY_AND_PERMISSION_REVIEW"
+    },
+    {
+      "key": "bedtime_ready_to_monitor_local_movement_during",
+      "expectedEnglishPreview": "Ready to monitor local movement during sleep.",
+      "translations": {
+        "zh-TW": "已準備好在睡眠期間於本機監測動作。",
+        "ja": "睡眠中の動きを端末内で監視する準備ができました。"
+      },
+      "reviewRisk": "BEDTIME_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "bedtime_no_tagged_nights_yet",
+      "expectedEnglishPreview": "No tagged nights yet",
+      "translations": {
+        "zh-TW": "尚無已標記的夜晚紀錄",
+        "ja": "タグ付きの夜の記録はまだありません"
+      },
+      "reviewRisk": "BEDTIME_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "bedtime_tagged_waiting_for_sleep_sessions",
+      "expectedEnglishPreview": "%1$d tagged; waiting for sleep sessions",
+      "translations": {
+        "zh-TW": "已標記 %1$d 筆，等待睡眠紀錄",
+        "ja": "%1$d 件を記録済み。睡眠セッションを待機中"
+      },
+      "reviewRisk": "SLEEP_TRACKING_PRIVACY_AND_PERMISSION_REVIEW"
+    },
+    {
+      "key": "bedtime_tagged_nights_with_local_sleep_data",
+      "expectedEnglishPreview": "%1$d/%2$d tagged nights with local sleep data",
+      "translations": {
+        "zh-TW": "%1$d／%2$d 個已標記的夜晚有本機睡眠資料",
+        "ja": "タグ付きの夜 %1$d／%2$d 件に端末内の睡眠データがあります"
+      },
+      "reviewRisk": "SLEEP_TRACKING_PRIVACY_AND_PERMISSION_REVIEW"
+    },
+    {
+      "key": "bedtime_start_sonar_or_smart_wake_to",
+      "expectedEnglishPreview": "Start Sonar or smart wake to compare restlessness",
+      "translations": {
+        "zh-TW": "啟動 Sonar 或智慧喚醒，以比較睡眠躁動程度",
+        "ja": "寝返りなどの落ち着かない動きを比較するには、Sonar またはスマート起床を開始してください"
+      },
+      "reviewRisk": "SLEEP_TRACKING_PRIVACY_AND_PERMISSION_REVIEW"
+    },
+    {
+      "key": "bedtime_m_restless_vs_baseline",
+      "expectedEnglishPreview": "+%1$dm restless vs baseline",
+      "translations": {
+        "zh-TW": "比基準多 %1$d 分鐘躁動",
+        "ja": "基準より落ち着かない動きが %1$d 分多い"
+      },
+      "reviewRisk": "BEDTIME_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "bedtime_m_restless_vs_baseline_2",
+      "expectedEnglishPreview": "%1$dm restless vs baseline",
+      "translations": {
+        "zh-TW": "相較基準的躁動時間：%1$d 分鐘",
+        "ja": "基準と比べた落ち着かない動き：%1$d 分"
+      },
+      "reviewRisk": "BEDTIME_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "bedtime_matches_baseline_restlessness",
+      "expectedEnglishPreview": "Matches baseline restlessness",
+      "translations": {
+        "zh-TW": "躁動程度與基準相符",
+        "ja": "落ち着かない動きは基準と同程度です"
+      },
+      "reviewRisk": "BEDTIME_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "bedtime_last_night",
+      "expectedEnglishPreview": "Last night",
+      "translations": {
+        "zh-TW": "昨晚",
+        "ja": "昨夜"
+      },
+      "reviewRisk": "BEDTIME_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "bedtime_not_set",
+      "expectedEnglishPreview": "Not set",
+      "translations": {
+        "zh-TW": "尚未設定",
+        "ja": "未設定"
+      },
+      "reviewRisk": "BEDTIME_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "bedtime_local_estimate",
+      "expectedEnglishPreview": "Local estimate",
+      "translations": {
+        "zh-TW": "本機估計值",
+        "ja": "端末内の推定値"
+      },
+      "reviewRisk": "BEDTIME_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "bedtime_fits_sleep_target",
+      "expectedEnglishPreview": "Fits %1$s sleep target",
+      "translations": {
+        "zh-TW": "符合 %1$s 睡眠目標",
+        "ja": "睡眠目標 %1$s に適合"
+      },
+      "reviewRisk": "SLEEP_TRACKING_PRIVACY_AND_PERMISSION_REVIEW"
+    },
+    {
+      "key": "bedtime_delayed_until",
+      "expectedEnglishPreview": "Delayed until %1$s",
+      "translations": {
+        "zh-TW": "已延後至 %1$s",
+        "ja": "%1$s まで延期"
+      },
+      "reviewRisk": "BEDTIME_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "bedtime_sonar_loud_bursts",
+      "expectedEnglishPreview": "; %1$d loud bursts, peak %2$d dB est.",
+      "translations": {
+        "zh-TW": "；較大聲響 %1$d 次，峰值估計 %2$d dB",
+        "ja": "；大きな音 %1$d 回、推定ピーク %2$d dB"
+      },
+      "reviewRisk": "SLEEP_TRACKING_PRIVACY_AND_PERMISSION_REVIEW"
+    },
+    {
+      "key": "bedtime_sonar_no_loud_bursts",
+      "expectedEnglishPreview": "; no loud bursts",
+      "translations": {
+        "zh-TW": "；沒有較大聲響",
+        "ja": "；大きな音はありません"
+      },
+      "reviewRisk": "SLEEP_TRACKING_PRIVACY_AND_PERMISSION_REVIEW"
+    },
+    {
+      "key": "bedtime_noise_no_baseline",
+      "expectedEnglishPreview": "No baseline",
+      "translations": {
+        "zh-TW": "沒有基準資料",
+        "ja": "基準データなし"
+      },
+      "reviewRisk": "SLEEP_TRACKING_PRIVACY_AND_PERMISSION_REVIEW"
+    },
+    {
+      "key": "bedtime_noise_checks_at_reminder",
+      "expectedEnglishPreview": "Measured when you open Bedtime",
+      "translations": {
+        "zh-TW": "開啟就寢畫面時測量",
+        "ja": "就寝画面を開いたときに測定"
+      },
+      "reviewRisk": "SLEEP_TRACKING_PRIVACY_AND_PERMISSION_REVIEW"
+    },
+    {
+      "key": "bedtime_noise_mic_permission_needed",
+      "expectedEnglishPreview": "Mic permission needed",
+      "translations": {
+        "zh-TW": "需要麥克風權限",
+        "ja": "マイクの権限が必要"
+      },
+      "reviewRisk": "SLEEP_TRACKING_PRIVACY_AND_PERMISSION_REVIEW"
+    },
+    {
+      "key": "bedtime_noise_last_measured",
+      "expectedEnglishPreview": "Last %1$s; no audio saved",
+      "translations": {
+        "zh-TW": "上次測量 %1$s；未儲存音訊",
+        "ja": "前回の測定 %1$s。音声は保存していません"
+      },
+      "reviewRisk": "SLEEP_TRACKING_PRIVACY_AND_PERMISSION_REVIEW"
+    },
+    {
+      "key": "bedtime_noise_level_quiet",
+      "expectedEnglishPreview": "Quiet",
+      "translations": {
+        "zh-TW": "安靜",
+        "ja": "静か"
+      },
+      "reviewRisk": "SLEEP_TRACKING_PRIVACY_AND_PERMISSION_REVIEW"
+    },
+    {
+      "key": "bedtime_noise_level_moderate",
+      "expectedEnglishPreview": "Moderate",
+      "translations": {
+        "zh-TW": "普通",
+        "ja": "普通"
+      },
+      "reviewRisk": "SLEEP_TRACKING_PRIVACY_AND_PERMISSION_REVIEW"
+    },
+    {
+      "key": "bedtime_noise_level_loud",
+      "expectedEnglishPreview": "Loud",
+      "translations": {
+        "zh-TW": "吵雜",
+        "ja": "騒がしい"
+      },
+      "reviewRisk": "SLEEP_TRACKING_PRIVACY_AND_PERMISSION_REVIEW"
+    },
+    {
+      "key": "bedtime_reminder_default",
+      "expectedEnglishPreview": "Your bedtime is approaching. Start getting ready for sleep.",
+      "translations": {
+        "zh-TW": "就寢時間快到了，請開始準備睡覺。",
+        "ja": "そろそろ就寝時刻です。寝る準備を始めましょう。"
+      },
+      "reviewRisk": "BEDTIME_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "bedtime_reminder_title",
+      "expectedEnglishPreview": "Time to wind down",
+      "translations": {
+        "zh-TW": "該放鬆準備睡覺了",
+        "ja": "寝る準備をしましょう"
+      },
+      "reviewRisk": "BEDTIME_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "bedtime_room_quiet_advice",
+      "expectedEnglishPreview": "Room baseline is quiet. Keep lights low and start winding down.",
+      "translations": {
+        "zh-TW": "房間目前安靜，請維持柔和照明並開始放鬆。",
+        "ja": "部屋は静かです。照明を落とし、くつろぐ準備をしましょう。"
+      },
+      "reviewRisk": "BEDTIME_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "bedtime_room_moderate_advice",
+      "expectedEnglishPreview": "Room baseline is moderate. Lower TV, fan, or conversation before sleep.",
+      "translations": {
+        "zh-TW": "房間聲音屬中等，睡前可降低電視、風扇或說話聲。",
+        "ja": "部屋の騒音は中程度です。寝る前にテレビ、扇風機、会話の音を小さくしましょう。"
+      },
+      "reviewRisk": "BEDTIME_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "bedtime_room_loud_advice",
+      "expectedEnglishPreview": "Room baseline is loud. Reduce noise before bed if you can.",
+      "translations": {
+        "zh-TW": "房間目前較吵雜，如果可以，請先降低噪音再就寢。",
+        "ja": "部屋の音が大きめです。可能なら寝る前に騒音を減らしてください。"
+      },
+      "reviewRisk": "BEDTIME_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "bedtime_countdown_title",
+      "expectedEnglishPreview": "Wind down soon",
+      "translations": {
+        "zh-TW": "即將進入放鬆時間",
+        "ja": "まもなく就寝準備"
+      },
+      "reviewRisk": "BEDTIME_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "bedtime_countdown_subtext",
+      "expectedEnglishPreview": "Bedtime countdown",
+      "translations": {
+        "zh-TW": "就寢倒數",
+        "ja": "就寝までのカウントダウン"
+      },
+      "reviewRisk": "BEDTIME_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "bedtime_dnd_status_off",
+      "expectedEnglishPreview": "Off",
+      "translations": {
+        "zh-TW": "已關閉",
+        "ja": "オフ"
+      },
+      "reviewRisk": "SLEEP_TRACKING_PRIVACY_AND_PERMISSION_REVIEW"
+    },
+    {
+      "key": "bedtime_dnd_status_needs_access",
+      "expectedEnglishPreview": "Needs DND access",
+      "translations": {
+        "zh-TW": "需要勿擾模式存取權",
+        "ja": "おやすみモードへのアクセスが必要"
+      },
+      "reviewRisk": "SLEEP_TRACKING_PRIVACY_AND_PERMISSION_REVIEW"
+    },
+    {
+      "key": "bedtime_dnd_status_sync_failed",
+      "expectedEnglishPreview": "Rule sync failed",
+      "translations": {
+        "zh-TW": "規則同步失敗",
+        "ja": "ルールの同期に失敗しました"
+      },
+      "reviewRisk": "SLEEP_TRACKING_PRIVACY_AND_PERMISSION_REVIEW"
+    },
+    {
+      "key": "bedtime_dnd_status_active_until",
+      "expectedEnglishPreview": "Active until %1$s",
+      "translations": {
+        "zh-TW": "有效至 %1$s",
+        "ja": "%1$s まで有効"
+      },
+      "reviewRisk": "SLEEP_TRACKING_PRIVACY_AND_PERMISSION_REVIEW"
+    },
+    {
+      "key": "bedtime_dnd_status_ready_at",
+      "expectedEnglishPreview": "Ready at %1$s",
+      "translations": {
+        "zh-TW": "將於 %1$s 就緒",
+        "ja": "%1$s に準備完了"
+      },
+      "reviewRisk": "SLEEP_TRACKING_PRIVACY_AND_PERMISSION_REVIEW"
+    },
+    {
+      "key": "bedtime_sonar_needs_mic",
+      "expectedEnglishPreview": "Grant microphone permission to use local sonar sleep tracking.",
+      "translations": {
+        "zh-TW": "授予麥克風權限，才能使用本機 Sonar 睡眠追蹤。",
+        "ja": "端末内の Sonar 睡眠トラッキングにはマイクの権限を許可してください。"
+      },
+      "reviewRisk": "SLEEP_TRACKING_PRIVACY_AND_PERMISSION_REVIEW"
+    },
+    {
+      "key": "bedtime_sonar_starting",
+      "expectedEnglishPreview": "Starting sonar and confirming microphone monitoring.",
+      "translations": {
+        "zh-TW": "正在啟動 Sonar 並確認麥克風監測狀態。",
+        "ja": "Sonar を開始し、マイクの監視状態を確認しています。"
+      },
+      "reviewRisk": "SLEEP_TRACKING_PRIVACY_AND_PERMISSION_REVIEW"
+    },
+    {
+      "key": "bedtime_sonar_start_failed",
+      "expectedEnglishPreview": "Sonar could not start: %1$s",
+      "translations": {
+        "zh-TW": "無法啟動 Sonar：%1$s",
+        "ja": "Sonar を開始できません：%1$s"
+      },
+      "reviewRisk": "SLEEP_TRACKING_PRIVACY_AND_PERMISSION_REVIEW"
+    },
+    {
+      "key": "bedtime_sonar_stopping",
+      "expectedEnglishPreview": "Stopping sonar tracking and saving a local summary.",
+      "translations": {
+        "zh-TW": "正在停止 Sonar 追蹤並儲存本機摘要。",
+        "ja": "Sonar の追跡を停止し、端末内に要約を保存しています。"
+      },
+      "reviewRisk": "SLEEP_TRACKING_PRIVACY_AND_PERMISSION_REVIEW"
+    },
+    {
+      "key": "bedtime_sonar_stop_failed",
+      "expectedEnglishPreview": "Sonar could not stop cleanly: %1$s",
+      "translations": {
+        "zh-TW": "無法正常停止 Sonar：%1$s",
+        "ja": "Sonar を正常に停止できません：%1$s"
+      },
+      "reviewRisk": "SLEEP_TRACKING_PRIVACY_AND_PERMISSION_REVIEW"
+    },
+    {
+      "key": "bedtime_sonar_mic_denied",
+      "expectedEnglishPreview": "Microphone permission was denied. Sonar stays off.",
+      "translations": {
+        "zh-TW": "麥克風權限遭拒，Sonar 維持關閉。",
+        "ja": "マイクの権限が拒否されました。Sonar はオフのままです。"
+      },
+      "reviewRisk": "SLEEP_TRACKING_PRIVACY_AND_PERMISSION_REVIEW"
+    },
+    {
+      "key": "bedtime_sonar_monitoring",
+      "expectedEnglishPreview": "Monitoring movement and loud sleep sounds. No raw audio is recorded.",
+      "translations": {
+        "zh-TW": "正在監測動作與較大睡眠聲響；不錄製原始音訊。",
+        "ja": "動きや大きな睡眠音を監視しています。生の音声は録音しません。"
+      },
+      "reviewRisk": "SLEEP_TRACKING_PRIVACY_AND_PERMISSION_REVIEW"
+    },
+    {
+      "key": "bedtime_sonar_unconfirmed",
+      "expectedEnglishPreview": "Sonar could not confirm microphone monitoring. Try again.",
+      "translations": {
+        "zh-TW": "Sonar 無法確認麥克風監測是否開始，請重試。",
+        "ja": "Sonar はマイクの監視開始を確認できませんでした。再試行してください。"
+      },
+      "reviewRisk": "SLEEP_TRACKING_PRIVACY_AND_PERMISSION_REVIEW"
+    },
+    {
+      "key": "bedtime_snore_peak_average",
+      "expectedEnglishPreview": "Peak %1$d dB est. / avg %2$d",
+      "translations": {
+        "zh-TW": "峰值估計 %1$d dB／平均 %2$d",
+        "ja": "推定ピーク %1$d dB／平均 %2$d"
+      },
+      "reviewRisk": "BEDTIME_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "bedtime_reminder_minutes_value",
+      "expectedEnglishPreview": "%1$d min",
+      "translations": {
+        "zh-TW": "%1$d 分鐘",
+        "ja": "%1$d 分"
+      },
+      "reviewRisk": "BEDTIME_UI_TERMINOLOGY_REVIEW"
+    }
+  ]
+}

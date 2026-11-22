@@ -1,0 +1,405 @@
+{
+  "schema": "acx-l11-batch7-drafts/1",
+  "topic": "STATS_RESIDUAL_SETTINGS_UTILITIES",
+  "status": "MODEL_PRELIMINARY_NOT_APPROVED",
+  "independentApproval": false,
+  "sourceRef": "app/src/main/res/values/strings.xml",
+  "records": [
+    {
+      "key": "stats_today_s_wake_is_already_counted",
+      "expectedEnglishPreview": "Today\\'s wake is already counted. Keep the chain going tomorrow.",
+      "translations": {
+        "zh-TW": "今天的起床紀錄已計入，明天請繼續維持。",
+        "ja": "今日の起床はすでに記録されています。明日も続けましょう。"
+      },
+      "reviewRisk": "ACTION_CONTEXT_OR_PRIVACY_REVIEW"
+    },
+    {
+      "key": "stats_still_alive_from_yesterday_dismiss_today",
+      "expectedEnglishPreview": "Still alive from yesterday. Dismiss today\\'s alarm to protect it.",
+      "translations": {
+        "zh-TW": "昨天的連續紀錄仍有效；解除今天的鬧鐘以維持紀錄。",
+        "ja": "昨日からの連続記録は継続中です。今日のアラームを停止して維持しましょう。"
+      },
+      "reviewRisk": "ACTION_CONTEXT_OR_PRIVACY_REVIEW"
+    },
+    {
+      "key": "stats_enable_health_connect_to_layer_sleep",
+      "expectedEnglishPreview": "Enable Health Connect to layer sleep duration over local wake behavior.",
+      "translations": {
+        "zh-TW": "啟用 Health Connect，即可在本機起床行為圖表疊加睡眠時間。",
+        "ja": "Health Connect を有効にすると、端末内の起床行動のグラフに睡眠時間を重ねて表示できます。"
+      },
+      "reviewRisk": "ACTION_CONTEXT_OR_PRIVACY_REVIEW"
+    },
+    {
+      "key": "stats_grant_read_sleep_to_add_sleep",
+      "expectedEnglishPreview": "Grant READ_SLEEP to add sleep duration; alarm response, snooze, and retry trends stay local.",
+      "translations": {
+        "zh-TW": "授予 READ_SLEEP 權限以加入睡眠時間；鬧鐘反應、貪睡與重試趨勢仍保留在本機。",
+        "ja": "睡眠時間を追加するには READ_SLEEP を許可してください。アラーム応答、スヌーズ、再試行の傾向は端末内に保存されます。"
+      },
+      "reviewRisk": "ACTION_CONTEXT_OR_PRIVACY_REVIEW"
+    },
+    {
+      "key": "stats_sleep_sessions_are_ready_alarm_outcomes",
+      "expectedEnglishPreview": "Sleep sessions are ready. Alarm outcomes will add wake-behavior bars once they occur.",
+      "translations": {
+        "zh-TW": "睡眠紀錄已就緒；發生鬧鐘事件後，圖表才會加入起床行為長條。",
+        "ja": "睡眠セッションの準備ができました。アラームの結果が記録されると起床行動の棒グラフが追加されます。"
+      },
+      "reviewRisk": "ACTION_CONTEXT_OR_PRIVACY_REVIEW"
+    },
+    {
+      "key": "stats_wake_behavior_bars_are_ready_sleep",
+      "expectedEnglishPreview": "Wake-behavior bars are ready. Sleep bars appear after Health Connect returns recent sessions.",
+      "translations": {
+        "zh-TW": "起床行為長條已就緒；當 Health Connect 回傳近期睡眠紀錄後，才會顯示睡眠長條。",
+        "ja": "起床行動の棒グラフは表示できます。Health Connect から最近の睡眠記録が取得されると睡眠の棒グラフが表示されます。"
+      },
+      "reviewRisk": "ACTION_CONTEXT_OR_PRIVACY_REVIEW"
+    },
+    {
+      "key": "stats_recent_sleep_sessions_and_alarm_outcomes",
+      "expectedEnglishPreview": "Recent sleep sessions and alarm outcomes will build this chart locally.",
+      "translations": {
+        "zh-TW": "最近的睡眠紀錄與鬧鐘結果，會在本機形成這張圖表。",
+        "ja": "最近の睡眠セッションとアラーム結果をもとに、端末内でこのグラフが作成されます。"
+      },
+      "reviewRisk": "ACTION_CONTEXT_OR_PRIVACY_REVIEW"
+    },
+    {
+      "key": "stats_reason_light_motion",
+      "expectedEnglishPreview": "light motion",
+      "translations": {
+        "zh-TW": "輕微動作",
+        "ja": "小さな動き"
+      },
+      "reviewRisk": "ACTION_CONTEXT_OR_PRIVACY_REVIEW"
+    },
+    {
+      "key": "stats_reason_not_enough_data",
+      "expectedEnglishPreview": "not enough data",
+      "translations": {
+        "zh-TW": "資料不足",
+        "ja": "データ不足"
+      },
+      "reviewRisk": "ACTION_CONTEXT_OR_PRIVACY_REVIEW"
+    },
+    {
+      "key": "stats_reason_too_active",
+      "expectedEnglishPreview": "too active",
+      "translations": {
+        "zh-TW": "活動量過高",
+        "ja": "動きが多すぎる"
+      },
+      "reviewRisk": "ACTION_CONTEXT_OR_PRIVACY_REVIEW"
+    },
+    {
+      "key": "stats_reason_still_motion",
+      "expectedEnglishPreview": "still motion",
+      "translations": {
+        "zh-TW": "靜止狀態",
+        "ja": "静止状態"
+      },
+      "reviewRisk": "ACTION_CONTEXT_OR_PRIVACY_REVIEW"
+    },
+    {
+      "key": "stats_reason_unstable_light_motion",
+      "expectedEnglishPreview": "unstable light motion",
+      "translations": {
+        "zh-TW": "不穩定的輕微動作",
+        "ja": "安定しない小さな動き"
+      },
+      "reviewRisk": "ACTION_CONTEXT_OR_PRIVACY_REVIEW"
+    },
+    {
+      "key": "stats_reason_final_minute",
+      "expectedEnglishPreview": "final minute",
+      "translations": {
+        "zh-TW": "最後一分鐘",
+        "ja": "最後の1分"
+      },
+      "reviewRisk": "ACTION_CONTEXT_OR_PRIVACY_REVIEW"
+    },
+    {
+      "key": "stats_reason_service_timeout",
+      "expectedEnglishPreview": "service timeout",
+      "translations": {
+        "zh-TW": "服務逾時",
+        "ja": "サービスのタイムアウト"
+      },
+      "reviewRisk": "ACTION_CONTEXT_OR_PRIVACY_REVIEW"
+    },
+    {
+      "key": "stats_reason_session_stopped",
+      "expectedEnglishPreview": "session stopped",
+      "translations": {
+        "zh-TW": "紀錄已停止",
+        "ja": "セッションが停止しました"
+      },
+      "reviewRisk": "ACTION_CONTEXT_OR_PRIVACY_REVIEW"
+    },
+    {
+      "key": "stats_reason_start_failed",
+      "expectedEnglishPreview": "start failed",
+      "translations": {
+        "zh-TW": "啟動失敗",
+        "ja": "開始に失敗しました"
+      },
+      "reviewRisk": "ACTION_CONTEXT_OR_PRIVACY_REVIEW"
+    },
+    {
+      "key": "stats_reason_target_time",
+      "expectedEnglishPreview": "target time",
+      "translations": {
+        "zh-TW": "目標時間",
+        "ja": "目標時刻"
+      },
+      "reviewRisk": "ACTION_CONTEXT_OR_PRIVACY_REVIEW"
+    },
+    {
+      "key": "stats_reason_unknown",
+      "expectedEnglishPreview": "unknown",
+      "translations": {
+        "zh-TW": "原因未知",
+        "ja": "理由不明"
+      },
+      "reviewRisk": "ACTION_CONTEXT_OR_PRIVACY_REVIEW"
+    },
+    {
+      "key": "stats_sonar_decision_detail",
+      "expectedEnglishPreview": "Judged from room sound after %1$d min of listening. No audio is kept.",
+      "translations": {
+        "zh-TW": "聆聽 %1$d 分鐘後，依房間聲音作出判斷。未保存任何音訊。",
+        "ja": "%1$d 分間の室内音をもとに判定しました。音声データは保存していません。"
+      },
+      "reviewRisk": "ACTION_CONTEXT_OR_PRIVACY_REVIEW"
+    },
+    {
+      "key": "stats_motion_decision_detail",
+      "expectedEnglishPreview": "%1$s after %2$d min of watching (%3$s)",
+      "translations": {
+        "zh-TW": "監測 %2$d 分鐘後的結果：%1$s（%3$s）",
+        "ja": "%2$d 分間の動きの観測結果：%1$s（%3$s）"
+      },
+      "reviewRisk": "ACTION_CONTEXT_OR_PRIVACY_REVIEW"
+    },
+    {
+      "key": "stats_default_alarm_label",
+      "expectedEnglishPreview": "Alarm",
+      "translations": {
+        "zh-TW": "鬧鐘",
+        "ja": "アラーム"
+      },
+      "reviewRisk": "ACTION_CONTEXT_OR_PRIVACY_REVIEW"
+    },
+    {
+      "key": "settings_clear",
+      "expectedEnglishPreview": "Clear",
+      "translations": {
+        "zh-TW": "清除",
+        "ja": "消去"
+      },
+      "reviewRisk": "ACTION_CONTEXT_OR_PRIVACY_REVIEW"
+    },
+    {
+      "key": "settings_clear_history",
+      "expectedEnglishPreview": "Clear history",
+      "translations": {
+        "zh-TW": "清除歷史紀錄",
+        "ja": "履歴を消去"
+      },
+      "reviewRisk": "ACTION_CONTEXT_OR_PRIVACY_REVIEW"
+    },
+    {
+      "key": "settings_source",
+      "expectedEnglishPreview": "Source",
+      "translations": {
+        "zh-TW": "原始碼",
+        "ja": "ソースコード"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_dashboard_weather_calendar",
+      "expectedEnglishPreview": "Weather + calendar",
+      "translations": {
+        "zh-TW": "天氣與行事曆",
+        "ja": "天気とカレンダー"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_dashboard_weather_only",
+      "expectedEnglishPreview": "Weather only",
+      "translations": {
+        "zh-TW": "僅顯示天氣",
+        "ja": "天気のみ"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_dashboard_calendar_only",
+      "expectedEnglishPreview": "Calendar only",
+      "translations": {
+        "zh-TW": "僅顯示行事曆",
+        "ja": "カレンダーのみ"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_dashboard_minimal",
+      "expectedEnglishPreview": "Minimal",
+      "translations": {
+        "zh-TW": "精簡模式",
+        "ja": "最小限"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_dashboard_auto_alarm",
+      "expectedEnglishPreview": "%1$s + auto-alarm",
+      "translations": {
+        "zh-TW": "%1$s 加上自動鬧鐘",
+        "ja": "%1$s と自動アラーム"
+      },
+      "reviewRisk": "ACTION_CONTEXT_OR_PRIVACY_REVIEW"
+    },
+    {
+      "key": "settings_time_unknown",
+      "expectedEnglishPreview": "Time unknown",
+      "translations": {
+        "zh-TW": "時間未知",
+        "ja": "時刻不明"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_no_schedule_delta",
+      "expectedEnglishPreview": "No schedule delta",
+      "translations": {
+        "zh-TW": "排程時間沒有差異",
+        "ja": "予定時刻との差なし"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_within_minute_schedule",
+      "expectedEnglishPreview": "within 1 min of schedule",
+      "translations": {
+        "zh-TW": "與預定時間相差不到 1 分鐘",
+        "ja": "予定時刻との差が1分以内"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_recently",
+      "expectedEnglishPreview": "recently",
+      "translations": {
+        "zh-TW": "最近",
+        "ja": "最近"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_last_delivery",
+      "expectedEnglishPreview": "Last delivery %1$s: %2$s",
+      "translations": {
+        "zh-TW": "上次傳送 %1$s：%2$s",
+        "ja": "前回の送信 %1$s：%2$s"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_change_date",
+      "expectedEnglishPreview": "Change %1$s date",
+      "translations": {
+        "zh-TW": "更改 %1$s 日期",
+        "ja": "%1$s の日付を変更"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_date_field_description",
+      "expectedEnglishPreview": "%1$s: %2$s",
+      "translations": {
+        "zh-TW": "%1$s：%2$s",
+        "ja": "%1$s：%2$s"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_minutes_seconds_compact",
+      "expectedEnglishPreview": "%1$dm %2$ds",
+      "translations": {
+        "zh-TW": "%1$d 分 %2$d 秒",
+        "ja": "%1$d 分 %2$d 秒"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_support_no_share_target",
+      "expectedEnglishPreview": "No app is available to share the support bundle",
+      "translations": {
+        "zh-TW": "沒有可用來分享支援資料包的 App",
+        "ja": "サポートデータを共有できるアプリがありません"
+      },
+      "reviewRisk": "ACTION_CONTEXT_OR_PRIVACY_REVIEW"
+    },
+    {
+      "key": "settings_crash_log_ready",
+      "expectedEnglishPreview": "Crash log ready to share",
+      "translations": {
+        "zh-TW": "當機紀錄已可分享",
+        "ja": "クラッシュログを共有できます"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "timer_add_double_zero",
+      "expectedEnglishPreview": "Add double zero",
+      "translations": {
+        "zh-TW": "加入兩個零",
+        "ja": "00 を追加"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "timer_enter",
+      "expectedEnglishPreview": "Enter %1$s",
+      "translations": {
+        "zh-TW": "輸入 %1$s",
+        "ja": "%1$s を入力"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "notif_channel_bedtime_desc",
+      "expectedEnglishPreview": "Reminds you when it\\’s time to sleep",
+      "translations": {
+        "zh-TW": "在就寢時間提醒你",
+        "ja": "就寝時刻になったら通知します"
+      },
+      "reviewRisk": "ACTION_CONTEXT_OR_PRIVACY_REVIEW"
+    },
+    {
+      "key": "alarm_edit_stream_url",
+      "expectedEnglishPreview": "Stream URL (https://…)",
+      "translations": {
+        "zh-TW": "串流網址（https://…）",
+        "ja": "ストリーム URL（https://…）"
+      },
+      "reviewRisk": "ACTION_CONTEXT_OR_PRIVACY_REVIEW"
+    },
+    {
+      "key": "alarm_edit_checklist_placeholder",
+      "expectedEnglishPreview": "Stretch\\nDrink water\\nBrush teeth",
+      "translations": {
+        "zh-TW": "伸展一下\\n喝水\\n刷牙",
+        "ja": "ストレッチ\\n水を飲む\\n歯を磨く"
+      },
+      "reviewRisk": "ACTION_CONTEXT_OR_PRIVACY_REVIEW"
+    }
+  ]
+}
