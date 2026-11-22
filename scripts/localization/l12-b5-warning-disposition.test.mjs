@@ -31,3 +31,18 @@ test("L12-5 does not double-count multi-flag rows",()=>{
   assert.equal(r.stats.flaggedRows,1);assert.equal(r.stats.flagOccurrences,3);
   assert(r.items[0].reviewCategories.includes("ANDROID_PERCENT_FORMAT_RUNTIME_USAGE_REVIEW"));
 });
+
+test("L12-5 does not misclassify format-only skeletons as missing translated prose",()=>{
+  const x=make();x.triage.rows[0].sourcePreview="%1$s • %2$s";
+  x.triage.rows[0].candidateText="%1$s • %2$s";
+  const r=buildWarningDispositions(x.triage,x.preflight);
+  assert(r.items[0].reviewCategories.includes("FORMAT_ONLY_NO_PROSE_REVIEW"));
+  assert(!r.items[0].reviewCategories.includes("LIKELY_UNTRANSLATED_ENGLISH_NEEDS_REVIEW"));
+});
+test("L12-5 preserves brand/proper-name candidates for independent verification",()=>{
+  const x=make();x.triage.rows[0].sourcePreview="Wi-Fi";
+  x.triage.rows[0].candidateText="Wi-Fi";
+  const r=buildWarningDispositions(x.triage,x.preflight);
+  assert(r.items[0].reviewCategories.includes("POSSIBLE_IDENTIFIER_RETENTION_NEEDS_EVIDENCE"));
+  assert.equal(r.items[0].independentApproval,false);
+});
