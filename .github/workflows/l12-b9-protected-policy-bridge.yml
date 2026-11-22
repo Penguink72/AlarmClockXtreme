@@ -1,0 +1,66 @@
+name: ACX L12-9 protected policy and L13-B writer contract preflight
+on:
+  push:
+    branches:
+      - feature/acx-l12-b9-protected-policy-l13b-bridge-20261123
+    paths:
+      - "scripts/localization/**"
+      - "localization/**"
+      - "docs/localization/ACX-L12-B9*"
+      - ".github/workflows/l12-b9-protected-policy-bridge.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  protected-contract-negative-tests:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: L12-6 through L12-9 and L13-B typed writer regression tests
+        run: |
+          node --test \
+            scripts/localization/l12-b6-independent-review.test.mjs \
+            scripts/localization/l12-b7-review-batches.test.mjs \
+            scripts/localization/l12-b8b-risk-tiered-policy.test.mjs \
+            scripts/localization/l13-b-protected-xml-writer.test.mjs \
+            scripts/localization/l12-b9-protected-policy-intake.test.mjs
+      - name: Export UNSIGNED protected review requirements (not authorized)
+        run: |
+          node scripts/localization/l12-b9-protected-policy-intake.mjs \
+            --out-dir build/localization/L12_B9_UNSIGNED_UNAUTHORIZED_WORKLIST
+          node -e "const f=require('./build/localization/L12_B9_UNSIGNED_UNAUTHORIZED_WORKLIST/unsigned-review-requirements.json');if(f.requiredIndividualLocaleRows!==1414||f.nonSampledResidualLocaleRows!==1686||f.independentApproved!==0)process.exit(1);"
+      - name: Ordinary PR rejects all unprotected official release attempts
+        shell: bash
+        run: |
+          set -euo pipefail
+          if node scripts/localization/l12-b9-protected-policy-intake.mjs \
+            --verify-protected \
+            --policy-envelope build/NO_AUTHORITY.json \
+            --review-envelope build/NO_INDEPENDENT_REVIEW.json \
+            --compiler-envelope build/NO_PROTECTED_COMPILER.json; then
+            echo "SECURITY FAILURE: missing protected external trust accepted" >&2
+            exit 1
+          fi
+          if node scripts/localization/l13-b-protected-xml-writer.mjs \
+            --mode release --review-mode risk-tiered-policy \
+            --policy-envelope build/NO_AUTHORITY.json \
+            --tiered-review-envelope build/NO_INDEPENDENT_REVIEW.json \
+            --compiler-envelope build/NO_PROTECTED_COMPILER.json; then
+            echo "SECURITY FAILURE: L13-B writer accepted unsigned policy" >&2
+            exit 1
+          fi
+          test ! -e app/src/main/res/values-b+zh+Hant+TW/strings_l13_reviewed.xml
+          test ! -e app/src/main/res/values-ja/strings_l13_reviewed.xml
+          echo "L12-9/L13-B official resource publication remains BLOCKED."
+      - name: Publish unsigned L12-9 review requirements and gate status only
+        uses: actions/upload-artifact@v4
+        with:
+          name: acx-l12-b9-unsigned-protected-intake-requirements
+          path: build/localization/L12_B9_UNSIGNED_UNAUTHORIZED_WORKLIST/
+          retention-days: 14
