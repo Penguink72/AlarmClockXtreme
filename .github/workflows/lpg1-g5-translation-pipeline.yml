@@ -25,6 +25,7 @@ on:
       - feature/acx-l11-b5-backup-integrations-20261122
       - feature/acx-l11-b6-stats-bedtime-20261122
       - feature/acx-l12-structural-semantic-evidence-20261122
+      - feature/acx-l12-b2-behavior-probes-20261122
     paths:
       - "scripts/localization/**"
       - "localization/governance/**"
@@ -153,6 +154,16 @@ jobs:
         run: |
           node --test scripts/localization/l12-structural-semantic-evidence.test.mjs
           node scripts/localization/l12-structural-semantic-evidence.mjs --out-dir build/localization/L12_PRELIMINARY_QA_NOT_APPROVED
+      - name: L12-2 - Compare alarm and media operation paths with translation review claims
+        run: |
+          node --test scripts/localization/l12-b2-code-behavior-probes.test.mjs
+          node scripts/localization/l12-b2-code-behavior-probes.mjs --out-dir build/localization/L12_B2_CODE_PROBES_NOT_APPROVED
+      - name: Publish L12-2 code behavior evidence, not release approval
+        uses: actions/upload-artifact@v4
+        with:
+          name: acx-l12-b2-code-behavior-evidence-not-approved
+          path: build/localization/L12_B2_CODE_PROBES_NOT_APPROVED/
+          retention-days: 14
       - name: Publish L12 unapproved QA and semantic evidence
         uses: actions/upload-artifact@v4
         with:
