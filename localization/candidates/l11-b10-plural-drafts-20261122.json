@@ -1,0 +1,505 @@
+{
+  "schema": "acx-l11-batch10-plural-drafts/1",
+  "topic": "L11_B10_REMAINING_31_PLURALS",
+  "status": "MODEL_PRELIMINARY_NOT_APPROVED",
+  "independentApproval": false,
+  "sourceRef": "app/src/main/res/values/strings.xml",
+  "records": [
+    {
+      "key": "plurals:alarm_edit_active_integrations",
+      "expectedEnglishPreview": "[one] %1$d active [other] %1$d active",
+      "expectedSourceXml": "<item quantity=\"one\">%1$d active</item><item quantity=\"other\">%1$d active</item>",
+      "translations": {
+        "zh-TW": {
+          "one": "%1$d 個啟用中的整合服務",
+          "other": "%1$d 個啟用中的整合服務"
+        },
+        "ja": {
+          "one": "有効な連携 %1$d 件",
+          "other": "有効な連携 %1$d 件"
+        }
+      },
+      "reviewRisk": "PLURAL_BRANCH_FORMAT_AND_ACTION_CONTEXT_REVIEW"
+    },
+    {
+      "key": "plurals:alarm_edit_minutes_before",
+      "expectedEnglishPreview": "[one] %1$d minute before [other] %1$d minutes before",
+      "expectedSourceXml": "\r\n        <item quantity=\"one\">%1$d minute before</item>\r\n        <item quantity=\"other\">%1$d minutes before</item>\r\n    ",
+      "translations": {
+        "zh-TW": {
+          "one": "提前 %1$d 分鐘",
+          "other": "提前 %1$d 分鐘"
+        },
+        "ja": {
+          "one": "%1$d 分前",
+          "other": "%1$d 分前"
+        }
+      },
+      "reviewRisk": "PLURAL_BRANCH_FORMAT_AND_ACTION_CONTEXT_REVIEW"
+    },
+    {
+      "key": "plurals:alarm_edit_minutes_before_alarm",
+      "expectedEnglishPreview": "[one] %1$d minute before alarm [other] %1$d minutes before alarm",
+      "expectedSourceXml": "\r\n        <item quantity=\"one\">%1$d minute before alarm</item>\r\n        <item quantity=\"other\">%1$d minutes before alarm</item>\r\n    ",
+      "translations": {
+        "zh-TW": {
+          "one": "鬧鐘響鈴前 %1$d 分鐘",
+          "other": "鬧鐘響鈴前 %1$d 分鐘"
+        },
+        "ja": {
+          "one": "アラームの %1$d 分前",
+          "other": "アラームの %1$d 分前"
+        }
+      },
+      "reviewRisk": "PLURAL_BRANCH_FORMAT_AND_ACTION_CONTEXT_REVIEW"
+    },
+    {
+      "key": "plurals:alarm_edit_minutes_earlier",
+      "expectedEnglishPreview": "[one] %1$d minute earlier [other] %1$d minutes earlier",
+      "expectedSourceXml": "\r\n        <item quantity=\"one\">%1$d minute earlier</item>\r\n        <item quantity=\"other\">%1$d minutes earlier</item>\r\n    ",
+      "translations": {
+        "zh-TW": {
+          "one": "提前 %1$d 分鐘",
+          "other": "提前 %1$d 分鐘"
+        },
+        "ja": {
+          "one": "%1$d 分早く",
+          "other": "%1$d 分早く"
+        }
+      },
+      "reviewRisk": "PLURAL_BRANCH_FORMAT_AND_ACTION_CONTEXT_REVIEW"
+    },
+    {
+      "key": "plurals:alarm_edit_step_chain",
+      "expectedEnglishPreview": "[one] %1$d-step chain [other] %1$d-step chain",
+      "expectedSourceXml": "<item quantity=\"one\">%1$d-step chain</item><item quantity=\"other\">%1$d-step chain</item>",
+      "translations": {
+        "zh-TW": {
+          "one": "%1$d 步連鎖",
+          "other": "%1$d 步連鎖"
+        },
+        "ja": {
+          "one": "%1$d ステップの連続",
+          "other": "%1$d ステップの連続"
+        }
+      },
+      "reviewRisk": "PLURAL_BRANCH_FORMAT_AND_ACTION_CONTEXT_REVIEW"
+    },
+    {
+      "key": "plurals:alarmfiring_more_checks_left",
+      "expectedEnglishPreview": "[one] %1$d more check left [other] %1$d more checks left",
+      "expectedSourceXml": "\r\n        <item quantity=\"one\">%1$d more check left</item>\r\n        <item quantity=\"other\">%1$d more checks left</item>\r\n    ",
+      "translations": {
+        "zh-TW": {
+          "one": "還有 %1$d 項檢查",
+          "other": "還有 %1$d 項檢查"
+        },
+        "ja": {
+          "one": "残り %1$d 件の確認",
+          "other": "残り %1$d 件の確認"
+        }
+      },
+      "reviewRisk": "PLURAL_BRANCH_FORMAT_AND_ACTION_CONTEXT_REVIEW"
+    },
+    {
+      "key": "plurals:alarmlist_template_starts_in",
+      "expectedEnglishPreview": "[one] %1$s starts in %2$d minute [other] %1$s starts in %2$d minutes",
+      "expectedSourceXml": "\r\n        <item quantity=\"one\">%1$s starts in %2$d minute</item>\r\n        <item quantity=\"other\">%1$s starts in %2$d minutes</item>\r\n    ",
+      "translations": {
+        "zh-TW": {
+          "one": "%1$s 將在 %2$d 分鐘後開始",
+          "other": "%1$s 將在 %2$d 分鐘後開始"
+        },
+        "ja": {
+          "one": "%1$s は %2$d 分後に開始",
+          "other": "%1$s は %2$d 分後に開始"
+        }
+      },
+      "reviewRisk": "PLURAL_BRANCH_FORMAT_AND_ACTION_CONTEXT_REVIEW"
+    },
+    {
+      "key": "plurals:bedtime_jetlag_days",
+      "expectedEnglishPreview": "[one] %1$d day [other] %1$d days",
+      "expectedSourceXml": "<item quantity=\"one\">%1$d day</item><item quantity=\"other\">%1$d days</item>",
+      "translations": {
+        "zh-TW": {
+          "one": "%1$d 天",
+          "other": "%1$d 天"
+        },
+        "ja": {
+          "one": "%1$d 日",
+          "other": "%1$d 日"
+        }
+      },
+      "reviewRisk": "PLURAL_BRANCH_FORMAT_AND_ACTION_CONTEXT_REVIEW"
+    },
+    {
+      "key": "plurals:challenge_rps_instructions",
+      "expectedEnglishPreview": "[one] First to %1$d win. Pick your move: [other] First to %1$d wins. Pick your move:",
+      "expectedSourceXml": "\r\n        <item quantity=\"one\">First to %1$d win. Pick your move:</item>\r\n        <item quantity=\"other\">First to %1$d wins. Pick your move:</item>\r\n    ",
+      "translations": {
+        "zh-TW": {
+          "one": "先取得 %1$d 勝者獲勝。請出招：",
+          "other": "先取得 %1$d 勝者獲勝。請出招："
+        },
+        "ja": {
+          "one": "先に %1$d 勝した方が勝ちです。手を選んでください：",
+          "other": "先に %1$d 勝した方が勝ちです。手を選んでください："
+        }
+      },
+      "reviewRisk": "PLURAL_BRANCH_FORMAT_AND_ACTION_CONTEXT_REVIEW"
+    },
+    {
+      "key": "plurals:challenge_wordle_tries_left",
+      "expectedEnglishPreview": "[one] Guess the 5-letter word. %1$d try left. [other] Guess the 5-letter word. %1$d tries left.",
+      "expectedSourceXml": "\r\n        <item quantity=\"one\">Guess the 5-letter word. %1$d try left.</item>\r\n        <item quantity=\"other\">Guess the 5-letter word. %1$d tries left.</item>\r\n    ",
+      "translations": {
+        "zh-TW": {
+          "one": "猜出由 5 個英文字母組成的單字，剩下 %1$d 次機會。",
+          "other": "猜出由 5 個英文字母組成的單字，剩下 %1$d 次機會。"
+        },
+        "ja": {
+          "one": "5 文字の英単語を当ててください。残り %1$d 回。",
+          "other": "5 文字の英単語を当ててください。残り %1$d 回。"
+        }
+      },
+      "reviewRisk": "PLURAL_BRANCH_FORMAT_AND_ACTION_CONTEXT_REVIEW"
+    },
+    {
+      "key": "plurals:notif_snooze_countdown_minutes",
+      "expectedEnglishPreview": "[one] 1 minute [other] %1$d minutes",
+      "expectedSourceXml": "\r\n        <item quantity=\"one\">1 minute</item>\r\n        <item quantity=\"other\">%1$d minutes</item>\r\n    ",
+      "translations": {
+        "zh-TW": {
+          "one": "1 分鐘",
+          "other": "%1$d 分鐘"
+        },
+        "ja": {
+          "one": "1 分",
+          "other": "%1$d 分"
+        }
+      },
+      "reviewRisk": "PLURAL_BRANCH_FORMAT_AND_ACTION_CONTEXT_REVIEW"
+    },
+    {
+      "key": "plurals:notif_timers_canceled_text",
+      "expectedEnglishPreview": "[one] A running timer could not survive the device restart. [other] %1$d running timers could not survive the device restart.",
+      "expectedSourceXml": "\r\n        <item quantity=\"one\">A running timer could not survive the device restart.</item>\r\n        <item quantity=\"other\">%1$d running timers could not survive the device restart.</item>\r\n    ",
+      "translations": {
+        "zh-TW": {
+          "one": "裝置重新啟動後，一個運行中的計時器無法恢復。",
+          "other": "裝置重新啟動後，%1$d 個運行中的計時器無法恢復。"
+        },
+        "ja": {
+          "one": "端末の再起動により、実行中のタイマーを復元できませんでした。",
+          "other": "端末の再起動により、実行中のタイマー %1$d 件を復元できませんでした。"
+        }
+      },
+      "reviewRisk": "PLURAL_BRANCH_FORMAT_AND_ACTION_CONTEXT_REVIEW"
+    },
+    {
+      "key": "plurals:notif_timers_finished_count",
+      "expectedEnglishPreview": "[one] %1$d timer finished [other] %1$d timers finished",
+      "expectedSourceXml": "\r\n        <item quantity=\"one\">%1$d timer finished</item>\r\n        <item quantity=\"other\">%1$d timers finished</item>\r\n    ",
+      "translations": {
+        "zh-TW": {
+          "one": "%1$d 個計時器已結束",
+          "other": "%1$d 個計時器已結束"
+        },
+        "ja": {
+          "one": "タイマー %1$d 件が終了",
+          "other": "タイマー %1$d 件が終了"
+        }
+      },
+      "reviewRisk": "PLURAL_BRANCH_FORMAT_AND_ACTION_CONTEXT_REVIEW"
+    },
+    {
+      "key": "plurals:settings_backup_alarm_count",
+      "expectedEnglishPreview": "[one] %1$d alarm [other] %1$d alarms",
+      "expectedSourceXml": "<item quantity=\"one\">%1$d alarm</item><item quantity=\"other\">%1$d alarms</item>",
+      "translations": {
+        "zh-TW": {
+          "one": "%1$d 個鬧鐘",
+          "other": "%1$d 個鬧鐘"
+        },
+        "ja": {
+          "one": "アラーム %1$d 件",
+          "other": "アラーム %1$d 件"
+        }
+      },
+      "reviewRisk": "PLURAL_BRANCH_FORMAT_AND_ACTION_CONTEXT_REVIEW"
+    },
+    {
+      "key": "plurals:settings_backup_invalid_rows",
+      "expectedEnglishPreview": "[one] %1$d alarm row could not be read and will be skipped. [other] %1$d alarm rows could not be read and will be skipped.",
+      "expectedSourceXml": "<item quantity=\"one\">%1$d alarm row could not be read and will be skipped.</item><item quantity=\"other\">%1$d alarm rows could not be read and will be skipped.</item>",
+      "translations": {
+        "zh-TW": {
+          "one": "%1$d 筆鬧鐘資料無法讀取，將予以略過。",
+          "other": "%1$d 筆鬧鐘資料無法讀取，將予以略過。"
+        },
+        "ja": {
+          "one": "読み取れないアラームデータ %1$d 件をスキップします。",
+          "other": "読み取れないアラームデータ %1$d 件をスキップします。"
+        }
+      },
+      "reviewRisk": "PLURAL_BRANCH_FORMAT_AND_ACTION_CONTEXT_REVIEW"
+    },
+    {
+      "key": "plurals:settings_days",
+      "expectedEnglishPreview": "[one] %1$d day [other] %1$d days",
+      "expectedSourceXml": "<item quantity=\"one\">%1$d day</item><item quantity=\"other\">%1$d days</item>",
+      "translations": {
+        "zh-TW": {
+          "one": "%1$d 天",
+          "other": "%1$d 天"
+        },
+        "ja": {
+          "one": "%1$d 日",
+          "other": "%1$d 日"
+        }
+      },
+      "reviewRisk": "PLURAL_BRANCH_FORMAT_AND_ACTION_CONTEXT_REVIEW"
+    },
+    {
+      "key": "plurals:settings_fossify_import_success",
+      "expectedEnglishPreview": "[one] Imported %1$d Fossify alarm as disabled for review. [other] Imported %1$d Fossify alarms as disabled for review.",
+      "expectedSourceXml": "<item quantity=\"one\">Imported %1$d Fossify alarm as disabled for review.</item><item quantity=\"other\">Imported %1$d Fossify alarms as disabled for review.</item>",
+      "translations": {
+        "zh-TW": {
+          "one": "已匯入 %1$d 個 Fossify 鬧鐘，暫設為停用以供檢查。",
+          "other": "已匯入 %1$d 個 Fossify 鬧鐘，暫設為停用以供檢查。"
+        },
+        "ja": {
+          "one": "Fossify のアラーム %1$d 件をインポートし、確認のため無効にしました。",
+          "other": "Fossify のアラーム %1$d 件をインポートし、確認のため無効にしました。"
+        }
+      },
+      "reviewRisk": "PLURAL_BRANCH_FORMAT_AND_ACTION_CONTEXT_REVIEW"
+    },
+    {
+      "key": "plurals:settings_fossify_unreadable_ringtones",
+      "expectedEnglishPreview": "[one] %1$d ringtone URI is not readable on this device and will use the default alarm sound. [other] %1$d ringtone URIs are not readable on this device and will use the default alarm sound.",
+      "expectedSourceXml": "<item quantity=\"one\">%1$d ringtone URI is not readable on this device and will use the default alarm sound.</item><item quantity=\"other\">%1$d ringtone URIs are not readable on this device and will use the default alarm sound.</item>",
+      "translations": {
+        "zh-TW": {
+          "one": "此裝置無法讀取 %1$d 筆鈴聲 URI，將改用預設鬧鐘鈴聲。",
+          "other": "此裝置無法讀取 %1$d 筆鈴聲 URI，將改用預設鬧鐘鈴聲。"
+        },
+        "ja": {
+          "one": "この端末で読み取れない着信音 URI %1$d 件には、既定のアラーム音を使用します。",
+          "other": "この端末で読み取れない着信音 URI %1$d 件には、既定のアラーム音を使用します。"
+        }
+      },
+      "reviewRisk": "PLURAL_BRANCH_FORMAT_AND_ACTION_CONTEXT_REVIEW"
+    },
+    {
+      "key": "plurals:settings_minutes",
+      "expectedEnglishPreview": "[one] %1$d minute [other] %1$d minutes",
+      "expectedSourceXml": "<item quantity=\"one\">%1$d minute</item><item quantity=\"other\">%1$d minutes</item>",
+      "translations": {
+        "zh-TW": {
+          "one": "%1$d 分鐘",
+          "other": "%1$d 分鐘"
+        },
+        "ja": {
+          "one": "%1$d 分",
+          "other": "%1$d 分"
+        }
+      },
+      "reviewRisk": "PLURAL_BRANCH_FORMAT_AND_ACTION_CONTEXT_REVIEW"
+    },
+    {
+      "key": "plurals:settings_minutes_after_schedule_plural",
+      "expectedEnglishPreview": "[one] %1$d min after schedule [other] %1$d min after schedule",
+      "expectedSourceXml": "<item quantity=\"one\">%1$d min after schedule</item><item quantity=\"other\">%1$d min after schedule</item>",
+      "translations": {
+        "zh-TW": {
+          "one": "排程後 %1$d 分鐘",
+          "other": "排程後 %1$d 分鐘"
+        },
+        "ja": {
+          "one": "予定時刻の %1$d 分後",
+          "other": "予定時刻の %1$d 分後"
+        }
+      },
+      "reviewRisk": "PLURAL_BRANCH_FORMAT_AND_ACTION_CONTEXT_REVIEW"
+    },
+    {
+      "key": "plurals:settings_minutes_before_schedule",
+      "expectedEnglishPreview": "[one] %1$d min before schedule [other] %1$d min before schedule",
+      "expectedSourceXml": "<item quantity=\"one\">%1$d min before schedule</item><item quantity=\"other\">%1$d min before schedule</item>",
+      "translations": {
+        "zh-TW": {
+          "one": "排程前 %1$d 分鐘",
+          "other": "排程前 %1$d 分鐘"
+        },
+        "ja": {
+          "one": "予定時刻の %1$d 分前",
+          "other": "予定時刻の %1$d 分前"
+        }
+      },
+      "reviewRisk": "PLURAL_BRANCH_FORMAT_AND_ACTION_CONTEXT_REVIEW"
+    },
+    {
+      "key": "plurals:settings_more_items",
+      "expectedEnglishPreview": "[one] + %1$d more [other] + %1$d more",
+      "expectedSourceXml": "<item quantity=\"one\">+ %1$d more</item><item quantity=\"other\">+ %1$d more</item>",
+      "translations": {
+        "zh-TW": {
+          "one": "＋另有 %1$d 項",
+          "other": "＋另有 %1$d 項"
+        },
+        "ja": {
+          "one": "+ ほかに %1$d 件",
+          "other": "+ ほかに %1$d 件"
+        }
+      },
+      "reviewRisk": "PLURAL_BRANCH_FORMAT_AND_ACTION_CONTEXT_REVIEW"
+    },
+    {
+      "key": "plurals:settings_recent_diagnostics",
+      "expectedEnglishPreview": "[one] %1$d recent diagnostic event retained locally. [other] %1$d recent diagnostic events retained locally.",
+      "expectedSourceXml": "<item quantity=\"one\">%1$d recent diagnostic event retained locally.</item><item quantity=\"other\">%1$d recent diagnostic events retained locally.</item>",
+      "translations": {
+        "zh-TW": {
+          "one": "本機保留最近 %1$d 筆診斷事件。",
+          "other": "本機保留最近 %1$d 筆診斷事件。"
+        },
+        "ja": {
+          "one": "最近の診断イベント %1$d 件を端末内に保持しています。",
+          "other": "最近の診断イベント %1$d 件を端末内に保持しています。"
+        }
+      },
+      "reviewRisk": "PLURAL_BRANCH_FORMAT_AND_ACTION_CONTEXT_REVIEW"
+    },
+    {
+      "key": "plurals:stats_alarms_recorded",
+      "expectedEnglishPreview": "[one] %1$d alarm recorded [other] %1$d alarms recorded",
+      "expectedSourceXml": "\r\n        <item quantity=\"one\">%1$d alarm recorded</item>\r\n        <item quantity=\"other\">%1$d alarms recorded</item>\r\n    ",
+      "translations": {
+        "zh-TW": {
+          "one": "已記錄 %1$d 次鬧鐘",
+          "other": "已記錄 %1$d 次鬧鐘"
+        },
+        "ja": {
+          "one": "記録されたアラーム %1$d 件",
+          "other": "記録されたアラーム %1$d 件"
+        }
+      },
+      "reviewRisk": "PLURAL_BRANCH_FORMAT_AND_ACTION_CONTEXT_REVIEW"
+    },
+    {
+      "key": "plurals:stats_day_count",
+      "expectedEnglishPreview": "[one] %1$d day [other] %1$d days",
+      "expectedSourceXml": "\r\n        <item quantity=\"one\">%1$d day</item>\r\n        <item quantity=\"other\">%1$d days</item>\r\n    ",
+      "translations": {
+        "zh-TW": {
+          "one": "%1$d 天",
+          "other": "%1$d 天"
+        },
+        "ja": {
+          "one": "%1$d 日",
+          "other": "%1$d 日"
+        }
+      },
+      "reviewRisk": "PLURAL_BRANCH_FORMAT_AND_ACTION_CONTEXT_REVIEW"
+    },
+    {
+      "key": "plurals:stats_from_recent_wakeups",
+      "expectedEnglishPreview": "[one] from %1$d recent wake-up [other] from %1$d recent wake-ups",
+      "expectedSourceXml": "\r\n        <item quantity=\"one\">from %1$d recent wake-up</item>\r\n        <item quantity=\"other\">from %1$d recent wake-ups</item>\r\n    ",
+      "translations": {
+        "zh-TW": {
+          "one": "根據最近 %1$d 次起床紀錄",
+          "other": "根據最近 %1$d 次起床紀錄"
+        },
+        "ja": {
+          "one": "直近 %1$d 回の起床記録から",
+          "other": "直近 %1$d 回の起床記録から"
+        }
+      },
+      "reviewRisk": "PLURAL_BRANCH_FORMAT_AND_ACTION_CONTEXT_REVIEW"
+    },
+    {
+      "key": "plurals:stats_snooze_count",
+      "expectedEnglishPreview": "[one] %1$d snooze [other] %1$d snoozes",
+      "expectedSourceXml": "\r\n        <item quantity=\"one\">%1$d snooze</item>\r\n        <item quantity=\"other\">%1$d snoozes</item>\r\n    ",
+      "translations": {
+        "zh-TW": {
+          "one": "貪睡 %1$d 次",
+          "other": "貪睡 %1$d 次"
+        },
+        "ja": {
+          "one": "スヌーズ %1$d 回",
+          "other": "スヌーズ %1$d 回"
+        }
+      },
+      "reviewRisk": "PLURAL_BRANCH_FORMAT_AND_ACTION_CONTEXT_REVIEW"
+    },
+    {
+      "key": "plurals:stats_streak_best_days",
+      "expectedEnglishPreview": "[one] Best %1$d day [other] Best %1$d days",
+      "expectedSourceXml": "\r\n        <item quantity=\"one\">Best %1$d day</item>\r\n        <item quantity=\"other\">Best %1$d days</item>\r\n    ",
+      "translations": {
+        "zh-TW": {
+          "one": "最長連續紀錄 %1$d 天",
+          "other": "最長連續紀錄 %1$d 天"
+        },
+        "ja": {
+          "one": "最長連続記録 %1$d 日",
+          "other": "最長連続記録 %1$d 日"
+        }
+      },
+      "reviewRisk": "PLURAL_BRANCH_FORMAT_AND_ACTION_CONTEXT_REVIEW"
+    },
+    {
+      "key": "plurals:stats_wake_streak_days",
+      "expectedEnglishPreview": "[one] %1$d day wake streak [other] %1$d days wake streak",
+      "expectedSourceXml": "\r\n        <item quantity=\"one\">%1$d day wake streak</item>\r\n        <item quantity=\"other\">%1$d days wake streak</item>\r\n    ",
+      "translations": {
+        "zh-TW": {
+          "one": "連續起床 %1$d 天",
+          "other": "連續起床 %1$d 天"
+        },
+        "ja": {
+          "one": "連続起床 %1$d 日",
+          "other": "連続起床 %1$d 日"
+        }
+      },
+      "reviewRisk": "PLURAL_BRANCH_FORMAT_AND_ACTION_CONTEXT_REVIEW"
+    },
+    {
+      "key": "plurals:template_repeat_days",
+      "expectedEnglishPreview": "[one] %1$d day [other] %1$d days",
+      "expectedSourceXml": "\r\n        <item quantity=\"one\">%1$d day</item>\r\n        <item quantity=\"other\">%1$d days</item>\r\n    ",
+      "translations": {
+        "zh-TW": {
+          "one": "%1$d 天",
+          "other": "%1$d 天"
+        },
+        "ja": {
+          "one": "%1$d 日",
+          "other": "%1$d 日"
+        }
+      },
+      "reviewRisk": "PLURAL_BRANCH_FORMAT_AND_ACTION_CONTEXT_REVIEW"
+    },
+    {
+      "key": "plurals:worldclock_match_count",
+      "expectedEnglishPreview": "[one] %1$d match [other] %1$d matches",
+      "expectedSourceXml": "\r\n        <item quantity=\"one\">%1$d match</item>\r\n        <item quantity=\"other\">%1$d matches</item>\r\n    ",
+      "translations": {
+        "zh-TW": {
+          "one": "符合結果 %1$d 筆",
+          "other": "符合結果 %1$d 筆"
+        },
+        "ja": {
+          "one": "一致する結果 %1$d 件",
+          "other": "一致する結果 %1$d 件"
+        }
+      },
+      "reviewRisk": "PLURAL_BRANCH_FORMAT_AND_ACTION_CONTEXT_REVIEW"
+    }
+  ]
+}
