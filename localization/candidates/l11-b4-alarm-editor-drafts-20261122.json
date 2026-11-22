@@ -16,7 +16,7 @@
     },
     {
       "key": "alarm_edit_speak_context",
-      "expectedEnglishPreview": "Speak time, date &amp; weather",
+      "expectedEnglishPreview": "Speak time, date & weather",
       "translations": {
         "zh-TW": "播報時間、日期與天氣",
         "ja": "時刻・日付・天気を読み上げる"
