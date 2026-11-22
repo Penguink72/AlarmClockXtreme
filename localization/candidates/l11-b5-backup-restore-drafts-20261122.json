@@ -1,0 +1,693 @@
+{
+  "schema": "acx-l11-batch5-drafts/1",
+  "topic": "BACKUP_RESTORE_ENCRYPTION_FOSSIFY",
+  "status": "MODEL_PRELIMINARY_NOT_APPROVED",
+  "independentApproval": false,
+  "sourceRef": "app/src/main/res/values/strings.xml",
+  "records": [
+    {
+      "key": "settings_backup_inspection_failed",
+      "expectedEnglishPreview": "Backup contents could not be inspected: %1$s",
+      "translations": {
+        "zh-TW": "無法檢查備份內容：%1$s",
+        "ja": "バックアップの内容を確認できませんでした：%1$s"
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_backup_restore",
+      "expectedEnglishPreview": "Backup and restore",
+      "translations": {
+        "zh-TW": "備份與還原",
+        "ja": "バックアップと復元"
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_backup_restore_description",
+      "expectedEnglishPreview": "Keep a portable copy of alarms and app preferences for new devices or peace of mind.",
+      "translations": {
+        "zh-TW": "建立可攜式的鬧鐘與 App 偏好設定備份，供更換裝置或日後還原使用。",
+        "ja": "端末の変更や復元に備えて、アラームとアプリ設定の持ち運べるバックアップを作成します。"
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_export",
+      "expectedEnglishPreview": "Export",
+      "translations": {
+        "zh-TW": "匯出",
+        "ja": "エクスポート"
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_import",
+      "expectedEnglishPreview": "Import",
+      "translations": {
+        "zh-TW": "匯入",
+        "ja": "インポート"
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_plain_backup_description",
+      "expectedEnglishPreview": "Plain backups include alarms and global settings in a readable JSON file. AlarmClockXtreme warns before exporting configured secrets or private references.",
+      "translations": {
+        "zh-TW": "未加密備份會將鬧鐘與全域設定儲存在可讀取的 JSON 檔案。匯出包含已設定密鑰或私人參照資料時，AlarmClockXtreme 會先提出警告。",
+        "ja": "暗号化されていないバックアップには、アラームと全体設定が読み取り可能な JSON ファイルに保存されます。設定済みの秘密情報や個人情報への参照をエクスポートする前に警告します。"
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_import_fossify",
+      "expectedEnglishPreview": "Import Fossify Clock JSON",
+      "translations": {
+        "zh-TW": "匯入 Fossify Clock JSON",
+        "ja": "Fossify Clock の JSON をインポート"
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_import_fossify_description",
+      "expectedEnglishPreview": "Previews a bounded Fossify export without changing alarms. Confirmed alarms are appended disabled so times, weekdays, vibration, and available sounds can be reviewed first.",
+      "translations": {
+        "zh-TW": "先預覽有限範圍內的 Fossify 匯出內容，不會立即修改鬧鐘。確認後，會將有效的鬧鐘以停用狀態附加匯入，方便先檢查時間、星期、震動及可用的聲音。",
+        "ja": "Fossify のエクスポート内容を範囲を限定してプレビューし、アラームはすぐには変更しません。確認されたアラームは無効の状態で追加され、時刻・曜日・振動・利用可能な音を確認できます。"
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_encrypted_backup",
+      "expectedEnglishPreview": "Encrypted backup",
+      "translations": {
+        "zh-TW": "加密備份",
+        "ja": "暗号化バックアップ"
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_encrypted_backup_description",
+      "expectedEnglishPreview": "Use a passphrase to create an AES-256 encrypted backup. Keep the passphrase somewhere safe; it cannot be recovered by the app.",
+      "translations": {
+        "zh-TW": "使用密碼短語建立 AES-256 加密備份。請妥善保管密碼短語，App 無法協助取回。",
+        "ja": "パスフレーズを使って AES-256 で暗号化されたバックアップを作成します。アプリではパスフレーズを復元できないため、安全に保管してください。"
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_passphrase",
+      "expectedEnglishPreview": "Passphrase",
+      "translations": {
+        "zh-TW": "密碼短語",
+        "ja": "パスフレーズ"
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_passphrase_required",
+      "expectedEnglishPreview": "Required for encrypted files",
+      "translations": {
+        "zh-TW": "加密檔案必須提供",
+        "ja": "暗号化ファイルには必須"
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_confirm_passphrase",
+      "expectedEnglishPreview": "Confirm passphrase",
+      "translations": {
+        "zh-TW": "確認密碼短語",
+        "ja": "パスフレーズを確認"
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_confirm_passphrase_required",
+      "expectedEnglishPreview": "Required before encrypted export",
+      "translations": {
+        "zh-TW": "加密匯出前必須確認",
+        "ja": "暗号化エクスポートの前に確認が必要"
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_passphrase_mismatch",
+      "expectedEnglishPreview": "Passphrases do not match. Encrypted import uses only the first field.",
+      "translations": {
+        "zh-TW": "密碼短語不一致。匯入加密檔案時只使用第一個欄位。",
+        "ja": "パスフレーズが一致しません。暗号化ファイルのインポートでは最初の入力欄だけを使用します。"
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_encrypt_export",
+      "expectedEnglishPreview": "Encrypt export",
+      "translations": {
+        "zh-TW": "加密後匯出",
+        "ja": "暗号化してエクスポート"
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_decrypt_import",
+      "expectedEnglishPreview": "Decrypt import",
+      "translations": {
+        "zh-TW": "解密後匯入",
+        "ja": "復号してインポート"
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_inspecting_backup",
+      "expectedEnglishPreview": "Inspecting backup",
+      "translations": {
+        "zh-TW": "正在檢查備份",
+        "ja": "バックアップを確認中"
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_backup_in_progress",
+      "expectedEnglishPreview": "Backup operation in progress",
+      "translations": {
+        "zh-TW": "備份作業進行中",
+        "ja": "バックアップ処理中"
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_restore_choices_description",
+      "expectedEnglishPreview": "Restore choices appear after the file is checked.",
+      "translations": {
+        "zh-TW": "檢查檔案後，才會顯示還原選項。",
+        "ja": "ファイルの確認が完了すると復元方法を選べます。"
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_backup_attention",
+      "expectedEnglishPreview": "Backup needs attention",
+      "translations": {
+        "zh-TW": "備份需要處理",
+        "ja": "バックアップに対応が必要です"
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_backup_complete",
+      "expectedEnglishPreview": "Backup complete",
+      "translations": {
+        "zh-TW": "備份完成",
+        "ja": "バックアップが完了しました"
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_review_fossify_alarms",
+      "expectedEnglishPreview": "Review Fossify alarms",
+      "translations": {
+        "zh-TW": "檢查 Fossify 鬧鐘",
+        "ja": "Fossify のアラームを確認"
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_fossify_preview_counts",
+      "expectedEnglishPreview": "Valid alarms: %1$d. Invalid rows skipped: %2$d.",
+      "translations": {
+        "zh-TW": "有效鬧鐘：%1$d。已略過無效資料列：%2$d。",
+        "ja": "有効なアラーム：%1$d 件。無効な行は %2$d 件スキップしました。"
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_fossify_import_disabled_summary",
+      "expectedEnglishPreview": "All imports will be disabled. Enabled in Fossify: %1$d.",
+      "translations": {
+        "zh-TW": "所有匯入的鬧鐘都將設為停用。Fossify 中啟用的鬧鐘：%1$d。",
+        "ja": "インポートするアラームはすべて無効になります。Fossify で有効だったアラーム：%1$d 件。"
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_import_disabled",
+      "expectedEnglishPreview": "Import as disabled",
+      "translations": {
+        "zh-TW": "以停用狀態匯入",
+        "ja": "無効の状態でインポート"
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_review_backup",
+      "expectedEnglishPreview": "Review backup before restore",
+      "translations": {
+        "zh-TW": "還原前檢查備份",
+        "ja": "復元前にバックアップを確認"
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_review_backup_description",
+      "expectedEnglishPreview": "Nothing changes until you choose how to restore this backup.",
+      "translations": {
+        "zh-TW": "選擇還原方式之前，不會更動任何資料。",
+        "ja": "復元方法を選ぶまでデータは変更されません。"
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_backup_version",
+      "expectedEnglishPreview": "Backup v%1$d from app %2$s",
+      "translations": {
+        "zh-TW": "App %2$s 的第 %1$d 版備份",
+        "ja": "アプリ %2$s のバックアップ v%1$d"
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_unknown",
+      "expectedEnglishPreview": "unknown",
+      "translations": {
+        "zh-TW": "未知",
+        "ja": "不明"
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_backup_alarm_counts",
+      "expectedEnglishPreview": "%1$d alarms, %2$d enabled",
+      "translations": {
+        "zh-TW": "%1$d 個鬧鐘，其中 %2$d 個啟用",
+        "ja": "アラーム %1$d 件、うち %2$d 件が有効"
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_global_settings_restored",
+      "expectedEnglishPreview": "Global settings will be restored.",
+      "translations": {
+        "zh-TW": "將還原全域設定。",
+        "ja": "全体設定も復元されます。"
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_global_settings_missing",
+      "expectedEnglishPreview": "This backup does not include global settings.",
+      "translations": {
+        "zh-TW": "此備份不含全域設定。",
+        "ja": "このバックアップには全体設定が含まれていません。"
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_private_values_detected",
+      "expectedEnglishPreview": "Private values detected:",
+      "translations": {
+        "zh-TW": "偵測到私人資料：",
+        "ja": "個人情報を検出しました："
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_list_item",
+      "expectedEnglishPreview": "- %1$s",
+      "translations": {
+        "zh-TW": "- %1$s",
+        "ja": "- %1$s"
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_keep_restored_disabled",
+      "expectedEnglishPreview": "Keep restored alarms disabled until I review them",
+      "translations": {
+        "zh-TW": "檢查完成前，讓已還原的鬧鐘維持停用",
+        "ja": "確認が済むまで、復元したアラームを無効のままにする"
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_import_settings",
+      "expectedEnglishPreview": "Also restore app settings",
+      "translations": {
+        "zh-TW": "同時還原 App 設定",
+        "ja": "アプリ設定も復元する"
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_keep_integrations",
+      "expectedEnglishPreview": "Restore integrations and Guardian contacts",
+      "translations": {
+        "zh-TW": "還原整合服務與 Guardian 聯絡人",
+        "ja": "連携設定と Guardian の連絡先も復元する"
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_keep_integrations_warning",
+      "expectedEnglishPreview": "This file would install:",
+      "translations": {
+        "zh-TW": "此檔案會安裝以下設定：",
+        "ja": "このファイルでは以下の設定が追加されます："
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_keep_integrations_hint",
+      "expectedEnglishPreview": "Leave this off unless the file is your own backup. These values send alarm events to a server and text or call a phone number for you.",
+      "translations": {
+        "zh-TW": "除非這是你自己的備份，否則請勿啟用。這些設定可能把鬧鐘事件傳送到伺服器，或代表你傳送簡訊與撥打電話。",
+        "ja": "自分のバックアップであることを確認できない場合はオンにしないでください。これらの設定はアラームのイベントをサーバーに送信したり、SMS の送信や通話を行ったりする可能性があります。"
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_append_alarms",
+      "expectedEnglishPreview": "Append alarms",
+      "translations": {
+        "zh-TW": "附加鬧鐘",
+        "ja": "アラームを追加"
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_replace_alarms",
+      "expectedEnglishPreview": "Replace alarms",
+      "translations": {
+        "zh-TW": "取代現有鬧鐘",
+        "ja": "既存のアラームを置き換える"
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_export_time_unknown",
+      "expectedEnglishPreview": "Export time unknown",
+      "translations": {
+        "zh-TW": "匯出時間未知",
+        "ja": "エクスポート時刻は不明"
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_exported_at",
+      "expectedEnglishPreview": "Exported %1$s",
+      "translations": {
+        "zh-TW": "已於 %1$s 匯出",
+        "ja": "%1$s にエクスポートしました"
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_plain_backup_private",
+      "expectedEnglishPreview": "Plain backup includes private values",
+      "translations": {
+        "zh-TW": "未加密備份包含私人資料",
+        "ja": "暗号化されていないバックアップに個人情報が含まれています"
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_private_values_encrypted",
+      "expectedEnglishPreview": "These values will be inside the encrypted file:",
+      "translations": {
+        "zh-TW": "以下資料將包含在加密檔案中：",
+        "ja": "次の情報が暗号化ファイルに含まれます："
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_private_values_plain",
+      "expectedEnglishPreview": "These values will be readable in the exported JSON:",
+      "translations": {
+        "zh-TW": "以下資料可直接從匯出的 JSON 讀取：",
+        "ja": "次の情報はエクスポートされた JSON から読み取れます："
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_encrypted_backup_warning",
+      "expectedEnglishPreview": "Keep the passphrase private. Anyone with the file and passphrase can restore these values.",
+      "translations": {
+        "zh-TW": "請妥善保管密碼短語。取得檔案及密碼短語的人，都可能還原這些資料。",
+        "ja": "パスフレーズを安全に保管してください。ファイルとパスフレーズの両方を持つ人は、これらの情報を復元できます。"
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_plain_backup_warning",
+      "expectedEnglishPreview": "Use encrypted export when sharing or storing backups outside your own device.",
+      "translations": {
+        "zh-TW": "若要在裝置以外的地方分享或儲存備份，請使用加密匯出。",
+        "ja": "バックアップを別の端末や外部の場所に保存・共有する場合は、暗号化してエクスポートしてください。"
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_export_encrypted_backup",
+      "expectedEnglishPreview": "Export encrypted backup",
+      "translations": {
+        "zh-TW": "匯出加密備份",
+        "ja": "暗号化バックアップをエクスポート"
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_export_plain_backup",
+      "expectedEnglishPreview": "Export plain backup",
+      "translations": {
+        "zh-TW": "匯出未加密備份",
+        "ja": "暗号化せずにバックアップをエクスポート"
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_backup_exported",
+      "expectedEnglishPreview": "Backup exported: %1$s.",
+      "translations": {
+        "zh-TW": "已匯出備份：%1$s。",
+        "ja": "バックアップをエクスポートしました：%1$s。"
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_backup_encrypted_exported",
+      "expectedEnglishPreview": "Encrypted backup exported: %1$s.",
+      "translations": {
+        "zh-TW": "已匯出加密備份：%1$s。",
+        "ja": "暗号化バックアップをエクスポートしました：%1$s。"
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_backup_imported",
+      "expectedEnglishPreview": "Backup imported: %1$s.",
+      "translations": {
+        "zh-TW": "已匯入備份：%1$s。",
+        "ja": "バックアップをインポートしました：%1$s。"
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_backup_encrypted_imported",
+      "expectedEnglishPreview": "Encrypted backup imported: %1$s.",
+      "translations": {
+        "zh-TW": "已匯入加密備份：%1$s。",
+        "ja": "暗号化バックアップをインポートしました：%1$s。"
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_backup_all_done",
+      "expectedEnglishPreview": "Backup complete.",
+      "translations": {
+        "zh-TW": "備份完成。",
+        "ja": "バックアップが完了しました。"
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_backup_export_failed",
+      "expectedEnglishPreview": "Couldn’t export backup.",
+      "translations": {
+        "zh-TW": "無法匯出備份。",
+        "ja": "バックアップをエクスポートできませんでした。"
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_backup_encrypted_export_failed",
+      "expectedEnglishPreview": "Couldn’t export encrypted backup.",
+      "translations": {
+        "zh-TW": "無法匯出加密備份。",
+        "ja": "暗号化バックアップをエクスポートできませんでした。"
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_backup_import_failed",
+      "expectedEnglishPreview": "Couldn’t import backup.",
+      "translations": {
+        "zh-TW": "無法匯入備份。",
+        "ja": "バックアップをインポートできませんでした。"
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_backup_encrypted_import_failed",
+      "expectedEnglishPreview": "Couldn’t import encrypted backup.",
+      "translations": {
+        "zh-TW": "無法匯入加密備份。",
+        "ja": "暗号化バックアップをインポートできませんでした。"
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_backup_preview_failed",
+      "expectedEnglishPreview": "Couldn’t preview backup.",
+      "translations": {
+        "zh-TW": "無法預覽備份。",
+        "ja": "バックアップをプレビューできませんでした。"
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_backup_encrypted_preview_failed",
+      "expectedEnglishPreview": "Couldn’t preview encrypted backup.",
+      "translations": {
+        "zh-TW": "無法預覽加密備份。",
+        "ja": "暗号化バックアップをプレビューできませんでした。"
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_backup_failure_with_hint",
+      "expectedEnglishPreview": "%1$s %2$s",
+      "translations": {
+        "zh-TW": "%1$s %2$s",
+        "ja": "%1$s %2$s"
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_backup_hint_passphrase",
+      "expectedEnglishPreview": "Check the passphrase and choose the encrypted backup again.",
+      "translations": {
+        "zh-TW": "請檢查密碼短語，並重新選擇加密備份檔案。",
+        "ja": "パスフレーズを確認し、暗号化バックアップを選び直してください。"
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_backup_hint_permission",
+      "expectedEnglishPreview": "Grant file access and try again.",
+      "translations": {
+        "zh-TW": "請授予檔案存取權後重試。",
+        "ja": "ファイルへのアクセスを許可して再試行してください。"
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_backup_hint_missing_file",
+      "expectedEnglishPreview": "Choose a file location this device can still access.",
+      "translations": {
+        "zh-TW": "請選擇裝置仍可存取的檔案位置。",
+        "ja": "この端末から引き続きアクセスできるファイルの場所を選んでください。"
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_backup_hint_storage",
+      "expectedEnglishPreview": "Check storage access and try again.",
+      "translations": {
+        "zh-TW": "請確認儲存空間存取權後重試。",
+        "ja": "ストレージへのアクセスを確認して再試行してください。"
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_backup_hint_version",
+      "expectedEnglishPreview": "Choose a backup from a supported app version.",
+      "translations": {
+        "zh-TW": "請選擇支援版本的 App 所建立的備份。",
+        "ja": "対応するアプリのバージョンで作成されたバックアップを選んでください。"
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_backup_hint_malformed",
+      "expectedEnglishPreview": "Choose a valid AlarmClockXtreme backup file.",
+      "translations": {
+        "zh-TW": "請選擇有效的 AlarmClockXtreme 備份檔案。",
+        "ja": "有効な AlarmClockXtreme のバックアップファイルを選んでください。"
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_backup_hint_generic",
+      "expectedEnglishPreview": "Check the file or destination and try again.",
+      "translations": {
+        "zh-TW": "請確認檔案或目的地後重試。",
+        "ja": "ファイルまたは保存先を確認して再試行してください。"
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_fossify_preview_not_export",
+      "expectedEnglishPreview": "Couldn\\’t preview this file. It doesn\\’t look like a Fossify Clock export. Choose the JSON file exported by Fossify Clock.",
+      "translations": {
+        "zh-TW": "無法預覽此檔案。這似乎不是 Fossify Clock 匯出檔；請選擇 Fossify Clock 匯出的 JSON 檔案。",
+        "ja": "このファイルをプレビューできません。Fossify Clock のエクスポートではないようです。Fossify Clock で出力した JSON を選んでください。"
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_fossify_preview_unreadable",
+      "expectedEnglishPreview": "Couldn\\’t preview this file. Check that it is still accessible on this device and try again.",
+      "translations": {
+        "zh-TW": "無法預覽此檔案。請確認裝置仍可存取該檔案後重試。",
+        "ja": "このファイルをプレビューできません。端末からアクセスできることを確認して再試行してください。"
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_fossify_import_failed_not_export",
+      "expectedEnglishPreview": "Couldn\\’t import Fossify alarms. The file doesn\\’t look like a Fossify Clock export.",
+      "translations": {
+        "zh-TW": "無法匯入 Fossify 鬧鐘。這似乎不是 Fossify Clock 的匯出檔。",
+        "ja": "Fossify のアラームをインポートできません。Fossify Clock のエクスポートではないようです。"
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_fossify_import_failed_unreadable",
+      "expectedEnglishPreview": "Couldn\\’t import Fossify alarms. Check that the file is still accessible and try again.",
+      "translations": {
+        "zh-TW": "無法匯入 Fossify 鬧鐘。請確認裝置仍可存取該檔案後重試。",
+        "ja": "Fossify のアラームをインポートできません。端末からファイルにアクセスできることを確認して再試行してください。"
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_fossify_import_failed_changed",
+      "expectedEnglishPreview": "Couldn\\’t import Fossify alarms. The file changed after preview, so choose it again to re-check.",
+      "translations": {
+        "zh-TW": "無法匯入 Fossify 鬧鐘。預覽後檔案已變更，請重新選擇檔案並再次檢查。",
+        "ja": "Fossify のアラームをインポートできません。プレビュー後にファイルが変更されたため、ファイルを選び直して確認してください。"
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    },
+    {
+      "key": "settings_fossify_import_failed_generic",
+      "expectedEnglishPreview": "Couldn\\’t import Fossify alarms. Check the file and try again.",
+      "translations": {
+        "zh-TW": "無法匯入 Fossify 鬧鐘。請檢查檔案後重試。",
+        "ja": "Fossify のアラームをインポートできません。ファイルを確認して再試行してください。"
+      },
+      "reviewRisk": "BACKUP_RESTORE_PRIVACY_AND_DATA_LOSS_REVIEW"
+    }
+  ]
+}
