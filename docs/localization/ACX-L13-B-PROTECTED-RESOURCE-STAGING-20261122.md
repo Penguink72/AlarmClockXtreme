@@ -32,3 +32,9 @@
 4. L15 在可保留 P1～P3 音樂庫／播放紀錄的前提下交付 APK。
 
 **不變量：不改 AlarmService、AlarmManager、Room、Media3、P1～P3 音樂池與播放歷史。**
+
+## L13-B 額外全 App 連結預檢（僅 CI 暫存）
+
+後續新增 .github/workflows/l13-b-merged-resource-link.yml：在 GitHub Actions 的一次性 checkout 中產生 staging，將兩份未核准 XML 暫時加入 main res 的獨立 ci_only_unapproved 檔名，再執行 :app:processFdroidDebugResources 與 :app:compileFdroidDebugKotlin。Exit trap 移除暫存 XML；不提交任何翻譯檔，不產生 APK 或正式 release artifact。這是測試整體 Android resource merger 是否能接受候選 XML，**不是部署未經批准譯文**。
+
+驗證應分別記錄：isolated aapt2 / 現有 App 資源編譯 / 暫存候選與全 App 資源同時 link 三種獨立結論；不可相互替代。
