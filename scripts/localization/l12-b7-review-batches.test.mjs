@@ -104,7 +104,8 @@ test("L12-7 offline desk avoids external scripts and never submits official auth
   const t=readFileSync(join(ROOT,"scripts/localization/l12-b7-review-desk-template.html"),"utf8");
   assert(t.includes("<!--L12B7_DATA-->"));
   assert(t.includes('type="file"'));
-  assert(t.includes('type="application/json"'));
+  assert(t.includes('accept=".json,application/json"'));
+  assert(t.includes('JSON.parse(document.getElementById("review-data").textContent)'));
   assert(!t.includes('src="https://'));
   assert(!t.includes("<button id=\"approve\""));
   assert(t.includes("PROVISIONAL_UNTRUSTED_NO_APPROVAL"));
