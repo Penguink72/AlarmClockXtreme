@@ -248,7 +248,7 @@ function batchTsv(plan){
       r.risks.join(";"),r.warningCategories.join(";"),c.english,
       plain(r.candidate),"","NOT_APPROVED"].map(x=>JSON.stringify(x)).join("\t")))).join("\n")+"\n";
 }
-function renderDesk(plan,root=ROOT){
+export function renderDesk(plan,root=ROOT){
   const template=readFileSync(join(root,"scripts/localization/l12-b7-review-desk-template.html"),"utf8");
   if(!template.includes("<!--L12B7_DATA-->"))throw Error("Review desk template data slot missing");
   const safe=JSON.stringify({summary:plan.summary,batches:plan.batches})
