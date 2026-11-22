@@ -8,6 +8,7 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { execFileSync } from "node:child_process";
 import { buildL10 } from "./l10-source-binding-graph.mjs";
+import { buildDispositionQueue,dispositionTsv } from "./l11-b3-source-dispositions.mjs";
 
 const ROOT=resolve(dirname(fileURLToPath(import.meta.url)),"../..");
 const LC=["zh-TW","ja"];
@@ -62,7 +63,7 @@ function validatePack(catalog,packs){
   }
 }
 
-export function buildL11({graph,catalog,packs,curated,batch2=[]}){
+export function buildL11({graph,catalog,packs,curated,batch2=[],batch3=[]}){
   if(curated.schema!=="acx-l11-priority-translation-drafts/1" ||
      curated.independentApproval!==false)throw Error("Untrusted curated draft schema/authority");
   validatePack(catalog,packs);
@@ -73,13 +74,22 @@ export function buildL11({graph,catalog,packs,curated,batch2=[]}){
        !Array.isArray(pack.records))
       throw Error("Untrusted L11-B2 draft batch schema/authority");
   }
+  for(const pack of batch3){
+    if(pack.schema!=="acx-l11-batch3-drafts/1" ||
+       pack.independentApproval!==false ||
+       pack.status!=="MODEL_PRELIMINARY_NOT_APPROVED" ||
+       !Array.isArray(pack.records))
+      throw Error("Untrusted L11-B3 draft batch schema/authority");
+  }
   const base=new Map(graph.sources.map(row=>[row.key,row]));
   const g6=new Map(catalog.entries.map(x=>["string:"+x.key,x]));
   const authored=new Map();
   const drafts=[
     ...curated.records.map(r=>({...r,batchOrigin:"L11_MODEL_DRAFT_UNREVIEWED"})),
     ...batch2.flatMap(pack=>pack.records.map(r=>({...r,
-      batchOrigin:"L11_B2_MODEL_DRAFT_UNREVIEWED"})))
+      batchOrigin:"L11_B2_MODEL_DRAFT_UNREVIEWED"}))),
+    ...batch3.flatMap(pack=>pack.records.map(r=>({...r,
+      batchOrigin:"L11_B3_MODEL_DRAFT_UNREVIEWED"})))
   ];
   for(const r of drafts){
     const key="string:"+r.key;
@@ -95,6 +105,7 @@ export function buildL11({graph,catalog,packs,curated,batch2=[]}){
     missingByLocale:{"zh-TW":0,ja:0},
     curatedKeys:curated.records.length,curatedLocaleRows:0,
     batch2Keys:batch2.reduce((n,x)=>n+x.records.length,0),batch2LocaleRows:0,
+    batch3Keys:batch3.reduce((n,x)=>n+x.records.length,0),batch3LocaleRows:0,
     reusedG6LocaleRows:0,existingLocaleProtected:0,
     sourceDriftHolds:0,untranslatedLocaleRows:0,
     officialApproved:0,androidXmlModified:false
@@ -122,7 +133,9 @@ export function buildL11({graph,catalog,packs,curated,batch2=[]}){
         record.translationOrigin=candidate.batchOrigin;
         record.reviewRisk=candidate.reviewRisk??"UNASSESSED";
         record.candidateState="DRAFT_NEEDS_SEMANTIC_REVIEW";
-        if(candidate.batchOrigin==="L11_B2_MODEL_DRAFT_UNREVIEWED")
+        if(candidate.batchOrigin==="L11_B3_MODEL_DRAFT_UNREVIEWED")
+          summary.batch3LocaleRows++;
+        else if(candidate.batchOrigin==="L11_B2_MODEL_DRAFT_UNREVIEWED")
           summary.batch2LocaleRows++;
         else summary.curatedLocaleRows++;
         if(old && norm(old.source)===norm(row.sourcePreview)){
@@ -207,6 +220,7 @@ export function summaryMd(data){
     "- Missing dedicated XML: zh-TW "+s.missingByLocale["zh-TW"]+"; ja "+s.missingByLocale.ja,
     "- New source-pinned curated rows: "+s.curatedLocaleRows+" ("+s.curatedKeys+" keys)",
     "- L11-B2 source-pinned unreviewed rows: "+s.batch2LocaleRows+" ("+s.batch2Keys+" keys)",
+    "- L11-B3 source-pinned unreviewed rows: "+s.batch3LocaleRows+" ("+s.batch3Keys+" keys)",
     "- Reused existing G6 unreviewed rows: "+s.reusedG6LocaleRows,
     "- G6 source/format mismatches on proposed reuse: "+s.sourceDriftHolds,
     "- Remaining untranslated locale rows: "+s.untranslatedLocaleRows,
@@ -245,6 +259,10 @@ if(process.argv[1] && import.meta.url===pathToFileURL(resolve(process.argv[1])).
     batch2:[
       read("localization/candidates/l11-b2-settings-drafts-20261122.json"),
       read("localization/candidates/l11-b2-alarm-notification-drafts-20261122.json")
+    ],
+    batch3:[
+      read("localization/candidates/l11-b3-music-alarm-drafts-20261122.json"),
+      read("localization/candidates/l11-b3-firing-permissions-drafts-20261122.json")
     ]
   });
   mkdirSync(out,{recursive:true});
@@ -259,6 +277,20 @@ if(process.argv[1] && import.meta.url===pathToFileURL(resolve(process.argv[1])).
     reason:"Never reuse stale G6 drafts silently"
   });
   writeFileSync(join(out,"l11-priority-review.tsv"),draftTsv(data));
-  writeFileSync(join(out,"l11-summary.md"),summaryMd(data));
+  const triage=buildDispositionQueue(data,graph);
+  write("l11-b3-source-disposition-suggestions.json",triage);
+  writeFileSync(join(out,"l11-b3-source-disposition-suggestions.tsv"),dispositionTsv(triage));
+  writeFileSync(join(out,"l11-summary.md"),summaryMd(data)+[
+    "",
+    "## L11-3 candidate-only lexical disposition triage",
+    "",
+    "- Remaining untranslated locale rows: "+triage.stats.undecidedLocaleRows,
+    ...Object.entries(triage.stats.byDisposition).sort((a,b)=>a[0].localeCompare(b[0],"en"))
+      .map(([key,value])=>"- "+key+": "+value),
+    "- Nontranslatable base keys outside missing locale denominator: "+triage.stats.excludedNonTranslatableBaseKeys,
+    "- Approved fallbacks: 0. L11 cannot authorize official XML or review ledgers.",
+    ""
+  ].join("\n"));
   console.log("L11_TRANSLATION_DRAFTS "+JSON.stringify(data.summary));
+  console.log("L11_B3_DISPOSITION_CANDIDATES "+JSON.stringify(triage.stats));
 }

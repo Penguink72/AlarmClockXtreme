@@ -1,0 +1,810 @@
+{
+  "schema": "acx-l11-batch3-drafts/1",
+  "topic": "FIRING_CHALLENGES_PERMISSIONS_RELIABILITY",
+  "status": "MODEL_PRELIMINARY_NOT_APPROVED",
+  "independentApproval": false,
+  "sourceRef": "app/src/main/res/values/strings.xml",
+  "records": [
+    {
+      "key": "settings_cover_to_snooze",
+      "expectedEnglishPreview": "Cover-to-snooze",
+      "translations": {
+        "zh-TW": "覆蓋螢幕以貪睡",
+        "ja": "画面を覆ってスヌーズ"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_firing_controls",
+      "expectedEnglishPreview": "Firing controls",
+      "translations": {
+        "zh-TW": "響鈴操作方式",
+        "ja": "アラーム中の操作方法"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_firing_controls_description",
+      "expectedEnglishPreview": "How you dismiss and snooze alarms. Buttons mode is recommended for screen readers.",
+      "translations": {
+        "zh-TW": "選擇解除鬧鐘與貪睡的操作方式。螢幕閱讀器使用者建議採用按鈕模式。",
+        "ja": "アラームの停止とスヌーズの操作方法を選択します。スクリーンリーダーを使う場合はボタンモードを推奨します。"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_firing_buttons",
+      "expectedEnglishPreview": "Buttons",
+      "translations": {
+        "zh-TW": "按鈕",
+        "ja": "ボタン"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_firing_swipe",
+      "expectedEnglishPreview": "Swipe",
+      "translations": {
+        "zh-TW": "滑動手勢",
+        "ja": "スワイプ"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_firing_hybrid",
+      "expectedEnglishPreview": "Hybrid",
+      "translations": {
+        "zh-TW": "混合模式",
+        "ja": "ハイブリッド"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_firing_hybrid_description",
+      "expectedEnglishPreview": "Hybrid: swipe gestures and buttons",
+      "translations": {
+        "zh-TW": "混合模式：滑動手勢與按鈕並用",
+        "ja": "ハイブリッド：スワイプとボタンを併用"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_firing_buttons_description",
+      "expectedEnglishPreview": "Buttons only: accessible, no gestures",
+      "translations": {
+        "zh-TW": "僅使用按鈕：支援無障礙操作，不需要手勢",
+        "ja": "ボタンのみ：ジェスチャー不要でアクセシブル"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_firing_swipe_description",
+      "expectedEnglishPreview": "Swipe only: gesture-driven",
+      "translations": {
+        "zh-TW": "僅使用滑動：透過手勢操作",
+        "ja": "スワイプのみ：ジェスチャーで操作"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_readiness_notifications",
+      "expectedEnglishPreview": "notifications",
+      "translations": {
+        "zh-TW": "通知",
+        "ja": "通知"
+      },
+      "reviewRisk": "ALARM_ACTION_SAFETY_REVIEW"
+    },
+    {
+      "key": "settings_readiness_fullscreen_alarm",
+      "expectedEnglishPreview": "full-screen alarm access",
+      "translations": {
+        "zh-TW": "全螢幕鬧鐘存取權",
+        "ja": "全画面アラームへのアクセス"
+      },
+      "reviewRisk": "ALARM_ACTION_SAFETY_REVIEW"
+    },
+    {
+      "key": "settings_readiness_local_network",
+      "expectedEnglishPreview": "local network access",
+      "translations": {
+        "zh-TW": "區域網路存取權",
+        "ja": "ローカルネットワークへのアクセス"
+      },
+      "reviewRisk": "ALARM_ACTION_SAFETY_REVIEW"
+    },
+    {
+      "key": "settings_readiness_battery",
+      "expectedEnglishPreview": "battery",
+      "translations": {
+        "zh-TW": "電池設定",
+        "ja": "バッテリー設定"
+      },
+      "reviewRisk": "ALARM_ACTION_SAFETY_REVIEW"
+    },
+    {
+      "key": "settings_readiness_standby_bucket",
+      "expectedEnglishPreview": "standby bucket",
+      "translations": {
+        "zh-TW": "待命限制級別",
+        "ja": "スタンバイバケット"
+      },
+      "reviewRisk": "ALARM_ACTION_SAFETY_REVIEW"
+    },
+    {
+      "key": "settings_readiness_fullscreen",
+      "expectedEnglishPreview": "full-screen access",
+      "translations": {
+        "zh-TW": "全螢幕存取權",
+        "ja": "全画面へのアクセス"
+      },
+      "reviewRisk": "ALARM_ACTION_SAFETY_REVIEW"
+    },
+    {
+      "key": "settings_readiness_lan",
+      "expectedEnglishPreview": "LAN access",
+      "translations": {
+        "zh-TW": "區域網路存取權",
+        "ja": "LAN へのアクセス"
+      },
+      "reviewRisk": "ALARM_ACTION_SAFETY_REVIEW"
+    },
+    {
+      "key": "settings_readiness_standby",
+      "expectedEnglishPreview": "standby",
+      "translations": {
+        "zh-TW": "待命狀態",
+        "ja": "スタンバイ"
+      },
+      "reviewRisk": "ALARM_ACTION_SAFETY_REVIEW"
+    },
+    {
+      "key": "settings_readiness_ready",
+      "expectedEnglishPreview": "Exact alarms, alerts, %1$s are ready",
+      "translations": {
+        "zh-TW": "精準鬧鐘、通知、%1$s 均已就緒",
+        "ja": "正確なアラーム、通知、%1$s の準備ができました"
+      },
+      "reviewRisk": "ALARM_ACTION_SAFETY_REVIEW"
+    },
+    {
+      "key": "settings_readiness_review",
+      "expectedEnglishPreview": "Review %1$s",
+      "translations": {
+        "zh-TW": "檢查 %1$s",
+        "ja": "%1$s を確認"
+      },
+      "reviewRisk": "ALARM_ACTION_SAFETY_REVIEW"
+    },
+    {
+      "key": "challenge_choose_correct_answer_unlock_dismiss",
+      "expectedEnglishPreview": "Choose the correct answer to unlock dismiss.",
+      "translations": {
+        "zh-TW": "選出正確答案，才能解除鬧鐘。",
+        "ja": "正しい答えを選ぶとアラームを停止できます。"
+      },
+      "reviewRisk": "ALARM_ACTION_SAFETY_REVIEW"
+    },
+    {
+      "key": "wake_confirm_keep_protection",
+      "expectedEnglishPreview": "Closing this screen keeps wake-check protection active. The alarm can ring up to %1$d more times if you do not confirm.",
+      "translations": {
+        "zh-TW": "關閉此畫面仍會維持清醒確認保護。如果未確認，鬧鐘最多可能再響起 %1$d 次。",
+        "ja": "この画面を閉じても起床確認の保護は継続します。確認しない場合、アラームは最大 %1$d 回再び鳴ることがあります。"
+      },
+      "reviewRisk": "ALARM_ACTION_SAFETY_REVIEW"
+    },
+    {
+      "key": "app_dismiss",
+      "expectedEnglishPreview": "Dismiss",
+      "translations": {
+        "zh-TW": "解除鬧鐘",
+        "ja": "アラームを停止"
+      },
+      "reviewRisk": "ALARM_ACTION_SAFETY_REVIEW"
+    },
+    {
+      "key": "test_alarm_alarmclockxtreme_wake_device_dismiss_test",
+      "expectedEnglishPreview": "AlarmClockXtreme can wake this device. Dismiss the test to finish setup.",
+      "translations": {
+        "zh-TW": "AlarmClockXtreme 可以喚醒這台裝置。請解除測試鬧鐘以完成設定。",
+        "ja": "AlarmClockXtreme はこの端末でアラームを鳴らせます。設定を完了するにはテストアラームを停止してください。"
+      },
+      "reviewRisk": "ALARM_ACTION_SAFETY_REVIEW"
+    },
+    {
+      "key": "test_alarm_dismiss_test_alarm",
+      "expectedEnglishPreview": "Dismiss test alarm",
+      "translations": {
+        "zh-TW": "解除測試鬧鐘",
+        "ja": "テストアラームを停止"
+      },
+      "reviewRisk": "ALARM_ACTION_SAFETY_REVIEW"
+    },
+    {
+      "key": "firing_challenge_reference_missing",
+      "expectedEnglishPreview": "This alarm has no saved tag, code, photo or network to check against, so here is a maths problem instead. Edit the alarm to set one.",
+      "translations": {
+        "zh-TW": "此鬧鐘沒有儲存可供比對的標籤、代碼、照片或網路資訊，因此改用數學題。請編輯鬧鐘以設定相關資料。",
+        "ja": "このアラームには照合用のタグ、コード、写真、ネットワークが保存されていないため、代わりに計算問題を出します。アラームを編集して設定してください。"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarmlist_swipe_to_delete",
+      "expectedEnglishPreview": "Swipe to delete",
+      "translations": {
+        "zh-TW": "滑動以刪除",
+        "ja": "スワイプして削除"
+      },
+      "reviewRisk": "ALARM_ACTION_SAFETY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_weather_ready",
+      "expectedEnglishPreview": "Weather ready",
+      "translations": {
+        "zh-TW": "天氣資訊已就緒",
+        "ja": "天気情報の準備ができました"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_no_weather",
+      "expectedEnglishPreview": "No weather",
+      "translations": {
+        "zh-TW": "沒有天氣資訊",
+        "ja": "天気情報はありません"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_next_event",
+      "expectedEnglishPreview": "Next event",
+      "translations": {
+        "zh-TW": "下一個行程",
+        "ja": "次の予定"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_open_schedule",
+      "expectedEnglishPreview": "Open schedule",
+      "translations": {
+        "zh-TW": "開啟行程",
+        "ja": "予定を開く"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_routine_items",
+      "expectedEnglishPreview": "%1$s routine items",
+      "translations": {
+        "zh-TW": "例行項目：%1$s 項",
+        "ja": "ルーティン項目：%1$s 件"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_complete",
+      "expectedEnglishPreview": "%1$s / %2$s complete",
+      "translations": {
+        "zh-TW": "已完成 %1$s／%2$s",
+        "ja": "完了：%1$s / %2$s"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_start_shaking_to_build_momentum",
+      "expectedEnglishPreview": "Start shaking to build momentum.",
+      "translations": {
+        "zh-TW": "開始搖晃手機以累積進度。",
+        "ja": "端末を振り始めて進捗を増やしましょう。"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_shakes_remaining",
+      "expectedEnglishPreview": "%1$s shakes remaining.",
+      "translations": {
+        "zh-TW": "還需搖晃 %1$s 次。",
+        "ja": "あと %1$s 回振ってください。"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_of_tapped",
+      "expectedEnglishPreview": "%1$s of %2$s tapped",
+      "translations": {
+        "zh-TW": "已點選 %1$s／%2$s",
+        "ja": "タップ済み：%1$s / %2$s"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_watch",
+      "expectedEnglishPreview": "Watch",
+      "translations": {
+        "zh-TW": "觀看",
+        "ja": "見る"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_memorize_the_highlighted_tiles_before_the",
+      "expectedEnglishPreview": "Memorize the highlighted tiles before the pattern disappears.",
+      "translations": {
+        "zh-TW": "請在圖案消失前記住亮起的方格。",
+        "ja": "パターンが消える前に光ったマスを覚えてください。"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_tap_the_same_tiles_in_the",
+      "expectedEnglishPreview": "Tap the same tiles in the same order.",
+      "translations": {
+        "zh-TW": "依照相同順序點選相同方格。",
+        "ja": "同じマスを同じ順番でタップしてください。"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_the_pattern_will_show_again_in",
+      "expectedEnglishPreview": "The pattern will show again in a moment.",
+      "translations": {
+        "zh-TW": "稍後會再次顯示圖案。",
+        "ja": "少しするとパターンが再び表示されます。"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_of_matched",
+      "expectedEnglishPreview": "%1$s of %2$s matched",
+      "translations": {
+        "zh-TW": "配對完成 %1$s／%2$s",
+        "ja": "一致：%1$s / %2$s"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_listening",
+      "expectedEnglishPreview": "Listening...",
+      "translations": {
+        "zh-TW": "正在聆聽…",
+        "ja": "音声を認識中…"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_start_listening",
+      "expectedEnglishPreview": "Start listening",
+      "translations": {
+        "zh-TW": "開始語音辨識",
+        "ja": "音声認識を開始"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_checking",
+      "expectedEnglishPreview": "Checking...",
+      "translations": {
+        "zh-TW": "正在檢查…",
+        "ja": "確認中…"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_check_drawing",
+      "expectedEnglishPreview": "Check drawing",
+      "translations": {
+        "zh-TW": "檢查手寫內容",
+        "ja": "手書き内容を確認"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_steps",
+      "expectedEnglishPreview": "%1$s / %2$s steps",
+      "translations": {
+        "zh-TW": "步數 %1$s／%2$s",
+        "ja": "歩数 %1$s / %2$s"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_start_walking_to_build_progress",
+      "expectedEnglishPreview": "Start walking to build progress.",
+      "translations": {
+        "zh-TW": "開始步行以累積進度。",
+        "ja": "歩き始めて進捗を増やしましょう。"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_steps_remaining",
+      "expectedEnglishPreview": "%1$s steps remaining.",
+      "translations": {
+        "zh-TW": "還需走 %1$s 步。",
+        "ja": "残り %1$s 歩です。"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_squats",
+      "expectedEnglishPreview": "%1$s / %2$s squats",
+      "translations": {
+        "zh-TW": "深蹲 %1$s／%2$s",
+        "ja": "スクワット %1$s / %2$s"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_start_with_one_clean_squat",
+      "expectedEnglishPreview": "Start with one clean squat.",
+      "translations": {
+        "zh-TW": "先完成一次標準深蹲。",
+        "ja": "まず1回、正しい姿勢でスクワットしてください。"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_squats_remaining",
+      "expectedEnglishPreview": "%1$s squats remaining.",
+      "translations": {
+        "zh-TW": "還需深蹲 %1$s 次。",
+        "ja": "スクワットはあと %1$s 回です。"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_push_ups",
+      "expectedEnglishPreview": "%1$s / %2$s push-ups",
+      "translations": {
+        "zh-TW": "伏地挺身 %1$s／%2$s",
+        "ja": "腕立て伏せ %1$s / %2$s"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_start_your_first_push_up",
+      "expectedEnglishPreview": "Start your first push-up.",
+      "translations": {
+        "zh-TW": "開始做第一次伏地挺身。",
+        "ja": "最初の腕立て伏せを始めてください。"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_push_ups_remaining",
+      "expectedEnglishPreview": "%1$s push-ups remaining.",
+      "translations": {
+        "zh-TW": "還需伏地挺身 %1$s 次。",
+        "ja": "腕立て伏せはあと %1$s 回です。"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_seconds",
+      "expectedEnglishPreview": "%1$s / %2$s seconds",
+      "translations": {
+        "zh-TW": "秒數 %1$s／%2$s",
+        "ja": "秒数 %1$s / %2$s"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_tap_start_and_hold_position",
+      "expectedEnglishPreview": "Tap Start and hold position.",
+      "translations": {
+        "zh-TW": "點選「開始」並保持姿勢。",
+        "ja": "「開始」をタップして姿勢を維持してください。"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_seconds_remaining",
+      "expectedEnglishPreview": "%1$s seconds remaining.",
+      "translations": {
+        "zh-TW": "剩餘 %1$s 秒。",
+        "ja": "残り %1$s 秒です。"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_not_connected_to_wi_fi_yet",
+      "expectedEnglishPreview": "Not connected to Wi-Fi yet.",
+      "translations": {
+        "zh-TW": "尚未連上 Wi-Fi。",
+        "ja": "まだ Wi-Fi に接続されていません。"
+      },
+      "reviewRisk": "ALARM_ACTION_SAFETY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_connected_to",
+      "expectedEnglishPreview": "Connected to: %1$s",
+      "translations": {
+        "zh-TW": "已連線至：%1$s",
+        "ja": "接続先：%1$s"
+      },
+      "reviewRisk": "ALARM_ACTION_SAFETY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_correct",
+      "expectedEnglishPreview": "%1$s / %2$s correct",
+      "translations": {
+        "zh-TW": "答對 %1$s／%2$s 題",
+        "ja": "正解：%1$s / %2$s"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_choice",
+      "expectedEnglishPreview": "%1$s choice",
+      "translations": {
+        "zh-TW": "選項 %1$s",
+        "ja": "選択肢 %1$s"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_empty",
+      "expectedEnglishPreview": "empty",
+      "translations": {
+        "zh-TW": "空白",
+        "ja": "空欄"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_correct_position",
+      "expectedEnglishPreview": "%1$s, correct position",
+      "translations": {
+        "zh-TW": "%1$s，位置正確",
+        "ja": "%1$s、位置が正しい"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_in_the_word_wrong_position",
+      "expectedEnglishPreview": "%1$s, in the word, wrong position",
+      "translations": {
+        "zh-TW": "%1$s，字母存在但位置錯誤",
+        "ja": "%1$s、文字は含まれていますが位置が違います"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_not_in_the_word",
+      "expectedEnglishPreview": "%1$s, not in the word",
+      "translations": {
+        "zh-TW": "%1$s，不在目標單字中",
+        "ja": "%1$s、答えの単語には含まれていません"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_5_letter_word",
+      "expectedEnglishPreview": "5-letter word",
+      "translations": {
+        "zh-TW": "五個字母的單字",
+        "ja": "5文字の単語"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_tap",
+      "expectedEnglishPreview": "TAP!",
+      "translations": {
+        "zh-TW": "點選！",
+        "ja": "タップ！"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_wait",
+      "expectedEnglishPreview": "Wait...",
+      "translations": {
+        "zh-TW": "請稍候…",
+        "ja": "お待ちください…"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_too_early",
+      "expectedEnglishPreview": "Too early!",
+      "translations": {
+        "zh-TW": "太早了！",
+        "ja": "早すぎます！"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_tap_to_start",
+      "expectedEnglishPreview": "Tap to start",
+      "translations": {
+        "zh-TW": "點選以開始",
+        "ja": "タップして開始"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_to_move",
+      "expectedEnglishPreview": "%1$s to move",
+      "translations": {
+        "zh-TW": "輪到 %1$s 行棋",
+        "ja": "%1$s の手番"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_which_word_appeared",
+      "expectedEnglishPreview": "Which word appeared?",
+      "translations": {
+        "zh-TW": "剛才出現的是哪個單字？",
+        "ja": "どの単語が表示されましたか？"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_get_ready",
+      "expectedEnglishPreview": "Get ready",
+      "translations": {
+        "zh-TW": "準備開始",
+        "ja": "準備してください"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_no_saved_place_is_set_so",
+      "expectedEnglishPreview": "No saved place is set, so location dismissal is not locked.",
+      "translations": {
+        "zh-TW": "沒有設定儲存地點，因此解除鬧鐘不受位置限制。",
+        "ja": "保存場所が設定されていないため、場所によるアラーム停止の制限はありません。"
+      },
+      "reviewRisk": "ALARM_ACTION_SAFETY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_waiting_for_a_location_fix_leave",
+      "expectedEnglishPreview": "Waiting for a location fix. Leave the saved %1$d m area to unlock dismiss.",
+      "translations": {
+        "zh-TW": "正在等待定位。請離開已儲存地點的 %1$d 公尺範圍，以解除鬧鐘。",
+        "ja": "位置情報を取得しています。停止するには保存場所から %1$d m の範囲外に出てください。"
+      },
+      "reviewRisk": "ALARM_ACTION_SAFETY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_handwriting_recognition_is_unavailable_type_the",
+      "expectedEnglishPreview": "Handwriting recognition is unavailable. Type the word instead.",
+      "translations": {
+        "zh-TW": "無法使用手寫辨識，請改用鍵盤輸入單字。",
+        "ja": "手書き認識を利用できません。代わりに単語を入力してください。"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_recognized_draw_again",
+      "expectedEnglishPreview": "Recognized \"%1$s\". Draw %2$s again.",
+      "translations": {
+        "zh-TW": "辨識為「%1$s」，請重新書寫 %2$s。",
+        "ja": "「%1$s」と認識しました。%2$s をもう一度書いてください。"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_no_handwriting_match_draw_again",
+      "expectedEnglishPreview": "No handwriting match. Draw %1$s again.",
+      "translations": {
+        "zh-TW": "手寫內容不符，請重新書寫 %1$s。",
+        "ja": "手書きの内容が一致しません。%1$s をもう一度書いてください。"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_speech_recognition_stopped_try_again_or",
+      "expectedEnglishPreview": "Speech recognition stopped. Try again or type the phrase.",
+      "translations": {
+        "zh-TW": "語音辨識已停止。請重試，或改用文字輸入短句。",
+        "ja": "音声認識が停止しました。再試行するか、フレーズを入力してください。"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarmfiring_the_microphone_had_an_audio_error",
+      "expectedEnglishPreview": "The microphone had an audio error. Try again or type the phrase.",
+      "translations": {
+        "zh-TW": "麥克風發生音訊錯誤。請重試，或改用文字輸入短句。",
+        "ja": "マイクで音声エラーが発生しました。再試行するか、フレーズを入力してください。"
+      },
+      "reviewRisk": "ALARM_ACTION_SAFETY_REVIEW"
+    },
+    {
+      "key": "permission_notifications",
+      "expectedEnglishPreview": "Notifications",
+      "translations": {
+        "zh-TW": "通知",
+        "ja": "通知"
+      },
+      "reviewRisk": "ALARM_ACTION_SAFETY_REVIEW"
+    },
+    {
+      "key": "permission_show_active_alarms_timer_finish",
+      "expectedEnglishPreview": "Show active alarms, timer finish alerts, and wake-up reminders.",
+      "translations": {
+        "zh-TW": "顯示目前的鬧鐘、計時結束通知與起床提醒。",
+        "ja": "有効なアラーム、タイマー終了の通知、起床リマインダーを表示します。"
+      },
+      "reviewRisk": "ALARM_ACTION_SAFETY_REVIEW"
+    },
+    {
+      "key": "permission_calendar",
+      "expectedEnglishPreview": "Calendar",
+      "translations": {
+        "zh-TW": "行事曆",
+        "ja": "カレンダー"
+      },
+      "reviewRisk": "ALARM_ACTION_SAFETY_REVIEW"
+    },
+    {
+      "key": "permission_bring_today_s_events_into",
+      "expectedEnglishPreview": "Bring today’s events into the dashboard and morning briefing.",
+      "translations": {
+        "zh-TW": "將今天的行程顯示在首頁摘要和早晨簡報中。",
+        "ja": "今日の予定をダッシュボードと朝のブリーフィングに表示します。"
+      },
+      "reviewRisk": "ALARM_ACTION_SAFETY_REVIEW"
+    },
+    {
+      "key": "permission_location",
+      "expectedEnglishPreview": "Location",
+      "translations": {
+        "zh-TW": "位置資訊",
+        "ja": "位置情報"
+      },
+      "reviewRisk": "ALARM_ACTION_SAFETY_REVIEW"
+    },
+    {
+      "key": "permission_show_local_weather_without_asking",
+      "expectedEnglishPreview": "Show local weather without asking you to set a city every time.",
+      "translations": {
+        "zh-TW": "顯示所在地天氣，不必每次都手動設定城市。",
+        "ja": "毎回都市を設定しなくても、現在地の天気を表示します。"
+      },
+      "reviewRisk": "ALARM_ACTION_SAFETY_REVIEW"
+    },
+    {
+      "key": "permission_android_will_still_ask_confirm",
+      "expectedEnglishPreview": "Android will still ask you to confirm each request, and you can change them later in system settings.",
+      "translations": {
+        "zh-TW": "Android 仍會要求你逐項確認權限，之後可在系統設定中變更。",
+        "ja": "Android は引き続き権限ごとに確認を求めます。後からシステム設定で変更できます。"
+      },
+      "reviewRisk": "ALARM_ACTION_SAFETY_REVIEW"
+    },
+    {
+      "key": "permission_missing",
+      "expectedEnglishPreview": "Missing",
+      "translations": {
+        "zh-TW": "缺少",
+        "ja": "不足"
+      },
+      "reviewRisk": "ALARM_ACTION_SAFETY_REVIEW"
+    },
+    {
+      "key": "readiness_needs_activity_permission",
+      "expectedEnglishPreview": "Grant physical-activity permission so steps can be counted.",
+      "translations": {
+        "zh-TW": "請授予身體活動權限，才能計算步數。",
+        "ja": "歩数を数えるには身体活動の権限を許可してください。"
+      },
+      "reviewRisk": "ALARM_ACTION_SAFETY_REVIEW"
+    },
+    {
+      "key": "health_notifications_denied",
+      "expectedEnglishPreview": "Notification permission is denied, so you may not hear alarms.",
+      "translations": {
+        "zh-TW": "通知權限已遭拒絕，因此可能無法聽到鬧鐘。",
+        "ja": "通知の権限が拒否されているため、アラームが聞こえない場合があります。"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    }
+  ]
+}
