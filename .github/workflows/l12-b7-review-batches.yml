@@ -1,0 +1,46 @@
+name: ACX L12-7 source-bound risk-batched human review workbench
+on:
+  push:
+    branches:
+      - feature/acx-l12-b7-risk-batched-review-20261122
+    paths:
+      - "scripts/localization/**"
+      - "docs/localization/ACX-L12-B7*"
+      - ".github/workflows/l12-b7-review-batches.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  review-batches:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Verify L12-7 grouping, risks, warning pins and non-approval
+        run: |
+          node --test scripts/localization/l12-b7-review-batches.test.mjs
+          node scripts/localization/l12-b7-review-batches.mjs --out-dir build/localization/L12_B7_UNAPPROVED_REVIEW_DESK
+      - name: Reject any attempt to use review notes as approval
+        shell: bash
+        run: |
+          set -euo pipefail
+          if node scripts/localization/l12-b7-review-batches.mjs --validate-notes localization/governance/l12/independent-review-ledger.json; then
+            echo "SECURITY FAILURE: ordinary ledger accepted as unsigned L12-7 annotations" >&2
+            exit 1
+          fi
+          if node scripts/localization/l12-b6-independent-review.mjs --review-envelope build/NO_EXTERNAL_SIGNATURE.json; then
+            echo "SECURITY FAILURE: unsigned model workbench bypassed L12-6" >&2
+            exit 1
+          fi
+          echo "L12-6 external signature gate still blocks release; L12-7 cannot approve."
+      - name: Export offline batch-by-batch review navigation and unsigned notes desk
+        uses: actions/upload-artifact@v4
+        with:
+          name: acx-l12-b7-offline-unapproved-review-workbench
+          path: build/localization/L12_B7_UNAPPROVED_REVIEW_DESK/
+          retention-days: 14

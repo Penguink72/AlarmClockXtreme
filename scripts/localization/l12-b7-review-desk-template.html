@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src 'none'; img-src data:;">
+<title>ACX L12-7 翻譯分批審閱工作台（未批准）</title>
+<style>
+:root{color-scheme:light dark;font-family:system-ui,-apple-system,"Noto Sans TC",sans-serif;line-height:1.5}
+*{box-sizing:border-box} body{max-width:1240px;margin:0 auto;padding:16px;color:CanvasText;background:Canvas}
+header{border-bottom:1px solid #80808055;padding-bottom:12px}
+h1{font-size:1.35rem;margin:0 0 8px}h2{font-size:1.12rem}h3{font-size:1rem}
+.small{font-size:.85rem;color:GrayText}.alert{border:1px solid #b77733;padding:12px;border-radius:7px}
+.tools{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:16px 0}
+button,select,input,textarea{font:inherit;padding:7px;border-radius:5px;border:1px solid #80808066;background:Canvas;color:CanvasText}
+button{cursor:pointer}button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid #6699e9}
+button[disabled]{opacity:.4;cursor:default}input[type=search]{min-width:210px;flex:1}
+.card{padding:16px;border:1px solid #80808055;border-radius:8px;margin:12px 0;overflow-wrap:anywhere}
+.card-head{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.meta{font-size:.8rem;color:GrayText}.english{white-space:pre-wrap;margin:8px 0;padding:10px;border-inline-start:3px solid #8888;background:color-mix(in srgb,CanvasText 4%,Canvas)}
+.pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.locale{padding:10px;border:1px solid #80808044;border-radius:6px}
+.locale h4{margin:0 0 6px}.candidate{white-space:pre-wrap;overflow:auto;max-height:260px;font-size:.92rem}
+label{display:block;font-size:.86rem;margin:8px 0 3px}.locale select,.locale textarea{width:100%}
+textarea{min-height:70px;resize:vertical}
+details{margin:8px 0}summary{cursor:pointer}
+footer{margin:28px 0;font-size:.85rem;color:GrayText}
+@media(max-width:760px){.pair{grid-template-columns:1fr}.tools>button{min-height:42px}}
+</style>
+</head>
+<body>
+<header>
+<h1>AlarmClockXtreme｜L12-7 離線翻譯審閱工作台</h1>
+<p class="alert"><strong>尚未獨立批准。</strong> 所有勾選與備註只是審閱工作筆記，不會授權正式譯文、不會更新 G1/G4，也不會生成可用於 L12-6 簽章的正式審核記錄。不同按鈕沒有「正式批准」功能。</p>
+<p class="small" id="stats">載入審閱清單中</p>
+</header>
+<main>
+<div class="tools">
+<label for="batch">批次</label><select id="batch"></select>
+<button id="prev" type="button">上一批</button><button id="next" type="button">下一批</button>
+<input id="search" type="search" placeholder="在本批次搜尋 Key 或英文／譯文" aria-label="搜尋本批次">
+</div>
+<div class="tools">
+<button id="export" type="button">匯出未授權審閱筆記 JSON</button>
+<label for="import">匯入先前筆記</label>
+<input id="import" type="file" accept=".json,application/json">
+<span class="small" id="note-count">0 筆筆記，正式批准 0</span>
+</div>
+<p class="small" id="notice" role="status" aria-live="polite">切換批次不會丟掉已填筆記，但關閉頁面前必須匯出 JSON。頁面不使用伺服器或本機儲存。</p>
+<h2 id="batch-title"></h2>
+<section id="cards" aria-label="候選語言資源"></section>
+</main>
+<footer>資料來源：L12-6 source-pinned model drafts。相同英文不代表相同操作；繁中、日文必須分別審查。此 HTML 在離線瀏覽器中開啟，所有變更僅存在目前頁面記憶體。</footer>
+<!--L12B7_DATA-->
+<script>
+"use strict";
+(function(){
+const data=JSON.parse(document.getElementById("review-data").textContent);
+const batches=data.batches,summary=data.summary;
+const select=document.getElementById("batch"),cards=document.getElementById("cards");
+const notes=new Map();let current=0;
+const idOf=r=>r.key+"\u0000"+r.locale;
+const warningText=r=>(r.warningCategories||[]).concat(r.issues||[]).join("、");
+function el(tag,cls,text){
+  const n=document.createElement(tag);if(cls)n.className=cls;
+  if(text!==undefined)n.textContent=String(text);
+  return n;
+}
+function setMessage(s){document.getElementById("notice").textContent=s}
+function noteKey(r){return idOf(r)}
+function showNotes(){
+  document.getElementById("note-count").textContent=notes.size+" 筆筆記；正式批准 0";
+}
+function eligible(r){
+  return {key:r.key,locale:r.locale,sourceHash:r.sourceHash,
+    translationHash:r.translationHash,reviewRevision:r.reviewRevision};
+}
+function render(){
+  const b=batches[current];select.value=String(current);
+  const title=document.getElementById("batch-title");
+  title.textContent=b.batchId+" · "+b.priority+" · "+b.featureFamily+
+    " · "+b.keyCards+" 個 Key／"+b.localeRows+" 筆語系資源";
+  document.getElementById("prev").disabled=current===0;
+  document.getElementById("next").disabled=current>=batches.length-1;
+  const q=document.getElementById("search").value.trim().toLocaleLowerCase();
+  cards.replaceChildren();let shown=0;
+  for(const c of b.cards){
+    if(q&&!([c.key,c.english,...c.localeRows.map(r=>JSON.stringify(r.candidate))]
+      .join(" ").toLocaleLowerCase().includes(q)))continue;
+    shown++;
+    const outer=el("article","card");
+    const head=el("div","card-head");
+    head.append(el("h3","",c.key),el("span","meta",c.priority+" · "+c.type));
+    outer.append(head);
+    outer.append(el("p","meta",c.sourcePath+":"+String(c.sourceLine??"不明")+
+      " · "+(c.risks||[]).join(", ")));
+    outer.append(el("div","english",c.english));
+    if(c.sameEnglishIsNotSameAction){
+      outer.append(el("p","small","其他 Key 使用相同英文（僅供對照，不能共同批准）："+
+        c.sameEnglishAsOtherKeys.join("、")));
+    }
+    const row=el("div","pair");
+    for(const r of c.localeRows){
+      const pane=el("section","locale");
+      pane.append(el("h4","",r.locale==="zh-TW"?"繁體中文 zh-TW":"日本語 ja"));
+      pane.append(el("div","candidate",typeof r.candidate==="string"?
+        r.candidate:JSON.stringify(r.candidate,null,2)));
+      const warns=warningText(r);
+      if(warns)pane.append(el("p","small","需審核："+warns));
+      const label=el("label","","初步分類（不是批准）");
+      const choice=el("select");choice.setAttribute("aria-label",r.key+" / "+r.locale+" 初步分類");
+      for(const [value,t] of [
+        ["","未標註"],["LOOKS_ACCEPTABLE_UNVERIFIED","看似可用／仍未獨立批准"],
+        ["NEEDS_REVISION","需要修改譯文"],
+        ["NEEDS_MORE_CONTEXT","需要操作／UI 上下文"],
+        ["SKIP_FOR_NOW","先略過"]]){
+        const op=el("option","",t);op.value=value;choice.append(op);
+      }
+      const noteLabel=el("label","","審查備註（不具批准效力）");
+      const input=el("textarea");input.maxLength=4000;
+      input.setAttribute("aria-label",r.key+" / "+r.locale+" 審查備註");
+      const prev=notes.get(noteKey(r));
+      if(prev){choice.value=prev.disposition;input.value=prev.note}
+      function save(){
+        if(choice.value||input.value.trim()){
+          const disposition=choice.value||"NEEDS_MORE_CONTEXT";
+          notes.set(noteKey(r),{...eligible(r),disposition,note:input.value});
+        }else notes.delete(noteKey(r));
+        showNotes();
+      }
+      choice.addEventListener("change",save);
+      input.addEventListener("input",save);
+      pane.append(label,choice,noteLabel,input);
+      const d=el("details"),s=el("summary","","版本追蹤");
+      d.append(s,el("p","small","sourceHash: "+r.sourceHash+
+        "\ntranslationHash: "+r.translationHash+"\nreviewRevision: "+r.reviewRevision));
+      pane.append(d);row.append(pane);
+    }
+    outer.append(row);cards.append(outer);
+  }
+  if(shown===0)cards.append(el("p","small","本批次沒有符合搜尋文字的候選。"));
+}
+for(let i=0;i<batches.length;i++){
+  const b=batches[i],opt=el("option","",b.batchId+"（"+b.keyCards+" Key）");
+  opt.value=String(i);select.append(opt);
+}
+document.getElementById("stats").textContent="資料指紋 "+summary.reviewSetDigest+
+  " · "+summary.reviewKeyCards+" 個配對 Key · "+summary.reviewRequiredLocaleRows+
+  " 筆待審列 · "+summary.batches+" 批 · 敏感風險列 "+
+  summary.sourceRiskSensitiveLocaleRows+" · 獨立批准 0";
+select.addEventListener("change",()=>{current=Number(select.value);render()});
+document.getElementById("prev").addEventListener("click",()=>{if(current>0){current--;render()}});
+document.getElementById("next").addEventListener("click",()=>{
+  if(current<batches.length-1){current++;render()}
+});
+document.getElementById("search").addEventListener("input",render);
+document.getElementById("export").addEventListener("click",()=>{
+  const payload={schema:"acx-l12-b7-untrusted-review-notes/1",
+    reviewSetDigest:summary.reviewSetDigest,
+    batchPlanDigest:summary.batchPlanDigest,
+    status:"PROVISIONAL_UNTRUSTED_NO_APPROVAL",
+    entries:[...notes.values()].sort((a,b)=>a.key.localeCompare(b.key,"en")||
+      a.locale.localeCompare(b.locale,"en"))};
+  const file=new Blob([JSON.stringify(payload,null,2)+"\n"],{type:"application/json"});
+  const url=URL.createObjectURL(file),a=document.createElement("a");
+  a.href=url;a.download="acx-l12-b7-untrusted-review-notes.json";
+  document.body.append(a);a.click();a.remove();
+  URL.revokeObjectURL(url);
+  setMessage("筆記已送出下載，這不是正式批准；使用 Node --validate-notes 可檢查格式及版本。");
+});
+document.getElementById("import").addEventListener("change",async e=>{
+  const file=e.target.files?.[0];if(!file)return;
+  try{
+    if(file.size>2_000_000)throw Error("筆記檔太大");
+    const doc=JSON.parse(await file.text());
+    if(doc.schema!=="acx-l12-b7-untrusted-review-notes/1"||
+      doc.reviewSetDigest!==summary.reviewSetDigest||
+      doc.batchPlanDigest!==summary.batchPlanDigest||
+      !Array.isArray(doc.entries)||doc.entries.length>3100)
+      throw Error("筆記結構或來源版本不吻合");
+    const valid=new Map(batches.flatMap(b=>b.cards.flatMap(c=>c.localeRows))
+      .map(r=>[noteKey(r),r]));
+    const next=new Map();
+    for(const n of doc.entries){
+      const r=valid.get(noteKey(n));
+      if(!r||next.has(noteKey(n))||r.sourceHash!==n.sourceHash||
+        r.translationHash!==n.translationHash||r.reviewRevision!==n.reviewRevision||
+        !["LOOKS_ACCEPTABLE_UNVERIFIED","NEEDS_REVISION","NEEDS_MORE_CONTEXT",
+          "SKIP_FOR_NOW"].includes(n.disposition)||
+        typeof n.note!=="string"||n.note.length>4000||
+        Object.keys(n).some(k=>["approved","independentApproval","mayRelease",
+          "signatureBase64","reviewMode","reviewerId","reviewedAt",
+          "meaningVerified","formatVerified","operationConsequencesVerified",
+          "contextVerified"].includes(k)))
+        throw Error("含未授權批准、重複列或舊版文字；整份筆記不匯入");
+      next.set(noteKey(n),n);
+    }
+    notes.clear();for(const [id,n] of next)notes.set(id,n);
+    showNotes();render();setMessage("已匯入 "+notes.size+" 筆未批准審閱筆記。");
+  }catch(err){setMessage("無法匯入："+String(err.message||err))}
+  finally{e.target.value=""}
+});
+showNotes();render();
+})();
+</script>
+</body>
+</html>
