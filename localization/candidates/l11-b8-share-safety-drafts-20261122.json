@@ -1,0 +1,297 @@
+{
+  "schema": "acx-l11-batch8-drafts/1",
+  "topic": "SHARE_IMPORT_PRIVACY_BACKUP_ALARM_SAFETY",
+  "status": "MODEL_PRELIMINARY_NOT_APPROVED",
+  "independentApproval": false,
+  "sourceRef": "app/src/main/res/values/strings.xml",
+  "records": [
+    {
+      "key": "share_import_discard",
+      "expectedEnglishPreview": "Discard",
+      "translations": {
+        "zh-TW": "捨棄",
+        "ja": "破棄"
+      },
+      "reviewRisk": "ALARM_SAFETY_AND_PRIVACY_CONTEXT_REVIEW"
+    },
+    {
+      "key": "share_import_saving",
+      "expectedEnglishPreview": "Saving",
+      "translations": {
+        "zh-TW": "儲存中",
+        "ja": "保存中"
+      },
+      "reviewRisk": "ALARM_SAFETY_AND_PRIVACY_CONTEXT_REVIEW"
+    },
+    {
+      "key": "share_import_save_without_enabling",
+      "expectedEnglishPreview": "Save without enabling",
+      "translations": {
+        "zh-TW": "儲存但不啟用",
+        "ja": "無効のまま保存"
+      },
+      "reviewRisk": "ALARM_SAFETY_AND_PRIVACY_CONTEXT_REVIEW"
+    },
+    {
+      "key": "share_import_discard_shared_alarm",
+      "expectedEnglishPreview": "Discard shared alarm",
+      "translations": {
+        "zh-TW": "捨棄分享的鬧鐘",
+        "ja": "共有されたアラームを破棄"
+      },
+      "reviewRisk": "ALARM_SAFETY_AND_PRIVACY_CONTEXT_REVIEW"
+    },
+    {
+      "key": "share_import_review_shared_alarm",
+      "expectedEnglishPreview": "Review shared alarm",
+      "translations": {
+        "zh-TW": "檢查分享的鬧鐘",
+        "ja": "共有されたアラームを確認"
+      },
+      "reviewRisk": "ALARM_SAFETY_AND_PRIVACY_CONTEXT_REVIEW"
+    },
+    {
+      "key": "share_import_saved_imports_stay_off_until",
+      "expectedEnglishPreview": "Saved imports stay off until you review and enable them.",
+      "translations": {
+        "zh-TW": "儲存後的匯入鬧鐘會保持停用，直到你檢查並啟用。",
+        "ja": "インポートしたアラームは確認して有効にするまで無効のまま保存されます。"
+      },
+      "reviewRisk": "ALARM_SAFETY_AND_PRIVACY_CONTEXT_REVIEW"
+    },
+    {
+      "key": "share_import_time",
+      "expectedEnglishPreview": "Time",
+      "translations": {
+        "zh-TW": "時間",
+        "ja": "時刻"
+      },
+      "reviewRisk": "ALARM_SAFETY_AND_PRIVACY_CONTEXT_REVIEW"
+    },
+    {
+      "key": "share_import_repeat",
+      "expectedEnglishPreview": "Repeat",
+      "translations": {
+        "zh-TW": "重複",
+        "ja": "繰り返し"
+      },
+      "reviewRisk": "ALARM_SAFETY_AND_PRIVACY_CONTEXT_REVIEW"
+    },
+    {
+      "key": "share_import_challenge",
+      "expectedEnglishPreview": "Challenge",
+      "translations": {
+        "zh-TW": "挑戰",
+        "ja": "チャレンジ"
+      },
+      "reviewRisk": "ALARM_SAFETY_AND_PRIVACY_CONTEXT_REVIEW"
+    },
+    {
+      "key": "share_import_status",
+      "expectedEnglishPreview": "Status",
+      "translations": {
+        "zh-TW": "狀態",
+        "ja": "状態"
+      },
+      "reviewRisk": "ALARM_SAFETY_AND_PRIVACY_CONTEXT_REVIEW"
+    },
+    {
+      "key": "share_import_private_references",
+      "expectedEnglishPreview": "Private references",
+      "translations": {
+        "zh-TW": "私人參照資料",
+        "ja": "個人情報への参照"
+      },
+      "reviewRisk": "ALARM_SAFETY_AND_PRIVACY_CONTEXT_REVIEW"
+    },
+    {
+      "key": "share_import_no_contact_location_wi_fi",
+      "expectedEnglishPreview": "No contact, location, Wi-Fi, media, or challenge reference was found.",
+      "translations": {
+        "zh-TW": "未發現聯絡人、位置、Wi-Fi、媒體或挑戰參照資料。",
+        "ja": "連絡先・位置・Wi-Fi・メディア・チャレンジへの参照は見つかりませんでした。"
+      },
+      "reviewRisk": "ALARM_SAFETY_AND_PRIVACY_CONTEXT_REVIEW"
+    },
+    {
+      "key": "share_import_sanitizing_keeps_wake_time_repeat",
+      "expectedEnglishPreview": "Sanitizing keeps the wake time and repeat pattern, but removes values that can identify devices, places, people, media, or challenge secrets.",
+      "translations": {
+        "zh-TW": "淨化匯入內容時會保留響鈴時間與重複規則，但移除可能識別裝置、地點、人員、媒體或挑戰密鑰的資料。",
+        "ja": "インポートデータの安全化では、起床時刻と繰り返し設定を保持し、端末・場所・人物・メディア・チャレンジの秘密情報を特定できる値を削除します。"
+      },
+      "reviewRisk": "ALARM_SAFETY_AND_PRIVACY_CONTEXT_REVIEW"
+    },
+    {
+      "key": "share_import_import_could_not_saved",
+      "expectedEnglishPreview": "Import could not be saved",
+      "translations": {
+        "zh-TW": "無法儲存匯入內容",
+        "ja": "インポートデータを保存できませんでした"
+      },
+      "reviewRisk": "ALARM_SAFETY_AND_PRIVACY_CONTEXT_REVIEW"
+    },
+    {
+      "key": "share_import_strip_private_references",
+      "expectedEnglishPreview": "Strip private references",
+      "translations": {
+        "zh-TW": "移除私人參照資料",
+        "ja": "個人情報への参照を削除"
+      },
+      "reviewRisk": "ALARM_SAFETY_AND_PRIVACY_CONTEXT_REVIEW"
+    },
+    {
+      "key": "share_clean",
+      "expectedEnglishPreview": "Clean",
+      "translations": {
+        "zh-TW": "已清理",
+        "ja": "クリーン"
+      },
+      "reviewRisk": "ALARM_SAFETY_AND_PRIVACY_CONTEXT_REVIEW"
+    },
+    {
+      "key": "share_challenge_none",
+      "expectedEnglishPreview": "None",
+      "translations": {
+        "zh-TW": "無",
+        "ja": "なし"
+      },
+      "reviewRisk": "ALARM_SAFETY_AND_PRIVACY_CONTEXT_REVIEW"
+    },
+    {
+      "key": "share_import_saved_off",
+      "expectedEnglishPreview": "Saved off until reviewed",
+      "translations": {
+        "zh-TW": "已儲存，待檢查後啟用",
+        "ja": "保存済み。確認まで無効"
+      },
+      "reviewRisk": "ALARM_SAFETY_AND_PRIVACY_CONTEXT_REVIEW"
+    },
+    {
+      "key": "share_default_alarm_label",
+      "expectedEnglishPreview": "Shared alarm",
+      "translations": {
+        "zh-TW": "分享的鬧鐘",
+        "ja": "共有されたアラーム"
+      },
+      "reviewRisk": "ALARM_SAFETY_AND_PRIVACY_CONTEXT_REVIEW"
+    },
+    {
+      "key": "share_review_before_saving",
+      "expectedEnglishPreview": "Review this shared alarm before saving it.",
+      "translations": {
+        "zh-TW": "儲存前請先檢查分享的鬧鐘。",
+        "ja": "保存する前に共有されたアラームを確認してください。"
+      },
+      "reviewRisk": "ALARM_SAFETY_AND_PRIVACY_CONTEXT_REVIEW"
+    },
+    {
+      "key": "share_import_failed",
+      "expectedEnglishPreview": "Unable to import this shared alarm.",
+      "translations": {
+        "zh-TW": "無法匯入這個分享的鬧鐘。",
+        "ja": "この共有アラームをインポートできませんでした。"
+      },
+      "reviewRisk": "ALARM_SAFETY_AND_PRIVACY_CONTEXT_REVIEW"
+    },
+    {
+      "key": "health_background_restricted",
+      "expectedEnglishPreview": "Android has restricted background activity. Review Alarm reliability in Settings.",
+      "translations": {
+        "zh-TW": "Android 已限制背景活動。請到設定檢查鬧鐘可靠性。",
+        "ja": "Android によってバックグラウンド動作が制限されています。設定でアラームの信頼性を確認してください。"
+      },
+      "reviewRisk": "ALARM_SAFETY_AND_PRIVACY_CONTEXT_REVIEW"
+    },
+    {
+      "key": "health_battery_optimization_manufacturer",
+      "expectedEnglishPreview": "Battery optimization is active on %1$s. Review its alarm reliability steps.",
+      "translations": {
+        "zh-TW": "%1$s 已啟用電池最佳化。請檢查裝置對鬧鐘的可靠性設定。",
+        "ja": "%1$s でバッテリーの最適化が有効です。アラームの動作に関する設定を確認してください。"
+      },
+      "reviewRisk": "ALARM_SAFETY_AND_PRIVACY_CONTEXT_REVIEW"
+    },
+    {
+      "key": "health_battery_optimization",
+      "expectedEnglishPreview": "Battery optimization is active, so alarms may not fire reliably.",
+      "translations": {
+        "zh-TW": "已啟用電池最佳化，鬧鐘可能無法可靠響鈴。",
+        "ja": "バッテリーの最適化が有効なため、アラームが確実に鳴らない可能性があります。"
+      },
+      "reviewRisk": "ALARM_SAFETY_AND_PRIVACY_CONTEXT_REVIEW"
+    },
+    {
+      "key": "health_exact_alarms_revoked",
+      "expectedEnglishPreview": "Exact alarm permission was revoked, so alarms cannot fire on time.",
+      "translations": {
+        "zh-TW": "精確鬧鐘權限已遭撤銷，鬧鐘無法準時響起。",
+        "ja": "正確なアラームの権限が取り消されたため、予定時刻に鳴らせません。"
+      },
+      "reviewRisk": "ALARM_SAFETY_AND_PRIVACY_CONTEXT_REVIEW"
+    },
+    {
+      "key": "backup_version_unsupported",
+      "expectedEnglishPreview": "Unsupported backup version %1$d.",
+      "translations": {
+        "zh-TW": "不支援備份版本 %1$d。",
+        "ja": "バックアップのバージョン %1$d には対応していません。"
+      },
+      "reviewRisk": "ALARM_SAFETY_AND_PRIVACY_CONTEXT_REVIEW"
+    },
+    {
+      "key": "backup_version_too_new",
+      "expectedEnglishPreview": "Unsupported backup version %1$d; this app understands 1-%2$d.",
+      "translations": {
+        "zh-TW": "不支援備份版本 %1$d；此 App 支援 1～%2$d。",
+        "ja": "バックアップのバージョン %1$d には対応していません。このアプリは 1～%2$d に対応しています。"
+      },
+      "reviewRisk": "ALARM_SAFETY_AND_PRIVACY_CONTEXT_REVIEW"
+    },
+    {
+      "key": "backup_version_older",
+      "expectedEnglishPreview": "Compatible older backup v%1$d; missing newer fields import with safe defaults.",
+      "translations": {
+        "zh-TW": "相容的舊版備份 v%1$d；較新的欄位若缺少，會使用安全的預設值。",
+        "ja": "対応する旧バージョンのバックアップ v%1$d です。新しい項目がない場合は安全な初期値を使用します。"
+      },
+      "reviewRisk": "ALARM_SAFETY_AND_PRIVACY_CONTEXT_REVIEW"
+    },
+    {
+      "key": "backup_version_current",
+      "expectedEnglishPreview": "Compatible backup v%1$d.",
+      "translations": {
+        "zh-TW": "相容的備份 v%1$d。",
+        "ja": "対応するバックアップ v%1$d です。"
+      },
+      "reviewRisk": "ALARM_SAFETY_AND_PRIVACY_CONTEXT_REVIEW"
+    },
+    {
+      "key": "test_alarm_device_launch_alarm_screen_play",
+      "expectedEnglishPreview": "Your device can launch the alarm screen, play audio, and vibrate. This did not create or change any saved alarms.",
+      "translations": {
+        "zh-TW": "此裝置可以開啟鬧鐘畫面、播放聲音並震動。本次測試不會建立或更改已儲存的鬧鐘。",
+        "ja": "この端末ではアラーム画面の起動、音の再生、振動が可能です。このテストでは保存済みのアラームを作成・変更していません。"
+      },
+      "reviewRisk": "ALARM_SAFETY_AND_PRIVACY_CONTEXT_REVIEW"
+    },
+    {
+      "key": "test_alarm_if_did_not_hear_feel",
+      "expectedEnglishPreview": "If you did not hear or feel this test, review volume, Do Not Disturb, and battery settings before relying on an overnight alarm.",
+      "translations": {
+        "zh-TW": "如果測試時沒有聽到或感受到提示，請先檢查音量、勿擾模式及電池設定，再依賴夜間鬧鐘。",
+        "ja": "このテストで音や振動を確認できなかった場合は、夜間のアラームに頼る前に音量・おやすみモード・バッテリー設定を確認してください。"
+      },
+      "reviewRisk": "ALARM_SAFETY_AND_PRIVACY_CONTEXT_REVIEW"
+    },
+    {
+      "key": "direct_boot_alarm_message",
+      "expectedEnglishPreview": "Device is still locked after reboot. Stop this fallback alarm, then unlock to restore full alarm controls.",
+      "translations": {
+        "zh-TW": "裝置重新開機後仍處於鎖定狀態。請先停止這個備用鬧鐘，然後解鎖以恢復完整操作。",
+        "ja": "再起動後も端末がロックされています。この代替アラームを停止し、ロックを解除してすべての操作を復元してください。"
+      },
+      "reviewRisk": "ALARM_SAFETY_AND_PRIVACY_CONTEXT_REVIEW"
+    }
+  ]
+}
