@@ -29,6 +29,7 @@ on:
       - feature/acx-l11b7-l12b2-integrated-qa-20261122
       - feature/acx-l11-b8-challenges-share-20261122
       - feature/acx-l11b8-l12b3-integrated-qa-20261122
+      - feature/acx-l12-b4-aapt2-review-20261122
     paths:
       - "scripts/localization/**"
       - "localization/governance/**"
@@ -172,6 +173,36 @@ jobs:
             exit 1
           fi
           echo "L12-3 official release correctly blocked."
+      - name: L12-4 - Create isolated unapproved Android XML and review warning list
+        run: |
+          node --test scripts/localization/l12-b4-aapt2-staging.test.mjs
+          node scripts/localization/l12-b4-aapt2-staging.mjs --out-dir build/localization/L12_B4_AAPT2_ISOLATED_UNAPPROVED
+      - name: L12-4 - Compile isolated candidate XML with actual Android aapt2 (not a release)
+        shell: bash
+        run: |
+          set -euo pipefail
+          STAGE="build/localization/L12_B4_AAPT2_ISOLATED_UNAPPROVED"
+          SDK_ROOT="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-}}"
+          if [[ -z "$SDK_ROOT" || ! -d "$SDK_ROOT/build-tools" ]]; then
+            echo "Android build-tools unavailable; cannot claim aapt2 verification" >&2
+            exit 1
+          fi
+          AAPT2="$(find "$SDK_ROOT/build-tools" -mindepth 2 -maxdepth 2 -type f -name aapt2 | sort -V | tail -1)"
+          if [[ -z "$AAPT2" || ! -x "$AAPT2" ]]; then
+            echo "No executable aapt2 available; resource compilation not validated" >&2
+            exit 1
+          fi
+          "$AAPT2" version
+          "$AAPT2" compile --dir "$STAGE/res" -o "$STAGE/unapproved-candidate-resources.zip"
+          sha256sum "$STAGE/unapproved-candidate-resources.zip" > "$STAGE/isolated-aapt2-compiled-sha256.txt"
+          unzip -l "$STAGE/unapproved-candidate-resources.zip" > "$STAGE/isolated-aapt2-contents.txt"
+          echo "L12-4 staged resources were compiled in isolation. NO HUMAN APPROVAL, NO FULL APP BUILD."
+      - name: Publish L12-4 isolated aapt2 compilation and unresolved warning review
+        uses: actions/upload-artifact@v4
+        with:
+          name: acx-l12-b4-isolated-aapt2-unapproved-review
+          path: build/localization/L12_B4_AAPT2_ISOLATED_UNAPPROVED/
+          retention-days: 14
       - name: Publish L12-3 Android XML review-only preflight evidence
         uses: actions/upload-artifact@v4
         with:
