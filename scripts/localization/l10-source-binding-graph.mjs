@@ -101,7 +101,7 @@ function textApi(line, window, ext) {
     return "QUANTITY_RESOURCE_API_CANDIDATE";
   if (/\b(?:getString|stringResource|getText)\s*\(/.test(line))
     return "DIRECT_RESOURCE_API_CANDIDATE";
-  if (/\b(?:titleRes|descriptionRes|labelRes|textForResource|resId|resourceId|iconTextRes)\b/.test(line))
+  if (/(?:\b(?:titleRes|descriptionRes|labelRes|textForResource|resId|resourceId|iconTextRes)\b|\b\w+Res\b)/.test(line))
     return "INDIRECT_ID_CANDIDATE";
   if (/\b(?:getIdentifier|Class\.forName)\s*\(/.test(line))
     return "DYNAMIC_ID_NEEDS_REVIEW";
