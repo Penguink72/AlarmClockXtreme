@@ -22,12 +22,12 @@ function fixture(){
     l12=buildL12({l11,graph:i.graph,matrix,glossary});
   return cached=stageSourceRows({l11,l12,matrix,reviewDecisions,glossary,g4Ledger});
 }
-test("L12-B4 stages exactly 2680 review-only locale rows, not approved App resources",()=>{
+test("L12-B4 stages exactly 2986 review-only locale rows, not approved App resources",()=>{
   const x=buildStagingResources(fixture());
   assert.deepEqual(Object.keys(x.files).sort(),[
     "values-b+zh+Hant+TW/strings.xml","values-ja/strings.xml"]);
-  assert.equal(x.manifest.candidatesByLocale["zh-TW"],1340);
-  assert.equal(x.manifest.candidatesByLocale.ja,1340);
+  assert.equal(x.manifest.candidatesByLocale["zh-TW"],1493);
+  assert.equal(x.manifest.candidatesByLocale.ja,1493);
   assert(x.manifest.fileSha256["values-ja/strings.xml"].startsWith("sha256:"));
   assert.equal(x.manifest.independentSemanticApproval,false);
   assert.equal(x.manifest.sourceStringsXmlMutated,false);
@@ -38,14 +38,14 @@ test("L12-B4 emitted XML contains single resources root and structurally delimit
   for(const content of Object.values(x.files)){
     assert.equal((content.match(/<resources>/g)||[]).length,1);
     assert.equal((content.match(/<\/resources>/g)||[]).length,1);
-    assert.equal((content.match(/<string name=/g)||[]).length,1340);
+    assert.equal((content.match(/<string name=/g)||[]).length,1493);
     assert(!content.includes("<script>"));
     assert(content.includes("NEVER COPY TO PRODUCTION"));
   }
 });
 test("L12-B4 flags all unresolved English/percent warnings without machine approval",()=>{
   const x=triageWarnings(fixture());
-  assert.equal(x.stats.unchangedEnglish,22);
+  assert.equal(x.stats.unchangedEnglish,29);
   assert.equal(x.stats.percent,12);
   assert.equal(x.stats.authorizedDecisions,0);
   assert(x.stats.rows>=32);
