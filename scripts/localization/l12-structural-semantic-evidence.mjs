@@ -19,7 +19,7 @@ export function risksFor(key,source){
   if(/delete|remove|clear|reset|replace|restore|import|backup|erase/i.test(txt))out.push("DATA_LOSS_OR_RESTORE");
   if(/snooze|dismiss|alarmfiring|alarm_fired|realarm|wake_confirm|cancel|schedule|missed_alarm/i.test(txt))
     out.push("ALARM_FIRING_CONTROL");
-  if(/webhook|secret|passphrase|private|privacy|permission|guardian|sms|contact|network|hue|certificate|health.connect|sleep.data/i.test(txt))
+  if(/webhook|secret|passphrase|private|privacy|permission|guardian|sms|contact|network|hue|certificate|health|read_sleep|sleep.data/i.test(txt))
     out.push("SECURITY_PRIVACY_PERMISSION");
   if(/playlist|music.library|ringtone|track|music.pool|media.source|playback.history|stream.url/i.test(txt))
     out.push("MEDIA_SOURCE_PLAYBACK");
