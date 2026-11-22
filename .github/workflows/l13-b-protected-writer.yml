@@ -23,6 +23,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
+      - uses: android-actions/setup-android@v4
+      - name: Install SDK build tools for actual Android aapt2
+        run: sdkmanager --install "build-tools;36.0.0"
       - name: Verify 3100-row protected review packet and all resource-kind gates
         run: |
           node --test scripts/localization/l12-b6-independent-review.test.mjs
@@ -38,7 +41,7 @@ jobs:
         run: |
           set -euo pipefail
           STAGE="build/localization/L13_B_ISOLATED_UNAPPROVED"
-          SDK_ROOT="\${ANDROID_HOME:-\${ANDROID_SDK_ROOT:-}}"
+          SDK_ROOT="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-}}"
           if [[ -z "$SDK_ROOT" || ! -d "$SDK_ROOT/build-tools" ]]; then
             echo "Cannot claim aapt2 without SDK build tools" >&2
             exit 1
