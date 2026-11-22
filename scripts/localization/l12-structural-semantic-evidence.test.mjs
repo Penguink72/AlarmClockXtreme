@@ -24,12 +24,12 @@ function result(){
   return buildL12({l11,graph:inputs.graph,matrix,glossary});
 }
 
-test("L12 consumes exactly all 2074 L11 candidate locale rows without changing or approving resources",()=>{
+test("L12 consumes the exact current L11 review queue without publishing or approving resources",()=>{
   const d=result();
-  assert.equal(d.stats.totalCandidates,2074);
-  assert.equal(d.records.length,2074);
-  assert.equal(d.stats.byLocale["zh-TW"],1037);
-  assert.equal(d.stats.byLocale.ja,1037);
+  assert.equal(d.stats.totalCandidates,2306);
+  assert.equal(d.records.length,2306);
+  assert.equal(d.stats.byLocale["zh-TW"],1153);
+  assert.equal(d.stats.byLocale.ja,1153);
   assert.equal(d.stats.officialReleaseEligible,0);
   assert.equal(d.stats.independentSemanticApproved,0);
   assert(d.records.every(r=>r.independentSemanticApproval===false));
