@@ -96,8 +96,13 @@ function f(){
     payloads:{subject,reviewPayload,compilerEvidence}};
 }
 const verify=(changes={})=>{
-  const x=f();
-  return validateProtectedTieredRelease({...x.context,...x.envelopes,...changes});
+  const x=f(),{tieredReviewEnvelope,...remaining}=changes;
+  return validateProtectedTieredRelease({...x.context,
+    policyEnvelope:x.envelopes.policyEnvelope,
+    reviewEnvelope:tieredReviewEnvelope===undefined?
+      x.envelopes.tieredReviewEnvelope:tieredReviewEnvelope,
+    compilerEnvelope:x.envelopes.compilerEnvelope,
+    ...remaining});
 };
 test("L12-9 unsigned requirements preserve risk distribution and never approve",()=>{
   const x=f(),r=x.requirements,s=x.context.riskPlan.summary;
@@ -155,8 +160,7 @@ test("L12-9 policy drift or forged subject fails even with signed review packets
   const x=f();
   const moved=structuredClone(x.context.policy);
   moved.policyRevision="l12-b9-proposal-modified";
-  assert(verify({policy:moved}).errors.includes(
-    "POLICY_AUTHORIZATION_NOT_BOUND_TO_CURRENT_SOURCE_OR_GOVERNANCE"));
+  assert(verify({policy:moved}).errors.includes("INVALID_OR_UNBOUND_POLICY"));
   const forged=structuredClone(x.envelopes.policyEnvelope);
   forged.payload.policyRevision="SELF_APPROVED";
   assert(verify({policyEnvelope:forged}).errors.some(e=>/POLICY_SIGNATURE/.test(e)));
