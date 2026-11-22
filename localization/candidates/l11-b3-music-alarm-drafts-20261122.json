@@ -1,0 +1,621 @@
+{
+  "schema": "acx-l11-batch3-drafts/1",
+  "topic": "MUSIC_SOURCES_ALARM_CONTROL",
+  "status": "MODEL_PRELIMINARY_NOT_APPROVED",
+  "independentApproval": false,
+  "sourceRef": "app/src/main/res/values/strings.xml",
+  "records": [
+    {
+      "key": "alarm_edit_ringtone_pool",
+      "expectedEnglishPreview": "Ringtone pool",
+      "translations": {
+        "zh-TW": "鈴聲隨機播放池",
+        "ja": "着信音のランダム再生プール"
+      },
+      "reviewRisk": "OPERATION_AND_MEDIA_SEMANTICS_REVIEW"
+    },
+    {
+      "key": "alarm_edit_remove_ringtone",
+      "expectedEnglishPreview": "Remove %1$s from ringtone pool",
+      "translations": {
+        "zh-TW": "將 %1$s 從鈴聲池移除",
+        "ja": "%1$s を着信音プールから外す"
+      },
+      "reviewRisk": "OPERATION_AND_MEDIA_SEMANTICS_REVIEW"
+    },
+    {
+      "key": "alarm_edit_ringtone_pool_hint",
+      "expectedEnglishPreview": "When the pool is non-empty, a random entry is picked each fire and overrides the single Ringtone setting above. Tap a chip to remove it.",
+      "translations": {
+        "zh-TW": "鈴聲池不為空時，每次響鈴會隨機選擇其中一項，並取代上方單一鈴聲設定。點選標籤可將其移除。",
+        "ja": "プールに音がある場合、アラームが鳴るたびに1曲をランダムに選び、上の単一着信音設定より優先します。項目をタップするとプールから外せます。"
+      },
+      "reviewRisk": "OPERATION_AND_MEDIA_SEMANTICS_REVIEW"
+    },
+    {
+      "key": "alarm_edit_ringtone_uri",
+      "expectedEnglishPreview": "Ringtone URI",
+      "translations": {
+        "zh-TW": "鈴聲 URI",
+        "ja": "着信音の URI"
+      },
+      "reviewRisk": "OPERATION_AND_MEDIA_SEMANTICS_REVIEW"
+    },
+    {
+      "key": "alarm_edit_default_sound",
+      "expectedEnglishPreview": "Default sound",
+      "translations": {
+        "zh-TW": "預設聲音",
+        "ja": "既定のサウンド"
+      },
+      "reviewRisk": "OPERATION_AND_MEDIA_SEMANTICS_REVIEW"
+    },
+    {
+      "key": "alarm_edit_empty_ringtone",
+      "expectedEnglishPreview": "(empty)",
+      "translations": {
+        "zh-TW": "（空白）",
+        "ja": "（空）"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_challenge_audio_ducking",
+      "expectedEnglishPreview": "Quieter audio during challenges",
+      "translations": {
+        "zh-TW": "進行挑戰時降低音量",
+        "ja": "チャレンジ中に音量を下げる"
+      },
+      "reviewRisk": "OPERATION_AND_MEDIA_SEMANTICS_REVIEW"
+    },
+    {
+      "key": "settings_challenge_audio_ducking_description",
+      "expectedEnglishPreview": "Reduces only this alarm\\’s player volume while you solve a dismiss challenge; calls still mute it completely.",
+      "translations": {
+        "zh-TW": "完成解除挑戰時，只降低這次鬧鐘的播放器音量；來電仍會完全靜音。",
+        "ja": "停止チャレンジ中は、このアラームの再生音量だけを下げます。通話中は引き続き完全に消音します。"
+      },
+      "reviewRisk": "OPERATION_AND_MEDIA_SEMANTICS_REVIEW"
+    },
+    {
+      "key": "settings_unusable_media_warning",
+      "expectedEnglishPreview": "These sounds and images belong to apps this phone cannot read, so they will fall back to the default:",
+      "translations": {
+        "zh-TW": "這些聲音與圖片屬於手機無法讀取的 App 來源，因此將改用預設項目：",
+        "ja": "この端末から読み取れないアプリに属する音声や画像のため、既定の項目に切り替わります："
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "stats_clear_alarm_history",
+      "expectedEnglishPreview": "Clear alarm history?",
+      "translations": {
+        "zh-TW": "要清除鬧鐘歷史紀錄嗎？",
+        "ja": "アラーム履歴を消去しますか？"
+      },
+      "reviewRisk": "OPERATION_AND_MEDIA_SEMANTICS_REVIEW"
+    },
+    {
+      "key": "stats_no_alarm_history_yet",
+      "expectedEnglishPreview": "No alarm history yet",
+      "translations": {
+        "zh-TW": "目前沒有鬧鐘歷史紀錄",
+        "ja": "アラーム履歴はまだありません"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "stats_no_history_matches",
+      "expectedEnglishPreview": "No history matches",
+      "translations": {
+        "zh-TW": "沒有符合條件的歷史紀錄",
+        "ja": "条件に一致する履歴はありません"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "stopwatch_lap_history",
+      "expectedEnglishPreview": "Lap history",
+      "translations": {
+        "zh-TW": "計圈紀錄",
+        "ja": "ラップ履歴"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "youtube_download_alarm_sound",
+      "expectedEnglishPreview": "Download alarm sound",
+      "translations": {
+        "zh-TW": "下載鬧鐘聲音",
+        "ja": "アラーム音をダウンロード"
+      },
+      "reviewRisk": "OPERATION_AND_MEDIA_SEMANTICS_REVIEW"
+    },
+    {
+      "key": "youtube_paste_youtube_url_audio_saved",
+      "expectedEnglishPreview": "Paste a YouTube URL. The audio is saved into your device’s Alarms folder, so it appears wherever you pick alarm sounds.",
+      "translations": {
+        "zh-TW": "貼上 YouTube 網址。音訊會儲存到裝置的 Alarms 資料夾，並出現在鬧鐘聲音選擇清單中。",
+        "ja": "YouTube の URL を貼り付けます。音声は端末の Alarms フォルダーに保存され、アラーム音の選択画面から選べます。"
+      },
+      "reviewRisk": "OPERATION_AND_MEDIA_SEMANTICS_REVIEW"
+    },
+    {
+      "key": "youtube_name_sound_optional",
+      "expectedEnglishPreview": "Name this sound (optional)",
+      "translations": {
+        "zh-TW": "為這段聲音命名（選填）",
+        "ja": "この音に名前を付ける（任意）"
+      },
+      "reviewRisk": "OPERATION_AND_MEDIA_SEMANTICS_REVIEW"
+    },
+    {
+      "key": "youtube_try_shorter_phrase_different_sound",
+      "expectedEnglishPreview": "Try a shorter phrase, a different sound name, or paste a direct URL instead.",
+      "translations": {
+        "zh-TW": "請縮短詞句、改用其他聲音名稱，或直接貼上網址後重試。",
+        "ja": "短いフレーズや別の音声名を使うか、直接 URL を貼り付けてください。"
+      },
+      "reviewRisk": "OPERATION_AND_MEDIA_SEMANTICS_REVIEW"
+    },
+    {
+      "key": "bedtime_sounds_stop_sound",
+      "expectedEnglishPreview": "Stop sound",
+      "translations": {
+        "zh-TW": "停止播放聲音",
+        "ja": "サウンドの再生を停止"
+      },
+      "reviewRisk": "OPERATION_AND_MEDIA_SEMANTICS_REVIEW"
+    },
+    {
+      "key": "bedtime_sounds_sleep_sounds",
+      "expectedEnglishPreview": "Sleep sounds",
+      "translations": {
+        "zh-TW": "助眠聲音",
+        "ja": "睡眠用サウンド"
+      },
+      "reviewRisk": "OPERATION_AND_MEDIA_SEMANTICS_REVIEW"
+    },
+    {
+      "key": "bedtime_sounds_continuous_procedural_soundscapes_no_looping",
+      "expectedEnglishPreview": "Continuous procedural soundscapes with no looping artifacts.",
+      "translations": {
+        "zh-TW": "連續生成的環境音景，不會出現循環播放的接縫。",
+        "ja": "ループのつなぎ目が目立たない、連続生成のサウンドスケープです。"
+      },
+      "reviewRisk": "OPERATION_AND_MEDIA_SEMANTICS_REVIEW"
+    },
+    {
+      "key": "bedtime_sounds_fade_out_after",
+      "expectedEnglishPreview": "Fade out after",
+      "translations": {
+        "zh-TW": "多久後淡出",
+        "ja": "フェードアウト開始まで"
+      },
+      "reviewRisk": "OPERATION_AND_MEDIA_SEMANTICS_REVIEW"
+    },
+    {
+      "key": "bedtime_sounds_final_taper_length",
+      "expectedEnglishPreview": "Final taper length",
+      "translations": {
+        "zh-TW": "最後淡出時間",
+        "ja": "最後のフェードアウト時間"
+      },
+      "reviewRisk": "OPERATION_AND_MEDIA_SEMANTICS_REVIEW"
+    },
+    {
+      "key": "share_sound_pool",
+      "expectedEnglishPreview": "Random ringtone pool",
+      "translations": {
+        "zh-TW": "隨機鈴聲池",
+        "ja": "ランダム着信音プール"
+      },
+      "reviewRisk": "OPERATION_AND_MEDIA_SEMANTICS_REVIEW"
+    },
+    {
+      "key": "share_sound_radio",
+      "expectedEnglishPreview": "Internet radio",
+      "translations": {
+        "zh-TW": "網路廣播",
+        "ja": "インターネットラジオ"
+      },
+      "reviewRisk": "OPERATION_AND_MEDIA_SEMANTICS_REVIEW"
+    },
+    {
+      "key": "share_sound_spotify",
+      "expectedEnglishPreview": "Spotify",
+      "translations": {
+        "zh-TW": "Spotify",
+        "ja": "Spotify"
+      },
+      "reviewRisk": "OPERATION_AND_MEDIA_SEMANTICS_REVIEW"
+    },
+    {
+      "key": "share_sound_silent",
+      "expectedEnglishPreview": "Silent alarm",
+      "translations": {
+        "zh-TW": "靜音鬧鐘",
+        "ja": "無音アラーム"
+      },
+      "reviewRisk": "OPERATION_AND_MEDIA_SEMANTICS_REVIEW"
+    },
+    {
+      "key": "share_sound_custom",
+      "expectedEnglishPreview": "Custom ringtone",
+      "translations": {
+        "zh-TW": "自訂鈴聲",
+        "ja": "カスタム着信音"
+      },
+      "reviewRisk": "OPERATION_AND_MEDIA_SEMANTICS_REVIEW"
+    },
+    {
+      "key": "share_sound_default",
+      "expectedEnglishPreview": "Device default",
+      "translations": {
+        "zh-TW": "裝置預設",
+        "ja": "端末の既定値"
+      },
+      "reviewRisk": "OPERATION_AND_MEDIA_SEMANTICS_REVIEW"
+    },
+    {
+      "key": "stats_history_cleared",
+      "expectedEnglishPreview": "History cleared",
+      "translations": {
+        "zh-TW": "已清除歷史紀錄",
+        "ja": "履歴を消去しました"
+      },
+      "reviewRisk": "OPERATION_AND_MEDIA_SEMANTICS_REVIEW"
+    },
+    {
+      "key": "stats_could_not_clear_history",
+      "expectedEnglishPreview": "Could not clear history",
+      "translations": {
+        "zh-TW": "無法清除歷史紀錄",
+        "ja": "履歴を消去できませんでした"
+      },
+      "reviewRisk": "OPERATION_AND_MEDIA_SEMANTICS_REVIEW"
+    },
+    {
+      "key": "alarm_edit_dismiss_action",
+      "expectedEnglishPreview": "Run when dismissed",
+      "translations": {
+        "zh-TW": "解除後執行",
+        "ja": "停止後に実行"
+      },
+      "reviewRisk": "OPERATION_AND_MEDIA_SEMANTICS_REVIEW"
+    },
+    {
+      "key": "alarm_edit_dismiss_action_none",
+      "expectedEnglishPreview": "Nothing",
+      "translations": {
+        "zh-TW": "不執行任何動作",
+        "ja": "何もしない"
+      },
+      "reviewRisk": "OPERATION_AND_MEDIA_SEMANTICS_REVIEW"
+    },
+    {
+      "key": "alarm_edit_dismiss_action_webhook",
+      "expectedEnglishPreview": "Call a webhook",
+      "translations": {
+        "zh-TW": "呼叫 Webhook",
+        "ja": "Webhook を呼び出す"
+      },
+      "reviewRisk": "OPERATION_AND_MEDIA_SEMANTICS_REVIEW"
+    },
+    {
+      "key": "alarm_edit_dismiss_action_hue_scene",
+      "expectedEnglishPreview": "Set a Hue scene",
+      "translations": {
+        "zh-TW": "設定 Hue 場景",
+        "ja": "Hue シーンを設定"
+      },
+      "reviewRisk": "OPERATION_AND_MEDIA_SEMANTICS_REVIEW"
+    },
+    {
+      "key": "alarm_edit_dismiss_action_broadcast",
+      "expectedEnglishPreview": "Send a broadcast",
+      "translations": {
+        "zh-TW": "傳送廣播 Intent",
+        "ja": "ブロードキャストを送信"
+      },
+      "reviewRisk": "OPERATION_AND_MEDIA_SEMANTICS_REVIEW"
+    },
+    {
+      "key": "alarm_edit_dismiss_action_payload_hue_scene",
+      "expectedEnglishPreview": "Scene ID",
+      "translations": {
+        "zh-TW": "場景 ID",
+        "ja": "シーン ID"
+      },
+      "reviewRisk": "OPERATION_AND_MEDIA_SEMANTICS_REVIEW"
+    },
+    {
+      "key": "alarm_edit_dismiss_action_payload_broadcast",
+      "expectedEnglishPreview": "Intent action",
+      "translations": {
+        "zh-TW": "Intent 動作",
+        "ja": "Intent アクション"
+      },
+      "reviewRisk": "OPERATION_AND_MEDIA_SEMANTICS_REVIEW"
+    },
+    {
+      "key": "alarm_edit_dismiss_action_hint",
+      "expectedEnglishPreview": "Fires once, right after you dismiss this alarm. Webhooks must be HTTPS. A Hue scene needs the bridge set up in Settings. A broadcast action is for automation apps such as Tasker.",
+      "translations": {
+        "zh-TW": "解除鬧鐘後立即執行一次。Webhook 必須使用 HTTPS。Hue 場景需要先在設定中完成橋接器設定；廣播動作可供 Tasker 等自動化 App 使用。",
+        "ja": "アラーム停止の直後に1回だけ実行します。Webhook には HTTPS が必要です。Hue シーンには設定画面でブリッジの設定が必要です。ブロードキャストは Tasker などの自動化アプリ向けです。"
+      },
+      "reviewRisk": "OPERATION_AND_MEDIA_SEMANTICS_REVIEW"
+    },
+    {
+      "key": "alarm_edit_dismiss_action_invalid",
+      "expectedEnglishPreview": "That value will not be accepted. Check the format for the action you picked.",
+      "translations": {
+        "zh-TW": "無法接受這個值。請檢查所選動作的輸入格式。",
+        "ja": "この値は使用できません。選択したアクションの入力形式を確認してください。"
+      },
+      "reviewRisk": "OPERATION_AND_MEDIA_SEMANTICS_REVIEW"
+    },
+    {
+      "key": "alarm_edit_early_dismiss",
+      "expectedEnglishPreview": "Early dismiss window",
+      "translations": {
+        "zh-TW": "提前解除時間範圍",
+        "ja": "事前停止できる時間帯"
+      },
+      "reviewRisk": "OPERATION_AND_MEDIA_SEMANTICS_REVIEW"
+    },
+    {
+      "key": "alarm_edit_early_dismiss_hint",
+      "expectedEnglishPreview": "Allows a deliberate early skip from the upcoming-alarm notification before the ring begins.",
+      "translations": {
+        "zh-TW": "允許鬧鐘響鈴前，從即將響鈴的通知主動略過這次提醒。",
+        "ja": "アラームが鳴り始める前に、次のアラーム通知から意図的にスキップできます。"
+      },
+      "reviewRisk": "OPERATION_AND_MEDIA_SEMANTICS_REVIEW"
+    },
+    {
+      "key": "alarm_edit_wifi_dismiss_ssid",
+      "expectedEnglishPreview": "Wi-Fi dismiss SSID (connect to this network to dismiss)",
+      "translations": {
+        "zh-TW": "用於解除鬧鐘的 Wi-Fi SSID（連線後可解除）",
+        "ja": "停止用 Wi-Fi SSID（接続すると停止可能）"
+      },
+      "reviewRisk": "OPERATION_AND_MEDIA_SEMANTICS_REVIEW"
+    },
+    {
+      "key": "alarm_edit_hardware_snooze",
+      "expectedEnglishPreview": "Snooze on any key",
+      "translations": {
+        "zh-TW": "按任意按鍵可貪睡",
+        "ja": "いずれかのキーでスヌーズ"
+      },
+      "reviewRisk": "OPERATION_AND_MEDIA_SEMANTICS_REVIEW"
+    },
+    {
+      "key": "alarm_edit_hardware_dismiss",
+      "expectedEnglishPreview": "Dismiss on any key",
+      "translations": {
+        "zh-TW": "按任意按鍵可解除",
+        "ja": "いずれかのキーで停止"
+      },
+      "reviewRisk": "OPERATION_AND_MEDIA_SEMANTICS_REVIEW"
+    },
+    {
+      "key": "alarm_edit_hold_to_dismiss",
+      "expectedEnglishPreview": "Hold to dismiss",
+      "translations": {
+        "zh-TW": "長按才能解除",
+        "ja": "長押しで停止"
+      },
+      "reviewRisk": "OPERATION_AND_MEDIA_SEMANTICS_REVIEW"
+    },
+    {
+      "key": "alarm_edit_hold_to_dismiss_hint",
+      "expectedEnglishPreview": "When enabled, the firing screen requires holding Dismiss for the configured duration. Swipe-left dismissal is replaced with a visible hold prompt.",
+      "translations": {
+        "zh-TW": "啟用後，鬧鐘響鈴畫面必須長按「解除」達指定時間。向左滑動解除會改成顯示長按提示。",
+        "ja": "有効にすると、アラーム画面で指定時間「停止」を長押しする必要があります。左スワイプ停止の代わりに長押し案内が表示されます。"
+      },
+      "reviewRisk": "OPERATION_AND_MEDIA_SEMANTICS_REVIEW"
+    },
+    {
+      "key": "alarm_edit_dismiss_song_end",
+      "expectedEnglishPreview": "Dismiss when song finishes",
+      "translations": {
+        "zh-TW": "歌曲結束時解除鬧鐘",
+        "ja": "曲の終了時にアラームを停止"
+      },
+      "reviewRisk": "OPERATION_AND_MEDIA_SEMANTICS_REVIEW"
+    },
+    {
+      "key": "alarm_edit_dismiss_song_end_hint",
+      "expectedEnglishPreview": "Turns off looping and auto-dismisses the alarm when the chosen ringtone or track finishes naturally. Internet radio ignores this setting.",
+      "translations": {
+        "zh-TW": "關閉循環播放，並在所選鈴聲或歌曲自然結束時自動解除鬧鐘。網路廣播不適用此設定。",
+        "ja": "ループ再生を無効にし、選択した着信音や曲が自然に終わるとアラームを自動停止します。インターネットラジオには適用されません。"
+      },
+      "reviewRisk": "OPERATION_AND_MEDIA_SEMANTICS_REVIEW"
+    },
+    {
+      "key": "alarm_edit_gentle_wake_active",
+      "expectedEnglishPreview": "Gentle wake active",
+      "translations": {
+        "zh-TW": "溫和喚醒已啟用",
+        "ja": "やさしい起床設定が有効"
+      },
+      "reviewRisk": "OPERATION_AND_MEDIA_SEMANTICS_REVIEW"
+    },
+    {
+      "key": "alarm_edit_apply_gentle_wake",
+      "expectedEnglishPreview": "Apply gentle wake preset",
+      "translations": {
+        "zh-TW": "套用溫和喚醒預設值",
+        "ja": "やさしい起床プリセットを適用"
+      },
+      "reviewRisk": "OPERATION_AND_MEDIA_SEMANTICS_REVIEW"
+    },
+    {
+      "key": "alarm_edit_gentle_wake_hint",
+      "expectedEnglishPreview": "Sets 2-min volume fade, 1-min vibration delay, and sunrise simulation for a calm wake.",
+      "translations": {
+        "zh-TW": "設定 2 分鐘音量漸增、1 分鐘後開始震動，以及日出模擬效果，讓喚醒更柔和。",
+        "ja": "2分間の音量フェードイン、1分後の振動開始、日の出演出を設定し、穏やかに目覚められるようにします。"
+      },
+      "reviewRisk": "OPERATION_AND_MEDIA_SEMANTICS_REVIEW"
+    },
+    {
+      "key": "alarm_edit_flash_wake",
+      "expectedEnglishPreview": "Flash wake (brighten screen)",
+      "translations": {
+        "zh-TW": "閃光喚醒（提高螢幕亮度）",
+        "ja": "フラッシュ起床（画面を明るくする）"
+      },
+      "reviewRisk": "OPERATION_AND_MEDIA_SEMANTICS_REVIEW"
+    },
+    {
+      "key": "alarm_edit_flash_wake_hint",
+      "expectedEnglishPreview": "Gradually increases screen brightness alongside volume.",
+      "translations": {
+        "zh-TW": "隨音量逐漸增加螢幕亮度。",
+        "ja": "音量とともに画面の明るさを徐々に上げます。"
+      },
+      "reviewRisk": "OPERATION_AND_MEDIA_SEMANTICS_REVIEW"
+    },
+    {
+      "key": "alarm_edit_background_image",
+      "expectedEnglishPreview": "Firing background image",
+      "translations": {
+        "zh-TW": "響鈴背景圖片",
+        "ja": "アラーム中の背景画像"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarm_edit_background_optional_hint",
+      "expectedEnglishPreview": "Optional. The ringing screen keeps the standard gradient until you choose an image.",
+      "translations": {
+        "zh-TW": "選用。選擇圖片前，響鈴畫面會維持標準漸層背景。",
+        "ja": "任意。画像を選択するまでは、アラーム画面に標準のグラデーションが表示されます。"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarm_edit_show_ringing_image",
+      "expectedEnglishPreview": "Show image while ringing",
+      "translations": {
+        "zh-TW": "響鈴時顯示圖片",
+        "ja": "アラーム中に画像を表示"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarm_edit_clear_background",
+      "expectedEnglishPreview": "Clear background image",
+      "translations": {
+        "zh-TW": "清除背景圖片",
+        "ja": "背景画像を解除"
+      },
+      "reviewRisk": "OPERATION_AND_MEDIA_SEMANTICS_REVIEW"
+    },
+    {
+      "key": "alarm_edit_background_enabled_hint",
+      "expectedEnglishPreview": "Ringing screen image is enabled for this alarm.",
+      "translations": {
+        "zh-TW": "這個鬧鐘已啟用響鈴背景圖片。",
+        "ja": "このアラームでは背景画像が有効です。"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarm_edit_background_disabled_hint",
+      "expectedEnglishPreview": "Image is saved for this alarm but the ringing screen still uses the standard gradient.",
+      "translations": {
+        "zh-TW": "圖片已儲存於這個鬧鐘，但響鈴畫面仍使用標準漸層背景。",
+        "ja": "画像はこのアラームに保存されていますが、アラーム画面では標準のグラデーションを使用します。"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarm_edit_confirm_awake",
+      "expectedEnglishPreview": "Confirm you’re awake",
+      "translations": {
+        "zh-TW": "確認已清醒",
+        "ja": "起きたことを確認"
+      },
+      "reviewRisk": "OPERATION_AND_MEDIA_SEMANTICS_REVIEW"
+    },
+    {
+      "key": "alarm_edit_realarm_delay",
+      "expectedEnglishPreview": "Re-alarm delay if not confirmed",
+      "translations": {
+        "zh-TW": "未確認時再次響鈴的延遲時間",
+        "ja": "未確認時の再アラームまでの時間"
+      },
+      "reviewRisk": "OPERATION_AND_MEDIA_SEMANTICS_REVIEW"
+    },
+    {
+      "key": "alarm_edit_realarm_hint",
+      "expectedEnglishPreview": "A notification will appear after dismissal. If you don’t confirm within the delay, the alarm re-fires.",
+      "translations": {
+        "zh-TW": "解除鬧鐘後會出現通知。若未在指定時間內確認已清醒，鬧鐘將再次響起。",
+        "ja": "アラーム停止後に通知が表示されます。指定時間内に起床を確認しない場合、再びアラームが鳴ります。"
+      },
+      "reviewRisk": "OPERATION_AND_MEDIA_SEMANTICS_REVIEW"
+    },
+    {
+      "key": "alarm_edit_light_sleep",
+      "expectedEnglishPreview": "Wake during light sleep",
+      "translations": {
+        "zh-TW": "淺眠時喚醒",
+        "ja": "浅い睡眠中に起こす"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarm_edit_detection_window",
+      "expectedEnglishPreview": "Detection window",
+      "translations": {
+        "zh-TW": "偵測時間範圍",
+        "ja": "検出する時間帯"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarm_edit_smart_alarm_hint",
+      "expectedEnglishPreview": "Uses conservative phone-motion scoring and waits for enough evidence before firing early.",
+      "translations": {
+        "zh-TW": "依手機動作採取保守評分，在有足夠依據後才提早響鈴。",
+        "ja": "端末の動きから控えめに判定し、十分な根拠が得られた場合にのみ早めに鳴らします。"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarm_edit_skip_holidays",
+      "expectedEnglishPreview": "Skip on public holidays",
+      "translations": {
+        "zh-TW": "國定假日略過",
+        "ja": "祝日はスキップ"
+      },
+      "reviewRisk": "TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "alarm_edit_radio_https_required",
+      "expectedEnglishPreview": "Only https stream addresses can play. Android blocks plain http.",
+      "translations": {
+        "zh-TW": "僅能播放 HTTPS 串流網址，Android 會封鎖一般 HTTP。",
+        "ja": "HTTPS のストリーム URL のみ再生できます。Android は通常の HTTP をブロックします。"
+      },
+      "reviewRisk": "OPERATION_AND_MEDIA_SEMANTICS_REVIEW"
+    },
+    {
+      "key": "alarm_edit_radio_hint",
+      "expectedEnglishPreview": "Streams internet radio as the alarm sound and falls back to the default ringtone on failure. The address has to be https.",
+      "translations": {
+        "zh-TW": "使用網路廣播作為鬧鐘聲音，失敗時改用預設鈴聲。串流網址必須為 HTTPS。",
+        "ja": "インターネットラジオをアラーム音として再生し、失敗した場合は既定の着信音に切り替えます。ストリーム URL は HTTPS にしてください。"
+      },
+      "reviewRisk": "OPERATION_AND_MEDIA_SEMANTICS_REVIEW"
+    }
+  ]
+}
