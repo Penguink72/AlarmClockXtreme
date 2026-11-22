@@ -20,6 +20,7 @@ on:
       - feature/acx-l10-source-binding-graph-20261122
       - feature/acx-l11-priority-translation-drafts-20261122
       - feature/acx-l11-b2-priority-drafts-20261122
+      - feature/acx-l11-b3-context-dispositions-20261122
     paths:
       - "scripts/localization/**"
       - "localization/governance/**"
@@ -138,6 +139,7 @@ jobs:
         run: |
           node --test scripts/localization/l11-translation-worklist.test.mjs
           node --test scripts/localization/l11-b2-draft-batches.test.mjs
+          node --test scripts/localization/l11-b3-draft-disposition.test.mjs
           node scripts/localization/l11-translation-worklist.mjs --out-dir build/localization/B0_FULL_APP_INVENTORY
       - name: Publish B0 full-app inventory evidence
         uses: actions/upload-artifact@v4
