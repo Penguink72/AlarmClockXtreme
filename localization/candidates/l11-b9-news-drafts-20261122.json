@@ -1,0 +1,342 @@
+{
+  "schema": "acx-l11-batch9-drafts/1",
+  "topic": "NEWS_FEEDS_TIME_AND_ERRORS",
+  "status": "MODEL_PRELIMINARY_NOT_APPROVED",
+  "independentApproval": false,
+  "sourceRef": "app/src/main/res/values/strings.xml",
+  "records": [
+    {
+      "key": "news_news",
+      "expectedEnglishPreview": "News",
+      "translations": {
+        "zh-TW": "新聞",
+        "ja": "ニュース"
+      },
+      "reviewRisk": "NEWS_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "news_refresh_feed",
+      "expectedEnglishPreview": "Refresh feed",
+      "translations": {
+        "zh-TW": "重新整理新聞來源",
+        "ja": "フィードを更新"
+      },
+      "reviewRisk": "NETWORK_FEED_AND_FALLBACK_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "news_showing_saved_headlines",
+      "expectedEnglishPreview": "Showing saved headlines",
+      "translations": {
+        "zh-TW": "顯示已儲存的新聞標題",
+        "ja": "保存済みの見出しを表示中"
+      },
+      "reviewRisk": "NEWS_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "news_couldn_t_load_feed",
+      "expectedEnglishPreview": "Couldn’t load this feed",
+      "translations": {
+        "zh-TW": "無法載入這個新聞來源",
+        "ja": "このフィードを読み込めませんでした"
+      },
+      "reviewRisk": "NEWS_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "news_no_headlines_yet",
+      "expectedEnglishPreview": "No headlines yet",
+      "translations": {
+        "zh-TW": "目前沒有新聞標題",
+        "ja": "見出しはまだありません"
+      },
+      "reviewRisk": "NEWS_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "news_pick_feed_chips_above",
+      "expectedEnglishPreview": "Pick a feed from the chips above.",
+      "translations": {
+        "zh-TW": "請在上方選擇新聞來源。",
+        "ja": "上の項目からフィードを選択してください。"
+      },
+      "reviewRisk": "NEWS_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "news_couldn_t_refresh",
+      "expectedEnglishPreview": "Couldn’t refresh",
+      "translations": {
+        "zh-TW": "無法重新整理",
+        "ja": "更新できませんでした"
+      },
+      "reviewRisk": "NETWORK_FEED_AND_FALLBACK_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "news_open_article",
+      "expectedEnglishPreview": "Open article",
+      "translations": {
+        "zh-TW": "開啟文章",
+        "ja": "記事を開く"
+      },
+      "reviewRisk": "NEWS_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "news_custom_feed",
+      "expectedEnglishPreview": "Custom feed",
+      "translations": {
+        "zh-TW": "自訂新聞來源",
+        "ja": "カスタムフィード"
+      },
+      "reviewRisk": "NEWS_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "news_pick_a_different_source_or_try",
+      "expectedEnglishPreview": "Pick a different source, or try again.",
+      "translations": {
+        "zh-TW": "請選擇其他來源或再試一次。",
+        "ja": "別の配信元を選ぶか、もう一度お試しください。"
+      },
+      "reviewRisk": "NETWORK_FEED_AND_FALLBACK_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "news_just_now",
+      "expectedEnglishPreview": "just now",
+      "translations": {
+        "zh-TW": "剛剛",
+        "ja": "たった今"
+      },
+      "reviewRisk": "NEWS_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "news_minutes_ago",
+      "expectedEnglishPreview": "%1$dm ago",
+      "translations": {
+        "zh-TW": "%1$d 分鐘前",
+        "ja": "%1$d 分前"
+      },
+      "reviewRisk": "NEWS_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "news_hours_ago",
+      "expectedEnglishPreview": "%1$dh ago",
+      "translations": {
+        "zh-TW": "%1$d 小時前",
+        "ja": "%1$d 時間前"
+      },
+      "reviewRisk": "NEWS_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "news_days_ago",
+      "expectedEnglishPreview": "%1$dd ago",
+      "translations": {
+        "zh-TW": "%1$d 天前",
+        "ja": "%1$d 日前"
+      },
+      "reviewRisk": "NEWS_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "news_feed_google_top",
+      "expectedEnglishPreview": "Google News: Top",
+      "translations": {
+        "zh-TW": "Google 新聞：焦點",
+        "ja": "Google ニュース：トップ"
+      },
+      "reviewRisk": "NEWS_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "news_feed_google_top_short",
+      "expectedEnglishPreview": "Top",
+      "translations": {
+        "zh-TW": "焦點",
+        "ja": "トップ"
+      },
+      "reviewRisk": "NEWS_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "news_feed_google_world",
+      "expectedEnglishPreview": "Google News: World",
+      "translations": {
+        "zh-TW": "Google 新聞：國際",
+        "ja": "Google ニュース：世界"
+      },
+      "reviewRisk": "NEWS_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "news_feed_google_world_short",
+      "expectedEnglishPreview": "World",
+      "translations": {
+        "zh-TW": "國際",
+        "ja": "世界"
+      },
+      "reviewRisk": "NEWS_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "news_feed_google_tech",
+      "expectedEnglishPreview": "Google News: Tech",
+      "translations": {
+        "zh-TW": "Google 新聞：科技",
+        "ja": "Google ニュース：テクノロジー"
+      },
+      "reviewRisk": "NEWS_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "news_feed_google_tech_short",
+      "expectedEnglishPreview": "Tech",
+      "translations": {
+        "zh-TW": "科技",
+        "ja": "テクノロジー"
+      },
+      "reviewRisk": "NEWS_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "news_feed_bbc",
+      "expectedEnglishPreview": "BBC: Top stories",
+      "translations": {
+        "zh-TW": "BBC：焦點新聞",
+        "ja": "BBC：トップニュース"
+      },
+      "reviewRisk": "NEWS_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "news_feed_bbc_short",
+      "expectedEnglishPreview": "Top stories",
+      "translations": {
+        "zh-TW": "焦點新聞",
+        "ja": "トップニュース"
+      },
+      "reviewRisk": "NEWS_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "news_feed_npr",
+      "expectedEnglishPreview": "NPR: News",
+      "translations": {
+        "zh-TW": "NPR：新聞",
+        "ja": "NPR：ニュース"
+      },
+      "reviewRisk": "NEWS_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "news_feed_npr_short",
+      "expectedEnglishPreview": "News",
+      "translations": {
+        "zh-TW": "新聞",
+        "ja": "ニュース"
+      },
+      "reviewRisk": "NEWS_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "news_feed_hn",
+      "expectedEnglishPreview": "Hacker News: Front page",
+      "translations": {
+        "zh-TW": "Hacker News：首頁",
+        "ja": "Hacker News：トップページ"
+      },
+      "reviewRisk": "NEWS_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "news_feed_hn_short",
+      "expectedEnglishPreview": "Front page",
+      "translations": {
+        "zh-TW": "首頁",
+        "ja": "トップページ"
+      },
+      "reviewRisk": "NEWS_UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "news_error_no_connection",
+      "expectedEnglishPreview": "Check your connection and try again.",
+      "translations": {
+        "zh-TW": "請檢查網路連線後再試一次。",
+        "ja": "接続状況を確認して再試行してください。"
+      },
+      "reviewRisk": "NETWORK_FEED_AND_FALLBACK_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "news_error_timeout",
+      "expectedEnglishPreview": "This feed took too long to respond. Try again later.",
+      "translations": {
+        "zh-TW": "這個新聞來源回應時間過長，請稍後再試。",
+        "ja": "フィードの応答に時間がかかりすぎました。後ほど再試行してください。"
+      },
+      "reviewRisk": "NETWORK_FEED_AND_FALLBACK_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "news_error_tls",
+      "expectedEnglishPreview": "This feed could not be loaded securely. Choose another source.",
+      "translations": {
+        "zh-TW": "無法安全地載入此新聞來源，請改選其他來源。",
+        "ja": "このフィードを安全に読み込めませんでした。別の配信元を選んでください。"
+      },
+      "reviewRisk": "NETWORK_FEED_AND_FALLBACK_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "news_error_invalid_url",
+      "expectedEnglishPreview": "This feed URL is not valid. Choose another source in Settings.",
+      "translations": {
+        "zh-TW": "新聞來源網址無效，請到設定中選擇其他來源。",
+        "ja": "フィード URL が無効です。設定で別の配信元を選択してください。"
+      },
+      "reviewRisk": "NETWORK_FEED_AND_FALLBACK_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "news_error_forbidden",
+      "expectedEnglishPreview": "This feed requires access the app does not have. Choose another source.",
+      "translations": {
+        "zh-TW": "此新聞來源需要 App 未取得的存取權，請改選其他來源。",
+        "ja": "このフィードにはアプリにないアクセス権が必要です。別の配信元を選択してください。"
+      },
+      "reviewRisk": "NETWORK_FEED_AND_FALLBACK_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "news_error_unresponsive",
+      "expectedEnglishPreview": "This feed source is not responding. Try another source or refresh later.",
+      "translations": {
+        "zh-TW": "新聞來源沒有回應，請改選其他來源或稍後重新整理。",
+        "ja": "配信元が応答していません。別の配信元を選ぶか、後で更新してください。"
+      },
+      "reviewRisk": "NETWORK_FEED_AND_FALLBACK_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "news_error_empty",
+      "expectedEnglishPreview": "This source returned no feed content.",
+      "translations": {
+        "zh-TW": "此新聞來源沒有回傳內容。",
+        "ja": "この配信元からフィードの内容が返されませんでした。"
+      },
+      "reviewRisk": "NETWORK_FEED_AND_FALLBACK_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "news_error_io",
+      "expectedEnglishPreview": "The feed could not be reached. Check your connection and try again.",
+      "translations": {
+        "zh-TW": "無法連上新聞來源，請檢查網路連線後再試。",
+        "ja": "フィードに接続できませんでした。接続状況を確認して再試行してください。"
+      },
+      "reviewRisk": "NETWORK_FEED_AND_FALLBACK_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "news_error_unreadable",
+      "expectedEnglishPreview": "This feed could not be read. Try another source or refresh later.",
+      "translations": {
+        "zh-TW": "無法讀取此新聞來源，請改選其他來源或稍後重新整理。",
+        "ja": "このフィードを読み取れませんでした。別の配信元を選ぶか後で更新してください。"
+      },
+      "reviewRisk": "NETWORK_FEED_AND_FALLBACK_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "news_error_generic",
+      "expectedEnglishPreview": "The feed could not be refreshed.",
+      "translations": {
+        "zh-TW": "無法重新整理新聞來源。",
+        "ja": "フィードを更新できませんでした。"
+      },
+      "reviewRisk": "NETWORK_FEED_AND_FALLBACK_SEMANTIC_REVIEW"
+    },
+    {
+      "key": "news_stale_headlines",
+      "expectedEnglishPreview": "Showing saved headlines. Use Refresh to try again. %1$s",
+      "translations": {
+        "zh-TW": "正在顯示已儲存的標題。點選重新整理再試。%1$s",
+        "ja": "保存済みの見出しを表示しています。更新して再試行してください。%1$s"
+      },
+      "reviewRisk": "NEWS_UI_TERMINOLOGY_REVIEW"
+    }
+  ]
+}
