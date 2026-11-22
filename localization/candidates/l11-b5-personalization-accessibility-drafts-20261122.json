@@ -1,0 +1,432 @@
+{
+  "schema": "acx-l11-batch5-drafts/1",
+  "topic": "PERSONALIZATION_ACCESSIBILITY_ALARM_CONTROLS",
+  "status": "MODEL_PRELIMINARY_NOT_APPROVED",
+  "independentApproval": false,
+  "sourceRef": "app/src/main/res/values/strings.xml",
+  "records": [
+    {
+      "key": "settings_celsius",
+      "expectedEnglishPreview": "Celsius (°C)",
+      "translations": {
+        "zh-TW": "攝氏（°C）",
+        "ja": "摂氏（°C）"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_fahrenheit",
+      "expectedEnglishPreview": "Fahrenheit (°F)",
+      "translations": {
+        "zh-TW": "華氏（°F）",
+        "ja": "華氏（°F）"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_personalization",
+      "expectedEnglishPreview": "Personalization",
+      "translations": {
+        "zh-TW": "個人化",
+        "ja": "パーソナライズ"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_personalization_description",
+      "expectedEnglishPreview": "Pick the accent color, enable adaptive difficulty, and tune the wake-up screen.",
+      "translations": {
+        "zh-TW": "選擇強調色、啟用自適應挑戰難度，並調整喚醒畫面。",
+        "ja": "アクセントカラーを選び、難易度の自動調整を有効にして、起床画面を調整します。"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_motivational_quotes",
+      "expectedEnglishPreview": "Motivational quotes on alarm",
+      "translations": {
+        "zh-TW": "響鈴時顯示勵志短句",
+        "ja": "アラーム中に励ましの言葉を表示"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_motivational_quotes_description",
+      "expectedEnglishPreview": "Shows a short quote on the firing screen alongside the time.",
+      "translations": {
+        "zh-TW": "在響鈴畫面的時間旁顯示一句簡短引言。",
+        "ja": "アラーム画面で時刻のそばに短い言葉を表示します。"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_adaptive_difficulty",
+      "expectedEnglishPreview": "Adaptive challenge difficulty",
+      "translations": {
+        "zh-TW": "挑戰難度自動調整",
+        "ja": "チャレンジの難易度を自動調整"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_adaptive_difficulty_description",
+      "expectedEnglishPreview": "Auto-bumps math challenges (Easy → Medium → Hard) when your snooze rate climbs above 50%.",
+      "translations": {
+        "zh-TW": "貪睡比例超過 50% 時，自動提高數學挑戰難度（簡單 → 中等 → 困難）。",
+        "ja": "スヌーズ率が50%を超えた場合、計算チャレンジの難易度を自動的に「簡単 → 普通 → 難しい」に上げます。"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_dynamic_color",
+      "expectedEnglishPreview": "Material You dynamic color",
+      "translations": {
+        "zh-TW": "Material You 動態色彩",
+        "ja": "Material You のダイナミックカラー"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_dynamic_color_description",
+      "expectedEnglishPreview": "Blends the app accent with your wallpaper palette (Android 12+).",
+      "translations": {
+        "zh-TW": "將 App 的強調色與桌布色盤融合（Android 12 以上）。",
+        "ja": "アプリのアクセントカラーを壁紙の色と組み合わせます（Android 12 以降）。"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_expressive_surfaces",
+      "expectedEnglishPreview": "Expressive surfaces",
+      "translations": {
+        "zh-TW": "更鮮明的介面樣式",
+        "ja": "表現力のある画面デザイン"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_expressive_surfaces_description",
+      "expectedEnglishPreview": "Adds bolder shape rhythm and clearer accent semantics across shared app surfaces.",
+      "translations": {
+        "zh-TW": "在 App 共用畫面使用更鮮明的形狀節奏與更清楚的強調色意義。",
+        "ja": "共通画面で形状のメリハリを強め、アクセントカラーの意味をわかりやすくします。"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_reduce_motion",
+      "expectedEnglishPreview": "Reduce motion and flashing",
+      "translations": {
+        "zh-TW": "減少動畫與閃光",
+        "ja": "動きや点滅を減らす"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_reduce_motion_description",
+      "expectedEnglishPreview": "Stops decorative loops and flashlight strobing. Android\\’s Remove animations setting is also honored.",
+      "translations": {
+        "zh-TW": "停止裝飾性循環動畫及手電筒頻閃，並遵守 Android 的「移除動畫」設定。",
+        "ja": "装飾的なループアニメーションやライトの点滅を停止し、Android の「アニメーションを削除」設定にも従います。"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_repeat_missed",
+      "expectedEnglishPreview": "Repeat missed alarms",
+      "translations": {
+        "zh-TW": "再次提醒未接鬧鐘",
+        "ja": "見逃したアラームを再通知"
+      },
+      "reviewRisk": "ACCESSIBILITY_OR_ALARM_CONTROL_REVIEW"
+    },
+    {
+      "key": "settings_repeat_missed_description",
+      "expectedEnglishPreview": "If an alarm auto-silences, re-fire it briefly when you unlock or unplug within 10 minutes.",
+      "translations": {
+        "zh-TW": "鬧鐘自動靜音後，若在 10 分鐘內解鎖或拔下充電線，會再次短暫響鈴。",
+        "ja": "アラームが自動で消音された後、10分以内にロックを解除するか充電ケーブルを抜くと、短時間もう一度鳴ります。"
+      },
+      "reviewRisk": "ACCESSIBILITY_OR_ALARM_CONTROL_REVIEW"
+    },
+    {
+      "key": "settings_cancellation_lock",
+      "expectedEnglishPreview": "Cancellation lock",
+      "translations": {
+        "zh-TW": "禁止臨時取消鬧鐘",
+        "ja": "直前のアラーム取消を制限"
+      },
+      "reviewRisk": "ACCESSIBILITY_OR_ALARM_CONTROL_REVIEW"
+    },
+    {
+      "key": "settings_cancellation_lock_description",
+      "expectedEnglishPreview": "Prevent disabling alarms close to fire time",
+      "translations": {
+        "zh-TW": "避免在鬧鐘即將響起時將其停用。",
+        "ja": "アラームの予定時刻が近いときに無効化できないようにします。"
+      },
+      "reviewRisk": "ACCESSIBILITY_OR_ALARM_CONTROL_REVIEW"
+    },
+    {
+      "key": "settings_disabled",
+      "expectedEnglishPreview": "Disabled",
+      "translations": {
+        "zh-TW": "已停用",
+        "ja": "無効"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_lock_before_fire",
+      "expectedEnglishPreview": "Lock %1$d min before fire",
+      "translations": {
+        "zh-TW": "響鈴前 %1$d 分鐘開始鎖定",
+        "ja": "鳴動の %1$d 分前から制限"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_long_press_threshold",
+      "expectedEnglishPreview": "Dismiss hold duration",
+      "translations": {
+        "zh-TW": "解除鬧鐘需長按的時間",
+        "ja": "アラーム停止の長押し時間"
+      },
+      "reviewRisk": "ACCESSIBILITY_OR_ALARM_CONTROL_REVIEW"
+    },
+    {
+      "key": "settings_hold_duration_short",
+      "expectedEnglishPreview": "%1$.1f s",
+      "translations": {
+        "zh-TW": "%1$.1f 秒",
+        "ja": "%1$.1f 秒"
+      },
+      "reviewRisk": "ACCESSIBILITY_OR_ALARM_CONTROL_REVIEW"
+    },
+    {
+      "key": "settings_custom_typing_phrases",
+      "expectedEnglishPreview": "Custom typing phrases",
+      "translations": {
+        "zh-TW": "自訂輸入短句",
+        "ja": "入力用のカスタムフレーズ"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_custom_typing_phrases_placeholder",
+      "expectedEnglishPreview": "One phrase per line, appended to the built-in list",
+      "translations": {
+        "zh-TW": "每行一個短句，會加入內建清單之後",
+        "ja": "1行に1フレーズ。標準のリストに追加します"
+      },
+      "reviewRisk": "ACCESSIBILITY_OR_ALARM_CONTROL_REVIEW"
+    },
+    {
+      "key": "settings_custom_typing_phrases_description",
+      "expectedEnglishPreview": "These are added after the built-in phrase library, so you can make typing challenges sound more like you.",
+      "translations": {
+        "zh-TW": "將這些短句加入內建詞句庫之後，讓輸入挑戰更符合你的習慣。",
+        "ja": "標準のフレーズ集に追加され、入力チャレンジを自分に合った内容にできます。"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_challenge_bypass",
+      "expectedEnglishPreview": "Challenge accessibility bypass",
+      "translations": {
+        "zh-TW": "無障礙挑戰略過選項",
+        "ja": "アクセシビリティ向けチャレンジ回避"
+      },
+      "reviewRisk": "ACCESSIBILITY_OR_ALARM_CONTROL_REVIEW"
+    },
+    {
+      "key": "settings_challenge_bypass_description",
+      "expectedEnglishPreview": "Allow dismissing after a timed delay without completing the challenge. Helps users who cannot perform physical challenges.",
+      "translations": {
+        "zh-TW": "經過指定等待時間後，允許不完成挑戰就解除鬧鐘，協助無法執行肢體挑戰的使用者。",
+        "ja": "指定時間が経過した後、チャレンジを完了せずにアラームを停止できるようにします。身体動作が難しい人向けです。"
+      },
+      "reviewRisk": "ACCESSIBILITY_OR_ALARM_CONTROL_REVIEW"
+    },
+    {
+      "key": "settings_bypass_delay",
+      "expectedEnglishPreview": "Bypass delay",
+      "translations": {
+        "zh-TW": "允許略過前的等待時間",
+        "ja": "回避可能になるまでの待ち時間"
+      },
+      "reviewRisk": "ACCESSIBILITY_OR_ALARM_CONTROL_REVIEW"
+    },
+    {
+      "key": "settings_seconds_short",
+      "expectedEnglishPreview": "%1$ds",
+      "translations": {
+        "zh-TW": "%1$d 秒",
+        "ja": "%1$d 秒"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_challenge_volume",
+      "expectedEnglishPreview": "Challenge volume: %1$d%%",
+      "translations": {
+        "zh-TW": "挑戰音量：%1$d%%",
+        "ja": "チャレンジ音量：%1$d%%"
+      },
+      "reviewRisk": "ACCESSIBILITY_OR_ALARM_CONTROL_REVIEW"
+    },
+    {
+      "key": "settings_percent",
+      "expectedEnglishPreview": "%1$d%%",
+      "translations": {
+        "zh-TW": "%1$d%%",
+        "ja": "%1$d%%"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_bedtime_checklist",
+      "expectedEnglishPreview": "Bedtime wind-down checklist",
+      "translations": {
+        "zh-TW": "睡前準備檢查清單",
+        "ja": "就寝前のチェックリスト"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_bedtime_checklist_placeholder",
+      "expectedEnglishPreview": "One item per line (e.g. Dim lights, Phone on charger, Set alarm)",
+      "translations": {
+        "zh-TW": "每行一項（例如調暗燈光、手機充電、設定鬧鐘）",
+        "ja": "1行に1項目（例：照明を暗くする、充電する、アラームを設定）"
+      },
+      "reviewRisk": "ACCESSIBILITY_OR_ALARM_CONTROL_REVIEW"
+    },
+    {
+      "key": "settings_bedtime_checklist_description",
+      "expectedEnglishPreview": "This appears in Bedtime so your routine stays consistent even when the rest of the day feels busy.",
+      "translations": {
+        "zh-TW": "清單會顯示在就寢畫面，協助保持固定的睡前作息。",
+        "ja": "就寝画面に表示され、毎日の寝る前の習慣を続けやすくします。"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_accent_color",
+      "expectedEnglishPreview": "Accent color",
+      "translations": {
+        "zh-TW": "強調色",
+        "ja": "アクセントカラー"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_accent_color_description",
+      "expectedEnglishPreview": "Used for the primary alarm tint, dashboard chips, and switches.",
+      "translations": {
+        "zh-TW": "套用於主要鬧鐘色調、首頁標籤及切換開關。",
+        "ja": "アラームのメインカラー、ダッシュボードのチップ、スイッチに適用されます。"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_accent_default_blue",
+      "expectedEnglishPreview": "Default blue",
+      "translations": {
+        "zh-TW": "預設藍色",
+        "ja": "既定の青"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_accent_coral",
+      "expectedEnglishPreview": "Coral",
+      "translations": {
+        "zh-TW": "珊瑚色",
+        "ja": "コーラル"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_accent_amber",
+      "expectedEnglishPreview": "Amber",
+      "translations": {
+        "zh-TW": "琥珀色",
+        "ja": "アンバー"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_accent_mint",
+      "expectedEnglishPreview": "Mint",
+      "translations": {
+        "zh-TW": "薄荷綠",
+        "ja": "ミント"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_accent_mono",
+      "expectedEnglishPreview": "Mono",
+      "translations": {
+        "zh-TW": "單色",
+        "ja": "モノクロ"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_use_accent",
+      "expectedEnglishPreview": "Use %1$s accent",
+      "translations": {
+        "zh-TW": "使用 %1$s 強調色",
+        "ja": "%1$s のアクセントカラーを使用"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_accent_semantics",
+      "expectedEnglishPreview": "%1$s accent color",
+      "translations": {
+        "zh-TW": "%1$s 強調色",
+        "ja": "%1$s のアクセントカラー"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_unexpected_error",
+      "expectedEnglishPreview": "unexpected error",
+      "translations": {
+        "zh-TW": "非預期的錯誤",
+        "ja": "予期しないエラー"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_hours_minutes_short",
+      "expectedEnglishPreview": "%1$dh %2$dm",
+      "translations": {
+        "zh-TW": "%1$d 小時 %2$d 分鐘",
+        "ja": "%1$d 時間 %2$d 分"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_hours_short",
+      "expectedEnglishPreview": "%1$dh",
+      "translations": {
+        "zh-TW": "%1$d 小時",
+        "ja": "%1$d 時間"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    },
+    {
+      "key": "settings_minutes_compact",
+      "expectedEnglishPreview": "%1$dm",
+      "translations": {
+        "zh-TW": "%1$d 分鐘",
+        "ja": "%1$d 分"
+      },
+      "reviewRisk": "UI_TERMINOLOGY_REVIEW"
+    }
+  ]
+}

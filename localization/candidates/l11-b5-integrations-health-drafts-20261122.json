@@ -1,0 +1,711 @@
+{
+  "schema": "acx-l11-batch5-drafts/1",
+  "topic": "NETWORK_INTEGRATIONS_HEALTH_CONNECT_PRIVACY",
+  "status": "MODEL_PRELIMINARY_NOT_APPROVED",
+  "independentApproval": false,
+  "sourceRef": "app/src/main/res/values/strings.xml",
+  "records": [
+    {
+      "key": "settings_enable_webhook",
+      "expectedEnglishPreview": "Enable webhook",
+      "translations": {
+        "zh-TW": "啟用 Webhook",
+        "ja": "Webhook を有効にする"
+      },
+      "reviewRisk": "NETWORK_SECURITY_OR_HEALTH_DATA_REVIEW"
+    },
+    {
+      "key": "settings_enable_webhook_description",
+      "expectedEnglishPreview": "Send v1 JSON events for alarm_fired, alarm_snoozed, alarm_dismissed, alarm_missed, and alarm_skipped.",
+      "translations": {
+        "zh-TW": "傳送 v1 JSON 鬧鐘事件：alarm_fired、alarm_snoozed、alarm_dismissed、alarm_missed 與 alarm_skipped。",
+        "ja": "alarm_fired、alarm_snoozed、alarm_dismissed、alarm_missed、alarm_skipped の各イベントを v1 JSON で送信します。"
+      },
+      "reviewRisk": "NETWORK_SECURITY_OR_HEALTH_DATA_REVIEW"
+    },
+    {
+      "key": "settings_signing_secret",
+      "expectedEnglishPreview": "Signing secret",
+      "translations": {
+        "zh-TW": "簽署密鑰",
+        "ja": "署名用シークレット"
+      },
+      "reviewRisk": "NETWORK_SECURITY_OR_HEALTH_DATA_REVIEW"
+    },
+    {
+      "key": "settings_signing_secret_placeholder",
+      "expectedEnglishPreview": "Optional HMAC secret",
+      "translations": {
+        "zh-TW": "選填的 HMAC 密鑰",
+        "ja": "任意の HMAC シークレット"
+      },
+      "reviewRisk": "NETWORK_SECURITY_OR_HEALTH_DATA_REVIEW"
+    },
+    {
+      "key": "settings_local_network_needed",
+      "expectedEnglishPreview": "Local network access needed",
+      "translations": {
+        "zh-TW": "需要區域網路存取權",
+        "ja": "ローカルネットワークへのアクセスが必要"
+      },
+      "reviewRisk": "NETWORK_SECURITY_OR_HEALTH_DATA_REVIEW"
+    },
+    {
+      "key": "settings_testing",
+      "expectedEnglishPreview": "Testing",
+      "translations": {
+        "zh-TW": "測試中",
+        "ja": "テスト中"
+      },
+      "reviewRisk": "TERM_AND_BEHAVIOR_REVIEW"
+    },
+    {
+      "key": "settings_test",
+      "expectedEnglishPreview": "Test",
+      "translations": {
+        "zh-TW": "測試",
+        "ja": "テスト"
+      },
+      "reviewRisk": "TERM_AND_BEHAVIOR_REVIEW"
+    },
+    {
+      "key": "settings_public_holidays",
+      "expectedEnglishPreview": "Public holidays",
+      "translations": {
+        "zh-TW": "國定假日",
+        "ja": "祝日"
+      },
+      "reviewRisk": "TERM_AND_BEHAVIOR_REVIEW"
+    },
+    {
+      "key": "settings_public_holidays_description",
+      "expectedEnglishPreview": "Automatically skip alarms on country-specific holidays without disabling the alarm itself.",
+      "translations": {
+        "zh-TW": "在指定國家的假日自動略過鬧鐘，不需要停用該鬧鐘。",
+        "ja": "指定した国の祝日は、アラームを無効にせず自動的にスキップします。"
+      },
+      "reviewRisk": "TERM_AND_BEHAVIOR_REVIEW"
+    },
+    {
+      "key": "settings_skip_holidays",
+      "expectedEnglishPreview": "Skip alarms on holidays",
+      "translations": {
+        "zh-TW": "假日略過鬧鐘",
+        "ja": "祝日はアラームをスキップ"
+      },
+      "reviewRisk": "TERM_AND_BEHAVIOR_REVIEW"
+    },
+    {
+      "key": "settings_skip_holidays_description",
+      "expectedEnglishPreview": "Useful for weekday alarms that should respect bank holidays and public closures.",
+      "translations": {
+        "zh-TW": "適用於需要避開國定假日及公休日的平日鬧鐘。",
+        "ja": "祝日や公休日には鳴らさない平日のアラームに適しています。"
+      },
+      "reviewRisk": "TERM_AND_BEHAVIOR_REVIEW"
+    },
+    {
+      "key": "settings_country_code",
+      "expectedEnglishPreview": "Country code",
+      "translations": {
+        "zh-TW": "國家代碼",
+        "ja": "国コード"
+      },
+      "reviewRisk": "TERM_AND_BEHAVIOR_REVIEW"
+    },
+    {
+      "key": "settings_country_code_placeholder",
+      "expectedEnglishPreview": "US, GB, DE…",
+      "translations": {
+        "zh-TW": "US、GB、DE…",
+        "ja": "US、GB、DE…"
+      },
+      "reviewRisk": "TERM_AND_BEHAVIOR_REVIEW"
+    },
+    {
+      "key": "settings_hue_sunrise",
+      "expectedEnglishPreview": "Philips Hue sunrise",
+      "translations": {
+        "zh-TW": "Philips Hue 日出燈光",
+        "ja": "Philips Hue の日の出演出"
+      },
+      "reviewRisk": "NETWORK_SECURITY_OR_HEALTH_DATA_REVIEW"
+    },
+    {
+      "key": "settings_hue_sunrise_description",
+      "expectedEnglishPreview": "Wake the room up gradually before the alarm sound takes over.",
+      "translations": {
+        "zh-TW": "在鬧鐘聲音響起前，逐漸讓室內燈光變亮。",
+        "ja": "アラーム音が鳴り始める前に部屋の照明を徐々に明るくします。"
+      },
+      "reviewRisk": "NETWORK_SECURITY_OR_HEALTH_DATA_REVIEW"
+    },
+    {
+      "key": "settings_hue_ip",
+      "expectedEnglishPreview": "Bridge IP address",
+      "translations": {
+        "zh-TW": "橋接器 IP 位址",
+        "ja": "ブリッジの IP アドレス"
+      },
+      "reviewRisk": "NETWORK_SECURITY_OR_HEALTH_DATA_REVIEW"
+    },
+    {
+      "key": "settings_hue_api_key",
+      "expectedEnglishPreview": "Hue API key",
+      "translations": {
+        "zh-TW": "Hue API 金鑰",
+        "ja": "Hue API キー"
+      },
+      "reviewRisk": "NETWORK_SECURITY_OR_HEALTH_DATA_REVIEW"
+    },
+    {
+      "key": "settings_hue_light_ids",
+      "expectedEnglishPreview": "Light IDs",
+      "translations": {
+        "zh-TW": "燈具 ID",
+        "ja": "照明 ID"
+      },
+      "reviewRisk": "NETWORK_SECURITY_OR_HEALTH_DATA_REVIEW"
+    },
+    {
+      "key": "settings_hue_cert_pinned",
+      "expectedEnglishPreview": "Bridge certificate pinned",
+      "translations": {
+        "zh-TW": "已固定橋接器憑證",
+        "ja": "ブリッジの証明書を固定済み"
+      },
+      "reviewRisk": "NETWORK_SECURITY_OR_HEALTH_DATA_REVIEW"
+    },
+    {
+      "key": "settings_forget",
+      "expectedEnglishPreview": "Forget",
+      "translations": {
+        "zh-TW": "忘記已儲存資料",
+        "ja": "保存した情報を削除"
+      },
+      "reviewRisk": "TERM_AND_BEHAVIOR_REVIEW"
+    },
+    {
+      "key": "settings_hue_network_description",
+      "expectedEnglishPreview": "Android 17+ requires local network access before AlarmClockXtreme can reach this Hue bridge.",
+      "translations": {
+        "zh-TW": "Android 17 以上版本需要區域網路存取權，AlarmClockXtreme 才能連線至 Hue 橋接器。",
+        "ja": "Android 17 以降では、Hue ブリッジに接続するにはローカルネットワークへのアクセス権が必要です。"
+      },
+      "reviewRisk": "NETWORK_SECURITY_OR_HEALTH_DATA_REVIEW"
+    },
+    {
+      "key": "settings_hue_test_description",
+      "expectedEnglishPreview": "Run a quick bridge check once the IP and API key are in place.",
+      "translations": {
+        "zh-TW": "輸入 IP 位址與 API 金鑰後，進行快速的橋接器連線檢查。",
+        "ja": "IP アドレスと API キーを入力した後、ブリッジへの接続を簡単に確認します。"
+      },
+      "reviewRisk": "NETWORK_SECURITY_OR_HEALTH_DATA_REVIEW"
+    },
+    {
+      "key": "settings_hue_forget_title",
+      "expectedEnglishPreview": "Forget Hue certificate?",
+      "translations": {
+        "zh-TW": "要忘記 Hue 憑證嗎？",
+        "ja": "Hue の証明書を削除しますか？"
+      },
+      "reviewRisk": "NETWORK_SECURITY_OR_HEALTH_DATA_REVIEW"
+    },
+    {
+      "key": "settings_hue_forget_message",
+      "expectedEnglishPreview": "Only continue after verifying the bridge was replaced or its certificate changed. The next successful encrypted connection will trust and save a new certificate.",
+      "translations": {
+        "zh-TW": "只有確認橋接器已更換或憑證確實改變後，才應繼續。下次成功的加密連線將信任並儲存新憑證。",
+        "ja": "ブリッジを交換した、または証明書が変更されたことを確認してから続行してください。次に暗号化接続が成功すると、新しい証明書を信頼して保存します。"
+      },
+      "reviewRisk": "NETWORK_SECURITY_OR_HEALTH_DATA_REVIEW"
+    },
+    {
+      "key": "settings_hue_forget_action",
+      "expectedEnglishPreview": "Forget certificate",
+      "translations": {
+        "zh-TW": "忘記憑證",
+        "ja": "証明書を削除"
+      },
+      "reviewRisk": "NETWORK_SECURITY_OR_HEALTH_DATA_REVIEW"
+    },
+    {
+      "key": "settings_hue_ip_not_local",
+      "expectedEnglishPreview": "Enter the bridge’s local address, like 192.168.1.42 or philips-hue.local. A public hostname is refused because the bridge certificate cannot be verified.",
+      "translations": {
+        "zh-TW": "請輸入橋接器的區域網路位址，例如 192.168.1.42 或 philips-hue.local。由於無法驗證橋接器憑證，因此不接受公開主機名稱。",
+        "ja": "192.168.1.42 や philips-hue.local など、ブリッジのローカルアドレスを入力してください。証明書を検証できないため、公開ホスト名は受け付けません。"
+      },
+      "reviewRisk": "NETWORK_SECURITY_OR_HEALTH_DATA_REVIEW"
+    },
+    {
+      "key": "settings_checking_webhook_endpoint",
+      "expectedEnglishPreview": "Checking webhook endpoint...",
+      "translations": {
+        "zh-TW": "正在檢查 Webhook 端點…",
+        "ja": "Webhook エンドポイントを確認中…"
+      },
+      "reviewRisk": "NETWORK_SECURITY_OR_HEALTH_DATA_REVIEW"
+    },
+    {
+      "key": "settings_checking_hue_bridge",
+      "expectedEnglishPreview": "Checking Hue bridge...",
+      "translations": {
+        "zh-TW": "正在檢查 Hue 橋接器…",
+        "ja": "Hue ブリッジを確認中…"
+      },
+      "reviewRisk": "NETWORK_SECURITY_OR_HEALTH_DATA_REVIEW"
+    },
+    {
+      "key": "settings_hue_certificate_changed_verify_the_bridge",
+      "expectedEnglishPreview": "Hue certificate changed. Verify the bridge, then forget the saved certificate.",
+      "translations": {
+        "zh-TW": "Hue 憑證已變更。請先確認橋接器，再忘記已儲存的憑證。",
+        "ja": "Hue の証明書が変更されました。ブリッジを確認した後、保存済みの証明書を削除してください。"
+      },
+      "reviewRisk": "NETWORK_SECURITY_OR_HEALTH_DATA_REVIEW"
+    },
+    {
+      "key": "settings_hue_bridge_returned_an_invalid_certificate",
+      "expectedEnglishPreview": "Hue bridge returned an invalid certificate fingerprint",
+      "translations": {
+        "zh-TW": "Hue 橋接器回傳的憑證指紋無效",
+        "ja": "Hue ブリッジから無効な証明書フィンガープリントが返されました"
+      },
+      "reviewRisk": "NETWORK_SECURITY_OR_HEALTH_DATA_REVIEW"
+    },
+    {
+      "key": "settings_hue_bridge_not_checked_enter_a",
+      "expectedEnglishPreview": "Hue bridge not checked. Enter a valid IP and API key.",
+      "translations": {
+        "zh-TW": "尚未檢查 Hue 橋接器。請輸入有效的 IP 位址與 API 金鑰。",
+        "ja": "Hue ブリッジは未確認です。有効な IP アドレスと API キーを入力してください。"
+      },
+      "reviewRisk": "NETWORK_SECURITY_OR_HEALTH_DATA_REVIEW"
+    },
+    {
+      "key": "settings_hue_bridge_not_found_check_the",
+      "expectedEnglishPreview": "Hue bridge not found. Check the IP and the API key.",
+      "translations": {
+        "zh-TW": "找不到 Hue 橋接器。請檢查 IP 位址和 API 金鑰。",
+        "ja": "Hue ブリッジが見つかりません。IP アドレスと API キーを確認してください。"
+      },
+      "reviewRisk": "NETWORK_SECURITY_OR_HEALTH_DATA_REVIEW"
+    },
+    {
+      "key": "settings_hue_needs_local_network",
+      "expectedEnglishPreview": "Hue bridge not checked. Allow local network access first.",
+      "translations": {
+        "zh-TW": "尚未檢查 Hue 橋接器。請先允許區域網路存取。",
+        "ja": "Hue ブリッジは未確認です。先にローカルネットワークへのアクセスを許可してください。"
+      },
+      "reviewRisk": "NETWORK_SECURITY_OR_HEALTH_DATA_REVIEW"
+    },
+    {
+      "key": "settings_hue_reachable_certificate_saved",
+      "expectedEnglishPreview": "Hue bridge reachable (API v2). Certificate saved.",
+      "translations": {
+        "zh-TW": "已連上 Hue 橋接器（API v2），並儲存憑證。",
+        "ja": "Hue ブリッジに接続しました（API v2）。証明書を保存しました。"
+      },
+      "reviewRisk": "NETWORK_SECURITY_OR_HEALTH_DATA_REVIEW"
+    },
+    {
+      "key": "settings_hue_reachable",
+      "expectedEnglishPreview": "Hue bridge reachable (API v2)",
+      "translations": {
+        "zh-TW": "已連上 Hue 橋接器（API v2）",
+        "ja": "Hue ブリッジに接続しました（API v2）"
+      },
+      "reviewRisk": "NETWORK_SECURITY_OR_HEALTH_DATA_REVIEW"
+    },
+    {
+      "key": "settings_connection_weather",
+      "expectedEnglishPreview": "Weather",
+      "translations": {
+        "zh-TW": "天氣",
+        "ja": "天気"
+      },
+      "reviewRisk": "NETWORK_SECURITY_OR_HEALTH_DATA_REVIEW"
+    },
+    {
+      "key": "settings_connection_air_quality",
+      "expectedEnglishPreview": "Air quality",
+      "translations": {
+        "zh-TW": "空氣品質",
+        "ja": "大気質"
+      },
+      "reviewRisk": "NETWORK_SECURITY_OR_HEALTH_DATA_REVIEW"
+    },
+    {
+      "key": "settings_connection_nws",
+      "expectedEnglishPreview": "NWS weather alerts",
+      "translations": {
+        "zh-TW": "NWS 天氣警報",
+        "ja": "NWS 気象警報"
+      },
+      "reviewRisk": "NETWORK_SECURITY_OR_HEALTH_DATA_REVIEW"
+    },
+    {
+      "key": "settings_connection_radar",
+      "expectedEnglishPreview": "Live radar",
+      "translations": {
+        "zh-TW": "即時雷達",
+        "ja": "ライブレーダー"
+      },
+      "reviewRisk": "NETWORK_SECURITY_OR_HEALTH_DATA_REVIEW"
+    },
+    {
+      "key": "settings_connection_news",
+      "expectedEnglishPreview": "News feed",
+      "translations": {
+        "zh-TW": "新聞動態",
+        "ja": "ニュースフィード"
+      },
+      "reviewRisk": "NETWORK_SECURITY_OR_HEALTH_DATA_REVIEW"
+    },
+    {
+      "key": "settings_connection_hue",
+      "expectedEnglishPreview": "Philips Hue",
+      "translations": {
+        "zh-TW": "Philips Hue",
+        "ja": "Philips Hue"
+      },
+      "reviewRisk": "NETWORK_SECURITY_OR_HEALTH_DATA_REVIEW"
+    },
+    {
+      "key": "settings_connection_location_data",
+      "expectedEnglishPreview": "Latitude, longitude",
+      "translations": {
+        "zh-TW": "緯度、經度",
+        "ja": "緯度・経度"
+      },
+      "reviewRisk": "NETWORK_SECURITY_OR_HEALTH_DATA_REVIEW"
+    },
+    {
+      "key": "settings_connection_us_location_data",
+      "expectedEnglishPreview": "Latitude, longitude (US only)",
+      "translations": {
+        "zh-TW": "緯度、經度（僅限美國）",
+        "ja": "緯度・経度（米国のみ）"
+      },
+      "reviewRisk": "NETWORK_SECURITY_OR_HEALTH_DATA_REVIEW"
+    },
+    {
+      "key": "settings_connection_embed_location",
+      "expectedEnglishPreview": "Latitude, longitude (via embed URL)",
+      "translations": {
+        "zh-TW": "緯度、經度（透過內嵌網址）",
+        "ja": "緯度・経度（埋め込み URL 経由）"
+      },
+      "reviewRisk": "NETWORK_SECURITY_OR_HEALTH_DATA_REVIEW"
+    },
+    {
+      "key": "settings_connection_cached_forecast",
+      "expectedEnglishPreview": "Last cached forecast",
+      "translations": {
+        "zh-TW": "最後快取的預報",
+        "ja": "最後にキャッシュした予報"
+      },
+      "reviewRisk": "NETWORK_SECURITY_OR_HEALTH_DATA_REVIEW"
+    },
+    {
+      "key": "settings_connection_hidden_unavailable",
+      "expectedEnglishPreview": "Hidden when unavailable",
+      "translations": {
+        "zh-TW": "不可用時隱藏",
+        "ja": "利用できない場合は非表示"
+      },
+      "reviewRisk": "NETWORK_SECURITY_OR_HEALTH_DATA_REVIEW"
+    },
+    {
+      "key": "settings_connection_no_alerts",
+      "expectedEnglishPreview": "No alerts shown",
+      "translations": {
+        "zh-TW": "未顯示警報",
+        "ja": "警報は表示されていません"
+      },
+      "reviewRisk": "NETWORK_SECURITY_OR_HEALTH_DATA_REVIEW"
+    },
+    {
+      "key": "settings_connection_radar_hidden",
+      "expectedEnglishPreview": "Radar card hidden",
+      "translations": {
+        "zh-TW": "雷達資訊卡已隱藏",
+        "ja": "レーダーカードを非表示"
+      },
+      "reviewRisk": "NETWORK_SECURITY_OR_HEALTH_DATA_REVIEW"
+    },
+    {
+      "key": "settings_connection_user_configured",
+      "expectedEnglishPreview": "user-configured",
+      "translations": {
+        "zh-TW": "由使用者設定",
+        "ja": "ユーザーが設定"
+      },
+      "reviewRisk": "NETWORK_SECURITY_OR_HEALTH_DATA_REVIEW"
+    },
+    {
+      "key": "settings_connection_feed_data",
+      "expectedEnglishPreview": "Feed URL fetch only",
+      "translations": {
+        "zh-TW": "僅擷取新聞來源網址",
+        "ja": "フィード URL の取得のみ"
+      },
+      "reviewRisk": "NETWORK_SECURITY_OR_HEALTH_DATA_REVIEW"
+    },
+    {
+      "key": "settings_connection_empty_feed",
+      "expectedEnglishPreview": "Empty feed",
+      "translations": {
+        "zh-TW": "新聞來源為空",
+        "ja": "フィードが空です"
+      },
+      "reviewRisk": "NETWORK_SECURITY_OR_HEALTH_DATA_REVIEW"
+    },
+    {
+      "key": "settings_connection_not_configured",
+      "expectedEnglishPreview": "not configured",
+      "translations": {
+        "zh-TW": "尚未設定",
+        "ja": "未設定"
+      },
+      "reviewRisk": "NETWORK_SECURITY_OR_HEALTH_DATA_REVIEW"
+    },
+    {
+      "key": "settings_connection_webhook_data",
+      "expectedEnglishPreview": "Alarm event, time, optional label",
+      "translations": {
+        "zh-TW": "鬧鐘事件、時間、選填的標籤",
+        "ja": "アラームイベント・時刻・任意のラベル"
+      },
+      "reviewRisk": "NETWORK_SECURITY_OR_HEALTH_DATA_REVIEW"
+    },
+    {
+      "key": "settings_connection_lan_domain",
+      "expectedEnglishPreview": "%1$s (LAN)",
+      "translations": {
+        "zh-TW": "%1$s（區域網路）",
+        "ja": "%1$s（LAN）"
+      },
+      "reviewRisk": "NETWORK_SECURITY_OR_HEALTH_DATA_REVIEW"
+    },
+    {
+      "key": "settings_connection_hue_data",
+      "expectedEnglishPreview": "Light on/brightness/color commands",
+      "translations": {
+        "zh-TW": "開燈、亮度及色彩指令",
+        "ja": "点灯・明るさ・色のコマンド"
+      },
+      "reviewRisk": "NETWORK_SECURITY_OR_HEALTH_DATA_REVIEW"
+    },
+    {
+      "key": "settings_connection_always_local",
+      "expectedEnglishPreview": "Always local",
+      "translations": {
+        "zh-TW": "始終只在裝置本機處理",
+        "ja": "常に端末内で処理"
+      },
+      "reviewRisk": "NETWORK_SECURITY_OR_HEALTH_DATA_REVIEW"
+    },
+    {
+      "key": "settings_health_connect",
+      "expectedEnglishPreview": "Health Connect",
+      "translations": {
+        "zh-TW": "Health Connect",
+        "ja": "Health Connect"
+      },
+      "reviewRisk": "NETWORK_SECURITY_OR_HEALTH_DATA_REVIEW"
+    },
+    {
+      "key": "settings_health_fdroid_description",
+      "expectedEnglishPreview": "This build does not include Health Connect. The setting is kept so backups from a build that does still restore.",
+      "translations": {
+        "zh-TW": "此版本未包含 Health Connect。保留這項設定，是為了讓包含此功能的其他版本備份仍可還原。",
+        "ja": "このビルドには Health Connect が含まれません。対応版からのバックアップを復元できるように設定項目を残しています。"
+      },
+      "reviewRisk": "NETWORK_SECURITY_OR_HEALTH_DATA_REVIEW"
+    },
+    {
+      "key": "settings_health_read_sleep",
+      "expectedEnglishPreview": "Read recent sleep sessions",
+      "translations": {
+        "zh-TW": "讀取最近的睡眠紀錄",
+        "ja": "最近の睡眠セッションを読み取る"
+      },
+      "reviewRisk": "NETWORK_SECURITY_OR_HEALTH_DATA_REVIEW"
+    },
+    {
+      "key": "settings_health_read_sleep_description",
+      "expectedEnglishPreview": "Reads your sleep sessions and nothing else. Summaries stay on the device and refresh while Bedtime, Stats or Settings is open.",
+      "translations": {
+        "zh-TW": "只讀取睡眠紀錄，不讀取其他資料。摘要保留在裝置上，並於開啟就寢、統計或設定畫面時更新。",
+        "ja": "睡眠セッションだけを読み取ります。要約は端末内に保存され、就寝・統計・設定画面を開いている間に更新されます。"
+      },
+      "reviewRisk": "NETWORK_SECURITY_OR_HEALTH_DATA_REVIEW"
+    },
+    {
+      "key": "settings_health_fdroid_permission",
+      "expectedEnglishPreview": "No Health Connect permissions are requested on F-Droid.",
+      "translations": {
+        "zh-TW": "F-Droid 版本不會要求 Health Connect 權限。",
+        "ja": "F-Droid 版では Health Connect の権限を要求しません。"
+      },
+      "reviewRisk": "NETWORK_SECURITY_OR_HEALTH_DATA_REVIEW"
+    },
+    {
+      "key": "settings_health_sdk_available",
+      "expectedEnglishPreview": "Available on this device",
+      "translations": {
+        "zh-TW": "此裝置可使用",
+        "ja": "この端末で利用可能"
+      },
+      "reviewRisk": "NETWORK_SECURITY_OR_HEALTH_DATA_REVIEW"
+    },
+    {
+      "key": "settings_health_update_needed",
+      "expectedEnglishPreview": "Update needed",
+      "translations": {
+        "zh-TW": "需要更新",
+        "ja": "更新が必要"
+      },
+      "reviewRisk": "NETWORK_SECURITY_OR_HEALTH_DATA_REVIEW"
+    },
+    {
+      "key": "settings_health_unavailable",
+      "expectedEnglishPreview": "Unavailable",
+      "translations": {
+        "zh-TW": "無法使用",
+        "ja": "利用できません"
+      },
+      "reviewRisk": "NETWORK_SECURITY_OR_HEALTH_DATA_REVIEW"
+    },
+    {
+      "key": "settings_health_not_included",
+      "expectedEnglishPreview": "Not included",
+      "translations": {
+        "zh-TW": "未包含",
+        "ja": "含まれていません"
+      },
+      "reviewRisk": "NETWORK_SECURITY_OR_HEALTH_DATA_REVIEW"
+    },
+    {
+      "key": "settings_health_permission_granted",
+      "expectedEnglishPreview": "Sleep data access granted",
+      "translations": {
+        "zh-TW": "已授予睡眠資料存取權",
+        "ja": "睡眠データへのアクセスを許可済み"
+      },
+      "reviewRisk": "NETWORK_SECURITY_OR_HEALTH_DATA_REVIEW"
+    },
+    {
+      "key": "settings_health_permission_needed",
+      "expectedEnglishPreview": "Permission needed",
+      "translations": {
+        "zh-TW": "需要權限",
+        "ja": "権限が必要"
+      },
+      "reviewRisk": "NETWORK_SECURITY_OR_HEALTH_DATA_REVIEW"
+    },
+    {
+      "key": "settings_health_last_session",
+      "expectedEnglishPreview": "Last Health Connect session: %1$s · %2$d read in the last 14 days.",
+      "translations": {
+        "zh-TW": "最近一筆 Health Connect 紀錄：%1$s；最近 14 天讀取 %2$d 筆。",
+        "ja": "最後の Health Connect セッション：%1$s。過去14日間に %2$d 件を読み取りました。"
+      },
+      "reviewRisk": "NETWORK_SECURITY_OR_HEALTH_DATA_REVIEW"
+    },
+    {
+      "key": "settings_health_no_recent_sessions",
+      "expectedEnglishPreview": "Sleep data access is granted, but nothing was recorded in the last 14 days.",
+      "translations": {
+        "zh-TW": "已取得睡眠資料存取權，但最近 14 天沒有紀錄。",
+        "ja": "睡眠データへのアクセスは許可されていますが、過去14日間に記録がありません。"
+      },
+      "reviewRisk": "NETWORK_SECURITY_OR_HEALTH_DATA_REVIEW"
+    },
+    {
+      "key": "settings_health_attention",
+      "expectedEnglishPreview": "Health Connect needs attention",
+      "translations": {
+        "zh-TW": "Health Connect 需要處理",
+        "ja": "Health Connect に対応が必要"
+      },
+      "reviewRisk": "NETWORK_SECURITY_OR_HEALTH_DATA_REVIEW"
+    },
+    {
+      "key": "settings_health_review_access",
+      "expectedEnglishPreview": "Review access",
+      "translations": {
+        "zh-TW": "檢查存取權",
+        "ja": "アクセス権を確認"
+      },
+      "reviewRisk": "NETWORK_SECURITY_OR_HEALTH_DATA_REVIEW"
+    },
+    {
+      "key": "settings_health_grant_access",
+      "expectedEnglishPreview": "Grant access",
+      "translations": {
+        "zh-TW": "授予存取權",
+        "ja": "アクセスを許可"
+      },
+      "reviewRisk": "NETWORK_SECURITY_OR_HEALTH_DATA_REVIEW"
+    },
+    {
+      "key": "settings_health_update_description",
+      "expectedEnglishPreview": "Health Connect is installed but needs an update before sleep sessions can be read.",
+      "translations": {
+        "zh-TW": "已安裝 Health Connect，但必須更新才能讀取睡眠紀錄。",
+        "ja": "Health Connect はインストールされていますが、睡眠セッションを読み取るには更新が必要です。"
+      },
+      "reviewRisk": "NETWORK_SECURITY_OR_HEALTH_DATA_REVIEW"
+    },
+    {
+      "key": "settings_health_unavailable_description",
+      "expectedEnglishPreview": "Health Connect is not available on this device.",
+      "translations": {
+        "zh-TW": "此裝置無法使用 Health Connect。",
+        "ja": "この端末では Health Connect を利用できません。"
+      },
+      "reviewRisk": "NETWORK_SECURITY_OR_HEALTH_DATA_REVIEW"
+    },
+    {
+      "key": "settings_health_opt_in_description",
+      "expectedEnglishPreview": "Opt in to read recent Health Connect sleep sessions on-device for Bedtime and Stats context.",
+      "translations": {
+        "zh-TW": "選擇允許在裝置上讀取最近的 Health Connect 睡眠紀錄，供就寢與統計畫面參考。",
+        "ja": "就寝画面と統計画面の参考情報として、最近の Health Connect の睡眠セッションを端末内で読み取ることに同意します。"
+      },
+      "reviewRisk": "NETWORK_SECURITY_OR_HEALTH_DATA_REVIEW"
+    },
+    {
+      "key": "settings_health_grant_description",
+      "expectedEnglishPreview": "Grant sleep data access in Health Connect before the app can show recent sleep summaries.",
+      "translations": {
+        "zh-TW": "請先在 Health Connect 授予睡眠資料存取權，App 才能顯示最近的睡眠摘要。",
+        "ja": "最近の睡眠要約をアプリに表示するには、Health Connect で睡眠データへのアクセスを許可してください。"
+      },
+      "reviewRisk": "NETWORK_SECURITY_OR_HEALTH_DATA_REVIEW"
+    },
+    {
+      "key": "settings_health_available_description",
+      "expectedEnglishPreview": "Recent sleep summaries are available locally from Health Connect.",
+      "translations": {
+        "zh-TW": "可從 Health Connect 取得近期睡眠摘要，並保留在本機。",
+        "ja": "最近の睡眠要約を Health Connect から取得し、端末内で利用できます。"
+      },
+      "reviewRisk": "NETWORK_SECURITY_OR_HEALTH_DATA_REVIEW"
+    },
+    {
+      "key": "settings_health_empty_description",
+      "expectedEnglishPreview": "Sleep data access is granted. No recent Health Connect sleep sessions yet.",
+      "translations": {
+        "zh-TW": "已取得睡眠資料存取權，但 Health Connect 尚無近期睡眠紀錄。",
+        "ja": "睡眠データへのアクセスは許可されていますが、Health Connect に最近の睡眠セッションはありません。"
+      },
+      "reviewRisk": "NETWORK_SECURITY_OR_HEALTH_DATA_REVIEW"
+    }
+  ]
+}
