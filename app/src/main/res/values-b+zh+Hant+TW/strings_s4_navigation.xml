@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="s4_nav_today">今日</string>
+    <string name="s4_nav_alarms">鬧鐘</string>
+    <string name="s4_nav_timer">計時</string>
+    <string name="s4_nav_world">世界</string>
+    <string name="s4_nav_news">新聞</string>
+    <string name="s4_nav_settings">設定</string>
+</resources>
