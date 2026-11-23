@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import test from "node:test";
 import assert from "node:assert/strict";
-import {mkdtempSync,symlinkSync,rmSync,readFileSync,existsSync} from "node:fs";
+import {mkdirSync,mkdtempSync,symlinkSync,rmSync,readFileSync,existsSync} from "node:fs";
 import {tmpdir} from "node:os";
 import {join,resolve,dirname} from "node:path";
 import {fileURLToPath} from "node:url";
@@ -102,6 +102,7 @@ test("L12-9B preliminary invalid notes refuse all claimed review progress",()=>{
   assert(prepared.strata.every(s=>s.observedUnsignedNoteStatus==="INVALID_NOTES_REFUSED"));
 });
 test("L12-9B blocks output outside build and only writes unapproved handoff files",()=>{
+  mkdirSync(join(ROOT,"build"),{recursive:true});
   const x=fixture(),temp=mkdtempSync(join(ROOT,"build","l12b9b-handoff-"));
   try{
     assert.throws(()=>writeOperationalHandoff("/tmp/l12-b9b-untrusted-release",x.prepared),
