@@ -28,6 +28,7 @@ jobs:
         with:
           distribution: temurin
           java-version: "17"
+          cache: gradle
       - uses: android-actions/setup-android@v4
       - name: Install Android 36
         run: sdkmanager --install "platforms;android-36" "build-tools;36.0.0"
@@ -229,7 +230,25 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          bash ./gradlew :app:testFdroidDebugUnitTest             --tests 'com.sysadmindoc.alarmclock.ui.components.BilingualUiOptionsTest'             --tests 'com.sysadmindoc.alarmclock.util.AppLanguageManagerTest'             --no-daemon --stacktrace
+          log="${RUNNER_TEMP}/bilingual-ui-unit-tests.log"
+          for attempt in 1 2 3; do
+            echo "Bilingual test attempt ${attempt}/3"
+            if bash ./gradlew :app:testFdroidDebugUnitTest \
+              --tests 'com.sysadmindoc.alarmclock.ui.components.BilingualUiOptionsTest' \
+              --tests 'com.sysadmindoc.alarmclock.util.AppLanguageManagerTest' \
+              --no-daemon --stacktrace 2>&1 | tee "$log"; then
+              exit 0
+            fi
+            if ! grep -Eq '(status code 429|Too Many Requests|Read timed out|Connection timed out)' "$log"; then
+              echo "Unit test failed for a non-network reason; no retry." >&2
+              exit 1
+            fi
+            if [[ "$attempt" -eq 3 ]]; then
+              echo "External test dependency rate-limit persisted after three attempts" >&2
+              exit 1
+            fi
+            sleep $((attempt * 45))
+          done
       - name: Confirm original music, Room and alarm scheduler modules unchanged
         shell: bash
         run: |
