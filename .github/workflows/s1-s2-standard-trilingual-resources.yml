@@ -1,0 +1,121 @@
+name: ACX S1/S2 standard trilingual native resources
+
+on:
+  push:
+    branches: [feature/acx-s1-s2-simplified-locales-20261123]
+    paths:
+      - "scripts/localization/s1s2-standard-locales*"
+      - "localization/**"
+      - "docs/localization/ACX-S1-S2*"
+      - ".github/workflows/s1-s2-standard-trilingual-resources.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  generate-and-validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: android-actions/setup-android@v4
+      - name: Install Android 36
+        run: sdkmanager --install "platforms;android-36" "build-tools;36.0.0"
+      - name: Technical QA for unreviewed translated resources
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --test scripts/localization/s1s2-standard-locales.test.mjs \
+            scripts/localization/l13-b-protected-xml-writer.test.mjs
+          node scripts/localization/s1s2-standard-locales.mjs --mode stage \
+            --out-dir build/localization/S2_STANDARD_MACHINE_TRANSLATED
+          node --input-type=module -e '
+            import {readFileSync} from "node:fs";
+            import assert from "node:assert/strict";
+            const m=JSON.parse(readFileSync("build/localization/S2_STANDARD_MACHINE_TRANSLATED/s2-resource-manifest.json","utf8"));
+            assert.equal(m.translatedTotalRows,3100);
+            assert.equal(m.originalEnglishChanged,false);
+            assert.equal(m.existingLocalizedDefinitionsOverwritten,0);
+            assert.equal(m.independentlyApprovedLocaleRows,0);
+            assert.equal(m.formatArgumentMismatches,0);
+          '
+      - name: Disposable integration of all 3100 rows into real Android resources
+        shell: bash
+        run: |
+          set -euo pipefail
+          STAGE=build/localization/S2_STANDARD_MACHINE_TRANSLATED
+          ZH=app/src/main/res/values-b+zh+Hant+TW/strings_s2_machine_translated.xml
+          JA=app/src/main/res/values-ja/strings_s2_machine_translated.xml
+          test ! -e "$ZH" && test ! -e "$JA"
+          trap 'rm -f "$ZH" "$JA"' EXIT
+          cp "$STAGE/values-b+zh+Hant+TW/strings_s2_machine_translated.xml" "$ZH"
+          cp "$STAGE/values-ja/strings_s2_machine_translated.xml" "$JA"
+          bash ./gradlew :app:processFdroidDebugResources \
+            :app:compileFdroidDebugKotlin :app:processPlayDebugResources \
+            --no-daemon --stacktrace
+          echo "S2 fully linked and Kotlin-compiled, still NOT human semantically approved."
+      - name: Confirm temporary locale injection is cleaned
+        shell: bash
+        run: |
+          set -euo pipefail
+          test ! -e app/src/main/res/values-b+zh+Hant+TW/strings_s2_machine_translated.xml
+          test ! -e app/src/main/res/values-ja/strings_s2_machine_translated.xml
+          git diff --exit-code -- app/src/main
+      - uses: actions/upload-artifact@v4
+        with:
+          name: acx-s2-standard-3100-machine-translation-native-xml
+          path: build/localization/S2_STANDARD_MACHINE_TRANSLATED/
+          retention-days: 14
+
+  promote-verified-resources-to-draft-branch:
+    needs: generate-and-validate
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    if: github.repository == 'Penguink72/AlarmClockXtreme' && github.ref == 'refs/heads/feature/acx-s1-s2-simplified-locales-20261123'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 1
+      - uses: actions/download-artifact@v4
+        with:
+          name: acx-s2-standard-3100-machine-translation-native-xml
+          path: build/localization/S2_STANDARD_MACHINE_TRANSLATED
+      - name: Commit two verified locale resource files, feature branch ONLY
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          ZH=app/src/main/res/values-b+zh+Hant+TW/strings_s2_machine_translated.xml
+          JA=app/src/main/res/values-ja/strings_s2_machine_translated.xml
+          STAGE=build/localization/S2_STANDARD_MACHINE_TRANSLATED
+          test ! -e "$ZH" && test ! -e "$JA"
+          test -s "$STAGE/values-b+zh+Hant+TW/strings_s2_machine_translated.xml"
+          test -s "$STAGE/values-ja/strings_s2_machine_translated.xml"
+          cp "$STAGE/values-b+zh+Hant+TW/strings_s2_machine_translated.xml" "$ZH"
+          cp "$STAGE/values-ja/strings_s2_machine_translated.xml" "$JA"
+          git add -- "$ZH" "$JA"
+          git diff --cached --check
+          git diff --cached --name-only | sort > /tmp/s2-modified.txt
+          printf '%s\n' "$JA" "$ZH" | sort > /tmp/s2-expected.txt
+          diff -u /tmp/s2-expected.txt /tmp/s2-modified.txt
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "feat(localization): commit 3100 technically validated S2 locale strings"
+          git push "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" \
+            HEAD:refs/heads/feature/acx-s1-s2-simplified-locales-20261123
+          echo "Feature-only resource commit done; main remains untouched."
