@@ -65,6 +65,7 @@ import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sysadmindoc.alarmclock.R
+import com.sysadmindoc.alarmclock.ui.components.bilingualStringResource
 import com.sysadmindoc.alarmclock.data.local.entity.MusicPoolEntry
 import com.sysadmindoc.alarmclock.data.local.entity.displayTitle
 import kotlinx.coroutines.launch
@@ -202,14 +203,14 @@ fun MusicLibraryDialog(
                                 }
                                 Column(modifier = Modifier.weight(1f)) {
                                     Text(
-                                        Lp2PreviewText.text(R.string.music_library_title, "music_library_title"),
+                                        bilingualStringResource(R.string.music_library_title),
                                         style = MaterialTheme.typography.titleLarge,
                                         maxLines = if (Lp2PreviewText.showsTwoLanguages()) 2 else 1,
                                         overflow = TextOverflow.Ellipsis
                                     )
                                     Text(
                                         if (showHistory) {
-                                            Lp2PreviewText.text(R.string.music_library_history_title, "music_library_history_title")
+                                            bilingualStringResource(R.string.music_library_history_title)
                                         } else {
                                             stringResource(
                                                 R.string.music_library_track_count,
@@ -221,7 +222,7 @@ fun MusicLibraryDialog(
                                 }
                                 if (!showHistory) {
                                     TextButton(onClick = { showHistory = true }) {
-                                        Text(stringResource(R.string.music_library_history_button))
+                                        Text(bilingualStringResource(R.string.music_library_history_button))
                                     }
                                 }
                             }
@@ -240,7 +241,7 @@ fun MusicLibraryDialog(
                                             },
                                             text = {
                                                 Text(
-                                                    stringResource(
+                                                    bilingualStringResource(
                                                         if (page == MusicLibraryWorkspace.MEDIA_LIBRARY) {
                                                             R.string.music_library_workspace_media
                                                         } else {
@@ -478,7 +479,7 @@ private fun MusicCatalogContent(
             value = state.catalogSearch,
             onValueChange = viewModel::setCatalogSearch,
             modifier = Modifier.fillMaxWidth(),
-            label = { Text(stringResource(R.string.music_library_catalog_search)) },
+            label = { Text(bilingualStringResource(R.string.music_library_catalog_search)) },
             singleLine = true
         )
         Row(
@@ -488,7 +489,7 @@ private fun MusicCatalogContent(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             CatalogFilterChip(
-                label = stringResource(R.string.music_library_category_all),
+                label = bilingualStringResource(R.string.music_library_category_all),
                 selected = category == MusicLibraryCategory.ALL,
                 onClick = { onCategoryChange(MusicLibraryCategory.ALL) }
             )
@@ -498,7 +499,7 @@ private fun MusicCatalogContent(
                 onClick = { onCategoryChange(MusicLibraryCategory.MUSIC) }
             )
             CatalogFilterChip(
-                label = stringResource(R.string.music_library_category_videos),
+                label = bilingualStringResource(R.string.music_library_category_videos),
                 selected = category == MusicLibraryCategory.VIDEOS,
                 onClick = { onCategoryChange(MusicLibraryCategory.VIDEOS) }
             )
@@ -510,21 +511,21 @@ private fun MusicCatalogContent(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             OutlinedButton(onClick = onOpenFolders) {
-                Text(stringResource(R.string.music_library_browse_folders))
+                Text(bilingualStringResource(R.string.music_library_browse_folders))
             }
             OutlinedButton(onClick = onOpenArtists) {
-                Text(stringResource(R.string.music_library_browse_artists_albums))
+                Text(bilingualStringResource(R.string.music_library_browse_artists_albums))
             }
         }
         if (state.catalogSourceScope != null) {
             val scopeLabel = when (val scope = state.catalogSourceScope) {
                 MusicPoolSourceScope.Folders ->
-                    stringResource(R.string.music_library_pool_scope_folders)
+                    bilingualStringResource(R.string.music_library_pool_scope_folders)
                 MusicPoolSourceScope.DeviceMedia ->
-                    stringResource(R.string.music_library_pool_device_source)
+                    bilingualStringResource(R.string.music_library_pool_device_source)
                 is MusicPoolSourceScope.Folder ->
                     state.sources.firstOrNull { it.id == scope.sourceId }?.name
-                        ?: stringResource(R.string.music_library_pool_unknown_source)
+                        ?: bilingualStringResource(R.string.music_library_pool_unknown_source)
                 null -> ""
             }
             TextButton(onClick = { viewModel.setCatalogSourceScope(null) }) {
@@ -549,13 +550,13 @@ private fun MusicCatalogContent(
         )
         if (previewController == null) {
             Text(
-                stringResource(R.string.music_library_preview_unavailable),
+                bilingualStringResource(R.string.music_library_preview_unavailable),
                 style = MaterialTheme.typography.bodySmall
             )
         }
         if (previewState.blockedByAlarm) {
             Text(
-                stringResource(R.string.music_library_preview_blocked_by_alarm),
+                bilingualStringResource(R.string.music_library_preview_blocked_by_alarm),
                 color = MaterialTheme.colorScheme.error,
                 style = MaterialTheme.typography.bodySmall
             )
@@ -575,24 +576,24 @@ private fun MusicCatalogContent(
                 onClick = { viewModel.setCatalogFilter(MusicPoolFilter.ALL_CANDIDATES) }
             )
             CatalogFilterChip(
-                label = stringResource(R.string.music_library_pool_included),
+                label = bilingualStringResource(R.string.music_library_pool_included),
                 selected = state.catalogFilter == MusicPoolFilter.INCLUDED,
                 onClick = { viewModel.setCatalogFilter(MusicPoolFilter.INCLUDED) }
             )
             CatalogFilterChip(
-                label = stringResource(R.string.music_library_pool_excluded),
+                label = bilingualStringResource(R.string.music_library_pool_excluded),
                 selected = state.catalogFilter == MusicPoolFilter.EXCLUDED,
                 onClick = { viewModel.setCatalogFilter(MusicPoolFilter.EXCLUDED) }
             )
         }
         if (!hasAudioPermission) {
             Text(
-                stringResource(R.string.music_library_catalog_permission),
+                bilingualStringResource(R.string.music_library_catalog_permission),
                 color = MaterialTheme.colorScheme.error,
                 style = MaterialTheme.typography.bodySmall
             )
             OutlinedButton(onClick = onRequestPermission, modifier = Modifier.fillMaxWidth()) {
-                Text(stringResource(R.string.music_library_catalog_grant_permission))
+                Text(bilingualStringResource(R.string.music_library_catalog_grant_permission))
             }
         }
         Row(
@@ -658,7 +659,7 @@ private fun MusicCatalogContent(
                     )
                 }
             ) {
-                Text(stringResource(R.string.music_library_pool_exclude))
+                Text(bilingualStringResource(R.string.music_library_pool_exclude))
             }
             OutlinedButton(
                 enabled = !state.scanning,
@@ -678,7 +679,7 @@ private fun MusicCatalogContent(
                 )
             }
             OutlinedButton(onClick = onManageSources) {
-                Text(stringResource(R.string.music_library_sources_button))
+                Text(bilingualStringResource(R.string.music_library_sources_button))
             }
         }
         Row(
@@ -721,7 +722,7 @@ private fun MusicCatalogContent(
         }
         if (state.poolTracks.any { it.track.source == MusicLibraryIndexer.SOURCE_MEDIA_STORE }) {
             Text(
-                stringResource(R.string.music_library_pool_device_warning),
+                bilingualStringResource(R.string.music_library_pool_device_warning),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.error
             )
@@ -896,12 +897,12 @@ private fun CatalogSourceScopePicker(
             onClick = { onSelect(null) }
         )
         CatalogFilterChip(
-            label = stringResource(R.string.music_library_pool_scope_folders),
+            label = bilingualStringResource(R.string.music_library_pool_scope_folders),
             selected = state.catalogSourceScope == MusicPoolSourceScope.Folders,
             onClick = { onSelect(MusicPoolSourceScope.Folders) }
         )
         CatalogFilterChip(
-            label = stringResource(R.string.music_library_pool_device_source),
+            label = bilingualStringResource(R.string.music_library_pool_device_source),
             selected = state.catalogSourceScope == MusicPoolSourceScope.DeviceMedia,
             onClick = { onSelect(MusicPoolSourceScope.DeviceMedia) }
         )
@@ -936,7 +937,7 @@ private fun MusicFoldersContent(
     ) {
         Text(stringResource(R.string.music_library_folder_relative_paths_pending))
         OutlinedButton(onClick = onManageSources, modifier = Modifier.fillMaxWidth()) {
-            Text(stringResource(R.string.music_library_sources_button))
+            Text(bilingualStringResource(R.string.music_library_sources_button))
         }
         if (state.sources.isEmpty() && deviceTrackCount == 0) {
             Text(stringResource(R.string.music_library_no_sources))
