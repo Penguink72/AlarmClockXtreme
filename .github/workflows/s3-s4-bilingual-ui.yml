@@ -2,9 +2,10 @@ name: ACX S3/S4 persisted language settings and bilingual runtime
 
 on:
   push:
-    branches: [feature/acx-s3-s4-dual-language-ui-20261123, fix/acx-s3s4-apk-install-20261123]
+    branches: [feature/acx-s3-s4-dual-language-ui-20261123, fix/acx-s3s4-apk-install-20261123, fix/acx-visible-localization-fallbacks-20261123]
     paths:
       - "app/src/main/**"
+      - "app/src/debug/**"
       - "app/src/test/java/com/sysadmindoc/alarmclock/ui/components/BilingualUiOptionsTest.kt"
       - "app/src/test/java/com/sysadmindoc/alarmclock/util/AppLanguageManagerTest.kt"
       - "docs/localization/ACX-S3-S4*"
@@ -128,6 +129,35 @@ jobs:
             echo "S3 forbids JVM-global locale mutation" >&2
             exit 1
           fi
+      - name: Guard visible locale resources and forbid hardcoded English regressions
+        shell: bash
+        run: |
+          set -euo pipefail
+          if grep -Fq 'New reliability net: if an alarm is silently suppressed' app/src/main/java/com/sysadmindoc/alarmclock/MainActivity.kt; then
+            echo "User-facing update notes must use localized resources" >&2
+            exit 1
+          fi
+          if grep -Fq '"Exact alarms designed to survive Doze mode"' app/src/main/java/com/sysadmindoc/alarmclock/ui/onboarding/OnboardingScreen.kt; then
+            echo "Onboarding bullets must not be hardcoded English" >&2
+            exit 1
+          fi
+          python3 - <<'PY'
+          import pathlib
+          import xml.etree.ElementTree as ET
+
+          base = pathlib.Path('app/src/main/res')
+          folders = ['values', 'values-b+zh+Hant+TW', 'values-ja']
+          actual = []
+          for name in folders:
+              path = base / name / 'strings_s4_visible_fallback_repair.xml'
+              root = ET.parse(path).getroot()
+              keys = [node.attrib['name'] for node in root.findall('string')]
+              assert len(keys) == len(set(keys)), f'duplicate locale keys in {path}'
+              assert len(keys) == 17, f'unexpected key count in {path}: {len(keys)}'
+              actual.append(set(keys))
+          assert actual[0] == actual[1] == actual[2], 'visible locale resources not 1:1'
+          print('Visible localization resource parity: 17/17/17')
+          PY
       - name: Compile Android F-Droid Kotlin/UI and Play resource variants
         shell: bash
         run: |
@@ -137,7 +167,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          bash ./gradlew :app:assembleFdroidDebug -PciVersionCode=162 --no-daemon --stacktrace
+          bash ./gradlew :app:assembleFdroidDebug -PciVersionCode=163 --no-daemon --stacktrace
           test -s app/build/outputs/apk/fdroid/debug/app-fdroid-debug.apk
       - name: Verify APK package, version and persistent upgrade signing
         id: apk_meta
@@ -160,8 +190,8 @@ jobs:
             echo "ERROR: Unexpected package name: $PKG_NAME"
             exit 1
           fi
-          if [[ "$VERSION_CODE" != "162" ]]; then
-            echo "ERROR: Expected S3/S4 versionCode=162 (must exceed previous 161), got: $VERSION_CODE"
+          if [[ "$VERSION_CODE" != "163" ]]; then
+            echo "ERROR: Expected S3/S4 versionCode=163 (must exceed previous 161), got: $VERSION_CODE"
             exit 1
           fi
           APKSIGNER_OUT="$("${BUILD_TOOLS_DIR}/apksigner" verify --verbose --print-certs "$APK_PATH")"
@@ -213,17 +243,17 @@ jobs:
         run: |
           set -euo pipefail
           short_sha="${GITHUB_SHA:0:7}"
-          tag="s3-s4-debug-v162-${short_sha}"
-          cp "app/build/outputs/apk/fdroid/debug/app-fdroid-debug.apk" "app/build/outputs/apk/fdroid/debug/AlarmClockXtreme-S3S4-v162-debug.apk"
-          apk="app/build/outputs/apk/fdroid/debug/AlarmClockXtreme-S3S4-v162-debug.apk"
+          tag="s3-s4-debug-v163-${short_sha}"
+          cp "app/build/outputs/apk/fdroid/debug/app-fdroid-debug.apk" "app/build/outputs/apk/fdroid/debug/AlarmClockXtreme-S3S4-v163-debug.apk"
+          apk="app/build/outputs/apk/fdroid/debug/AlarmClockXtreme-S3S4-v163-debug.apk"
           if gh release view "$tag" >/dev/null 2>&1; then
             gh release upload "$tag" "$apk" --clobber
           else
             gh release create "$tag" "$apk" \
               --target "$GITHUB_SHA" \
-              --title "S3/S4 bilingual debug v162 ($short_sha)" \
-              --notes "Development test build only. VersionCode 162, persistent debug signing certificate matched against Preview 3 v148. Not a production release." \
+              --title "S3/S4 bilingual debug v163 ($short_sha)" \
+              --notes "Development test build only. VersionCode 163, persistent debug signing certificate matched against Preview 3 v148. Not a production release." \
               --prerelease
           fi
-          gh release view "$tag" --json assets --jq '.assets[] | select(.name=="AlarmClockXtreme-S3S4-v162-debug.apk") | .name' | grep -Fx "AlarmClockXtreme-S3S4-v162-debug.apk"
-          echo "Direct APK: https://github.com/${GITHUB_REPOSITORY}/releases/download/${tag}/AlarmClockXtreme-S3S4-v162-debug.apk" >> "$GITHUB_STEP_SUMMARY"
+          gh release view "$tag" --json assets --jq '.assets[] | select(.name=="AlarmClockXtreme-S3S4-v163-debug.apk") | .name' | grep -Fx "AlarmClockXtreme-S3S4-v163-debug.apk"
+          echo "Direct APK: https://github.com/${GITHUB_REPOSITORY}/releases/download/${tag}/AlarmClockXtreme-S3S4-v163-debug.apk" >> "$GITHUB_STEP_SUMMARY"
