@@ -56,6 +56,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sysadmindoc.alarmclock.BuildConfig
 import com.sysadmindoc.alarmclock.R
+import com.sysadmindoc.alarmclock.ui.components.bilingualStringResource
 import com.sysadmindoc.alarmclock.data.model.Alarm
 import com.sysadmindoc.alarmclock.data.model.ShiftPattern
 import com.sysadmindoc.alarmclock.domain.LocationDismissPolicy
@@ -95,8 +96,8 @@ internal fun LazyListScope.alarmEditOverviewSections(
         highlighted = true
     ) {
         AppSectionTitle(
-            title = stringResource(R.string.alarm_edit_preview_title),
-            description = stringResource(R.string.alarm_edit_preview_description)
+            title = bilingualStringResource(R.string.alarm_edit_preview_title),
+            description = bilingualStringResource(R.string.alarm_edit_preview_description)
         )
 
         AppStatusChip(
@@ -232,7 +233,7 @@ internal fun LazyListScope.alarmEditOverviewSections(
         OutlinedTextField(
             value = state.label,
             onValueChange = viewModel::updateLabel,
-            placeholder = { Text(stringResource(R.string.alarm_edit_label_placeholder), color = TextMuted) },
+            placeholder = { Text(bilingualStringResource(R.string.alarm_edit_label_placeholder), color = TextMuted) },
             colors = appOutlinedTextFieldColors(),
             shape = AppInputShape,
             modifier = Modifier
