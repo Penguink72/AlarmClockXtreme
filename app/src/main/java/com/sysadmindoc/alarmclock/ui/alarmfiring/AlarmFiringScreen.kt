@@ -104,6 +104,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sysadmindoc.alarmclock.R
+import com.sysadmindoc.alarmclock.ui.components.bilingualStringResource
 import com.sysadmindoc.alarmclock.ui.alarmfiring.challenges.BarcodeScanChallengeView
 import com.sysadmindoc.alarmclock.ui.alarmfiring.challenges.Challenge
 import com.sysadmindoc.alarmclock.ui.alarmfiring.challenges.MathChallengeView
@@ -270,7 +271,7 @@ fun AlarmFiringScreen(
     val amPm = if (is24Hour) "" else currentTime.format(DateTimeFormatter.ofPattern("a"))
     val dateText = currentDate.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL))
     val alarmLabel = state.alarm?.label?.takeIf { it.isNotBlank() }
-        ?: stringResource(R.string.notif_alarm_ringing)
+        ?: bilingualStringResource(R.string.notif_alarm_ringing)
     val stepLabel = if (state.totalChallenges > 1) {
         stringResource(
             R.string.firing_step_of,
@@ -282,23 +283,23 @@ fun AlarmFiringScreen(
     }
     val statusLine = when {
         state.canDismiss && holdToDismissEnabled ->
-            stringResource(R.string.firing_status_hold_or_snooze, holdDurationSeconds)
-        state.canDismiss -> stringResource(R.string.firing_status_swipe_or_snooze)
+            bilingualStringResource(R.string.firing_status_hold_or_snooze, holdDurationSeconds)
+        state.canDismiss -> bilingualStringResource(R.string.firing_status_swipe_or_snooze)
         locationDismissActive && state.wakeChallengeReady -> locationDismissMessage
         challenge == null && holdToDismissEnabled ->
-            stringResource(R.string.firing_status_hold_to_stop, holdDurationSeconds)
-        challenge == null -> stringResource(R.string.firing_status_swipe_to_stop)
+            bilingualStringResource(R.string.firing_status_hold_to_stop, holdDurationSeconds)
+        challenge == null -> bilingualStringResource(R.string.firing_status_swipe_to_stop)
         else -> challenge.statusDescription()
     }
     val holdButtonHint = stringResource(R.string.firing_hold_button_hint, holdDurationSeconds)
     val holdDismissHint = stringResource(R.string.firing_hold_dismiss_short, holdDurationSeconds)
     val releaseDismissHint = stringResource(R.string.firing_release_dismiss)
     val releaseSnoozeHint = stringResource(R.string.firing_release_snooze)
-    val noSnoozesLeftHint = stringResource(R.string.firing_snoozes_none_left)
+    val noSnoozesLeftHint = bilingualStringResource(R.string.firing_snoozes_none_left)
     val swipeProtectedHint = stringResource(R.string.firing_swipe_protected)
-    val swipeLeftHint = stringResource(R.string.firing_swipe_left_dismiss)
+    val swipeLeftHint = bilingualStringResource(R.string.firing_swipe_left_dismiss)
     val finishStepHint = stringResource(R.string.firing_finish_step_first)
-    val swipeRightHint = stringResource(R.string.firing_swipe_right_snooze)
+    val swipeRightHint = bilingualStringResource(R.string.firing_swipe_right_snooze)
 
     Box(
         modifier = Modifier
@@ -444,11 +445,11 @@ fun AlarmFiringScreen(
                     }
                     AppStatusChip(
                         label = when {
-                            state.canDismiss && holdToDismissEnabled -> stringResource(R.string.firing_hold_required)
-                            state.canDismiss -> stringResource(R.string.firing_dismiss_ready)
+                            state.canDismiss && holdToDismissEnabled -> bilingualStringResource(R.string.firing_hold_required)
+                            state.canDismiss -> bilingualStringResource(R.string.firing_dismiss_ready)
                             locationDismissActive && state.wakeChallengeReady ->
-                                stringResource(R.string.firing_location_locked)
-                            else -> stringResource(R.string.firing_dismiss_locked)
+                                bilingualStringResource(R.string.firing_location_locked)
+                            else -> bilingualStringResource(R.string.firing_dismiss_locked)
                         },
                         icon = when {
                             state.canDismiss -> Icons.Default.CheckCircle
@@ -1013,17 +1014,17 @@ fun AlarmFiringScreen(
 
             AppSurfaceCard(modifier = Modifier.fillMaxWidth()) {
                 AppSectionTitle(
-                    title = stringResource(R.string.firing_controls_title),
+                    title = bilingualStringResource(R.string.firing_controls_title),
                     description = if (state.canDismiss) {
                         if (holdToDismissEnabled) {
-                            stringResource(R.string.firing_controls_hold_description)
+                            bilingualStringResource(R.string.firing_controls_hold_description)
                         } else {
-                            stringResource(R.string.firing_controls_ready_description)
+                            bilingualStringResource(R.string.firing_controls_ready_description)
                         }
                     } else if (locationDismissActive && state.wakeChallengeReady) {
-                        stringResource(R.string.firing_controls_location_description)
+                        bilingualStringResource(R.string.firing_controls_location_description)
                     } else {
-                        stringResource(R.string.firing_controls_locked_description)
+                        bilingualStringResource(R.string.firing_controls_locked_description)
                     }
                 )
 
@@ -1036,13 +1037,13 @@ fun AlarmFiringScreen(
                     AppStatusChip(
                         label = when {
                             state.canDismiss && holdToDismissEnabled ->
-                                stringResource(R.string.firing_hold_to_finish)
+                                bilingualStringResource(R.string.firing_hold_to_finish)
                             state.canDismiss && showSwipeControls ->
-                                stringResource(R.string.firing_swipe_left_dismiss)
-                            state.canDismiss -> stringResource(R.string.firing_tap_dismiss)
+                                bilingualStringResource(R.string.firing_swipe_left_dismiss)
+                            state.canDismiss -> bilingualStringResource(R.string.firing_tap_dismiss)
                             locationDismissActive && state.wakeChallengeReady ->
-                                stringResource(R.string.firing_dismiss_after_location)
-                            else -> stringResource(R.string.firing_dismiss_after_challenge)
+                                bilingualStringResource(R.string.firing_dismiss_after_location)
+                            else -> bilingualStringResource(R.string.firing_dismiss_after_challenge)
                         },
                         icon = if (state.canDismiss) Icons.Default.CheckCircle else Icons.Default.WarningAmber,
                         color = if (state.canDismiss) DismissGreen else TextMuted
@@ -1050,10 +1051,10 @@ fun AlarmFiringScreen(
                     AppStatusChip(
                         label = when {
                             !state.snoozeAllowed ->
-                                stringResource(R.string.firing_snoozes_none_left)
+                                bilingualStringResource(R.string.firing_snoozes_none_left)
                             showSwipeControls ->
-                                stringResource(R.string.firing_swipe_right_snooze)
-                            else -> stringResource(R.string.firing_tap_snooze)
+                                bilingualStringResource(R.string.firing_swipe_right_snooze)
+                            else -> bilingualStringResource(R.string.firing_tap_snooze)
                         },
                         icon = Icons.Default.Snooze,
                         color = if (state.snoozeAllowed) SnoozeYellow else TextMuted
@@ -1083,10 +1084,10 @@ fun AlarmFiringScreen(
                         ) {
                             Text(
                                 text = when {
-                                    state.canDismiss -> stringResource(R.string.dismiss_alarm)
+                                    state.canDismiss -> bilingualStringResource(R.string.dismiss_alarm)
                                     locationDismissActive && state.wakeChallengeReady ->
-                                        stringResource(R.string.firing_leave_place_to_dismiss)
-                                    else -> stringResource(R.string.firing_finish_challenge)
+                                        bilingualStringResource(R.string.firing_leave_place_to_dismiss)
+                                    else -> bilingualStringResource(R.string.firing_finish_challenge)
                                 },
                                 fontWeight = FontWeight.SemiBold,
                                 fontSize = 16.sp
@@ -1109,7 +1110,7 @@ fun AlarmFiringScreen(
                     Text(
                         text = when {
                             !state.snoozeAllowed ->
-                                stringResource(R.string.firing_snoozes_none_left)
+                                bilingualStringResource(R.string.firing_snoozes_none_left)
                             // Zero remaining on an alarm with no dismiss gate
                             // still snoozes; it just ends the alarm. Saying
                             // "0 snoozes left" beside a live button would read
@@ -1119,7 +1120,7 @@ fun AlarmFiringScreen(
                                 snoozesLeft,
                                 snoozesLeft
                             )
-                            else -> stringResource(R.string.firing_snooze_hint)
+                            else -> bilingualStringResource(R.string.firing_snooze_hint)
                         },
                         color = TextMuted,
                         style = MaterialTheme.typography.bodySmall,
@@ -1134,9 +1135,9 @@ fun AlarmFiringScreen(
                     ) {
                         Text(
                             text = if (showSnoozeOptions) {
-                                stringResource(R.string.firing_hide_snooze_choices)
+                                bilingualStringResource(R.string.firing_hide_snooze_choices)
                             } else {
-                                stringResource(R.string.firing_choose_snooze)
+                                bilingualStringResource(R.string.firing_choose_snooze)
                             },
                             color = TextSecondary
                         )
@@ -1180,7 +1181,7 @@ fun AlarmFiringScreen(
                                 modifier = Modifier.size(18.dp)
                             )
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text(stringResource(R.string.firing_choose_snooze_until))
+                            Text(bilingualStringResource(R.string.firing_choose_snooze_until))
                         }
                     }
                 }
@@ -1212,7 +1213,7 @@ fun AlarmFiringScreen(
                         showSnoozeUntilPicker = false
                     }
                 ) {
-                    Text(stringResource(R.string.firing_snooze_until_save), color = SnoozeYellow)
+                    Text(bilingualStringResource(R.string.firing_snooze_until_save), color = SnoozeYellow)
                 }
             },
             dismissButton = {
@@ -1223,12 +1224,12 @@ fun AlarmFiringScreen(
             title = {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     AppStatusChip(
-                        label = stringResource(R.string.firing_snooze_until_title),
+                        label = bilingualStringResource(R.string.firing_snooze_until_title),
                         icon = Icons.Default.AccessTime,
                         color = SnoozeYellow
                     )
                     Text(
-                        stringResource(R.string.firing_snooze_until_hint),
+                        bilingualStringResource(R.string.firing_snooze_until_hint),
                         color = TextSecondary,
                         style = MaterialTheme.typography.bodySmall
                     )
@@ -1503,7 +1504,7 @@ private fun HoldToDismissButton(
                 Spacer(modifier = Modifier.width(10.dp))
                 Text(
                     text = when {
-                        !enabled -> stringResource(R.string.firing_finish_challenge)
+                        !enabled -> bilingualStringResource(R.string.firing_finish_challenge)
                         isHolding -> stringResource(R.string.firing_keep_holding)
                         else -> stringResource(
                             R.string.firing_hold_to_dismiss_short,
@@ -1527,8 +1528,8 @@ private fun LongPressSnoozeButton(
     onClick: () -> Unit,
     onLongClick: () -> Unit
 ) {
-    val snoozeLabel = stringResource(R.string.firing_snooze_for_minutes, minutes)
-    val exactSnoozeLabel = stringResource(R.string.firing_choose_snooze)
+    val snoozeLabel = bilingualStringResource(R.string.firing_snooze_for_minutes, minutes)
+    val exactSnoozeLabel = bilingualStringResource(R.string.firing_choose_snooze)
     val tint = if (enabled) SnoozeYellow else TextMuted
     Surface(
         modifier = Modifier
@@ -1648,7 +1649,7 @@ private fun SnoozeMinutePicker(
                 )
             ) {
                 Text(
-                    text = stringResource(R.string.firing_snooze_minutes, minutes),
+                    text = bilingualStringResource(R.string.firing_snooze_minutes, minutes),
                     fontWeight = FontWeight.SemiBold
                 )
             }
