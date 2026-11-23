@@ -26,6 +26,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -73,6 +75,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.sysadmindoc.alarmclock.ui.components.AppInlineNotice
 import com.sysadmindoc.alarmclock.ui.components.AppStatusChip
 import com.sysadmindoc.alarmclock.ui.components.AppSurfaceCard
+import com.sysadmindoc.alarmclock.ui.components.bilingualStringResource
 import com.sysadmindoc.alarmclock.ui.theme.AccentBlue
 import com.sysadmindoc.alarmclock.ui.theme.AccentRed
 import com.sysadmindoc.alarmclock.ui.theme.DismissGreen
@@ -95,7 +98,7 @@ data class OnboardingPage(
     @StringRes val titleRes: Int,
     @StringRes val descriptionRes: Int,
     val accentColor: Color,
-    val highlights: List<String>
+    val highlights: List<Int>
 )
 
 private val onboardingPages = listOf(
@@ -105,8 +108,8 @@ private val onboardingPages = listOf(
         descriptionRes = R.string.onboarding_alarmclockxtreme_built_stay_dependable_even,
         accentColor = AccentBlue,
         highlights = listOf(
-            "Exact alarms designed to survive Doze mode",
-            "Battery guidance for aggressive device vendors"
+            R.string.s4_onboarding_exact_doze,
+            R.string.s4_onboarding_battery_guidance
         )
     ),
     OnboardingPage(
@@ -115,8 +118,8 @@ private val onboardingPages = listOf(
         descriptionRes = R.string.onboarding_challenge_based_dismiss_flows_help,
         accentColor = SnoozeYellow,
         highlights = listOf(
-            "Math, shake, memory, steps, barcode, and more",
-            "Layer multiple challenges when you need extra certainty"
+            R.string.s4_onboarding_challenge_types,
+            R.string.s4_onboarding_challenge_layers
         )
     ),
     OnboardingPage(
@@ -125,8 +128,8 @@ private val onboardingPages = listOf(
         descriptionRes = R.string.onboarding_see_weather_calendar_next_alarm,
         accentColor = DismissGreen,
         highlights = listOf(
-            "A quick daily dashboard with forecast and events",
-            "Useful context without ads or noisy clutter"
+            R.string.s4_onboarding_dashboard_events,
+            R.string.s4_onboarding_context_no_clutter
         )
     ),
     OnboardingPage(
@@ -135,8 +138,8 @@ private val onboardingPages = listOf(
         descriptionRes = R.string.onboarding_no_ads_no_tracking_no,
         accentColor = AccentRed,
         highlights = listOf(
-            "Permissions are optional and can be changed later",
-            "Data stays on your device unless you configure an integration"
+            R.string.s4_onboarding_permissions_optional,
+            R.string.s4_onboarding_data_local
         )
     )
 )
@@ -487,7 +490,8 @@ private fun OnboardingPageContent(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 24.dp, vertical = 8.dp),
+            .padding(horizontal = 24.dp, vertical = 8.dp)
+            .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -507,13 +511,13 @@ private fun OnboardingPageContent(
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 Text(
-                    text = stringResource(page.titleRes),
+                    text = bilingualStringResource(page.titleRes),
                     style = MaterialTheme.typography.headlineSmall,
                     color = TextPrimary,
                     textAlign = TextAlign.Center
                 )
                 Text(
-                    text = com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.textForResource(page.descriptionRes),
+                    text = bilingualStringResource(page.descriptionRes),
                     style = MaterialTheme.typography.bodyLarge,
                     color = TextSecondary,
                     textAlign = TextAlign.Center
@@ -526,7 +530,7 @@ private fun OnboardingPageContent(
             ) {
                 page.highlights.forEach { highlight ->
                     FeatureRow(
-                        text = highlight,
+                        text = bilingualStringResource(highlight),
                         accent = page.accentColor
                     )
                 }
