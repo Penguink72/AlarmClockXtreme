@@ -2,6 +2,7 @@ package com.sysadmindoc.alarmclock.ui.alarmfiring
 
 import android.Manifest
 import android.app.KeyguardManager
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
@@ -34,6 +35,8 @@ import com.sysadmindoc.alarmclock.domain.AlarmScheduler
 import com.sysadmindoc.alarmclock.service.AlarmFireDismissContract
 import com.sysadmindoc.alarmclock.ui.alarmfiring.challenges.Challenge
 import com.sysadmindoc.alarmclock.ui.theme.AlarmClockXtremeTheme
+import com.sysadmindoc.alarmclock.util.AppLanguageManager
+import com.sysadmindoc.alarmclock.ui.components.BilingualLocalizationHost
 import com.sysadmindoc.alarmclock.util.FlipDetector
 import com.sysadmindoc.alarmclock.util.PhotoMatcher
 import com.sysadmindoc.alarmclock.util.ProximityCoverDetector
@@ -141,6 +144,10 @@ class AlarmFiringActivity : ComponentActivity() {
         } else {
             viewModel.onLocationDismissUnavailable("Location permission is required before dismiss can unlock.")
         }
+    }
+
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(AppLanguageManager.localizedActivityBase(newBase))
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -312,6 +319,7 @@ class AlarmFiringActivity : ComponentActivity() {
         setContent {
             val reduceMotionAndFlashing by viewModel.reduceMotionAndFlashing.collectAsStateWithLifecycle()
             AlarmClockXtremeTheme(reduceMotionAndFlashing = reduceMotionAndFlashing) {
+                BilingualLocalizationHost {
                 AlarmFiringScreen(
                     onDismiss = { dismiss() },
                     onSnooze = { snooze() },
@@ -320,6 +328,7 @@ class AlarmFiringActivity : ComponentActivity() {
                     onTakePhoto = { launchPhotoCapture() },
                     viewModel = viewModel
                 )
+                }
             }
         }
     }
