@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="s4_onboarding_exact_doze">Exact alarms designed to survive Doze mode</string>
+    <string name="s4_onboarding_battery_guidance">Battery guidance for aggressive device vendors</string>
+    <string name="s4_onboarding_challenge_types">Math, shake, memory, steps, barcode, and more</string>
+    <string name="s4_onboarding_challenge_layers">Layer multiple challenges when you need extra certainty</string>
+    <string name="s4_onboarding_dashboard_events">A quick daily dashboard with forecast and events</string>
+    <string name="s4_onboarding_context_no_clutter">Useful context without ads or noisy clutter</string>
+    <string name="s4_onboarding_permissions_optional">Permissions are optional and can be changed later</string>
+    <string name="s4_onboarding_data_local">Data stays on your device unless you configure an integration</string>
+    <string name="s4_whats_new_alarm_retry">If the system silently suppresses an alarm, a reliability check retries it a few minutes later.</string>
+    <string name="s4_whats_new_silent_mode_warning">Wake readiness warns when complete-silence Do Not Disturb may mute alarms.</string>
+    <string name="s4_whats_new_quick_tile_fix">Fixed a small background resource leak in the Quick Settings skip-alarm tile.</string>
+    <string name="s4_whats_new_no_permissions">No new permissions.</string>
+    <string name="s4_lp2_technical_details">Show technical details (resource keys and origins)</string>
+    <string name="s4_remaining_days">%1$d d</string>
+    <string name="s4_remaining_hours">%1$d h</string>
+    <string name="s4_remaining_minutes">%1$d min</string>
+    <string name="s4_remaining_less_than_minute">Less than 1 min</string>
+</resources>
