@@ -61,6 +61,7 @@ import com.sysadmindoc.alarmclock.domain.LocationDismissPolicy
 import com.sysadmindoc.alarmclock.domain.NextAlarmCalculator
 import com.sysadmindoc.alarmclock.ui.components.AppFilterChip
 import com.sysadmindoc.alarmclock.ui.components.AppSectionTitle
+import com.sysadmindoc.alarmclock.ui.components.bilingualStringResource
 import com.sysadmindoc.alarmclock.ui.components.AppStatusChip
 import com.sysadmindoc.alarmclock.ui.components.AppSurfaceCard
 import com.sysadmindoc.alarmclock.ui.components.AppInputShape
@@ -448,8 +449,8 @@ fun AlarmEditScreen(
     if (showDiscardConfirmation) {
         AlertDialog(
             onDismissRequest = { showDiscardConfirmation = false },
-            title = { Text(stringResource(R.string.alarm_edit_discard_title)) },
-            text = { Text(stringResource(R.string.alarm_edit_discard_message)) },
+            title = { Text(bilingualStringResource(R.string.alarm_edit_discard_title)) },
+            text = { Text(bilingualStringResource(R.string.alarm_edit_discard_message)) },
             confirmButton = {
                 TextButton(
                     onClick = {
@@ -457,12 +458,12 @@ fun AlarmEditScreen(
                         onNavigateBack()
                     }
                 ) {
-                    Text(stringResource(R.string.alarm_edit_discard_action))
+                    Text(bilingualStringResource(R.string.alarm_edit_discard_action))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showDiscardConfirmation = false }) {
-                    Text(stringResource(R.string.alarm_edit_keep_editing))
+                    Text(bilingualStringResource(R.string.alarm_edit_keep_editing))
                 }
             }
         )
@@ -474,14 +475,14 @@ fun AlarmEditScreen(
         topBar = {
             val editorTitle = if (editorPage == AlarmEditorPage.OVERVIEW) {
                 stringResource(if (state.isEditing) R.string.edit_alarm else R.string.new_alarm)
-            } else com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.textForResource(editorPage.titleRes)
+            } else bilingualStringResource(editorPage.titleRes)
             val editorSubtitle = if (editorPage == AlarmEditorPage.OVERVIEW) {
                 if (state.isEditing) {
                     stringResource(R.string.alarm_edit_existing_subtitle)
                 } else {
                     stringResource(R.string.alarm_edit_new_subtitle)
                 }
-            } else stringResource(editorPage.subtitleRes)
+            } else bilingualStringResource(editorPage.subtitleRes)
             TopAppBar(
                 title = {
                     Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
@@ -807,12 +808,12 @@ fun AlarmEditScreen(
                     selectedTime?.let { viewModel.updateTime(it.hour, it.minute) }
                     showTimePicker = false
                 }, enabled = !useTimeNumpad || numpadTime != null) {
-                    Text(stringResource(R.string.alarm_edit_save_time), color = MaterialTheme.colorScheme.primary)
+                    Text(bilingualStringResource(R.string.alarm_edit_save_time), color = MaterialTheme.colorScheme.primary)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showTimePicker = false }) {
-                    Text(stringResource(R.string.alarm_edit_keep_current), color = TextSecondary)
+                    Text(bilingualStringResource(R.string.alarm_edit_keep_current), color = TextSecondary)
                 }
             },
             title = {
