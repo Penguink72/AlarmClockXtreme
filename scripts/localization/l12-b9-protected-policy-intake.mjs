@@ -6,7 +6,7 @@
  */
 import assert from "node:assert/strict";
 import {createHash,createPublicKey,verify} from "node:crypto";
-import {readFileSync,mkdirSync,writeFileSync} from "node:fs";
+import {readFileSync,mkdirSync,writeFileSync,realpathSync,statSync} from "node:fs";
 import {resolve,dirname,join,isAbsolute} from "node:path";
 import {fileURLToPath,pathToFileURL} from "node:url";
 import {loadRiskPlan,buildRiskTieredPlan,validatePolicy} from "./l12-b8b-risk-tiered-policy.mjs";
@@ -320,10 +320,12 @@ export function readExternalProtectedKeys(env=process.env,root=ROOT){
   for(const [envKey,role] of specs){
     const name=env[envKey]??"";
     if(!isAbsolute(name))throw Error("PROTECTED_"+role.toUpperCase()+"_KEY_PATH_REQUIRED");
-    const resolved=resolve(name);
-    const realRoot=resolve(root);
+    const resolved=realpathSync(resolve(name));
+    const realRoot=realpathSync(resolve(root));
     if(resolved===realRoot||resolved.startsWith(realRoot+"/")||resolved.startsWith(realRoot+"\\"))
       throw Error("PROTECTED_"+role.toUpperCase()+"_KEY_PATH_INSIDE_REPOSITORY");
+    if(!statSync(resolved).isFile())
+      throw Error("PROTECTED_"+role.toUpperCase()+"_KEY_MUST_BE_REGULAR_FILE");
     if(used.has(resolved))throw Error("PROTECTED_AUTHORITY_KEY_PATHS_MUST_BE_DISTINCT");
     used.add(resolved);
     result[role]=readFileSync(resolved,"utf8");
