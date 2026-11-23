@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_dual_language_enabled">同時顯示雙語</string>
+    <string name="settings_dual_language_description">在主要介面文字下方顯示第二語言。</string>
+    <string name="settings_secondary_language">第二語言</string>
+    <string name="settings_dual_language_preview">示例：鬧鐘／貪睡／音樂庫</string>
+</resources>
