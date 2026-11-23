@@ -66,6 +66,7 @@ import com.sysadmindoc.alarmclock.receiver.SnoozeReceiver
 import com.sysadmindoc.alarmclock.ui.alarmfiring.MorningBriefingActivity
 import com.sysadmindoc.alarmclock.util.AlarmTimeFormatter
 import com.sysadmindoc.alarmclock.util.AlarmPublicText
+import com.sysadmindoc.alarmclock.util.LocaleRuntimeTextBridge
 import com.sysadmindoc.alarmclock.wear.WearNextAlarmBridge
 import com.sysadmindoc.alarmclock.worker.WakeConfirmWorker
 import dagger.hilt.android.AndroidEntryPoint
@@ -654,8 +655,8 @@ class AlarmService : Service() {
                     this@AlarmService, CHANNEL_ALARM
                 )
                     .setSmallIcon(R.drawable.ic_alarm)
-                    .setContentTitle(getString(R.string.b2_test_title))
-                    .setContentText(getString(R.string.b2_test_description))
+                    .setContentTitle(LocaleRuntimeTextBridge.text(this@AlarmService, R.string.b2_test_title))
+                    .setContentText(LocaleRuntimeTextBridge.text(this@AlarmService, R.string.b2_test_description))
                     .setContentIntent(activityPi)
                     .setFullScreenIntent(activityPi, true)
                     .setCategory(NotificationCompat.CATEGORY_ALARM)
@@ -1080,7 +1081,7 @@ class AlarmService : Service() {
 
         return NotificationCompat.Builder(this, CHANNEL_ALARM)
             .setSmallIcon(R.drawable.ic_alarm)
-            .setContentTitle(getString(R.string.notif_alarm_title))
+            .setContentTitle(LocaleRuntimeTextBridge.text(this, R.string.notif_alarm_title))
             .setContentText(
                 AlarmPublicText.firingNotificationText(
                     label = alarm.label,
@@ -1101,7 +1102,7 @@ class AlarmService : Service() {
                 if (SnoozeCapPolicy.canSnooze(alarm, currentSnoozeCount)) {
                     addAction(
                         R.drawable.ic_alarm,
-                        getString(R.string.notif_snooze_action, alarm.snoozeDurationMinutes),
+                        LocaleRuntimeTextBridge.formatted(this@AlarmService, R.string.notif_snooze_action, alarm.snoozeDurationMinutes),
                         snoozePi
                     )
                 }
@@ -1113,7 +1114,7 @@ class AlarmService : Service() {
                 if (!SnoozeCapPolicy.hasDismissGate(alarm)) {
                     addAction(
                         R.drawable.ic_alarm,
-                        getString(R.string.notif_dismiss_action),
+                        LocaleRuntimeTextBridge.text(this@AlarmService, R.string.notif_dismiss_action),
                         dismissPi
                     )
                 }
@@ -3040,9 +3041,10 @@ class AlarmService : Service() {
 
         val notification = NotificationCompat.Builder(this, CHANNEL_MISSED)
             .setSmallIcon(R.drawable.ic_alarm)
-            .setContentTitle(getString(R.string.notif_missed_title))
+            .setContentTitle(LocaleRuntimeTextBridge.text(this, R.string.notif_missed_title))
             .setContentText(
-                getString(
+                LocaleRuntimeTextBridge.formatted(
+                    this,
                     R.string.notif_missed_auto_silenced,
                     label,
                     timeStr,
