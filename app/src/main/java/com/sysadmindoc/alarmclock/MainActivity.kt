@@ -195,10 +195,10 @@ class MainActivity : ComponentActivity() {
          * the app, not stale text from two versions ago.
          */
         private val WHATS_NEW_HIGHLIGHTS = listOf(
-            "New reliability net: if an alarm is silently suppressed by the system, it now re-fires a couple of minutes later.",
-            "Wake readiness warns you when total-silence Do Not Disturb would mute even your alarms.",
-            "Fixed a small background resource leak in the Quick Settings skip-alarm tile.",
-            "No new permissions."
+            R.string.s4_whats_new_alarm_retry,
+            R.string.s4_whats_new_silent_mode_warning,
+            R.string.s4_whats_new_quick_tile_fix,
+            R.string.s4_whats_new_no_permissions
         )
     }
 }

@@ -130,6 +130,7 @@ import com.sysadmindoc.alarmclock.ui.components.AppStatusChip
 import com.sysadmindoc.alarmclock.ui.components.AppSurfaceCard
 import com.sysadmindoc.alarmclock.ui.components.RecentPlaybackCard
 import com.sysadmindoc.alarmclock.ui.components.bilingualStringResource
+import com.sysadmindoc.alarmclock.ui.components.bilingualNextAlarmWithDuration
 import com.sysadmindoc.alarmclock.ui.ringtone.MusicLibraryDialog
 import com.sysadmindoc.alarmclock.ui.components.AppInputShape
 import com.sysadmindoc.alarmclock.ui.components.appOutlinedTextFieldColors
@@ -1154,7 +1155,7 @@ private fun AlarmHeader(
         title = bilingualStringResource(R.string.alarm_list_title),
         subtitle = when {
             pausedUntilLabel != null -> bilingualStringResource(R.string.alarmlist_paused_until, pausedUntilLabel)
-            hasAlarms && remainingTime.isNotBlank() -> bilingualStringResource(R.string.alarmlist_next_alarm, remainingTime)
+            hasAlarms && remainingTime.isNotBlank() -> bilingualNextAlarmWithDuration(remainingTime)
             alarmCount > 0 -> bilingualStringResource(R.string.alarmlist_all_alarms_paused)
             else -> bilingualStringResource(R.string.alarmlist_no_alarms_scheduled)
         },

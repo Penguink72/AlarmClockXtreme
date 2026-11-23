@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="s4_onboarding_exact_doze">精準鬧鐘設計可在 Doze 省電模式下維持提醒</string>
+    <string name="s4_onboarding_battery_guidance">提供各品牌手機的電池省電設定指引</string>
+    <string name="s4_onboarding_challenge_types">支援數學、搖晃、記憶、步數、條碼等挑戰</string>
+    <string name="s4_onboarding_challenge_layers">需要加強確認時，可以組合多種喚醒挑戰</string>
+    <string name="s4_onboarding_dashboard_events">集中查看天氣預報與行事曆的每日總覽</string>
+    <string name="s4_onboarding_context_no_clutter">提供實用資訊，沒有廣告或雜亂干擾</string>
+    <string name="s4_onboarding_permissions_optional">權限可自行選擇，之後也能修改</string>
+    <string name="s4_onboarding_data_local">除非自行設定外部整合，資料會保留在裝置上</string>
+    <string name="s4_whats_new_alarm_retry">系統若無聲地阻止鬧鐘響起，可靠性檢查會在數分鐘後嘗試再次觸發。</string>
+    <string name="s4_whats_new_silent_mode_warning">若勿擾模式設定為完全靜音，可能連鬧鐘都無聲，系統會提前提醒。</string>
+    <string name="s4_whats_new_quick_tile_fix">修正快速設定「略過下個鬧鐘」圖塊的少量背景資源洩漏。</string>
+    <string name="s4_whats_new_no_permissions">本次沒有新增權限。</string>
+    <string name="s4_lp2_technical_details">顯示技術資訊（資源鍵與來源）</string>
+    <string name="s4_remaining_days">%1$d 天</string>
+    <string name="s4_remaining_hours">%1$d 小時</string>
+    <string name="s4_remaining_minutes">%1$d 分鐘</string>
+    <string name="s4_remaining_less_than_minute">少於 1 分鐘</string>
+</resources>
