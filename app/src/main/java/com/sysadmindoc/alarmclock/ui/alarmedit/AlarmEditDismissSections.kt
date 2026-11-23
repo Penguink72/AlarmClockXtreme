@@ -55,6 +55,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sysadmindoc.alarmclock.BuildConfig
 import com.sysadmindoc.alarmclock.R
+import com.sysadmindoc.alarmclock.ui.components.bilingualStringResource
 import com.sysadmindoc.alarmclock.data.model.Alarm
 import com.sysadmindoc.alarmclock.data.model.ShiftPattern
 import com.sysadmindoc.alarmclock.domain.LocationDismissPolicy
@@ -365,7 +366,7 @@ internal fun LazyListScope.alarmEditDismissSections(
             OutlinedTextField(
                 value = state.nfcTagId,
                 onValueChange = viewModel::updateNfcTagId,
-                label = { Text(stringResource(R.string.alarm_edit_nfc_id), color = TextMuted) },
+                label = { Text(bilingualStringResource(R.string.alarm_edit_nfc_id), color = TextMuted) },
                 colors = appOutlinedTextFieldColors(),
                 shape = AppInputShape,
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 4.dp),
@@ -384,7 +385,7 @@ internal fun LazyListScope.alarmEditDismissSections(
             OutlinedTextField(
                 value = state.barcodeValue,
                 onValueChange = viewModel::updateBarcodeValue,
-                label = { Text(stringResource(R.string.alarm_edit_barcode_value), color = TextMuted) },
+                label = { Text(bilingualStringResource(R.string.alarm_edit_barcode_value), color = TextMuted) },
                 colors = appOutlinedTextFieldColors(),
                 shape = AppInputShape,
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 4.dp),
@@ -403,7 +404,7 @@ internal fun LazyListScope.alarmEditDismissSections(
             OutlinedTextField(
                 value = state.wifiDismissSsid,
                 onValueChange = viewModel::updateWifiDismissSsid,
-                label = { Text(stringResource(R.string.alarm_edit_wifi_name), color = TextMuted) },
+                label = { Text(bilingualStringResource(R.string.alarm_edit_wifi_name), color = TextMuted) },
                 colors = appOutlinedTextFieldColors(),
                 shape = AppInputShape,
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 4.dp),
@@ -490,8 +491,8 @@ internal fun LazyListScope.alarmEditDismissSections(
         OutlinedTextField(
             value = state.challengeChain,
             onValueChange = viewModel::updateChallengeChain,
-            label = { Text(stringResource(R.string.alarm_edit_chain_override), color = TextMuted) },
-            placeholder = { Text(stringResource(R.string.alarm_edit_chain_placeholder), color = TextMuted) },
+            label = { Text(bilingualStringResource(R.string.alarm_edit_chain_override), color = TextMuted) },
+            placeholder = { Text(bilingualStringResource(R.string.alarm_edit_chain_placeholder), color = TextMuted) },
             colors = appOutlinedTextFieldColors(),
             shape = AppInputShape,
             modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 4.dp),
@@ -503,7 +504,7 @@ internal fun LazyListScope.alarmEditDismissSections(
         )
         if (chainItems.isNotEmpty()) {
             val missingRefs = buildList {
-                if ("NFC_SCAN" in chainItems && state.nfcTagId.isBlank()) add(stringResource(R.string.alarm_edit_nfc_id))
+                if ("NFC_SCAN" in chainItems && state.nfcTagId.isBlank()) add(bilingualStringResource(R.string.alarm_edit_nfc_id))
                 if ("BARCODE_SCAN" in chainItems && state.barcodeValue.isBlank()) add(stringResource(R.string.alarm_edit_barcode_value_short))
                 if ("PHOTO_MATCH" in chainItems && state.photoMatchUri.isBlank()) add(stringResource(R.string.alarm_edit_reference_photo_lower))
                 if ("WIFI_CONNECT" in chainItems && state.wifiDismissSsid.isBlank()) add(stringResource(R.string.alarm_edit_wifi_ssid))
