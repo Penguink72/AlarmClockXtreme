@@ -2,7 +2,7 @@ name: ACX S3/S4 persisted language settings and bilingual runtime
 
 on:
   push:
-    branches: [feature/acx-s3-s4-dual-language-ui-20261123]
+    branches: [feature/acx-s3-s4-dual-language-ui-20261123, fix/acx-s3s4-apk-install-20261123]
     paths:
       - "app/src/main/**"
       - "app/src/test/java/com/sysadmindoc/alarmclock/ui/components/BilingualUiOptionsTest.kt"
@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   android-native-trilingual-and-dual-ui:
@@ -30,6 +30,85 @@ jobs:
       - uses: android-actions/setup-android@v4
       - name: Install Android 36
         run: sdkmanager --install "platforms;android-36" "build-tools;36.0.0"
+      - name: Prepare persistent CI debug keystore
+        env:
+          CI_DEBUG_KEYSTORE_BASE64: ${{ secrets.CI_DEBUG_KEYSTORE_BASE64 }}
+          CI_DEBUG_KEYSTORE_PASSWORD: ${{ secrets.CI_DEBUG_KEYSTORE_PASSWORD }}
+          CI_DEBUG_KEY_ALIAS: ${{ secrets.CI_DEBUG_KEY_ALIAS }}
+          CI_DEBUG_KEY_PASSWORD: ${{ secrets.CI_DEBUG_KEY_PASSWORD }}
+        run: |
+          RAW_P12="${RUNNER_TEMP}/ci-debug-raw.p12"
+          DEST_KEYSTORE="${RUNNER_TEMP}/ci-debug-signing.p12"
+          NORM_JAVA="${RUNNER_TEMP}/NormalizeKeystore.java"
+          python3 - "$RAW_P12" <<'PY'
+          import base64, os, pathlib, sys
+
+          def clean(name: str) -> str:
+              return os.environ.get(name, "").lstrip("\ufeff").strip()
+
+          b64 = "".join(clean("CI_DEBUG_KEYSTORE_BASE64").split())
+          store_pass = clean("CI_DEBUG_KEYSTORE_PASSWORD")
+          key_alias = clean("CI_DEBUG_KEY_ALIAS")
+          key_pass = clean("CI_DEBUG_KEY_PASSWORD")
+          if not b64 or not store_pass or not key_alias or not key_pass:
+              raise SystemExit("ERROR: Missing persistent CI debug signing secrets in GitHub Actions.")
+
+          print(f"::add-mask::{store_pass}")
+          print(f"::add-mask::{key_pass}")
+          pathlib.Path(sys.argv[1]).write_bytes(base64.b64decode(b64))
+          with open(os.environ["GITHUB_ENV"], "a", encoding="utf-8") as env_file:
+              env_file.write(f"CI_DEBUG_KEYSTORE_PASSWORD={store_pass}\n")
+              env_file.write(f"CI_DEBUG_KEY_ALIAS={key_alias}\n")
+              env_file.write(f"CI_DEBUG_KEY_PASSWORD={key_pass}\n")
+          PY
+          cat > "${NORM_JAVA}" <<'JAVA'
+          import java.io.*;
+          import java.nio.file.*;
+          import java.security.*;
+          import java.security.cert.Certificate;
+          public class NormalizeKeystore {
+              public static void main(String[] args) throws Exception {
+                  char[] storePass = args[2].toCharArray();
+                  String targetAlias = args[3];
+                  char[] keyPass = args[4].toCharArray();
+                  KeyStore src = KeyStore.getInstance("PKCS12");
+                  try (InputStream in = Files.newInputStream(Path.of(args[0]))) {
+                      src.load(in, storePass);
+                  }
+                  if (!src.aliases().hasMoreElements()) {
+                      throw new IllegalStateException("No aliases in source PKCS12 keystore");
+                  }
+                  String srcAlias = src.aliases().nextElement();
+                  Key key;
+                  try {
+                      key = src.getKey(srcAlias, storePass);
+                  } catch (Exception e) {
+                      key = src.getKey(srcAlias, new char[0]);
+                  }
+                  Certificate[] chain = src.getCertificateChain(srcAlias);
+                  KeyStore dst = KeyStore.getInstance("PKCS12");
+                  dst.load(null, storePass);
+                  dst.setKeyEntry(targetAlias, key, keyPass, chain);
+                  try (OutputStream out = Files.newOutputStream(Path.of(args[1]))) {
+                      dst.store(out, storePass);
+                  }
+              }
+          }
+          JAVA
+          CLEAN_STORE_PASS="$(python3 -c 'import os; print(os.environ["CI_DEBUG_KEYSTORE_PASSWORD"].lstrip("\ufeff").strip())')"
+          CLEAN_KEY_ALIAS="$(python3 -c 'import os; print(os.environ["CI_DEBUG_KEY_ALIAS"].lstrip("\ufeff").strip())')"
+          CLEAN_KEY_PASS="$(python3 -c 'import os; print(os.environ["CI_DEBUG_KEY_PASSWORD"].lstrip("\ufeff").strip())')"
+          rm -f "${DEST_KEYSTORE}"
+          java "${NORM_JAVA}" "${RAW_P12}" "${DEST_KEYSTORE}" "${CLEAN_STORE_PASS}" "${CLEAN_KEY_ALIAS}" "${CLEAN_KEY_PASS}"
+          rm -f "${RAW_P12}" "${NORM_JAVA}"
+          chmod 600 "${DEST_KEYSTORE}"
+          KEYSTORE_CERT_SHA256="$(keytool -list -v -keystore "${DEST_KEYSTORE}" -storetype PKCS12 -storepass "${CLEAN_STORE_PASS}" -alias "${CLEAN_KEY_ALIAS}" | awk '/SHA256:/ {print $2; exit}')"
+          echo "KEYSTORE_CERT_SHA256=${KEYSTORE_CERT_SHA256}"
+          {
+            echo "CI_DEBUG_KEYSTORE_PATH=${DEST_KEYSTORE}"
+            echo "EXPECTED_CERT_SHA256=${KEYSTORE_CERT_SHA256}"
+          } >> "$GITHUB_ENV"
+
       - name: Native zh-TW/ja source and no overwritten English resources
         shell: bash
         run: |
@@ -58,13 +137,63 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          bash ./gradlew :app:assembleFdroidDebug --no-daemon --stacktrace
+          bash ./gradlew :app:assembleFdroidDebug -PciVersionCode=162 --no-daemon --stacktrace
           test -s app/build/outputs/apk/fdroid/debug/app-fdroid-debug.apk
+      - name: Verify APK package, version and persistent upgrade signing
+        id: apk_meta
+        run: |
+          APK_PATH="app/build/outputs/apk/fdroid/debug/app-fdroid-debug.apk"
+          if [[ ! -s "$APK_PATH" ]]; then
+            echo "ERROR: Expected non-empty APK at $APK_PATH"
+            exit 1
+          fi
+          COMMIT_SHA="$(git rev-parse HEAD)"
+          APK_SHA256="$(sha256sum "$APK_PATH" | awk '{print $1}')"
+          APK_BYTES="$(stat -c%s "$APK_PATH")"
+          BUILD_TOOLS_DIR="${ANDROID_HOME}/build-tools/36.0.0"
+          BADGING="$("${BUILD_TOOLS_DIR}/aapt2" dump badging "$APK_PATH" | head -n 1)"
+          echo "APK_BADGING=${BADGING}"
+          PKG_NAME="$(echo "$BADGING" | sed -n "s/^package: name='\([^']*\)'.*/\1/p")"
+          VERSION_CODE="$(echo "$BADGING" | sed -n "s/.* versionCode='\([^']*\)'.*/\1/p")"
+          VERSION_NAME="$(echo "$BADGING" | sed -n "s/.* versionName='\([^']*\)'.*/\1/p")"
+          if [[ "$PKG_NAME" != "com.sysadmindoc.alarmclock.debug" ]]; then
+            echo "ERROR: Unexpected package name: $PKG_NAME"
+            exit 1
+          fi
+          if [[ "$VERSION_CODE" != "162" ]]; then
+            echo "ERROR: Expected S3/S4 versionCode=162 (must exceed previous 161), got: $VERSION_CODE"
+            exit 1
+          fi
+          APKSIGNER_OUT="$("${BUILD_TOOLS_DIR}/apksigner" verify --verbose --print-certs "$APK_PATH")"
+          echo "$APKSIGNER_OUT"
+          CERT_SHA256_HEX="$(echo "$APKSIGNER_OUT" | awk '/Signer #1 certificate SHA-256 digest:/ {print $NF; exit}')"
+          # Certificate of the already-distributed Preview 3 v147/v148 APKs
+          # (run 43683771079). An in-place upgrade only works if it is identical.
+          EXPECTED_UPGRADE_CERT="4F:15:3F:91:16:0F:A5:89:C6:CF:D5:5C:DE:1B:4A:CA:B3:81:A7:0B:0D:CF:31:D7:55:FF:39:40:4C:56:A2:1E"
+          ACTUAL_UPGRADE_CERT="$(echo "$CERT_SHA256_HEX" | sed 's/../&:/g; s/:$//' | tr '[:lower:]' '[:upper:]')"
+          if [[ "$ACTUAL_UPGRADE_CERT" != "$EXPECTED_UPGRADE_CERT" ]]; then
+            echo "ERROR: Signing cert ${ACTUAL_UPGRADE_CERT} differs from installed Preview 3 v148 cert ${EXPECTED_UPGRADE_CERT}; upgrade would require uninstall."
+            exit 1
+          fi
+          echo "UPGRADE_CERT_MATCHES_V148=true"
+          CERT_SHA1_HEX="$(echo "$APKSIGNER_OUT" | awk '/Signer #1 certificate SHA-1 digest:/ {print $NF; exit}')"
+          CERT_DN="$(echo "$APKSIGNER_OUT" | sed -n 's/^Signer #1 certificate DN: //p' | head -n 1)"
+          CERT_SHA256_COLON="$(echo "$CERT_SHA256_HEX" | sed 's/../&:/g; s/:$//' | tr '[:lower:]' '[:upper:]')"
+          CERT_SHA1_COLON="$(echo "$CERT_SHA1_HEX" | sed 's/../&:/g; s/:$//' | tr '[:lower:]' '[:upper:]')"
+          echo "APK_SIGNING_CERT_SHA256=${CERT_SHA256_COLON}"
+          echo "APK_SIGNING_CERT_SHA1=${CERT_SHA1_COLON}"
+          if [[ "$CERT_SHA256_COLON" != "$EXPECTED_CERT_SHA256" ]]; then
+            echo "ERROR: APK signing cert ($CERT_SHA256_COLON) does not match persistent CI keystore ($EXPECTED_CERT_SHA256)"
+            exit 1
+          fi
+          printf 'commit=%s\napplicationId=%s\nversionCode=%s\nversionName=%s\napk_sha256=%s\nsigning_cert_sha256=%s\n' "$COMMIT_SHA" "$PKG_NAME" "$VERSION_CODE" "$VERSION_NAME" "$APK_SHA256" "$ACTUAL_UPGRADE_CERT" > app/build/outputs/apk/fdroid/debug/apk-metadata.txt
       - name: Publish S3/S4 test APK only, not an official signed release
         uses: actions/upload-artifact@v4
         with:
           name: acx-s3-s4-trilingual-bilingual-fdroid-debug-apk
-          path: app/build/outputs/apk/fdroid/debug/app-fdroid-debug.apk
+          path: |
+            app/build/outputs/apk/fdroid/debug/app-fdroid-debug.apk
+            app/build/outputs/apk/fdroid/debug/apk-metadata.txt
           retention-days: 14
       - name: Verify six ordered bilingual language pairs and native selection decisions
         shell: bash
@@ -77,3 +206,22 @@ jobs:
           set -euo pipefail
           git diff --exit-code origin/feature/acx-s1-s2-simplified-locales-20261123...HEAD --             app/src/main/java/com/sysadmindoc/alarmclock/data/local             app/src/main/java/com/sysadmindoc/alarmclock/domain/AlarmScheduler.kt             app/src/main/java/com/sysadmindoc/alarmclock/service/AlarmService.kt
           echo "S3/S4: UI locale updates keep existing alarm delivery and music data intact."
+      - name: Publish direct-download APK as development prerelease
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          short_sha="${GITHUB_SHA:0:7}"
+          tag="s3-s4-debug-v162-${short_sha}"
+          apk="app/build/outputs/apk/fdroid/debug/app-fdroid-debug.apk#AlarmClockXtreme-S3S4-v162-debug.apk"
+          if gh release view "$tag" >/dev/null 2>&1; then
+            gh release upload "$tag" "$apk" --clobber
+          else
+            gh release create "$tag" "$apk" \
+              --target "$GITHUB_SHA" \
+              --title "S3/S4 bilingual debug v162 ($short_sha)" \
+              --notes "Development test build only. VersionCode 162, persistent debug signing certificate matched against Preview 3 v148. Not a production release." \
+              --prerelease
+          fi
+          echo "Direct APK: https://github.com/${GITHUB_REPOSITORY}/releases/download/${tag}/AlarmClockXtreme-S3S4-v162-debug.apk" >> "$GITHUB_STEP_SUMMARY"
