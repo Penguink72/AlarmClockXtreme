@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="s4_onboarding_exact_doze">Doze モード中でもアラームが鳴るように設計されています</string>
+    <string name="s4_onboarding_battery_guidance">端末メーカーごとの省電力設定を案内します</string>
+    <string name="s4_onboarding_challenge_types">計算、シェイク、記憶、歩数、バーコードなどに対応</string>
+    <string name="s4_onboarding_challenge_layers">より確実に起きたいときは複数のチャレンジを組み合わせられます</string>
+    <string name="s4_onboarding_dashboard_events">天気予報や予定をひと目で確認できるダッシュボード</string>
+    <string name="s4_onboarding_context_no_clutter">広告や余計な情報に邪魔されず、必要な情報を確認できます</string>
+    <string name="s4_onboarding_permissions_optional">権限は任意で、あとから変更できます</string>
+    <string name="s4_onboarding_data_local">外部サービスとの連携を設定しない限り、データは端末内に保存されます</string>
+    <string name="s4_whats_new_alarm_retry">システムがアラームを無音で抑止した場合、数分後に再通知を試みます。</string>
+    <string name="s4_whats_new_silent_mode_warning">おやすみモードの完全消音設定でアラームも無音になる可能性がある場合に警告します。</string>
+    <string name="s4_whats_new_quick_tile_fix">クイック設定の「次のアラームをスキップ」タイルで発生する軽微なリソースリークを修正しました。</string>
+    <string name="s4_whats_new_no_permissions">新しい権限の追加はありません。</string>
+    <string name="s4_lp2_technical_details">技術情報を表示（リソースキーと取得元）</string>
+    <string name="s4_remaining_days">%1$d 日</string>
+    <string name="s4_remaining_hours">%1$d 時間</string>
+    <string name="s4_remaining_minutes">%1$d 分</string>
+    <string name="s4_remaining_less_than_minute">1 分未満</string>
+</resources>
