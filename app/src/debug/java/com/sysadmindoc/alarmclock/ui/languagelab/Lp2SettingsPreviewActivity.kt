@@ -36,6 +36,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.sysadmindoc.alarmclock.R
 import com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText
+import com.sysadmindoc.alarmclock.util.LocaleRuntimeRouting
+import com.sysadmindoc.alarmclock.util.LocaleRuntimeTextBridge
+import com.sysadmindoc.alarmclock.util.LocaleContextTextAdapter
 import com.sysadmindoc.alarmclock.ui.theme.AlarmClockXtremeTheme
 
 /** Explicit Debug-only LP2-A settings adapter, no alarm scheduling side effects. */
@@ -166,6 +169,27 @@ private fun Lp2SettingsPreviewScreen(onClose: () -> Unit) {
                 }.getOrNull() else null
                 if (first != null) Text(first.value + if (first.fallback) " [EN fallback]" else "")
                 if (second != null) Text(second.value + if (second.fallback) " [EN fallback]" else "",
+                    color = MaterialTheme.colorScheme.secondary)
+            }
+            // L13-C: real Android resource lookup in a debug-only, read-only
+            // surface. A native fallback is NOT an approved zh-TW/ja translation;
+            // no call to LocaleManager.setApplicationLocales or DataStore.
+            HorizontalDivider()
+            Text(stringResource(R.string.settings_language), style = MaterialTheme.typography.titleSmall)
+            for (localeTag in listOf("en", "zh-TW", "ja")) {
+                val title = LocaleRuntimeTextBridge.previewBuiltin(
+                    context, localeTag, R.string.notif_alarm_title
+                )
+                val dismiss = LocaleRuntimeTextBridge.previewBuiltin(
+                    context, localeTag, R.string.notif_dismiss_action
+                )
+                val decision = LocaleRuntimeRouting.builtinDecision(localeTag)
+                val snooze = LocaleContextTextAdapter.formatted(
+                    context, decision, R.string.notif_snooze_action, 10
+                )
+                Text(localeTag, style = MaterialTheme.typography.labelLarge)
+                Text(title.value + " · " + snooze.value + " · " + dismiss.value)
+                Text(title.origin, style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.secondary)
             }
             OutlinedButton(onClick = {
