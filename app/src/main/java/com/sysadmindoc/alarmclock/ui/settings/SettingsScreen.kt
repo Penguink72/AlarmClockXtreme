@@ -376,12 +376,12 @@ fun SettingsScreen(
                 } else if (showSettingsHome) {
                     item(key = "settings-hero") {
                         AlarmClockHeroHeader(
-                            title = Lp2PreviewText.text(R.string.settings_title, "settings_title"),
+                            title = bilingualStringResource(R.string.settings_title),
                             subtitle = state.appVersion
                         )
                     }
                     settingsItem("settings-home-language") {
-                        SettingsGroup(title = stringResource(R.string.settings_language)) {
+                        SettingsGroup(title = bilingualStringResource(R.string.settings_language)) {
                             AppLanguageSelectionRow(
                                 selectedLanguageOption = selectedLanguageOption,
                                 languagePickerSupported = languagePickerSupported,
@@ -880,8 +880,8 @@ fun SettingsScreen(
             if (!showSettingsHome && selectedPane.id == "utilities") {
             settingsItem("utilities-shortcuts") {
             SettingsGroup(
-                title = stringResource(R.string.settings_utilities),
-                description = Lp2PreviewText.text(R.string.settings_utilities_description, "settings_utilities_description")
+                title = bilingualStringResource(R.string.settings_utilities),
+                description = bilingualStringResource(R.string.settings_utilities_description)
             ) {
                 AppLanguageSelectionRow(
                     selectedLanguageOption = selectedLanguageOption,
@@ -894,22 +894,22 @@ fun SettingsScreen(
                 HorizontalDivider(color = TextMuted.copy(alpha = 0.14f))
                 UtilityShortcutCard(
                     icon = Icons.Default.BarChart,
-                    title = Lp2PreviewText.text(R.string.settings_alarm_statistics, "settings_alarm_statistics"),
-                    description = stringResource(R.string.settings_alarm_statistics_description),
+                    title = bilingualStringResource(R.string.settings_alarm_statistics),
+                    description = bilingualStringResource(R.string.settings_alarm_statistics_description),
                     onClick = onNavigateToStats
                 )
                 HorizontalDivider(color = TextMuted.copy(alpha = 0.14f))
                 UtilityShortcutCard(
                     icon = Icons.Default.Speed,
-                    title = Lp2PreviewText.text(R.string.nav_stopwatch, "nav_stopwatch"),
-                    description = Lp2PreviewText.text(R.string.settings_stopwatch_description, "settings_stopwatch_description"),
+                    title = bilingualStringResource(R.string.nav_stopwatch),
+                    description = bilingualStringResource(R.string.settings_stopwatch_description),
                     onClick = onNavigateToStopwatch
                 )
                 HorizontalDivider(color = TextMuted.copy(alpha = 0.14f))
                 UtilityShortcutCard(
                     icon = Icons.Default.Bedtime,
                     title = stringResource(R.string.nav_bedtime),
-                    description = stringResource(R.string.settings_bedtime_description),
+                    description = bilingualStringResource(R.string.settings_bedtime_description),
                     onClick = onNavigateToBedtime
                 )
                 HorizontalDivider(color = TextMuted.copy(alpha = 0.14f))
@@ -1102,7 +1102,7 @@ fun SettingsScreen(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Column(modifier = Modifier.weight(1f)) {
-                            Text(stringResource(R.string.settings_dual_language_enabled))
+                            Text(bilingualStringResource(R.string.settings_dual_language_enabled))
                             Text(
                                 stringResource(R.string.settings_dual_language_description),
                                 style = MaterialTheme.typography.bodySmall
@@ -1119,7 +1119,7 @@ fun SettingsScreen(
                     }
                     if (bilingualOptions.enabled) {
                         Text(
-                            stringResource(R.string.settings_secondary_language),
+                            bilingualStringResource(R.string.settings_secondary_language),
                             style = MaterialTheme.typography.titleSmall
                         )
                         val selectedPrimary = selectedLanguageOption.languageTag
@@ -1162,7 +1162,7 @@ private fun AppLanguageSelectionRow(
     onClick: () -> Unit
 ) {
     SettingsActionRow(
-        label = stringResource(R.string.settings_language),
+        label = bilingualStringResource(R.string.settings_language),
         value = stringResource(
             when (selectedLanguageOption) {
                 AppLanguageOption.SYSTEM_DEFAULT -> R.string.settings_language_system_default
