@@ -36,4 +36,36 @@ class BilingualUiOptionsTest {
         assertEquals("en", enabled.copy(enabled = false).normalized().secondaryTag)
         assertFalse(enabled.copy(enabled = false).enabled)
     }
+    @Test
+    fun allSixOrderedLanguagePairsShowBothVisibleNativeTexts() {
+        val samples = mapOf(
+            "en" to "Alarm",
+            "zh-TW" to "鬧鐘",
+            "ja" to "アラーム"
+        )
+        for ((primaryTag, primary) in samples) {
+            for ((secondaryTag, secondary) in samples) {
+                if (primaryTag == secondaryTag) continue
+                val display = BilingualUiTextPolicy.combine(
+                    primary, secondary, primaryTag,
+                    BilingualUiOptions(true, secondaryTag)
+                )
+                assertEquals(primary + "\n" + secondary, display)
+            }
+        }
+    }
+
+    @Test
+    fun offSameLanguageAndIdenticalProperNounsDoNotDuplicateVisibleLabels() {
+        assertEquals("Alarm", BilingualUiTextPolicy.combine(
+            "Alarm", "鬧鐘", "en", BilingualUiOptions(false, "zh-TW")
+        ))
+        assertEquals("Alarm", BilingualUiTextPolicy.combine(
+            "Alarm", "Alarm", "en", BilingualUiOptions(true, "ja")
+        ))
+        assertEquals("Alarm", BilingualUiTextPolicy.combine(
+            "Alarm", "Alarm", "ja", BilingualUiOptions(true, "ja")
+        ))
+    }
+
 }
