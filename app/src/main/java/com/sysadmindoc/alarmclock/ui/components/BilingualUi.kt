@@ -62,6 +62,21 @@ object BilingualUiPreferences {
     }
 }
 
+/** Exact six ordered EN/zh-TW/ja pairings share this pure display policy. */
+object BilingualUiTextPolicy {
+    fun combine(
+        primary: String,
+        secondary: String,
+        primaryTag: String,
+        options: BilingualUiOptions
+    ): String {
+        val normalized = options.normalized()
+        if (!normalized.enabled || primaryTag == normalized.secondaryTag ||
+            secondary.isBlank() || secondary == primary) return primary
+        return primary + "\n" + secondary
+    }
+}
+
 val LocalBilingualUiOptions = compositionLocalOf { BilingualUiOptions() }
 
 /** SharedPreferences listener is scoped to the composition; changes update every visible screen. */
@@ -103,8 +118,7 @@ fun bilingualStringResource(@StringRes resId: Int, vararg args: Any): String {
         val secondaryContext = context.createConfigurationContext(config)
         secondaryContext.getString(resId, *args)
     }.getOrNull() ?: return primary
-    return if (translated.isBlank() || translated == primary) primary
-        else primary + "\n" + translated
+    return BilingualUiTextPolicy.combine(primary, translated, normalizedPrimary, options)
 }
 
 /** Two distinct text levels; primary is always action/screen identity. */
