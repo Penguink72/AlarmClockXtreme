@@ -26,15 +26,16 @@ internal object LocalizedRemainingTime {
         if (parts.isEmpty() || parts.joinToString(" ") { it.value } != raw.replace(whitespace, " ")) {
             return compact
         }
-        return parts.joinToString(" ") { match ->
-            val quantity = match.groupValues[1].toIntOrNull() ?: return compact
+        val quantities = parts.map { it.groupValues[1].toLongOrNull() ?: return compact }
+        return parts.mapIndexed { index, match ->
+            val quantity = quantities[index]
             val stringId = when (match.groupValues[2]) {
                 "d" -> R.string.s4_remaining_days
                 "h" -> R.string.s4_remaining_hours
                 else -> R.string.s4_remaining_minutes
             }
             context.getString(stringId, quantity)
-        }
+        }.joinToString(" ")
     }
 }
 
