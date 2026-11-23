@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="s4_nav_today">Today</string>
+    <string name="s4_nav_alarms">Alarms</string>
+    <string name="s4_nav_timer">Timer</string>
+    <string name="s4_nav_world">World</string>
+    <string name="s4_nav_news">News</string>
+    <string name="s4_nav_settings">Settings</string>
+</resources>

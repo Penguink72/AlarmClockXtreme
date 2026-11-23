@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_dual_language_enabled">2つの言語を同時に表示</string>
+    <string name="settings_dual_language_description">主な画面のラベルの下に第2言語を表示します。</string>
+    <string name="settings_secondary_language">第2言語</string>
+    <string name="settings_dual_language_preview">例：アラーム／スヌーズ／音楽ライブラリ</string>
+</resources>

@@ -40,6 +40,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.sysadmindoc.alarmclock.R
+import com.sysadmindoc.alarmclock.ui.components.bilingualStringResource
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 
@@ -178,12 +179,12 @@ internal fun MusicPlaylistsWorkspace(
     ) {
         if (repository == null) {
             Text(
-                Lp2PreviewText.text(R.string.music_playlist_integration_pending, "music_playlist_integration_pending"),
+                bilingualStringResource(R.string.music_playlist_integration_pending),
                 color = MaterialTheme.colorScheme.error,
                 style = MaterialTheme.typography.bodyMedium
             )
             OutlinedButton(enabled = false, onClick = {}) {
-                Text(stringResource(R.string.music_playlist_create))
+                Text(bilingualStringResource(R.string.music_playlist_create))
             }
         } else if (selectedPlaylistId != null) {
             val playlist = playlists?.firstOrNull { it.playlistId == selectedPlaylistId }
@@ -199,7 +200,7 @@ internal fun MusicPlaylistsWorkspace(
                     selectedPlaylistId = null
                     previousOrder = null
                 }) {
-                    Text(stringResource(R.string.music_playlist_back))
+                    Text(bilingualStringResource(R.string.music_playlist_back))
                 }
                 Text(
                     playlist?.name.orEmpty(),
@@ -231,7 +232,7 @@ internal fun MusicPlaylistsWorkspace(
                         enabled = !busy,
                         onClick = { onAddTracksToPlaylist(selectedPlaylistId!!) }
                     ) {
-                        Text(stringResource(R.string.music_playlist_add_tracks))
+                        Text(bilingualStringResource(R.string.music_playlist_add_tracks))
                     }
                 }
             }
@@ -253,7 +254,7 @@ internal fun MusicPlaylistsWorkspace(
                     enabled = !busy && playlist.playableTrackCount > 0,
                     onClick = { onApplyToAlarm(playlist.playlistId) }
                 ) {
-                    Text(Lp2PreviewText.text(R.string.music_playlist_apply_to_alarm, "music_playlist_apply_to_alarm"))
+                    Text(bilingualStringResource(R.string.music_playlist_apply_to_alarm))
                 }
             }
             if (selectedPlaylistItemIds.isNotEmpty()) {
@@ -291,7 +292,7 @@ internal fun MusicPlaylistsWorkspace(
                             }
                         }
                     ) {
-                        Text(stringResource(R.string.music_playlist_remove_selected))
+                        Text(bilingualStringResource(R.string.music_playlist_remove_selected))
                     }
                 }
             }
@@ -318,13 +319,13 @@ internal fun MusicPlaylistsWorkspace(
                         }
                     }
                 ) {
-                    Text(stringResource(R.string.music_playlist_undo_order))
+                    Text(bilingualStringResource(R.string.music_playlist_undo_order))
                 }
             }
             if (items == null) {
                 CircularProgressIndicator()
             } else if (items.orEmpty().isEmpty()) {
-                Text(Lp2PreviewText.text(R.string.music_playlist_empty, "music_playlist_empty"))
+                Text(bilingualStringResource(R.string.music_playlist_empty))
             } else {
                 LazyColumn(
                     modifier = Modifier.weight(1f),
@@ -426,7 +427,7 @@ internal fun MusicPlaylistsWorkspace(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    stringResource(R.string.music_playlist_title),
+                    bilingualStringResource(R.string.music_playlist_title),
                     style = MaterialTheme.typography.titleMedium
                 )
                 OutlinedButton(
@@ -436,7 +437,7 @@ internal fun MusicPlaylistsWorkspace(
                         dialogMode = PlaylistDialogMode.CREATE
                     }
                 ) {
-                    Text(stringResource(R.string.music_playlist_create))
+                    Text(bilingualStringResource(R.string.music_playlist_create))
                 }
             }
             if (selectedTrackUris.isNotEmpty()) {
@@ -451,7 +452,7 @@ internal fun MusicPlaylistsWorkspace(
             if (playlists == null) {
                 CircularProgressIndicator()
             } else if (playlists.orEmpty().isEmpty()) {
-                Text(stringResource(R.string.music_playlist_none))
+                Text(bilingualStringResource(R.string.music_playlist_none))
             } else {
                 LazyColumn(
                     modifier = Modifier.weight(1f),
@@ -528,7 +529,7 @@ internal fun MusicPlaylistsWorkspace(
                     value = name,
                     onValueChange = { name = it },
                     singleLine = true,
-                    label = { Text(stringResource(R.string.music_playlist_name)) }
+                    label = { Text(bilingualStringResource(R.string.music_playlist_name)) }
                 )
             },
             confirmButton = {
@@ -607,12 +608,12 @@ internal fun MusicPlaylistsWorkspace(
                         }
                     }
                 ) {
-                    Text(stringResource(R.string.music_playlist_save))
+                    Text(bilingualStringResource(R.string.music_playlist_save))
                 }
             },
             dismissButton = {
                 TextButton(enabled = !busy, onClick = { dialogMode = null }) {
-                    Text(stringResource(R.string.music_playlist_cancel))
+                    Text(bilingualStringResource(R.string.music_playlist_cancel))
                 }
             }
         )
@@ -624,8 +625,8 @@ internal fun MusicPlaylistsWorkspace(
                 pendingExcludedPlaylistId = null
                 pendingExcludedTrackUris = emptyList()
             },
-            title = { Text(stringResource(R.string.music_playlist_restore_excluded_title)) },
-            text = { Text(stringResource(R.string.music_playlist_restore_excluded_message)) },
+            title = { Text(bilingualStringResource(R.string.music_playlist_restore_excluded_title)) },
+            text = { Text(bilingualStringResource(R.string.music_playlist_restore_excluded_message)) },
             confirmButton = {
                 TextButton(
                     enabled = !busy,
@@ -640,7 +641,7 @@ internal fun MusicPlaylistsWorkspace(
                         )
                     }
                 ) {
-                    Text(stringResource(R.string.music_playlist_restore_excluded_confirm))
+                    Text(bilingualStringResource(R.string.music_playlist_restore_excluded_confirm))
                 }
             },
             dismissButton = {
@@ -649,7 +650,7 @@ internal fun MusicPlaylistsWorkspace(
                     pendingExcludedTrackUris = emptyList()
                     onSelectionHandled()
                 }) {
-                    Text(stringResource(R.string.music_playlist_cancel))
+                    Text(bilingualStringResource(R.string.music_playlist_cancel))
                 }
             }
         )
@@ -660,9 +661,9 @@ internal fun MusicPlaylistsWorkspace(
             .firstOrNull { it.playlistId == playlistId }?.name.orEmpty()
         AlertDialog(
             onDismissRequest = { pendingDeletePlaylistId = null },
-            title = { Text(stringResource(R.string.music_playlist_delete_confirm)) },
+            title = { Text(bilingualStringResource(R.string.music_playlist_delete_confirm)) },
             text = {
-                Text(stringResource(R.string.music_playlist_delete_confirm_message, playlistName))
+                Text(bilingualStringResource(R.string.music_playlist_delete_confirm_message, playlistName))
             },
             confirmButton = {
                 TextButton(
@@ -691,12 +692,12 @@ internal fun MusicPlaylistsWorkspace(
                         }
                     }
                 ) {
-                    Text(stringResource(R.string.music_playlist_delete))
+                    Text(bilingualStringResource(R.string.music_playlist_delete))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { pendingDeletePlaylistId = null }) {
-                    Text(stringResource(R.string.music_playlist_cancel))
+                    Text(bilingualStringResource(R.string.music_playlist_cancel))
                 }
             }
         )
@@ -738,7 +739,7 @@ private fun PlaylistSummaryRow(
         }
         if (hasTracksToAdd) {
             OutlinedButton(onClick = onAddSelected, enabled = !busy) {
-                Text(stringResource(R.string.music_playlist_add))
+                Text(bilingualStringResource(R.string.music_playlist_add))
             }
         }
         if (playlist.kind == MusicPlaylistKind.NAMED ||
@@ -754,21 +755,21 @@ private fun PlaylistSummaryRow(
                     onDismissRequest = { menuExpanded = false }
                 ) {
                     DropdownMenuItem(
-                        text = { Text(Lp2PreviewText.text(R.string.music_playlist_rename, "music_playlist_rename")) },
+                        text = { Text(bilingualStringResource(R.string.music_playlist_rename)) },
                         onClick = {
                             menuExpanded = false
                             onRename()
                         }
                     )
                     DropdownMenuItem(
-                        text = { Text(stringResource(R.string.music_playlist_copy)) },
+                        text = { Text(bilingualStringResource(R.string.music_playlist_copy)) },
                         onClick = {
                             menuExpanded = false
                             onCopy()
                         }
                     )
                     DropdownMenuItem(
-                        text = { Text(stringResource(R.string.music_playlist_delete)) },
+                        text = { Text(bilingualStringResource(R.string.music_playlist_delete)) },
                         onClick = {
                             menuExpanded = false
                             onDelete()
@@ -811,7 +812,7 @@ private fun PlaylistItemRow(
                 )
                 if (item.availability != MediaAvailability.PLAYABLE) {
                     Text(
-                        stringResource(R.string.music_playlist_item_unavailable),
+                        bilingualStringResource(R.string.music_playlist_item_unavailable),
                         color = MaterialTheme.colorScheme.error,
                         style = MaterialTheme.typography.bodySmall
                     )
@@ -829,17 +830,17 @@ private fun PlaylistItemRow(
                 style = MaterialTheme.typography.labelSmall
             )
             TextButton(enabled = editable, onClick = { onMove(-1) }) {
-                Text(stringResource(R.string.music_playlist_move_up))
+                Text(bilingualStringResource(R.string.music_playlist_move_up))
             }
             TextButton(enabled = editable, onClick = { onMove(1) }) {
-                Text(stringResource(R.string.music_playlist_move_down))
+                Text(bilingualStringResource(R.string.music_playlist_move_down))
             }
             TextButton(
                 enabled = editable,
                 modifier = Modifier.testTag("playlist-remove-${item.playlistItemId}"),
                 onClick = onRemove
             ) {
-                Text(Lp2PreviewText.text(R.string.music_playlist_remove, "music_playlist_remove"))
+                Text(bilingualStringResource(R.string.music_playlist_remove))
             }
         }
     }

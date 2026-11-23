@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_dual_language_enabled">Show two languages</string>
+    <string name="settings_dual_language_description">Display a second language beneath important UI labels.</string>
+    <string name="settings_secondary_language">Secondary language</string>
+    <string name="settings_dual_language_preview">Example: Alarm / Snooze / Music library</string>
+</resources>

@@ -1,5 +1,6 @@
 package com.sysadmindoc.alarmclock
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -20,6 +21,8 @@ import com.sysadmindoc.alarmclock.domain.AlarmScheduler
 import com.sysadmindoc.alarmclock.service.AlarmService
 import com.sysadmindoc.alarmclock.ui.alarmfiring.AlarmFiringActivity
 import com.sysadmindoc.alarmclock.ui.components.WhatsNewDialog
+import com.sysadmindoc.alarmclock.ui.components.BilingualLocalizationHost
+import com.sysadmindoc.alarmclock.util.AppLanguageManager
 import com.sysadmindoc.alarmclock.ui.navigation.AppNavigation
 import com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText
 import com.sysadmindoc.alarmclock.ui.theme.AlarmClockXtremeTheme
@@ -36,6 +39,10 @@ class MainActivity : ComponentActivity() {
     private var lastHandledShareTokenKey: String? = null
     private var pendingSharedAlarmToken: String? = null
     private var pendingSharedAlarmDraft by mutableStateOf<Alarm?>(null)
+
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(AppLanguageManager.localizedActivityBase(newBase))
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
@@ -57,6 +64,7 @@ class MainActivity : ComponentActivity() {
                 expressiveMode = settings.value.expressiveModeEnabled,
                 reduceMotionAndFlashing = settings.value.reduceMotionAndFlashing
             ) {
+                BilingualLocalizationHost {
                 AppNavigation(
                     sharedAlarmDraft = pendingSharedAlarmDraft,
                     onSharedAlarmConsumed = {
@@ -80,6 +88,7 @@ class MainActivity : ComponentActivity() {
                             WhatsNewTracker.markShown(this@MainActivity, BuildConfig.VERSION_CODE)
                         }
                     )
+                }
                 }
             }
         }

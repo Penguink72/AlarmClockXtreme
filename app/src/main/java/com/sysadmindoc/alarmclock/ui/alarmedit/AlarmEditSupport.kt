@@ -51,6 +51,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sysadmindoc.alarmclock.BuildConfig
 import com.sysadmindoc.alarmclock.R
+import com.sysadmindoc.alarmclock.ui.components.bilingualStringResource
 import com.sysadmindoc.alarmclock.data.model.Alarm
 import com.sysadmindoc.alarmclock.data.model.ShiftPattern
 import com.sysadmindoc.alarmclock.domain.LocationDismissPolicy
@@ -287,7 +288,7 @@ internal fun AlarmEditorCategoryOverview(
     val categories = listOf(
         AlarmEditorCategory(
             page = AlarmEditorPage.SOUND,
-            title = stringResource(R.string.alarm_edit_page_sound),
+            title = bilingualStringResource(R.string.alarm_edit_page_sound),
             summary = stringResource(
                 R.string.alarm_edit_sound_category_summary,
                 state.soundSummary(),
@@ -299,7 +300,7 @@ internal fun AlarmEditorCategoryOverview(
         ),
         AlarmEditorCategory(
             page = AlarmEditorPage.DISMISS,
-            title = stringResource(R.string.alarm_edit_page_dismiss),
+            title = bilingualStringResource(R.string.alarm_edit_page_dismiss),
             summary = stringResource(
                 R.string.alarm_edit_dismiss_category_summary,
                 state.challengeSummary(),
@@ -309,20 +310,20 @@ internal fun AlarmEditorCategoryOverview(
         ),
         AlarmEditorCategory(
             page = AlarmEditorPage.SCHEDULE,
-            title = stringResource(R.string.alarm_edit_page_schedule),
+            title = bilingualStringResource(R.string.alarm_edit_page_schedule),
             summary = scheduleSummary,
             icon = Icons.Default.CalendarMonth
         ),
         AlarmEditorCategory(
             page = AlarmEditorPage.WAKE,
-            title = stringResource(R.string.alarm_edit_page_wake),
+            title = bilingualStringResource(R.string.alarm_edit_page_wake),
             summary = wakeFeatures.takeIf { it.isNotEmpty() }?.joinToString(" • ")
                 ?: stringResource(R.string.alarm_edit_standard_wake),
             icon = Icons.Default.WbSunny
         ),
         AlarmEditorCategory(
             page = AlarmEditorPage.INTEGRATIONS,
-            title = stringResource(R.string.alarm_edit_page_integrations),
+            title = bilingualStringResource(R.string.alarm_edit_page_integrations),
             summary = if (integrationCount == 0) {
                 stringResource(R.string.alarm_edit_no_integrations)
             } else {
@@ -332,7 +333,7 @@ internal fun AlarmEditorCategoryOverview(
         ),
         AlarmEditorCategory(
             page = AlarmEditorPage.ADVANCED,
-            title = stringResource(R.string.alarm_edit_page_advanced),
+            title = bilingualStringResource(R.string.alarm_edit_page_advanced),
             summary = advancedFeatures.takeIf { it.isNotEmpty() }?.joinToString(" • ")
                 ?: stringResource(R.string.alarm_edit_using_defaults),
             icon = Icons.Default.Tune
@@ -344,8 +345,8 @@ internal fun AlarmEditorCategoryOverview(
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         AppSectionTitle(
-            title = stringResource(R.string.alarm_edit_settings_title),
-            description = stringResource(R.string.alarm_edit_settings_description)
+            title = bilingualStringResource(R.string.alarm_edit_settings_title),
+            description = bilingualStringResource(R.string.alarm_edit_settings_description)
         )
         BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
             val columns = alarmEditorCategoryColumns(maxWidth.value.toInt())
@@ -454,8 +455,8 @@ internal fun SettingsSectionContent(
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         AppSectionTitle(
-            title = com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.textForResource(section.titleRes),
-            description = com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.textForResource(section.descriptionRes)
+            title = bilingualStringResource(section.titleRes),
+            description = bilingualStringResource(section.descriptionRes)
         )
         AppSurfaceCard(contentPadding = PaddingValues(horizontal = 18.dp, vertical = 18.dp)) {
             content()
@@ -713,7 +714,7 @@ internal fun ChallengeChainPickerSheet(
                                 }
                             } else {
                                 TextButton(onClick = { draftChain = draftChain + type }) {
-                                    Text(stringResource(R.string.alarm_edit_add), color = MaterialTheme.colorScheme.primary)
+                                    Text(bilingualStringResource(R.string.alarm_edit_add), color = MaterialTheme.colorScheme.primary)
                                 }
                             }
                         }

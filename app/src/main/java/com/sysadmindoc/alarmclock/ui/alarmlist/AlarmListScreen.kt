@@ -129,6 +129,7 @@ import com.sysadmindoc.alarmclock.ui.components.AppSectionTitle
 import com.sysadmindoc.alarmclock.ui.components.AppStatusChip
 import com.sysadmindoc.alarmclock.ui.components.AppSurfaceCard
 import com.sysadmindoc.alarmclock.ui.components.RecentPlaybackCard
+import com.sysadmindoc.alarmclock.ui.components.bilingualStringResource
 import com.sysadmindoc.alarmclock.ui.ringtone.MusicLibraryDialog
 import com.sysadmindoc.alarmclock.ui.components.AppInputShape
 import com.sysadmindoc.alarmclock.ui.components.appOutlinedTextFieldColors
@@ -187,11 +188,11 @@ fun AlarmListScreen(
                     Text(Lp2PreviewText.text(R.string.settings_close, "settings_close"))
                 }
             },
-            title = { Text(statsAlarmLabel ?: stringResource(R.string.alarmlist_alarm_history)) },
+            title = { Text(statsAlarmLabel ?: bilingualStringResource(R.string.alarmlist_alarm_history)) },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     Text(
-                        stringResource(R.string.alarm_list_stats_window),
+                        bilingualStringResource(R.string.alarm_list_stats_window),
                         color = TextMuted,
                         style = MaterialTheme.typography.labelSmall
                     )
@@ -199,7 +200,7 @@ fun AlarmListScreen(
                         // A brand-new (or recently-cleared) alarm has nothing to
                         // report yet — frame it rather than dumping all-zero stats.
                         Text(
-                            stringResource(R.string.alarm_list_stats_empty),
+                            bilingualStringResource(R.string.alarm_list_stats_empty),
                             color = TextSecondary
                         )
                     } else {
@@ -486,7 +487,7 @@ fun AlarmListScreen(
                         ) {
                             if (state.groups.any { it.isNotBlank() }) {
                                 GroupFilterRow(
-                                    title = stringResource(R.string.alarm_list_groups),
+                                    title = bilingualStringResource(R.string.alarm_list_groups),
                                     groups = state.groups.filter { it.isNotBlank() },
                                     selectedGroup = state.selectedGroup,
                                     onSelectGroup = viewModel::selectGroup
@@ -495,7 +496,7 @@ fun AlarmListScreen(
 
                             if (state.profiles.any { it.isNotBlank() }) {
                                 GroupFilterRow(
-                                    title = stringResource(R.string.alarm_list_profiles),
+                                    title = bilingualStringResource(R.string.alarm_list_profiles),
                                     groups = state.profiles.filter { it.isNotBlank() },
                                     selectedGroup = state.selectedProfile,
                                     onSelectGroup = viewModel::selectProfile
@@ -507,7 +508,7 @@ fun AlarmListScreen(
                                     OutlinedTextField(
                                         value = searchQuery,
                                         onValueChange = { searchQuery = it },
-                                        placeholder = { Text(stringResource(R.string.alarm_list_search_placeholder)) },
+                                        placeholder = { Text(bilingualStringResource(R.string.alarm_list_search_placeholder)) },
                                         leadingIcon = { Icon(Icons.Default.Search, null, tint = TextMuted) },
                                         trailingIcon = {
                                             if (searchQuery.isNotBlank()) {
@@ -540,8 +541,8 @@ fun AlarmListScreen(
                                 AppSurfaceCard(modifier = Modifier.fillMaxWidth()) {
                                     AppEmptyState(
                                         icon = Icons.Default.AlarmAdd,
-                                        title = stringResource(R.string.alarm_list_empty_title),
-                                        description = stringResource(R.string.alarm_list_empty_description),
+                                        title = bilingualStringResource(R.string.alarm_list_empty_title),
+                                        description = bilingualStringResource(R.string.alarm_list_empty_description),
                                         footer = {
                                             AlarmListEmptyActions(
                                                 onAddAlarm = onAddAlarm,
@@ -566,8 +567,8 @@ fun AlarmListScreen(
                                 AppSurfaceCard(modifier = Modifier.fillMaxWidth()) {
                                     AppEmptyState(
                                         icon = Icons.Default.Search,
-                                        title = stringResource(R.string.alarm_list_no_matches_title),
-                                        description = stringResource(R.string.alarm_list_no_matches_description),
+                                        title = bilingualStringResource(R.string.alarm_list_no_matches_title),
+                                        description = bilingualStringResource(R.string.alarm_list_no_matches_description),
                                         footer = {
                                             TextButton(
                                                 onClick = {
@@ -765,7 +766,7 @@ fun AlarmListScreen(
                                 ) {
                                     Icon(Icons.Default.ContentCopy, contentDescription = null, modifier = Modifier.size(18.dp))
                                     Spacer(modifier = Modifier.width(6.dp))
-                                    Text(stringResource(R.string.alarm_list_templates))
+                                    Text(bilingualStringResource(R.string.alarm_list_templates))
                                 }
                                 TextButton(
                                     onClick = onAddAlarm,
@@ -875,7 +876,7 @@ private fun AlarmListEmptyActions(
                     shape = RoundedCornerShape(8.dp),
                     colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.primary)
                 ) {
-                    Text(stringResource(R.string.alarm_list_browse_templates))
+                    Text(bilingualStringResource(R.string.alarm_list_browse_templates))
                 }
             }
         } else {
@@ -895,7 +896,7 @@ private fun AlarmListEmptyActions(
                     shape = RoundedCornerShape(8.dp),
                     colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.primary)
                 ) {
-                    Text(stringResource(R.string.alarm_list_browse_templates))
+                    Text(bilingualStringResource(R.string.alarm_list_browse_templates))
                 }
             }
         }
@@ -1047,7 +1048,7 @@ private fun AlarmDetailPane(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                        Text(stringResource(R.string.alarm_list_alarm_state), color = TextPrimary, style = MaterialTheme.typography.titleSmall)
+                        Text(bilingualStringResource(R.string.alarm_list_alarm_state), color = TextPrimary, style = MaterialTheme.typography.titleSmall)
                         Text(
                             if (alarm.isEnabled) stringResource(R.string.alarmlist_tap_to_pause_long_press_to) else stringResource(R.string.alarmlist_tap_to_enable_this_alarm),
                             color = TextSecondary,
@@ -1082,7 +1083,7 @@ private fun AlarmDetailPane(
                     ) {
                         Icon(Icons.Default.ContentCopy, contentDescription = null, modifier = Modifier.size(18.dp))
                         Spacer(modifier = Modifier.width(6.dp))
-                        Text(stringResource(R.string.alarm_list_duplicate))
+                        Text(bilingualStringResource(R.string.alarm_list_duplicate))
                     }
                     OutlinedButton(
                         onClick = { onShare(alarm) },
@@ -1091,7 +1092,7 @@ private fun AlarmDetailPane(
                     ) {
                         Icon(Icons.Default.Share, contentDescription = null, modifier = Modifier.size(18.dp))
                         Spacer(modifier = Modifier.width(6.dp))
-                        Text(stringResource(R.string.alarm_list_share))
+                        Text(bilingualStringResource(R.string.alarm_list_share))
                     }
                 }
                 Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
@@ -1102,7 +1103,7 @@ private fun AlarmDetailPane(
                     ) {
                         Icon(Icons.Default.History, contentDescription = null, modifier = Modifier.size(18.dp))
                         Spacer(modifier = Modifier.width(6.dp))
-                        Text(stringResource(R.string.alarm_list_history))
+                        Text(bilingualStringResource(R.string.alarm_list_history))
                     }
                     OutlinedButton(
                         onClick = { onDelete(alarm) },
@@ -1123,7 +1124,7 @@ private fun AlarmDetailPane(
                     ) {
                         Icon(Icons.Default.SkipNext, contentDescription = null, modifier = Modifier.size(18.dp))
                         Spacer(modifier = Modifier.width(6.dp))
-                        Text(stringResource(R.string.alarm_list_skip_next_occurrence))
+                        Text(bilingualStringResource(R.string.alarm_list_skip_next_occurrence))
                     }
                 }
             }
@@ -1150,12 +1151,12 @@ private fun AlarmHeader(
                 .format(DateTimeFormatter.ofPattern("EEE, MMM d"))
         }
     AlarmClockHeroHeader(
-        title = stringResource(R.string.alarm_list_title),
+        title = bilingualStringResource(R.string.alarm_list_title),
         subtitle = when {
-            pausedUntilLabel != null -> stringResource(R.string.alarmlist_paused_until, pausedUntilLabel)
-            hasAlarms && remainingTime.isNotBlank() -> stringResource(R.string.alarmlist_next_alarm, remainingTime)
-            alarmCount > 0 -> stringResource(R.string.alarmlist_all_alarms_paused)
-            else -> stringResource(R.string.alarmlist_no_alarms_scheduled)
+            pausedUntilLabel != null -> bilingualStringResource(R.string.alarmlist_paused_until, pausedUntilLabel)
+            hasAlarms && remainingTime.isNotBlank() -> bilingualStringResource(R.string.alarmlist_next_alarm, remainingTime)
+            alarmCount > 0 -> bilingualStringResource(R.string.alarmlist_all_alarms_paused)
+            else -> bilingualStringResource(R.string.alarmlist_no_alarms_scheduled)
         },
         actions = {
             IconButton(onClick = onCycleSort) {
@@ -1172,7 +1173,7 @@ private fun AlarmHeader(
             pausedUntilLabel != null -> {
                 {
                     AppStatusChip(
-                        label = stringResource(R.string.alarm_list_resume_alarms),
+                        label = bilingualStringResource(R.string.alarm_list_resume_alarms),
                         icon = Icons.Default.NotificationsActive,
                         color = SnoozeYellow,
                         onClick = onResumeAlarms
@@ -1211,7 +1212,7 @@ private fun GroupFilterRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             AppFilterChip(
-                label = stringResource(R.string.alarm_list_group_all),
+                label = bilingualStringResource(R.string.alarm_list_group_all),
                 selected = selectedGroup == null,
                 onClick = { onSelectGroup(null) },
                 selectionSemantics = true,
@@ -1287,7 +1288,7 @@ private fun QuickAlarmRow(
 ) {
     AppSurfaceCard(contentPadding = androidx.compose.foundation.layout.PaddingValues(14.dp)) {
         AppSectionTitle(
-            title = stringResource(R.string.alarm_list_quick_alarms)
+            title = bilingualStringResource(R.string.alarm_list_quick_alarms)
         )
         Row(
             modifier = Modifier
@@ -1454,29 +1455,29 @@ private fun AlarmCard(
                             onDismissRequest = { showMenu = false }
                         ) {
                             DropdownMenuItem(
-                                text = { Text(stringResource(R.string.alarm_list_edit)) },
+                                text = { Text(bilingualStringResource(R.string.alarm_list_edit)) },
                                 leadingIcon = { Icon(Icons.Default.Edit, null, modifier = Modifier.size(18.dp)) },
                                 onClick = { showMenu = false; onClick() }
                             )
                             DropdownMenuItem(
-                                text = { Text(stringResource(R.string.alarm_list_duplicate)) },
+                                text = { Text(bilingualStringResource(R.string.alarm_list_duplicate)) },
                                 leadingIcon = { Icon(Icons.Default.ContentCopy, null, modifier = Modifier.size(18.dp)) },
                                 onClick = { showMenu = false; onDuplicate() }
                             )
                             DropdownMenuItem(
-                                text = { Text(stringResource(R.string.alarm_list_share)) },
+                                text = { Text(bilingualStringResource(R.string.alarm_list_share)) },
                                 leadingIcon = { Icon(Icons.Default.Share, null, modifier = Modifier.size(18.dp)) },
                                 onClick = { showMenu = false; onShare() }
                             )
                             if (alarm.isEnabled && alarm.isRecurringSchedule) {
                                 DropdownMenuItem(
-                                    text = { Text(stringResource(R.string.alarm_list_skip_next)) },
+                                    text = { Text(bilingualStringResource(R.string.alarm_list_skip_next)) },
                                     leadingIcon = { Icon(Icons.Default.SkipNext, null, modifier = Modifier.size(18.dp)) },
                                     onClick = { showMenu = false; onSkipNext() }
                                 )
                             }
                             DropdownMenuItem(
-                                text = { Text(stringResource(R.string.alarm_list_history)) },
+                                text = { Text(bilingualStringResource(R.string.alarm_list_history)) },
                                 leadingIcon = { Icon(Icons.Default.History, null, modifier = Modifier.size(18.dp)) },
                                 onClick = { showMenu = false; onShowHistory() }
                             )
@@ -1591,7 +1592,7 @@ private fun SelectionActionBar(
                 ) {
                     Icon(Icons.Default.NotificationsActive, contentDescription = null, modifier = Modifier.size(18.dp))
                     Spacer(modifier = Modifier.width(6.dp))
-                    Text(stringResource(R.string.alarm_list_enable))
+                    Text(bilingualStringResource(R.string.alarm_list_enable))
                 }
                 OutlinedButton(
                     onClick = onDisableSelected,

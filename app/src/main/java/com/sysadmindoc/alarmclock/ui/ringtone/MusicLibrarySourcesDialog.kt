@@ -25,6 +25,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sysadmindoc.alarmclock.R
+import com.sysadmindoc.alarmclock.ui.components.bilingualStringResource
 
 @Composable
 internal fun MusicLibrarySourcesDialog(
@@ -57,13 +58,13 @@ internal fun MusicLibrarySourcesDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(stringResource(R.string.music_library_sources_title)) },
+        title = { Text(bilingualStringResource(R.string.music_library_sources_title)) },
         text = {
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                Text(stringResource(R.string.music_library_source_management_hint))
+                Text(bilingualStringResource(R.string.music_library_source_management_hint))
                 OutlinedButton(
                     enabled = !state.scanning && !state.loadingPool,
                     onClick = { folderLauncher.launch(null) }
@@ -71,7 +72,7 @@ internal fun MusicLibrarySourcesDialog(
                     Text(com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.text(R.string.music_library_add_folder, "music_library_add_folder"))
                 }
                 if (state.sources.isEmpty()) {
-                    Text(stringResource(R.string.music_library_no_sources))
+                    Text(bilingualStringResource(R.string.music_library_no_sources))
                 } else {
                     LazyColumn(
                         modifier = Modifier.heightIn(max = 360.dp),
@@ -94,7 +95,7 @@ internal fun MusicLibrarySourcesDialog(
                 if (state.status.isNotBlank()) {
                     Text(state.status, style = MaterialTheme.typography.bodySmall)
                 }
-                Text(stringResource(R.string.music_library_duplicate_location_note))
+                Text(bilingualStringResource(R.string.music_library_duplicate_location_note))
             }
         },
         confirmButton = {
@@ -107,7 +108,7 @@ internal fun MusicLibrarySourcesDialog(
                 enabled = !state.scanning && !state.loadingPool,
                 onClick = { viewModel.scan() }
             ) {
-                Text(stringResource(R.string.music_library_scan_all_sources))
+                Text(bilingualStringResource(R.string.music_library_scan_all_sources))
             }
         }
     )
@@ -127,16 +128,16 @@ private fun MusicLibrarySourceRow(
     onAddToPool: () -> Unit
 ) {
     val statusText = when (source.status) {
-        MusicSourceStatus.NEEDS_SCAN -> stringResource(R.string.music_library_source_needs_scan)
-        MusicSourceStatus.READY -> stringResource(R.string.music_library_source_ready)
-        MusicSourceStatus.ERROR -> stringResource(R.string.music_library_source_error)
+        MusicSourceStatus.NEEDS_SCAN -> bilingualStringResource(R.string.music_library_source_needs_scan)
+        MusicSourceStatus.READY -> bilingualStringResource(R.string.music_library_source_ready)
+        MusicSourceStatus.ERROR -> bilingualStringResource(R.string.music_library_source_error)
     }
     val storageRoot = source.documentId.substringBefore(':')
     val origin = when {
         storageRoot.equals("primary", ignoreCase = true) ->
-            stringResource(R.string.music_library_source_phone)
+            bilingualStringResource(R.string.music_library_source_phone)
         storageRoot.isNotBlank() && storageRoot != source.documentId ->
-            stringResource(R.string.music_library_source_removable)
+            bilingualStringResource(R.string.music_library_source_removable)
         else -> source.treeUri.substringAfter("://")
             .substringBefore('/')
             .ifBlank { com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.text(R.string.music_library_source_unknown_origin, "music_library_source_unknown_origin") }
@@ -147,7 +148,7 @@ private fun MusicLibrarySourceRow(
     ) {
         Text(source.name, style = MaterialTheme.typography.titleSmall)
         Text(
-            stringResource(R.string.music_library_source_origin, origin, statusText),
+            bilingualStringResource(R.string.music_library_source_origin, origin, statusText),
             style = MaterialTheme.typography.bodySmall
         )
         Text(
@@ -177,13 +178,13 @@ private fun MusicLibrarySourceRow(
                 }
             }
             TextButton(enabled = !scanning, onClick = onSelectSubfolders) {
-                Text(stringResource(R.string.music_library_choose_subfolders))
+                Text(bilingualStringResource(R.string.music_library_choose_subfolders))
             }
             TextButton(
                 enabled = !scanning && source.indexed && source.trackCount > 0,
                 onClick = onAddToPool
             ) {
-                Text(stringResource(R.string.music_library_pool_add_folder))
+                Text(bilingualStringResource(R.string.music_library_pool_add_folder))
             }
         }
     }
@@ -194,13 +195,13 @@ private fun SubfolderSelectionDialog(viewModel: MusicLibraryViewModel) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     AlertDialog(
         onDismissRequest = viewModel::closeSubfolderPicker,
-        title = { Text(stringResource(R.string.music_library_choose_subfolders)) },
+        title = { Text(bilingualStringResource(R.string.music_library_choose_subfolders)) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 if (state.loadingSubfolders) {
-                    Text(stringResource(R.string.music_library_scanning_status))
+                    Text(bilingualStringResource(R.string.music_library_scanning_status))
                 } else if (state.folderCandidates.isEmpty()) {
-                    Text(stringResource(R.string.music_library_no_subfolders))
+                    Text(bilingualStringResource(R.string.music_library_no_subfolders))
                 } else {
                     LazyColumn(
                         modifier = Modifier.heightIn(max = 400.dp)
@@ -229,7 +230,7 @@ private fun SubfolderSelectionDialog(viewModel: MusicLibraryViewModel) {
                 enabled = !state.loadingSubfolders && state.selectedFolderIds.isNotEmpty(),
                 onClick = viewModel::addSelectedSubfolders
             ) {
-                Text(stringResource(R.string.music_library_add_selected_folders))
+                Text(bilingualStringResource(R.string.music_library_add_selected_folders))
             }
         },
         dismissButton = {

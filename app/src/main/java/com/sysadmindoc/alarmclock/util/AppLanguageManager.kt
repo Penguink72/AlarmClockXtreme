@@ -17,14 +17,35 @@ internal enum class AppLanguageOption(val languageTag: String?) {
 internal object AppLanguageManager {
     fun isSupported(): Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
 
+    // Android 13+ owns per-app locales. Below Android 13, a synchronous
+    // device-local preference is needed at Activity.attachBaseContext time.
+    private const val LEGACY_PREFS = "acx_s3_locale_settings"
+    private const val LEGACY_PRIMARY = "primary_language"
+
     fun currentOption(context: Context): AppLanguageOption {
-        if (!isSupported()) return AppLanguageOption.SYSTEM_DEFAULT
-        return currentOptionApi33(context)
+        if (isSupported()) return currentOptionApi33(context)
+        val saved = context.getSharedPreferences(LEGACY_PREFS, Context.MODE_PRIVATE)
+            .getString(LEGACY_PRIMARY, null)
+        return AppLanguageOption.values().firstOrNull { it.name == saved }
+            ?: AppLanguageOption.SYSTEM_DEFAULT
     }
 
     fun setOption(context: Context, option: AppLanguageOption) {
-        if (!isSupported()) return
-        setOptionApi33(context, option)
+        if (isSupported()) {
+            setOptionApi33(context, option)
+        } else {
+            context.getSharedPreferences(LEGACY_PREFS, Context.MODE_PRIVATE)
+                .edit().putString(LEGACY_PRIMARY, option.name).apply()
+        }
+    }
+
+    /** Scope the locale to Activity resources; never mutate global Locale. */
+    fun localizedActivityBase(base: Context): Context {
+        if (isSupported()) return base
+        val tag = currentOption(base).languageTag ?: return base
+        val configuration = android.content.res.Configuration(base.resources.configuration)
+        configuration.setLocale(Locale.forLanguageTag(tag))
+        return base.createConfigurationContext(configuration)
     }
 
     internal fun optionForLanguageTags(languageTags: String): AppLanguageOption {

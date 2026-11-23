@@ -1,0 +1,79 @@
+name: ACX S3/S4 persisted language settings and bilingual runtime
+
+on:
+  push:
+    branches: [feature/acx-s3-s4-dual-language-ui-20261123]
+    paths:
+      - "app/src/main/**"
+      - "app/src/test/java/com/sysadmindoc/alarmclock/ui/components/BilingualUiOptionsTest.kt"
+      - "app/src/test/java/com/sysadmindoc/alarmclock/util/AppLanguageManagerTest.kt"
+      - "docs/localization/ACX-S3-S4*"
+      - ".github/workflows/s3-s4-bilingual-ui.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  android-native-trilingual-and-dual-ui:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: android-actions/setup-android@v4
+      - name: Install Android 36
+        run: sdkmanager --install "platforms;android-36" "build-tools;36.0.0"
+      - name: Native zh-TW/ja source and no overwritten English resources
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s app/src/main/res/values/strings.xml
+          test -s app/src/main/res/values-b+zh+Hant+TW/strings_s2_machine_translated.xml
+          test -s app/src/main/res/values-ja/strings_s2_machine_translated.xml
+          test -s app/src/main/res/values/strings_s3_s4_bilingual.xml
+          test -s app/src/main/res/values-b+zh+Hant+TW/strings_s3_s4_bilingual.xml
+          test -s app/src/main/res/values-ja/strings_s3_s4_bilingual.xml
+          test -s app/src/main/res/values/strings_s4_navigation.xml
+          test -s app/src/main/res/values-b+zh+Hant+TW/strings_s4_navigation.xml
+          test -s app/src/main/res/values-ja/strings_s4_navigation.xml
+          test -s app/src/main/java/com/sysadmindoc/alarmclock/ui/components/BilingualUi.kt
+          test -s app/src/main/java/com/sysadmindoc/alarmclock/util/AppLanguageManager.kt
+          if grep -R 'Locale.setDefault(' app/src/main/java/com/sysadmindoc/alarmclock/ui/components/BilingualUi.kt             app/src/main/java/com/sysadmindoc/alarmclock/util/AppLanguageManager.kt; then
+            echo "S3 forbids JVM-global locale mutation" >&2
+            exit 1
+          fi
+      - name: Compile Android F-Droid Kotlin/UI and Play resource variants
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash ./gradlew :app:processFdroidDebugResources             :app:compileFdroidDebugKotlin             :app:compileFdroidDebugUnitTestKotlin             :app:processPlayDebugResources             --no-daemon --stacktrace
+      - name: Build installable F-Droid debug APK for S3/S4 device acceptance
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash ./gradlew :app:assembleFdroidDebug --no-daemon --stacktrace
+          test -s app/build/outputs/apk/fdroid/debug/app-fdroid-debug.apk
+      - name: Publish S3/S4 test APK only, not an official signed release
+        uses: actions/upload-artifact@v4
+        with:
+          name: acx-s3-s4-trilingual-bilingual-fdroid-debug-apk
+          path: app/build/outputs/apk/fdroid/debug/app-fdroid-debug.apk
+          retention-days: 14
+      - name: Verify six ordered bilingual language pairs and native selection decisions
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash ./gradlew :app:testFdroidDebugUnitTest             --tests 'com.sysadmindoc.alarmclock.ui.components.BilingualUiOptionsTest'             --tests 'com.sysadmindoc.alarmclock.util.AppLanguageManagerTest'             --no-daemon --stacktrace
+      - name: Confirm original music, Room and alarm scheduler modules unchanged
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --exit-code origin/feature/acx-s1-s2-simplified-locales-20261123...HEAD --             app/src/main/java/com/sysadmindoc/alarmclock/data/local             app/src/main/java/com/sysadmindoc/alarmclock/domain/AlarmScheduler.kt             app/src/main/java/com/sysadmindoc/alarmclock/service/AlarmService.kt
+          echo "S3/S4: UI locale updates keep existing alarm delivery and music data intact."

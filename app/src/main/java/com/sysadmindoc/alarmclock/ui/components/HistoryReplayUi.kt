@@ -159,7 +159,7 @@ fun RecentPlaybackCard(
                         modifier = Modifier.size(20.dp)
                     )
                     Text(
-                        text = Lp2PreviewText.text(R.string.recent_playback_title, "recent_playback_title"),
+                        text = bilingualStringResource(R.string.recent_playback_title),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.SemiBold,
                         color = TextPrimary
@@ -170,7 +170,7 @@ fun RecentPlaybackCard(
                     contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp)
                 ) {
                     Text(
-                        text = stringResource(R.string.recent_playback_view_all),
+                        text = bilingualStringResource(R.string.recent_playback_view_all),
                         style = MaterialTheme.typography.labelLarge,
                         color = MaterialTheme.colorScheme.primary
                     )
@@ -310,7 +310,7 @@ private fun RecentTrackPrimaryItem(
                     when (currentReplayState) {
                         is ReplayUiState.Resolving, is ReplayUiState.Preparing -> {
                             Text(
-                                text = stringResource(R.string.replay_status_preparing),
+                                text = bilingualStringResource(R.string.replay_status_preparing),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = MaterialTheme.colorScheme.primary
                             )
@@ -324,7 +324,7 @@ private fun RecentTrackPrimaryItem(
                         }
                         is ReplayUiState.Paused -> {
                             Text(
-                                text = stringResource(R.string.replay_status_paused),
+                                text = bilingualStringResource(R.string.replay_status_paused),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = TextMuted
                             )
@@ -364,9 +364,9 @@ private fun RecentTrackPrimaryItem(
                     Icon(
                         imageVector = Icons.Default.PlayArrow,
                         contentDescription = if (isActive && currentReplayState is ReplayUiState.Paused) {
-                            stringResource(R.string.replay_action_resume)
+                            bilingualStringResource(R.string.replay_action_resume)
                         } else {
-                            stringResource(R.string.replay_action_play)
+                            bilingualStringResource(R.string.replay_action_play)
                         },
                         tint = MaterialTheme.colorScheme.primary
                     )
@@ -381,7 +381,7 @@ private fun RecentTrackPrimaryItem(
                 ) {
                     Icon(
                         imageVector = Icons.Default.MoreVert,
-                        contentDescription = stringResource(R.string.replay_more_options),
+                        contentDescription = bilingualStringResource(R.string.replay_more_options),
                         tint = TextSecondary
                     )
                 }
@@ -457,7 +457,7 @@ private fun RecentTrackSubItem(
                     when (currentReplayState) {
                         is ReplayUiState.Resolving, is ReplayUiState.Preparing -> {
                             Text(
-                                text = stringResource(R.string.replay_status_preparing),
+                                text = bilingualStringResource(R.string.replay_status_preparing),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = MaterialTheme.colorScheme.primary
                             )
@@ -471,7 +471,7 @@ private fun RecentTrackSubItem(
                         }
                         is ReplayUiState.Paused -> {
                             Text(
-                                text = stringResource(R.string.replay_status_paused),
+                                text = bilingualStringResource(R.string.replay_status_paused),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = TextMuted
                             )
@@ -511,9 +511,9 @@ private fun RecentTrackSubItem(
                     Icon(
                         imageVector = Icons.Default.PlayArrow,
                         contentDescription = if (isActive && currentReplayState is ReplayUiState.Paused) {
-                            stringResource(R.string.replay_action_resume)
+                            bilingualStringResource(R.string.replay_action_resume)
                         } else {
-                            stringResource(R.string.replay_action_play)
+                            bilingualStringResource(R.string.replay_action_play)
                         },
                         tint = if (isActive) MaterialTheme.colorScheme.primary else TextSecondary
                     )
@@ -528,7 +528,7 @@ private fun RecentTrackSubItem(
                 ) {
                     Icon(
                         imageVector = Icons.Default.MoreVert,
-                        contentDescription = stringResource(R.string.replay_more_options),
+                        contentDescription = bilingualStringResource(R.string.replay_more_options),
                         tint = TextMuted
                     )
                 }
@@ -620,7 +620,7 @@ fun HistoryTrackRow(
                         when (currentReplayState) {
                             is ReplayUiState.Resolving, is ReplayUiState.Preparing -> {
                                 Text(
-                                    text = stringResource(R.string.replay_status_preparing),
+                                    text = bilingualStringResource(R.string.replay_status_preparing),
                                     style = MaterialTheme.typography.labelSmall,
                                     color = MaterialTheme.colorScheme.primary
                                 )
@@ -634,7 +634,7 @@ fun HistoryTrackRow(
                             }
                             is ReplayUiState.Paused -> {
                                 Text(
-                                    text = stringResource(R.string.replay_status_paused),
+                                    text = bilingualStringResource(R.string.replay_status_paused),
                                     style = MaterialTheme.typography.labelSmall,
                                     color = TextMuted
                                 )
@@ -681,9 +681,9 @@ fun HistoryTrackRow(
                         Icon(
                             imageVector = Icons.Default.PlayArrow,
                             contentDescription = if (isActive && currentReplayState is ReplayUiState.Paused) {
-                                stringResource(R.string.replay_action_resume)
+                                bilingualStringResource(R.string.replay_action_resume)
                             } else {
-                                stringResource(R.string.replay_action_play)
+                                bilingualStringResource(R.string.replay_action_play)
                             },
                             tint = if (isActive) MaterialTheme.colorScheme.primary else TextSecondary
                         )
@@ -698,7 +698,7 @@ fun HistoryTrackRow(
                     ) {
                         Icon(
                             imageVector = Icons.Default.MoreVert,
-                            contentDescription = stringResource(R.string.replay_more_options),
+                            contentDescription = bilingualStringResource(R.string.replay_more_options),
                             tint = TextMuted
                         )
                     }

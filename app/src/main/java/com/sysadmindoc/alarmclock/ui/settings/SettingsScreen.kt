@@ -162,6 +162,9 @@ import com.sysadmindoc.alarmclock.worker.GuardianReadiness
 import com.sysadmindoc.alarmclock.worker.GuardianSmsPath
 import com.sysadmindoc.alarmclock.util.AppLanguageManager
 import com.sysadmindoc.alarmclock.util.AppLanguageOption
+import com.sysadmindoc.alarmclock.ui.components.BilingualUiPreferences
+import com.sysadmindoc.alarmclock.ui.components.LocalBilingualUiOptions
+import com.sysadmindoc.alarmclock.ui.components.bilingualStringResource
 import com.sysadmindoc.alarmclock.util.LocalNetworkPermission
 import java.time.DayOfWeek
 import java.time.Instant
@@ -277,7 +280,8 @@ fun SettingsScreen(
     var selectedLanguageOption by remember(context, configurationLocaleTags) {
         mutableStateOf(AppLanguageManager.currentOption(context))
     }
-    val languagePickerSupported = AppLanguageManager.isSupported()
+    val languagePickerSupported = true // S3: Android 8–12 uses Activity-scoped native resources
+    val bilingualOptions = LocalBilingualUiOptions.current
     val screenScope = rememberCoroutineScope()
     val supportBundleSubject = stringResource(R.string.settings_support_bundle_subject)
     val shareSupportBundleTitle = Lp2PreviewText.text(R.string.settings_share_support_bundle, "settings_share_support_bundle")
@@ -372,12 +376,12 @@ fun SettingsScreen(
                 } else if (showSettingsHome) {
                     item(key = "settings-hero") {
                         AlarmClockHeroHeader(
-                            title = Lp2PreviewText.text(R.string.settings_title, "settings_title"),
+                            title = bilingualStringResource(R.string.settings_title),
                             subtitle = state.appVersion
                         )
                     }
                     settingsItem("settings-home-language") {
-                        SettingsGroup(title = stringResource(R.string.settings_language)) {
+                        SettingsGroup(title = bilingualStringResource(R.string.settings_language)) {
                             AppLanguageSelectionRow(
                                 selectedLanguageOption = selectedLanguageOption,
                                 languagePickerSupported = languagePickerSupported,
@@ -876,8 +880,8 @@ fun SettingsScreen(
             if (!showSettingsHome && selectedPane.id == "utilities") {
             settingsItem("utilities-shortcuts") {
             SettingsGroup(
-                title = stringResource(R.string.settings_utilities),
-                description = Lp2PreviewText.text(R.string.settings_utilities_description, "settings_utilities_description")
+                title = bilingualStringResource(R.string.settings_utilities),
+                description = bilingualStringResource(R.string.settings_utilities_description)
             ) {
                 AppLanguageSelectionRow(
                     selectedLanguageOption = selectedLanguageOption,
@@ -890,22 +894,22 @@ fun SettingsScreen(
                 HorizontalDivider(color = TextMuted.copy(alpha = 0.14f))
                 UtilityShortcutCard(
                     icon = Icons.Default.BarChart,
-                    title = Lp2PreviewText.text(R.string.settings_alarm_statistics, "settings_alarm_statistics"),
-                    description = stringResource(R.string.settings_alarm_statistics_description),
+                    title = bilingualStringResource(R.string.settings_alarm_statistics),
+                    description = bilingualStringResource(R.string.settings_alarm_statistics_description),
                     onClick = onNavigateToStats
                 )
                 HorizontalDivider(color = TextMuted.copy(alpha = 0.14f))
                 UtilityShortcutCard(
                     icon = Icons.Default.Speed,
-                    title = Lp2PreviewText.text(R.string.nav_stopwatch, "nav_stopwatch"),
-                    description = Lp2PreviewText.text(R.string.settings_stopwatch_description, "settings_stopwatch_description"),
+                    title = bilingualStringResource(R.string.nav_stopwatch),
+                    description = bilingualStringResource(R.string.settings_stopwatch_description),
                     onClick = onNavigateToStopwatch
                 )
                 HorizontalDivider(color = TextMuted.copy(alpha = 0.14f))
                 UtilityShortcutCard(
                     icon = Icons.Default.Bedtime,
                     title = stringResource(R.string.nav_bedtime),
-                    description = stringResource(R.string.settings_bedtime_description),
+                    description = bilingualStringResource(R.string.settings_bedtime_description),
                     onClick = onNavigateToBedtime
                 )
                 HorizontalDivider(color = TextMuted.copy(alpha = 0.14f))
@@ -1055,49 +1059,105 @@ fun SettingsScreen(
     }
 
     if (showLanguageDialog) {
+        val selectLanguage: (AppLanguageOption) -> Unit = { chosen ->
+            AppLanguageManager.setOption(context, chosen)
+            selectedLanguageOption = chosen
+            val next = BilingualUiPreferences.read(context)
+            if (next.secondaryTag == chosen.languageTag) {
+                BilingualUiPreferences.save(
+                    context, next.copy(secondaryTag = if (chosen.languageTag == "ja") "en" else "ja")
+                )
+            }
+            showLanguageDialog = false
+            // The resource configuration for Android 8–12 is applied during
+            // attachBaseContext; recreate only this settings-host Activity.
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+                (context as? android.app.Activity)?.recreate()
+            }
+        }
         AlertDialog(
             onDismissRequest = { showLanguageDialog = false },
-            title = { Text(Lp2PreviewText.text(R.string.settings_language_dialog_title, "settings_language_dialog_title")) },
+            title = { Text(bilingualStringResource(R.string.settings_language_dialog_title)) },
             text = {
-                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    AppLanguageOptionRow(
-                        label = stringResource(R.string.settings_language_system_default),
-                        selected = selectedLanguageOption == AppLanguageOption.SYSTEM_DEFAULT,
-                        onSelect = {
-                            selectedLanguageOption = AppLanguageOption.SYSTEM_DEFAULT
-                            AppLanguageManager.setOption(context, AppLanguageOption.SYSTEM_DEFAULT)
-                            showLanguageDialog = false
-                        }
-                    )
-                    AppLanguageOptionRow(
-                        label = Lp2PreviewText.text(R.string.settings_language_english, "settings_language_english"),
-                        selected = selectedLanguageOption == AppLanguageOption.ENGLISH,
-                        onSelect = {
-                            selectedLanguageOption = AppLanguageOption.ENGLISH
-                            AppLanguageManager.setOption(context, AppLanguageOption.ENGLISH)
-                            showLanguageDialog = false
-                        }
-                    )
-                    AppLanguageOptionRow(
-                        label = stringResource(R.string.settings_language_traditional_chinese),
-                        selected = selectedLanguageOption == AppLanguageOption.TRADITIONAL_CHINESE,
-                        onSelect = {
-                            selectedLanguageOption = AppLanguageOption.TRADITIONAL_CHINESE
-                            AppLanguageManager.setOption(
-                                context,
-                                AppLanguageOption.TRADITIONAL_CHINESE
+                Column(
+                    modifier = Modifier.verticalScroll(rememberScrollState()),
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    listOf(
+                        AppLanguageOption.SYSTEM_DEFAULT to R.string.settings_language_system_default,
+                        AppLanguageOption.ENGLISH to R.string.settings_language_english,
+                        AppLanguageOption.TRADITIONAL_CHINESE to R.string.settings_language_traditional_chinese,
+                        AppLanguageOption.JAPANESE to R.string.settings_language_japanese
+                    ).forEach { (option, labelRes) ->
+                        AppLanguageOptionRow(
+                            label = stringResource(labelRes),
+                            selected = selectedLanguageOption == option,
+                            onSelect = { selectLanguage(option) }
+                        )
+                    }
+                    HorizontalDivider()
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(bilingualStringResource(R.string.settings_dual_language_enabled))
+                            Text(
+                                stringResource(R.string.settings_dual_language_description),
+                                style = MaterialTheme.typography.bodySmall
                             )
-                            showLanguageDialog = false
                         }
-                    )
-                    AppLanguageOptionRow(
-                        label = Lp2PreviewText.text(R.string.settings_language_japanese, "settings_language_japanese"),
-                        selected = selectedLanguageOption == AppLanguageOption.JAPANESE,
-                        onSelect = {
-                            selectedLanguageOption = AppLanguageOption.JAPANESE
-                            AppLanguageManager.setOption(context, AppLanguageOption.JAPANESE)
-                            showLanguageDialog = false
-                        }
+                        Switch(
+                            checked = bilingualOptions.enabled,
+                            onCheckedChange = { checked ->
+                                val actualPrimary = selectedLanguageOption.languageTag
+                                    ?: AppLanguageManager.optionForLanguageTags(
+                                        configurationLocaleTags
+                                    ).languageTag ?: "en"
+                                val differentSecondary = if (
+                                    checked && bilingualOptions.secondaryTag == actualPrimary
+                                ) {
+                                    if (actualPrimary == "ja") "en" else "ja"
+                                } else bilingualOptions.secondaryTag
+                                BilingualUiPreferences.save(
+                                    context,
+                                    bilingualOptions.copy(
+                                        enabled = checked, secondaryTag = differentSecondary
+                                    )
+                                )
+                            }
+                        )
+                    }
+                    if (bilingualOptions.enabled) {
+                        Text(
+                            bilingualStringResource(R.string.settings_secondary_language),
+                            style = MaterialTheme.typography.titleSmall
+                        )
+                        val selectedPrimary = selectedLanguageOption.languageTag
+                            ?: AppLanguageManager.optionForLanguageTags(
+                                configurationLocaleTags
+                            ).languageTag ?: "en"
+                        listOf(
+                            "zh-TW" to R.string.settings_language_traditional_chinese,
+                            "en" to R.string.settings_language_english,
+                            "ja" to R.string.settings_language_japanese
+                        ).filter { it.first != selectedPrimary }
+                            .forEach { (tag, resId) ->
+                                AppLanguageOptionRow(
+                                    label = stringResource(resId),
+                                    selected = bilingualOptions.secondaryTag == tag,
+                                    onSelect = {
+                                        BilingualUiPreferences.save(
+                                            context, bilingualOptions.copy(secondaryTag = tag)
+                                        )
+                                    }
+                                )
+                            }
+                    }
+                    Text(
+                        bilingualStringResource(R.string.settings_dual_language_preview),
+                        style = MaterialTheme.typography.bodySmall
                     )
                 }
             },
@@ -1117,7 +1177,7 @@ private fun AppLanguageSelectionRow(
     onClick: () -> Unit
 ) {
     SettingsActionRow(
-        label = stringResource(R.string.settings_language),
+        label = bilingualStringResource(R.string.settings_language),
         value = stringResource(
             when (selectedLanguageOption) {
                 AppLanguageOption.SYSTEM_DEFAULT -> R.string.settings_language_system_default
