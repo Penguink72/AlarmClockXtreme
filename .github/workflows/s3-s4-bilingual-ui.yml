@@ -22,6 +22,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
+          fetch-depth: 0
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -62,5 +63,5 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          git diff --exit-code HEAD^ HEAD --             app/src/main/java/com/sysadmindoc/alarmclock/data/local             app/src/main/java/com/sysadmindoc/alarmclock/domain/AlarmScheduler.kt             app/src/main/java/com/sysadmindoc/alarmclock/service/AlarmService.kt
+          git diff --exit-code origin/feature/acx-s1-s2-simplified-locales-20261123...HEAD --             app/src/main/java/com/sysadmindoc/alarmclock/data/local             app/src/main/java/com/sysadmindoc/alarmclock/domain/AlarmScheduler.kt             app/src/main/java/com/sysadmindoc/alarmclock/service/AlarmService.kt
           echo "S3/S4: UI locale updates keep existing alarm delivery and music data intact."
