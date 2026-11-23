@@ -55,6 +55,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sysadmindoc.alarmclock.BuildConfig
 import com.sysadmindoc.alarmclock.R
+import com.sysadmindoc.alarmclock.ui.components.bilingualStringResource
 import com.sysadmindoc.alarmclock.data.model.Alarm
 import com.sysadmindoc.alarmclock.data.model.ShiftPattern
 import com.sysadmindoc.alarmclock.domain.LocationDismissPolicy
@@ -112,7 +113,7 @@ internal fun LazyListScope.alarmEditSoundSections(
                     modifier = Modifier.size(18.dp)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                Text(stringResource(R.string.alarm_edit_apply))
+                Text(bilingualStringResource(R.string.alarm_edit_apply))
             }
         }
         SettingsHint(
@@ -203,15 +204,15 @@ internal fun LazyListScope.alarmEditSoundSections(
             ),
             tone = HintTone.Neutral
         )
-        SettingsRow(label = stringResource(R.string.alarm_edit_manage_playlists)) {
+        SettingsRow(label = bilingualStringResource(R.string.alarm_edit_manage_playlists)) {
             OutlinedButton(onClick = onManagePlaylists) {
-                Text(stringResource(R.string.alarm_edit_manage_playlists))
+                Text(bilingualStringResource(R.string.alarm_edit_manage_playlists))
             }
         }
-        SettingsRow(label = stringResource(R.string.alarm_edit_preview_current_sound)) {
+        SettingsRow(label = bilingualStringResource(R.string.alarm_edit_preview_current_sound)) {
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 OutlinedButton(onClick = onPreviewCurrentSound, enabled = !previewBusy) {
-                    Text(stringResource(R.string.alarm_edit_preview_current_sound))
+                    Text(bilingualStringResource(R.string.alarm_edit_preview_current_sound))
                 }
                 OutlinedButton(onClick = onStopSoundPreview, enabled = previewActive) {
                     Text(com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.text(R.string.replay_action_stop, "replay_action_stop"))
@@ -228,10 +229,10 @@ internal fun LazyListScope.alarmEditSoundSections(
         SettingsRow(label = stringResource(R.string.alarm_edit_delivery_test_label)) {
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 OutlinedButton(onClick = onRunSystemAlarmDeliveryTest) {
-                    Text(stringResource(R.string.alarm_edit_delivery_test_run))
+                    Text(bilingualStringResource(R.string.alarm_edit_delivery_test_run))
                 }
                 OutlinedButton(onClick = onCancelSystemAlarmDeliveryTest) {
-                    Text(stringResource(R.string.alarm_edit_delivery_test_cancel))
+                    Text(bilingualStringResource(R.string.alarm_edit_delivery_test_cancel))
                 }
             }
         }
@@ -245,7 +246,7 @@ internal fun LazyListScope.alarmEditSoundSections(
         SettingsRow(label = stringResource(R.string.b2_test_title)) {
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 OutlinedButton(onClick = onRunProductionAlarmTest) {
-                    Text(stringResource(R.string.b2_test_run))
+                    Text(bilingualStringResource(R.string.b2_test_run))
                 }
                 OutlinedButton(onClick = onCancelProductionAlarmTest) {
                     Text(com.sysadmindoc.alarmclock.ui.settings.Lp2PreviewText.text(R.string.b2_test_cancel, "b2_test_cancel"))
