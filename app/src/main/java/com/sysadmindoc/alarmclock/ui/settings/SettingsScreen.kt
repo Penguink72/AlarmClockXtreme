@@ -1111,8 +1111,20 @@ fun SettingsScreen(
                         Switch(
                             checked = bilingualOptions.enabled,
                             onCheckedChange = { checked ->
+                                val actualPrimary = selectedLanguageOption.languageTag
+                                    ?: AppLanguageManager.optionForLanguageTags(
+                                        configurationLocaleTags
+                                    ).languageTag ?: "en"
+                                val differentSecondary = if (
+                                    checked && bilingualOptions.secondaryTag == actualPrimary
+                                ) {
+                                    if (actualPrimary == "ja") "en" else "ja"
+                                } else bilingualOptions.secondaryTag
                                 BilingualUiPreferences.save(
-                                    context, bilingualOptions.copy(enabled = checked)
+                                    context,
+                                    bilingualOptions.copy(
+                                        enabled = checked, secondaryTag = differentSecondary
+                                    )
                                 )
                             }
                         )
@@ -1123,6 +1135,9 @@ fun SettingsScreen(
                             style = MaterialTheme.typography.titleSmall
                         )
                         val selectedPrimary = selectedLanguageOption.languageTag
+                            ?: AppLanguageManager.optionForLanguageTags(
+                                configurationLocaleTags
+                            ).languageTag ?: "en"
                         listOf(
                             "zh-TW" to R.string.settings_language_traditional_chinese,
                             "en" to R.string.settings_language_english,
