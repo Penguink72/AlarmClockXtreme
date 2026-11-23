@@ -54,11 +54,6 @@ jobs:
         run: |
           set -euo pipefail
           bash ./gradlew :app:processFdroidDebugResources             :app:compileFdroidDebugKotlin             :app:compileFdroidDebugUnitTestKotlin             :app:processPlayDebugResources             --no-daemon --stacktrace
-      - name: Verify six ordered bilingual language pairs and native selection decisions
-        shell: bash
-        run: |
-          set -euo pipefail
-          bash ./gradlew :app:testFdroidDebugUnitTest             --tests 'com.sysadmindoc.alarmclock.ui.components.BilingualUiOptionsTest'             --tests 'com.sysadmindoc.alarmclock.util.AppLanguageManagerTest'             --no-daemon --stacktrace
       - name: Build installable F-Droid debug APK for S3/S4 device acceptance
         shell: bash
         run: |
@@ -71,6 +66,11 @@ jobs:
           name: acx-s3-s4-trilingual-bilingual-fdroid-debug-apk
           path: app/build/outputs/apk/fdroid/debug/app-fdroid-debug.apk
           retention-days: 14
+      - name: Verify six ordered bilingual language pairs and native selection decisions
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash ./gradlew :app:testFdroidDebugUnitTest             --tests 'com.sysadmindoc.alarmclock.ui.components.BilingualUiOptionsTest'             --tests 'com.sysadmindoc.alarmclock.util.AppLanguageManagerTest'             --no-daemon --stacktrace
       - name: Confirm original music, Room and alarm scheduler modules unchanged
         shell: bash
         run: |
