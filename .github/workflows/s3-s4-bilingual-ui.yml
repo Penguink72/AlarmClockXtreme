@@ -214,7 +214,8 @@ jobs:
           set -euo pipefail
           short_sha="${GITHUB_SHA:0:7}"
           tag="s3-s4-debug-v162-${short_sha}"
-          apk="app/build/outputs/apk/fdroid/debug/app-fdroid-debug.apk#AlarmClockXtreme-S3S4-v162-debug.apk"
+          cp "app/build/outputs/apk/fdroid/debug/app-fdroid-debug.apk" "app/build/outputs/apk/fdroid/debug/AlarmClockXtreme-S3S4-v162-debug.apk"
+          apk="app/build/outputs/apk/fdroid/debug/AlarmClockXtreme-S3S4-v162-debug.apk"
           if gh release view "$tag" >/dev/null 2>&1; then
             gh release upload "$tag" "$apk" --clobber
           else
@@ -224,4 +225,5 @@ jobs:
               --notes "Development test build only. VersionCode 162, persistent debug signing certificate matched against Preview 3 v148. Not a production release." \
               --prerelease
           fi
+          gh release view "$tag" --json assets --jq '.assets[] | select(.name=="AlarmClockXtreme-S3S4-v162-debug.apk") | .name' | grep -Fx "AlarmClockXtreme-S3S4-v162-debug.apk"
           echo "Direct APK: https://github.com/${GITHUB_REPOSITORY}/releases/download/${tag}/AlarmClockXtreme-S3S4-v162-debug.apk" >> "$GITHUB_STEP_SUMMARY"
