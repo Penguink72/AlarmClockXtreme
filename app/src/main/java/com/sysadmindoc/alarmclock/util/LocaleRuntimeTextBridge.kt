@@ -65,9 +65,18 @@ internal object LocaleRuntimeRouting {
 }
 
 internal object LocaleRuntimeTextBridge {
+    private fun selectedLocaleTag(context: Context): String? =
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            // S3: foreground service/notification UI text follows the same
+            // per-app preference on Android 8-12 as the Activity resources.
+            AppLanguageManager.currentOption(context).languageTag
+        } else {
+            LocaleRuntimeRouting.fromContext(context).nativeOverrideTag
+        }
+
     /** Read the latest platform setting at text-generation time, not at app start. */
     fun text(context: Context, @StringRes resId: Int): String {
-        val tag = LocaleRuntimeRouting.fromContext(context).nativeOverrideTag
+        val tag = selectedLocaleTag(context)
             ?: return context.getString(resId)
         return LocaleContextTextAdapter.text(
             context, LocaleRuntimeRouting.builtinDecision(tag), resId
@@ -75,7 +84,7 @@ internal object LocaleRuntimeTextBridge {
     }
 
     fun formatted(context: Context, @StringRes resId: Int, vararg arguments: Any): String {
-        val tag = LocaleRuntimeRouting.fromContext(context).nativeOverrideTag
+        val tag = selectedLocaleTag(context)
             ?: return context.getString(resId, *arguments)
         return LocaleContextTextAdapter.formatted(
             context, LocaleRuntimeRouting.builtinDecision(tag), resId, *arguments
@@ -85,7 +94,7 @@ internal object LocaleRuntimeTextBridge {
     fun quantity(
         context: Context, @PluralsRes resId: Int, count: Int, vararg arguments: Any
     ): String {
-        val tag = LocaleRuntimeRouting.fromContext(context).nativeOverrideTag
+        val tag = selectedLocaleTag(context)
             ?: return context.resources.getQuantityString(resId, count, *arguments)
         return LocaleContextTextAdapter.quantity(
             context, LocaleRuntimeRouting.builtinDecision(tag), resId, count, *arguments
