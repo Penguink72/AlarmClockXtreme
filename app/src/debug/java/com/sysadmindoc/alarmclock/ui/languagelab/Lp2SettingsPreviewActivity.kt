@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
@@ -68,6 +69,7 @@ private fun Lp2SettingsPreviewScreen(onClose: () -> Unit) {
     }
     var status by remember { mutableStateOf("intro") }
     var detail by remember { mutableStateOf("") }
+    var showTechnicalDetails by remember { mutableStateOf(false) }
     fun apply() {
         val applied = runCatching {
             Lp2PreviewText.configure(
@@ -97,7 +99,7 @@ private fun Lp2SettingsPreviewScreen(onClose: () -> Unit) {
         }
     }
     Scaffold(topBar = {
-        Row(Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 8.dp),
+        Row(Modifier.fillMaxWidth().statusBarsPadding().padding(horizontal = 12.dp, vertical = 8.dp),
             horizontalArrangement = Arrangement.SpaceBetween) {
             Text(stringResource(R.string.lp2a_header), style = MaterialTheme.typography.titleLarge)
             TextButton(onClick = onClose) { Text(stringResource(R.string.lp2a_back)) }
@@ -161,8 +163,12 @@ private fun Lp2SettingsPreviewScreen(onClose: () -> Unit) {
             Text(currentStatus, style = MaterialTheme.typography.bodySmall,
                 color = if (status == "error") MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.secondary)
             Text(stringResource(R.string.lp2a_sample_label), style = MaterialTheme.typography.titleSmall)
+            Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
+                Checkbox(checked = showTechnicalDetails, onCheckedChange = { showTechnicalDetails = it })
+                Text(stringResource(R.string.s4_lp2_technical_details))
+            }
             for (key in Lp2PreviewText.pilotKeys.take(6)) {
-                Text(key, style = MaterialTheme.typography.labelSmall)
+                if (showTechnicalDetails) Text(key, style = MaterialTheme.typography.labelSmall)
                 val first = runCatching { Lp2PreviewText.resolveForDebug(key, primary, context) }.getOrNull()
                 val second = if (dual) runCatching {
                     Lp2PreviewText.resolveForDebug(key, secondary, context)
@@ -189,8 +195,10 @@ private fun Lp2SettingsPreviewScreen(onClose: () -> Unit) {
                 )
                 Text(localeTag, style = MaterialTheme.typography.labelLarge)
                 Text(title.value + " · " + snooze.value + " · " + dismiss.value)
-                Text(title.origin, style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.secondary)
+                if (showTechnicalDetails) {
+                    Text(title.origin, style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.secondary)
+                }
             }
             OutlinedButton(onClick = {
                 context.startActivity(Intent(context, Lp1LanguageLabActivity::class.java))
