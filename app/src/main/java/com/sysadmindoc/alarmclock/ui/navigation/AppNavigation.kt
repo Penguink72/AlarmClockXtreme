@@ -33,6 +33,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.sysadmindoc.alarmclock.R
+import com.sysadmindoc.alarmclock.ui.components.bilingualStringResource
 import com.sysadmindoc.alarmclock.data.model.Alarm
 import com.sysadmindoc.alarmclock.ui.alarmedit.AlarmEditScreen
 import com.sysadmindoc.alarmclock.ui.alarmlist.AlarmListScreen
@@ -97,6 +99,19 @@ val bottomNavItems = listOf(
     BottomNavItem(Screen.News, "News", Icons.AutoMirrored.Filled.Article),
     BottomNavItem(Screen.Settings, "Settings", Icons.Default.Settings),
 )
+
+@Composable
+private fun s4NavDisplayLabel(screen: Screen): String {
+    val id = when (screen) {
+        Screen.Dashboard -> R.string.s4_nav_today
+        Screen.AlarmList -> R.string.s4_nav_alarms
+        Screen.Timer -> R.string.s4_nav_timer
+        Screen.WorldClock -> R.string.s4_nav_world
+        Screen.News -> R.string.s4_nav_news
+        else -> R.string.s4_nav_settings
+    }
+    return bilingualStringResource(id)
+}
 
 private fun visibleBottomNavItems(
     showDashboard: Boolean,
@@ -256,6 +271,7 @@ fun AppNavigation(
                         tonalElevation = 0.dp
                     ) {
                         visibleTabs.forEach { item ->
+                            val displayLabel = s4NavDisplayLabel(item.screen)
                             val selected = currentDestination?.hierarchy?.any {
                                 it.route == item.screen.route
                             } == true
@@ -280,8 +296,8 @@ fun AppNavigation(
                                     // override) so the label has the most
                                     // breathing room inside the pill.
                                     Text(
-                                        text = item.label,
-                                        maxLines = 1,
+                                        text = displayLabel,
+                                        maxLines = 2,
                                         style = MaterialTheme.typography.labelSmall,
                                     )
                                 },
@@ -314,6 +330,7 @@ fun AppNavigation(
                     contentColor = TextPrimary
                 ) {
                     visibleTabs.forEach { item ->
+                            val displayLabel = s4NavDisplayLabel(item.screen)
                         val selected = currentDestination?.hierarchy?.any {
                             it.route == item.screen.route
                         } == true
@@ -325,7 +342,7 @@ fun AppNavigation(
                                     modifier = Modifier.size(22.dp)
                                 )
                             },
-                            label = { Text(text = item.label, maxLines = 1) },
+                            label = { Text(text = displayLabel, maxLines = 2) },
                             selected = selected,
                             alwaysShowLabel = true,
                             onClick = { onTabClick(item.screen) },
