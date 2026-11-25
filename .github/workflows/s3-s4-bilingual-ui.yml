@@ -172,6 +172,8 @@ jobs:
           launch = code[start:end]
           assert launch.count("startAudio(alarm)") == 1, "alarm audio must start exactly once"
           assert launch.index("startAudio(alarm)") < launch.index("startActivity(firingIntent)"), "audio must not depend on lockscreen UI startup"
+          assert launch.index("startAudio(alarm)") < launch.index("val notification = try"), "audio must start before rich notification work"
+          assert launch.index("startAudio(alarm)") < launch.index("wearNextAlarmBridge.publishAlarmFiring(alarm)"), "audio must start before wearable work"
           assert 'val notification = try {' in launch, "notification build must be caught before audio"
           assert 'wearNextAlarmBridge.publishAlarmFiring(alarm)' in launch
           assert 'Log.e(TAG, "Wearable bridge failed; audio must continue"' in launch
