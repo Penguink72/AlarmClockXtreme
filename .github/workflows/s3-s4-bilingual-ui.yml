@@ -2,7 +2,7 @@ name: ACX S3/S4 persisted language settings and bilingual runtime
 
 on:
   push:
-    branches: [feature/acx-s3-s4-dual-language-ui-20261123, fix/acx-s3s4-apk-install-20261123, fix/acx-visible-localization-fallbacks-20261123]
+    branches: [feature/acx-s3-s4-dual-language-ui-20261123, fix/acx-s3s4-apk-install-20261123, fix/acx-visible-localization-fallbacks-20261123, hotfix/acx-screen-off-alarm-audio-20261126]
     paths:
       - "app/src/main/**"
       - "app/src/debug/**"
@@ -159,6 +159,25 @@ jobs:
           assert actual[0] == actual[1] == actual[2], 'visible locale resources not 1:1'
           print('Visible localization resource parity: 17/17/17')
           PY
+      - name: Guard screen-off alarm startup does not wait on UI or locale
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+
+          code = Path("app/src/main/java/com/sysadmindoc/alarmclock/service/AlarmService.kt").read_text()
+          start = code.index("    private suspend fun startAlarm(")
+          end = code.index("        AlarmHapticController.vibrationDelayMillis(", start)
+          launch = code[start:end]
+          assert launch.count("startAudio(alarm)") == 1, "alarm audio must start exactly once"
+          assert launch.index("startAudio(alarm)") < launch.index("startActivity(firingIntent)"), "audio must not depend on lockscreen UI startup"
+          assert 'val notification = try {' in launch, "notification build must be caught before audio"
+          assert 'wearNextAlarmBridge.publishAlarmFiring(alarm)' in launch
+          assert 'Log.e(TAG, "Wearable bridge failed; audio must continue"' in launch
+          assert 'Log.e(TAG, "Optional DND override failed; alarm must still play"' in launch
+          print("Screen-off audio non-gating source contract: PASS")
+          PY
       - name: Compile Android F-Droid Kotlin/UI and Play resource variants
         shell: bash
         run: |
@@ -168,7 +187,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          bash ./gradlew :app:assembleFdroidDebug -PciVersionCode=163 --no-daemon --stacktrace
+          bash ./gradlew :app:assembleFdroidDebug -PciVersionCode=164 --no-daemon --stacktrace
           test -s app/build/outputs/apk/fdroid/debug/app-fdroid-debug.apk
       - name: Verify APK package, version and persistent upgrade signing
         id: apk_meta
@@ -191,8 +210,8 @@ jobs:
             echo "ERROR: Unexpected package name: $PKG_NAME"
             exit 1
           fi
-          if [[ "$VERSION_CODE" != "163" ]]; then
-            echo "ERROR: Expected S3/S4 versionCode=163 (must exceed previous 161), got: $VERSION_CODE"
+          if [[ "$VERSION_CODE" != "164" ]]; then
+            echo "ERROR: Expected S3/S4 versionCode=164 (must exceed previous 161), got: $VERSION_CODE"
             exit 1
           fi
           APKSIGNER_OUT="$("${BUILD_TOOLS_DIR}/apksigner" verify --verbose --print-certs "$APK_PATH")"
@@ -236,6 +255,8 @@ jobs:
             if bash ./gradlew :app:testFdroidDebugUnitTest \
               --tests 'com.sysadmindoc.alarmclock.ui.components.BilingualUiOptionsTest' \
               --tests 'com.sysadmindoc.alarmclock.util.AppLanguageManagerTest' \
+              --tests 'com.sysadmindoc.alarmclock.service.AlarmServiceControllerTest' \
+              --tests 'com.sysadmindoc.alarmclock.domain.AlarmSchedulerExactPermissionTest' \
               --no-daemon --stacktrace 2>&1 | tee "$log"; then
               exit 0
             fi
@@ -253,7 +274,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          git diff --exit-code origin/feature/acx-s1-s2-simplified-locales-20261123...HEAD --             app/src/main/java/com/sysadmindoc/alarmclock/data/local             app/src/main/java/com/sysadmindoc/alarmclock/domain/AlarmScheduler.kt             app/src/main/java/com/sysadmindoc/alarmclock/service/AlarmService.kt
+          git diff --exit-code origin/feature/acx-s1-s2-simplified-locales-20261123...HEAD --             app/src/main/java/com/sysadmindoc/alarmclock/data/local             app/src/main/java/com/sysadmindoc/alarmclock/domain/AlarmScheduler.kt
+          echo "AlarmService is an intentional isolated hotfix; alarm scheduling and Room remain unchanged."
           echo "S3/S4: UI locale updates keep existing alarm delivery and music data intact."
       - name: Publish direct-download APK as development prerelease
         shell: bash
@@ -262,17 +284,17 @@ jobs:
         run: |
           set -euo pipefail
           short_sha="${GITHUB_SHA:0:7}"
-          tag="s3-s4-debug-v163-${short_sha}"
-          cp "app/build/outputs/apk/fdroid/debug/app-fdroid-debug.apk" "app/build/outputs/apk/fdroid/debug/AlarmClockXtreme-S3S4-v163-debug.apk"
-          apk="app/build/outputs/apk/fdroid/debug/AlarmClockXtreme-S3S4-v163-debug.apk"
+          tag="s3-s4-debug-v164-${short_sha}"
+          cp "app/build/outputs/apk/fdroid/debug/app-fdroid-debug.apk" "app/build/outputs/apk/fdroid/debug/AlarmClockXtreme-S3S4-v164-debug.apk"
+          apk="app/build/outputs/apk/fdroid/debug/AlarmClockXtreme-S3S4-v164-debug.apk"
           if gh release view "$tag" >/dev/null 2>&1; then
             gh release upload "$tag" "$apk" --clobber
           else
             gh release create "$tag" "$apk" \
               --target "$GITHUB_SHA" \
-              --title "S3/S4 bilingual debug v163 ($short_sha)" \
+              --title "S3/S4 bilingual debug v164 ($short_sha)" \
               --notes "Development test build only. VersionCode 163, persistent debug signing certificate matched against Preview 3 v148. Not a production release." \
               --prerelease
           fi
-          gh release view "$tag" --json assets --jq '.assets[] | select(.name=="AlarmClockXtreme-S3S4-v163-debug.apk") | .name' | grep -Fx "AlarmClockXtreme-S3S4-v163-debug.apk"
-          echo "Direct APK: https://github.com/${GITHUB_REPOSITORY}/releases/download/${tag}/AlarmClockXtreme-S3S4-v163-debug.apk" >> "$GITHUB_STEP_SUMMARY"
+          gh release view "$tag" --json assets --jq '.assets[] | select(.name=="AlarmClockXtreme-S3S4-v164-debug.apk") | .name' | grep -Fx "AlarmClockXtreme-S3S4-v164-debug.apk"
+          echo "Direct APK: https://github.com/${GITHUB_REPOSITORY}/releases/download/${tag}/AlarmClockXtreme-S3S4-v164-debug.apk" >> "$GITHUB_STEP_SUMMARY"
