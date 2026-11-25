@@ -791,7 +791,17 @@ class AlarmService : Service() {
         }
 
         val settings = preferencesManager.getCurrentSettings()
-        OnCallDndOverride.begin(this, settings.onCallModeEnabled)
+        try {
+            OnCallDndOverride.begin(this, settings.onCallModeEnabled)
+        } catch (e: Exception) {
+            Log.e(TAG, "Optional DND override failed; alarm must still play", e)
+            recordIncidentAsync(
+                type = AlarmIncidentEvent.TYPE_FOREGROUND_SERVICE,
+                status = AlarmIncidentEvent.STATUS_FAILED,
+                reasonCode = "ON_CALL_DND_OVERRIDE_FAILED_${e.javaClass.simpleName}",
+                source = "AlarmService"
+            )
+        }
 
         // Foreground promotion already happened synchronously in onStartCommand.
         // Building the rich notification or syncing a wearable must never be a
