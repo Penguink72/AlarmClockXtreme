@@ -793,35 +793,57 @@ class AlarmService : Service() {
         val settings = preferencesManager.getCurrentSettings()
         OnCallDndOverride.begin(this, settings.onCallModeEnabled)
 
-        // v1.5.4: startForeground() was already called synchronously in
-        // onStartCommand with a placeholder to satisfy Android 14+ timing.
-        // Update the notification in-place with the fully-labelled version.
-        val notification = buildAlarmNotification(alarm)
-        wearNextAlarmBridge.publishAlarmFiring(alarm)
-        try {
-            if (isForeground.compareAndSet(false, true)) {
-                startForeground(NOTIFICATION_ID, notification)
-            } else {
-                getSystemService(NotificationManager::class.java)
-                    .notify(NOTIFICATION_ID, notification)
-            }
-            recordIncident(
-                type = AlarmIncidentEvent.TYPE_NOTIFICATION,
-                status = AlarmIncidentEvent.STATUS_SUCCEEDED,
-                reasonCode = "ALARM_NOTIFICATION_POSTED",
-                source = "AlarmService"
-            )
+        // Foreground promotion already happened synchronously in onStartCommand.
+        // Building the rich notification or syncing a wearable must never be a
+        // prerequisite for audible alarm playback (especially cold starts in Doze).
+        // A failed update leaves the already-posted placeholder foreground
+        // notification intact while the actual alarm continues.
+        val notification = try {
+            buildAlarmNotification(alarm)
         } catch (e: Exception) {
-            // Service may already be foregrounded or the system may reject
-            // an update during teardown; neither is fatal — the alarm still
-            // plays and the firing Activity is launched below.
-            recordIncident(
+            Log.e(TAG, "Alarm notification construction failed; audio must continue", e)
+            recordIncidentAsync(
                 type = AlarmIncidentEvent.TYPE_NOTIFICATION,
                 status = AlarmIncidentEvent.STATUS_FAILED,
-                reasonCode = "ALARM_NOTIFICATION_FAILED_${e.javaClass.simpleName}",
+                reasonCode = "ALARM_NOTIFICATION_BUILD_FAILED_${e.javaClass.simpleName}",
                 source = "AlarmService"
             )
+            null
         }
+        try {
+            wearNextAlarmBridge.publishAlarmFiring(alarm)
+        } catch (e: Exception) {
+            Log.e(TAG, "Wearable bridge failed; audio must continue", e)
+        }
+        if (notification != null) {
+            try {
+                if (isForeground.compareAndSet(false, true)) {
+                    startForeground(NOTIFICATION_ID, notification)
+                } else {
+                    getSystemService(NotificationManager::class.java)
+                        .notify(NOTIFICATION_ID, notification)
+                }
+                recordIncident(
+                    type = AlarmIncidentEvent.TYPE_NOTIFICATION,
+                    status = AlarmIncidentEvent.STATUS_SUCCEEDED,
+                    reasonCode = "ALARM_NOTIFICATION_POSTED",
+                    source = "AlarmService"
+                )
+            } catch (e: Exception) {
+                // Notification update failure is not an audible alarm failure.
+                Log.e(TAG, "Alarm notification update failed; audio must continue", e)
+                recordIncidentAsync(
+                    type = AlarmIncidentEvent.TYPE_NOTIFICATION,
+                    status = AlarmIncidentEvent.STATUS_FAILED,
+                    reasonCode = "ALARM_NOTIFICATION_FAILED_${e.javaClass.simpleName}",
+                    source = "AlarmService"
+                )
+            }
+        }
+
+        // Screen-off: activity launch can be denied by Android/OEM policy. Do
+        // not wait for that separate UI path before starting alarm audio.
+        startAudio(alarm)
 
         val firingIntent = AlarmFireDismissContract.firingActivityIntent(
             context = this,
@@ -845,8 +867,6 @@ class AlarmService : Service() {
                 source = "AlarmService"
             )
         }
-
-        startAudio(alarm)
 
         AlarmHapticController.vibrationDelayMillis(alarm)?.let { delayMillis ->
             // v1.12.0 (roadmap N7): optional pre-vibration delay. Defers haptic
