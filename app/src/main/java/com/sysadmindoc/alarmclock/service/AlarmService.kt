@@ -803,6 +803,11 @@ class AlarmService : Service() {
             )
         }
 
+        // Audible wake-up is the primary operation. The synchronous
+        // foreground placeholder is already active, so media playback can
+        // start before the optional notification, wearable, and Activity work.
+        startAudio(alarm)
+
         // Foreground promotion already happened synchronously in onStartCommand.
         // Building the rich notification or syncing a wearable must never be a
         // prerequisite for audible alarm playback (especially cold starts in Doze).
@@ -850,10 +855,6 @@ class AlarmService : Service() {
                 )
             }
         }
-
-        // Screen-off: activity launch can be denied by Android/OEM policy. Do
-        // not wait for that separate UI path before starting alarm audio.
-        startAudio(alarm)
 
         val firingIntent = AlarmFireDismissContract.firingActivityIntent(
             context = this,
