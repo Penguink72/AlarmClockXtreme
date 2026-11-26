@@ -5,4 +5,11 @@
     <string name="firing_now_playing_unknown">Alarm sound</string>
     <string name="firing_now_playing_loading">Loading track title…</string>
     <string name="firing_now_playing_silent">Silent alarm</string>
+    <string name="firing_now_playing_source">Source</string>
+    <string name="firing_now_playing_playlist">Playlist</string>
+    <string name="firing_now_playing_library">Music library</string>
+    <string name="firing_now_playing_selected_tone">Selected ringtone</string>
+    <string name="firing_now_playing_system_tone">System alarm tone</string>
+    <string name="firing_now_playing_radio">Internet radio</string>
+    <string name="firing_now_playing_folder">Folder</string>
 </resources>
