@@ -83,7 +83,7 @@ object AlarmFullScreenFallback {
         return try {
             val soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
                 ?: RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-            val channelId = if (audible) {
+            val channelId = if (audible && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 // Android 8+ channel sound cannot be changed after creation.
                 // Never reuse the deliberately silent standard alarm channel.
                 val notificationManager = context.getSystemService(NotificationManager::class.java)
@@ -104,7 +104,7 @@ object AlarmFullScreenFallback {
                         )
                     }
                     enableVibration(true)
-                    vibrationPattern = longArrayOf(0, 500, 250, 500)
+                    setVibrationPattern(longArrayOf(0, 500, 250, 500))
                     lockscreenVisibility = android.app.Notification.VISIBILITY_PUBLIC
                 }
                 notificationManager.createNotificationChannel(channel)
