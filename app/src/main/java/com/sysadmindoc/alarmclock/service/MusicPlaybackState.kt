@@ -21,12 +21,12 @@ data class NowPlayingInfo(
     companion object {
         fun folderNameFrom(folderIds: Set<String>): String? {
             val paths = folderIds.asSequence()
-                .map(String::trim)
+                .map { it.trim() }
                 .map { it.trimEnd('/') }
-                .filter(String::isNotBlank)
+                .filter { it.isNotBlank() }
                 .toList()
             val chosen = paths.firstOrNull { '/' in it } ?: paths.firstOrNull()
-            return chosen?.substringAfterLast('/')?.takeIf(String::isNotBlank)
+            return chosen?.substringAfterLast('/')?.takeIf { it.isNotBlank() }
         }
     }
 }
