@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="firing_now_playing_label">正在播放</string>
+    <string name="firing_now_playing_default">預設鬧鐘鈴聲</string>
+    <string name="firing_now_playing_unknown">目前鬧鐘音效</string>
+    <string name="firing_now_playing_loading">正在讀取曲名…</string>
+    <string name="firing_now_playing_silent">靜音鬧鐘</string>
+</resources>
