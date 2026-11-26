@@ -99,6 +99,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -272,6 +273,17 @@ fun AlarmFiringScreen(
     val dateText = currentDate.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL))
     val alarmLabel = state.alarm?.label?.takeIf { it.isNotBlank() }
         ?: bilingualStringResource(R.string.notif_alarm_ringing)
+    // Show the track which actually reached playback; avoid falsely labelling
+    // a loading random track as the default ringtone.
+    val playingTitle = currentMusicTitle?.takeIf { it.isNotBlank() } ?: when {
+        state.alarm?.ringtoneUri == "silent" ->
+            bilingualStringResource(R.string.firing_now_playing_silent)
+        state.alarm?.randomMusicEnabled == true ->
+            bilingualStringResource(R.string.firing_now_playing_loading)
+        state.alarm?.ringtoneUri.isNullOrBlank() && state.alarm?.internetRadioUrl.isNullOrBlank() ->
+            bilingualStringResource(R.string.firing_now_playing_default)
+        else -> bilingualStringResource(R.string.firing_now_playing_unknown)
+    }
     val stepLabel = if (state.totalChallenges > 1) {
         stringResource(
             R.string.firing_step_of,
@@ -435,11 +447,18 @@ fun AlarmFiringScreen(
                             color = TextSecondary,
                             style = MaterialTheme.typography.bodyMedium
                         )
-                        if (state.alarm?.randomMusicEnabled == true && currentMusicTitle != null) {
+                        if (!state.canDismiss) {
                             Text(
-                                text = currentMusicTitle.orEmpty(),
+                                text = bilingualStringResource(R.string.firing_now_playing_label),
                                 color = MaterialTheme.colorScheme.primary,
-                                style = MaterialTheme.typography.bodySmall
+                                style = MaterialTheme.typography.labelMedium
+                            )
+                            Text(
+                                text = playingTitle,
+                                color = TextPrimary,
+                                style = MaterialTheme.typography.titleMedium,
+                                maxLines = 2,
+                                overflow = TextOverflow.Ellipsis
                             )
                         }
                     }
@@ -663,9 +682,19 @@ fun AlarmFiringScreen(
                                         .scale(pulseScale)
                                 )
                                 Text(
-                                    text = stringResource(R.string.firing_ready_title),
+                                    text = bilingualStringResource(R.string.firing_now_playing_label),
+                                    color = TextSecondary,
+                                    style = MaterialTheme.typography.titleMedium,
+                                    textAlign = TextAlign.Center
+                                )
+                                Text(
+                                    text = playingTitle,
                                     color = TextPrimary,
-                                    style = MaterialTheme.typography.headlineSmall
+                                    style = MaterialTheme.typography.headlineSmall,
+                                    textAlign = TextAlign.Center,
+                                    maxLines = 2,
+                                    overflow = TextOverflow.Ellipsis,
+                                    modifier = Modifier.fillMaxWidth()
                                 )
                                 Text(
                                     text = if (holdToDismissEnabled) {
