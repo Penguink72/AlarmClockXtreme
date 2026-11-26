@@ -1291,6 +1291,31 @@ class AlarmService : Service() {
         }
     }
 
+    // Title lookups are UI-only; guard against asynchronous results from a
+    // prior alarm or an earlier media item overwriting the currently playing
+    // song on the firing screen.
+    private val nowPlayingTitleEpoch = AtomicLong(0L)
+
+    private fun announceToneTitle(alarm: Alarm, uri: Uri, defaultTone: Boolean) {
+        val epoch = nowPlayingTitleEpoch.incrementAndGet()
+        if (defaultTone) {
+            MusicPlaybackState.updateTitle(getString(R.string.firing_now_playing_default))
+            return
+        }
+        val activeFireId = currentFireId
+        serviceScope.launch(Dispatchers.IO) {
+            val title = runCatching {
+                NowPlayingTitleResolver.resolve(this@AlarmService, uri)
+            }.getOrNull()
+            if (currentAlarmId == alarm.id && currentFireId == activeFireId &&
+                nowPlayingTitleEpoch.get() == epoch) {
+                MusicPlaybackState.updateTitle(
+                    title ?: getString(R.string.firing_now_playing_unknown)
+                )
+            }
+        }
+    }
+
     private fun startAudio(alarm: Alarm) {
         // Silent mode - skip audio entirely
         if (AlarmHapticController.usesMutedAlarmAudio(alarm) ||
@@ -1644,6 +1669,7 @@ class AlarmService : Service() {
     }
 
     private fun startMusicDefaultFallback(alarm: Alarm) {
+        nowPlayingTitleEpoch.incrementAndGet()
         volumeJob?.cancel()
         volumeJob = null
         MusicPlaybackState.updateTitle(null)
@@ -1772,6 +1798,9 @@ class AlarmService : Service() {
                     playbackStarted.set(true)
                     cancelPlaybackWatchdog()
                     updateAlarmMediaSessionState(PlaybackState.STATE_PLAYING)
+                    MusicPlaybackState.updateTitle(
+                        NowPlayingTitleResolver.radioHost(radioUrl) ?: radioUrl
+                    )
                     recordIncidentAsync(
                         type = AlarmIncidentEvent.TYPE_AUDIO,
                         status = AlarmIncidentEvent.STATUS_SUCCEEDED,
@@ -1854,6 +1883,12 @@ class AlarmService : Service() {
                         status = AlarmIncidentEvent.STATUS_SUCCEEDED,
                         reasonCode = "MEDIA3_PLAYER_STARTED",
                         source = "AlarmService"
+                    )
+                },
+                onStarted = {
+                    announceToneTitle(
+                        alarm, uri,
+                        defaultTone = alarm.ringtoneUri.isBlank()
                     )
                 },
                 onEnded = {
@@ -2162,6 +2197,9 @@ class AlarmService : Service() {
                     setOnPreparedListener { mp ->
                         mp.start()
                         updateAlarmMediaSessionState(PlaybackState.STATE_PLAYING)
+                        MusicPlaybackState.updateTitle(
+                            NowPlayingTitleResolver.radioHost(radioUrl) ?: radioUrl
+                        )
                         recordIncidentAsync(
                             type = AlarmIncidentEvent.TYPE_AUDIO,
                             status = AlarmIncidentEvent.STATUS_SUCCEEDED,
@@ -2288,6 +2326,7 @@ class AlarmService : Service() {
                 start()
                 updateAlarmMediaSessionState(PlaybackState.STATE_PLAYING)
             }
+            announceToneTitle(alarm, uri, defaultTone = alarm.ringtoneUri.isBlank())
             recordIncidentAsync(
                 type = AlarmIncidentEvent.TYPE_AUDIO,
                 status = AlarmIncidentEvent.STATUS_SUCCEEDED,
@@ -2347,6 +2386,7 @@ class AlarmService : Service() {
                         start()
                         updateAlarmMediaSessionState(PlaybackState.STATE_PLAYING)
                     }
+                    announceToneTitle(alarm, fallbackUri, defaultTone = true)
                     recordIncidentAsync(
                         type = AlarmIncidentEvent.TYPE_AUDIO,
                         status = AlarmIncidentEvent.STATUS_SUCCEEDED,
@@ -3170,6 +3210,7 @@ class AlarmService : Service() {
         activeMusicPlayback.set(null)
         failedMusicUris.clear()
         consecutiveMusicFailures.set(0)
+        nowPlayingTitleEpoch.incrementAndGet()
         MusicPlaybackState.updateTitle(null)
         OnCallDndOverride.end(this)
         volumeJob?.cancel()
