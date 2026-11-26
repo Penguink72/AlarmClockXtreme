@@ -5,4 +5,11 @@
     <string name="firing_now_playing_unknown">目前鬧鐘音效</string>
     <string name="firing_now_playing_loading">正在讀取曲名…</string>
     <string name="firing_now_playing_silent">靜音鬧鐘</string>
+    <string name="firing_now_playing_source">來源</string>
+    <string name="firing_now_playing_playlist">播放清單</string>
+    <string name="firing_now_playing_library">音樂庫</string>
+    <string name="firing_now_playing_selected_tone">自訂鈴聲</string>
+    <string name="firing_now_playing_system_tone">系統鬧鐘鈴聲</string>
+    <string name="firing_now_playing_radio">網路電台</string>
+    <string name="firing_now_playing_folder">資料夾</string>
 </resources>
