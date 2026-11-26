@@ -286,7 +286,8 @@ jobs:
           scheduler = (base / "domain/AlarmScheduler.kt").read_text()
           method = scheduler.split("private fun scheduleAlarmClock(", 1)[1].split("private fun recordScheduleIncident(", 1)[0]
           assert "alarmManager.setAlarmClock(" in method, "standard alarm must use setAlarmClock"
-          assert "showAlarmClockIcon" not in method, "cosmetic setting must not select scheduling semantics"
+          assert "preferencesManager.getCachedSettings().showAlarmClockIcon" not in method, "cosmetic setting must not be read during scheduling"
+          assert "if (showAlarmClockIcon)" not in method, "cosmetic setting must not branch scheduling semantics"
           assert "alarmManager.setExactAndAllowWhileIdle(" not in method, "standard alarm must not downgrade when icon is hidden"
           settings = (base / "ui/settings/SettingsScreen.kt").read_text()
           assert "onToggle = viewModel::toggleAlarmClockIcon" not in settings, "do not expose a no-op toggle"
