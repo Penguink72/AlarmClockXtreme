@@ -9,6 +9,7 @@ import com.sysadmindoc.alarmclock.data.readiness.ProductionTestAlarmScheduler
 import com.sysadmindoc.alarmclock.data.readiness.ProductionTestSessionStore
 import com.sysadmindoc.alarmclock.data.readiness.ProductionTestStage
 import com.sysadmindoc.alarmclock.service.AlarmService
+import com.sysadmindoc.alarmclock.service.AlarmFullScreenFallback
 import com.sysadmindoc.alarmclock.data.local.entity.AlarmIncidentEvent
 import com.sysadmindoc.alarmclock.domain.AlarmScheduler
 import com.sysadmindoc.alarmclock.service.AlarmFireDismissContract
@@ -75,10 +76,11 @@ class AlarmReceiver : BroadcastReceiver() {
                 source = "AlarmReceiver"
             )
         } catch (e: Exception) {
-            // ForegroundServiceStartNotAllowedException (API 31+) when the app is
-            // background-restricted at the exact moment AlarmManager wakes it.
-            // The AlarmManager exact-alarm guarantee means this is extremely rare;
-            // log for diagnostics and let the system handle retries.
+            // A denied foreground-service start means NO playback was started.
+            // The exact-alarm wake exemption usually permits this call, but
+            // OEM background policy can still deny it. Post an independent
+            // alarm-usage audible notification immediately, without touching
+            // Room/DataStore or pretending the alarm audio was confirmed.
             Log.e("AlarmReceiver", "startForegroundService failed for alarm $alarmId", e)
             incidents += ReceiverAlarmIncident(
                 alarmId = alarmId,
@@ -87,6 +89,23 @@ class AlarmReceiver : BroadcastReceiver() {
                 type = AlarmIncidentEvent.TYPE_FOREGROUND_SERVICE,
                 status = AlarmIncidentEvent.STATUS_FAILED,
                 reasonCode = "START_FOREGROUND_SERVICE_FAILED_${e.javaClass.simpleName}",
+                source = "AlarmReceiver"
+            )
+            val fallbackPosted = AlarmFullScreenFallback.postEmergency(
+                context = context,
+                alarmId = alarmId,
+                scheduledAt = scheduledAt,
+                fireId = fireId
+            )
+            incidents += ReceiverAlarmIncident(
+                alarmId = alarmId,
+                fireId = fireId,
+                scheduledAt = scheduledAt,
+                type = AlarmIncidentEvent.TYPE_NOTIFICATION,
+                status = if (fallbackPosted) AlarmIncidentEvent.STATUS_SUCCEEDED
+                         else AlarmIncidentEvent.STATUS_FAILED,
+                reasonCode = if (fallbackPosted) "FGS_DENIED_EMERGENCY_NOTIFICATION_POSTED"
+                             else "FGS_DENIED_EMERGENCY_NOTIFICATION_FAILED",
                 source = "AlarmReceiver"
             )
         } finally {

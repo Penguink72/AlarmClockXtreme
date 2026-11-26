@@ -697,13 +697,16 @@ class AlarmScheduler @Inject constructor(
     private fun scheduleAlarmClock(alarmId: Long, triggerTime: Long): AlarmRegistrationResult {
         DirectBootAlarmCache.cancelScheduledFallback(context, alarmId)
         val fireId = AlarmIncidentEvent.fireIdFor(alarmId, triggerTime)
-        val showAlarmClockIcon = preferencesManager.getCachedSettings().showAlarmClockIcon
+        // A user's wake-up alarm must keep its AlarmManager clock semantics
+        // even if an old install persisted showAlarmClockIcon=false. This was
+        // previously treated as a cosmetic switch but silently changed the
+        // Doze delivery contract. We intentionally do not consult that flag.
         recordScheduleIncident(
             alarmId = alarmId,
             fireId = fireId,
             triggerTime = triggerTime,
             status = AlarmIncidentEvent.STATUS_REQUESTED,
-            reasonCode = if (showAlarmClockIcon) "SET_ALARM_CLOCK" else "SET_EXACT_ALLOW_WHILE_IDLE"
+            reasonCode = "SET_ALARM_CLOCK"
         )
         val pendingIntent = createPendingIntent(alarmId, triggerTime, fireId)
         // v1.6.3: `canScheduleExactAlarms()` is checked upstream, but the
@@ -715,24 +718,16 @@ class AlarmScheduler @Inject constructor(
         // so the alarm still fires within the 1-2 minute Doze window instead
         // of vanishing silently.
         try {
-            if (showAlarmClockIcon) {
-                alarmManager.setAlarmClock(
-                    AlarmManager.AlarmClockInfo(triggerTime, createShowIntent(alarmId)),
-                    pendingIntent
-                )
-            } else {
-                alarmManager.setExactAndAllowWhileIdle(
-                    AlarmManager.RTC_WAKEUP,
-                    triggerTime,
-                    pendingIntent
-                )
-            }
+            alarmManager.setAlarmClock(
+                AlarmManager.AlarmClockInfo(triggerTime, createShowIntent(alarmId)),
+                pendingIntent
+            )
             recordScheduleIncident(
                 alarmId = alarmId,
                 fireId = fireId,
                 triggerTime = triggerTime,
                 status = AlarmIncidentEvent.STATUS_SUCCEEDED,
-                reasonCode = if (showAlarmClockIcon) "SET_ALARM_CLOCK" else "SET_EXACT_ALLOW_WHILE_IDLE"
+                reasonCode = "SET_ALARM_CLOCK"
             )
             return AlarmRegistrationResult.EXACT
         } catch (e: SecurityException) {

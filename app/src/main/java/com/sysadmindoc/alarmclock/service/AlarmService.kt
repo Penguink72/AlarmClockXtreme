@@ -804,9 +804,57 @@ class AlarmService : Service() {
         }
 
         // Audible wake-up is the primary operation. The synchronous
-        // foreground placeholder is already active, so media playback can
-        // start before the optional notification, wearable, and Activity work.
-        startAudio(alarm)
+        // foreground placeholder is already active, so playback must not
+        // depend on rich notifications, wearables, or lock-screen UI. Some
+        // startup paths (including a corrupted custom ringtone) can throw
+        // before their own asynchronous fallback has been installed.
+        try {
+            startAudio(alarm)
+        } catch (error: Exception) {
+            Log.e(TAG, "Primary alarm audio startup failed; using built-in tone", error)
+            recordIncidentAsync(
+                type = AlarmIncidentEvent.TYPE_AUDIO,
+                status = AlarmIncidentEvent.STATUS_FAILED,
+                reasonCode = "PRIMARY_AUDIO_START_FAILED_${error.javaClass.simpleName}",
+                source = "AlarmService"
+            )
+            try {
+                runCatching { alarmPlayback?.stopAndRelease() }
+                alarmPlayback = null
+                // No custom URI, playlist, internet radio, or gradual ramp:
+                // route straight to the existing MediaPlayer alarm-tone path.
+                startMusicDefaultFallback(
+                    alarm.copy(
+                        randomMusicEnabled = false,
+                        ringtoneUri = "",
+                        ringtonePool = "",
+                        internetRadioUrl = "",
+                        spotifyUri = "",
+                        gradualVolumeSeconds = 0,
+                        dismissAtRingtoneEnd = false
+                    )
+                )
+            } catch (fallbackError: Exception) {
+                Log.e(TAG, "Built-in tone fallback also failed", fallbackError)
+                recordIncidentAsync(
+                    type = AlarmIncidentEvent.TYPE_AUDIO,
+                    status = AlarmIncidentEvent.STATUS_FAILED,
+                    reasonCode = "BUILTIN_AUDIO_FALLBACK_FAILED_${fallbackError.javaClass.simpleName}",
+                    source = "AlarmService"
+                )
+                val notificationPosted = AlarmFullScreenFallback.postEmergency(
+                    this, alarm.id, currentScheduledAt, currentFireId
+                )
+                recordIncidentAsync(
+                    type = AlarmIncidentEvent.TYPE_NOTIFICATION,
+                    status = if (notificationPosted) AlarmIncidentEvent.STATUS_SUCCEEDED
+                             else AlarmIncidentEvent.STATUS_FAILED,
+                    reasonCode = if (notificationPosted) "AUDIO_FAILURE_EMERGENCY_NOTIFICATION_POSTED"
+                                 else "AUDIO_FAILURE_EMERGENCY_NOTIFICATION_FAILED",
+                    source = "AlarmService"
+                )
+            }
+        }
 
         // Foreground promotion already happened synchronously in onStartCommand.
         // Building the rich notification or syncing a wearable must never be a
