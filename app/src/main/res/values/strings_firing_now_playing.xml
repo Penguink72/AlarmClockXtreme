@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="firing_now_playing_label">Now playing</string>
+    <string name="firing_now_playing_default">Default alarm sound</string>
+    <string name="firing_now_playing_unknown">Alarm sound</string>
+    <string name="firing_now_playing_loading">Loading track title…</string>
+    <string name="firing_now_playing_silent">Silent alarm</string>
+</resources>
