@@ -119,7 +119,7 @@ class AlarmSchedulerTest {
             .scheduledAlarms
             .single()
         assertTrue(scheduledAlarm.alarmClockInfo != null)
-        assertEquals(triggerTime, scheduledAlarm.alarmClockInfo.triggerTime)
+        assertEquals(triggerTime, scheduledAlarm.alarmClockInfo?.triggerTime)
         verify {
             incidentRepository.recordAsync(
                 alarmId = 44L,
