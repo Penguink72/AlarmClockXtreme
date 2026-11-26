@@ -192,7 +192,7 @@ jobs:
           for directory in ("values", "values-b+zh+Hant+TW", "values-ja"):
               resources = ET.parse(base / directory / "strings_firing_now_playing.xml")
               names = {node.attrib["name"] for node in resources.findall(".//string")}
-              assert len(names) == 5, f"{directory}: expected 5 new strings"
+              assert len(names) == 12, f"{directory}: expected 12 V1+V2 strings"
               keys.append(names)
           assert keys[0] == keys[1] == keys[2], "Now Playing locale keys differ"
           screen = Path("app/src/main/java/com/sysadmindoc/alarmclock/ui/alarmfiring/AlarmFiringScreen.kt").read_text()
