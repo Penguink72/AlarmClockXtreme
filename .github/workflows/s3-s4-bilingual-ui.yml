@@ -2,7 +2,7 @@ name: ACX S3/S4 persisted language settings and bilingual runtime
 
 on:
   push:
-    branches: [feature/acx-s3-s4-dual-language-ui-20261123, fix/acx-s3s4-apk-install-20261123, fix/acx-visible-localization-fallbacks-20261123, hotfix/acx-screen-off-alarm-audio-20261126]
+    branches: [feature/acx-s3-s4-dual-language-ui-20261123, fix/acx-s3s4-apk-install-20261123, fix/acx-visible-localization-fallbacks-20261123, hotfix/acx-screen-off-alarm-audio-20261126, hotfix/acx-locked-screen-p1-p2-20261126]
     paths:
       - "app/src/main/**"
       - "app/src/debug/**"
@@ -189,7 +189,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          bash ./gradlew :app:assembleFdroidDebug -PciVersionCode=164 --no-daemon --stacktrace
+          bash ./gradlew :app:assembleFdroidDebug -PciVersionCode=165 --no-daemon --stacktrace
           test -s app/build/outputs/apk/fdroid/debug/app-fdroid-debug.apk
       - name: Verify APK package, version and persistent upgrade signing
         id: apk_meta
@@ -212,8 +212,8 @@ jobs:
             echo "ERROR: Unexpected package name: $PKG_NAME"
             exit 1
           fi
-          if [[ "$VERSION_CODE" != "164" ]]; then
-            echo "ERROR: Expected S3/S4 versionCode=164 (must exceed previous 161), got: $VERSION_CODE"
+          if [[ "$VERSION_CODE" != "165" ]]; then
+            echo "ERROR: Expected alarm reliability versionCode=165 (must exceed v164), got: $VERSION_CODE"
             exit 1
           fi
           APKSIGNER_OUT="$("${BUILD_TOOLS_DIR}/apksigner" verify --verbose --print-certs "$APK_PATH")"
@@ -274,15 +274,42 @@ jobs:
       - name: Report device-only and externally blocked coverage
         shell: bash
         run: |
-          echo 'Robolectric Android 31 scheduler permission tests require external SDK fixture downloads and are not release-gating this AlarmService-only change.' >> "$GITHUB_STEP_SUMMARY"
-          echo 'A real screen-off alarm test on the affected Android phone remains required.' >> "$GITHUB_STEP_SUMMARY"
-      - name: Confirm original music, Room and alarm scheduler modules unchanged
+          echo 'Robolectric Android SDK fixture downloads are not release-gating this targeted P1/P2 change; source contract guards and available JVM service tests run. AlarmSchedulerTest regression assertions were updated.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'A real screen-off alarm test on the affected Android phone remains required; emergency notification sound respects user notification and DND settings.' >> "$GITHUB_STEP_SUMMARY"
+      - name: Guard real alarm API and audible emergency path
         shell: bash
         run: |
           set -euo pipefail
-          git diff --exit-code origin/feature/acx-s1-s2-simplified-locales-20261123...HEAD --             app/src/main/java/com/sysadmindoc/alarmclock/data/local             app/src/main/java/com/sysadmindoc/alarmclock/domain/AlarmScheduler.kt
-          echo "AlarmService is an intentional isolated hotfix; alarm scheduling and Room remain unchanged."
-          echo "S3/S4: UI locale updates keep existing alarm delivery and music data intact."
+          python3 - <<'PY'
+          from pathlib import Path
+          base = Path("app/src/main/java/com/sysadmindoc/alarmclock")
+          scheduler = (base / "domain/AlarmScheduler.kt").read_text()
+          method = scheduler.split("private fun scheduleAlarmClock(", 1)[1].split("private fun recordScheduleIncident(", 1)[0]
+          assert "alarmManager.setAlarmClock(" in method, "standard alarm must use setAlarmClock"
+          assert "showAlarmClockIcon" not in method, "cosmetic setting must not select scheduling semantics"
+          assert "alarmManager.setExactAndAllowWhileIdle(" not in method, "standard alarm must not downgrade when icon is hidden"
+          settings = (base / "ui/settings/SettingsScreen.kt").read_text()
+          assert "onToggle = viewModel::toggleAlarmClockIcon" not in settings, "do not expose a no-op toggle"
+          receiver = (base / "receiver/AlarmReceiver.kt").read_text()
+          assert "AlarmFullScreenFallback.postEmergency(" in receiver, "denied FGS start must surface an emergency fallback"
+          notification = (base / "service/AlarmFullScreenFallback.kt").read_text()
+          assert 'CHANNEL_EMERGENCY = "alarm_fgs_emergency_v1"' in notification
+          assert "AudioAttributes.USAGE_ALARM" in notification
+          assert "setSound(" in notification
+          assert "enableVibration(true)" in notification
+          service = (base / "service/AlarmService.kt").read_text()
+          assert "PRIMARY_AUDIO_START_FAILED_" in service
+          assert "startMusicDefaultFallback(" in service
+          assert "AUDIO_FAILURE_EMERGENCY_NOTIFICATION_POSTED" in service
+          print("P1/P2 alarm delivery and audible fallback source guards: PASS")
+          PY
+      - name: Confirm music and Room modules unchanged
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --exit-code origin/feature/acx-s1-s2-simplified-locales-20261123...HEAD -- app/src/main/java/com/sysadmindoc/alarmclock/data/local
+          echo "Only alarm scheduling, receiver and audible startup plus a misleading settings toggle changed."
+          echo "Room schema, music library and playback source selection remain untouched."
       - name: Publish direct-download APK as development prerelease
         shell: bash
         env:
@@ -290,17 +317,17 @@ jobs:
         run: |
           set -euo pipefail
           short_sha="${GITHUB_SHA:0:7}"
-          tag="s3-s4-debug-v164-${short_sha}"
-          cp "app/build/outputs/apk/fdroid/debug/app-fdroid-debug.apk" "app/build/outputs/apk/fdroid/debug/AlarmClockXtreme-S3S4-v164-debug.apk"
-          apk="app/build/outputs/apk/fdroid/debug/AlarmClockXtreme-S3S4-v164-debug.apk"
+          tag="s3-s4-debug-v165-${short_sha}"
+          cp "app/build/outputs/apk/fdroid/debug/app-fdroid-debug.apk" "app/build/outputs/apk/fdroid/debug/AlarmClockXtreme-S3S4-v165-debug.apk"
+          apk="app/build/outputs/apk/fdroid/debug/AlarmClockXtreme-S3S4-v165-debug.apk"
           if gh release view "$tag" >/dev/null 2>&1; then
             gh release upload "$tag" "$apk" --clobber
           else
             gh release create "$tag" "$apk" \
               --target "$GITHUB_SHA" \
-              --title "S3/S4 bilingual debug v164 ($short_sha)" \
-              --notes "Development test build only. VersionCode 163, persistent debug signing certificate matched against Preview 3 v148. Not a production release." \
+              --title "S3/S4 alarm reliability P1+P2 v165 ($short_sha)" \
+              --notes "Development test build only. VersionCode 165, persistent debug signing certificate matched against Preview 3 v148. Not a production release." \
               --prerelease
           fi
-          gh release view "$tag" --json assets --jq '.assets[] | select(.name=="AlarmClockXtreme-S3S4-v164-debug.apk") | .name' | grep -Fx "AlarmClockXtreme-S3S4-v164-debug.apk"
-          echo "Direct APK: https://github.com/${GITHUB_REPOSITORY}/releases/download/${tag}/AlarmClockXtreme-S3S4-v164-debug.apk" >> "$GITHUB_STEP_SUMMARY"
+          gh release view "$tag" --json assets --jq '.assets[] | select(.name=="AlarmClockXtreme-S3S4-v165-debug.apk") | .name' | grep -Fx "AlarmClockXtreme-S3S4-v165-debug.apk"
+          echo "Direct APK: https://github.com/${GITHUB_REPOSITORY}/releases/download/${tag}/AlarmClockXtreme-S3S4-v165-debug.apk" >> "$GITHUB_STEP_SUMMARY"
