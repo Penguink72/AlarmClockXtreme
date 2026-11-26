@@ -11,6 +11,7 @@ import com.sysadmindoc.alarmclock.domain.LongPressThreshold
 import com.sysadmindoc.alarmclock.domain.SnoozeCapPolicy
 import com.sysadmindoc.alarmclock.service.AlarmRuntimeState
 import com.sysadmindoc.alarmclock.service.MusicPlaybackState
+import com.sysadmindoc.alarmclock.service.NowPlayingInfo
 import com.sysadmindoc.alarmclock.ui.alarmfiring.challenges.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
@@ -225,6 +226,7 @@ class AlarmFiringViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(FiringUiState())
     val uiState: StateFlow<FiringUiState> = _uiState.asStateFlow()
     val currentMusicTitle: StateFlow<String?> = MusicPlaybackState.currentTitle
+    val currentNowPlaying: StateFlow<NowPlayingInfo?> = MusicPlaybackState.nowPlaying
 
     /**
      * v1.5.1: One-shot signal that the firing activity should close itself

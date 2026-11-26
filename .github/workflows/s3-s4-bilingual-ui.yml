@@ -2,7 +2,7 @@ name: ACX S3/S4 persisted language settings and bilingual runtime
 
 on:
   push:
-    branches: [feature/acx-s3-s4-dual-language-ui-20261123, fix/acx-s3s4-apk-install-20261123, fix/acx-visible-localization-fallbacks-20261123, hotfix/acx-screen-off-alarm-audio-20261126, hotfix/acx-locked-screen-p1-p2-20261126, feature/acx-firing-nowplaying-v1-20261126]
+    branches: [feature/acx-s3-s4-dual-language-ui-20261123, fix/acx-s3s4-apk-install-20261123, fix/acx-visible-localization-fallbacks-20261123, hotfix/acx-screen-off-alarm-audio-20261126, hotfix/acx-locked-screen-p1-p2-20261126, feature/acx-firing-nowplaying-v1-20261126, feature/acx-firing-nowplaying-v2-20261126]
     paths:
       - "app/src/main/**"
       - "app/src/debug/**"
@@ -192,7 +192,7 @@ jobs:
           for directory in ("values", "values-b+zh+Hant+TW", "values-ja"):
               resources = ET.parse(base / directory / "strings_firing_now_playing.xml")
               names = {node.attrib["name"] for node in resources.findall(".//string")}
-              assert len(names) == 5, f"{directory}: expected 5 new strings"
+              assert len(names) == 12, f"{directory}: expected 12 V1+V2 strings"
               keys.append(names)
           assert keys[0] == keys[1] == keys[2], "Now Playing locale keys differ"
           screen = Path("app/src/main/java/com/sysadmindoc/alarmclock/ui/alarmfiring/AlarmFiringScreen.kt").read_text()
@@ -202,8 +202,31 @@ jobs:
           service = Path("app/src/main/java/com/sysadmindoc/alarmclock/service/AlarmService.kt").read_text()
           assert "announceToneTitle(" in service
           assert "NowPlayingTitleResolver.resolve" in service
-          assert "MusicPlaybackState.updateTitle(candidate.track.displayTitle)" in service
+          assert "title = candidate.track.displayTitle" in service
           print("V1 resource parity and now-playing title guards: PASS")
+          PY
+      - name: Guard V2 live source and folder without extra catalog access
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import xml.etree.ElementTree as ET
+          root = Path("app/src/main/res")
+          locale_sets = []
+          for directory in ("values", "values-b+zh+Hant+TW", "values-ja"):
+              names = {x.attrib["name"] for x in ET.parse(root / directory / "strings_firing_now_playing.xml").findall("string")}
+              assert len(names) == 12, (directory, len(names))
+              locale_sets.append(names)
+          assert locale_sets[0] == locale_sets[1] == locale_sets[2], "V2 resource parity mismatch"
+          service = Path("app/src/main/java/com/sysadmindoc/alarmclock/service/AlarmService.kt").read_text()
+          assert "NowPlayingInfo.folderNameFrom(candidate.folderIds)" in service
+          assert "source = if (session.snapshot.playlistId != null)" in service
+          view = Path("app/src/main/java/com/sysadmindoc/alarmclock/ui/alarmfiring/AlarmFiringScreen.kt").read_text()
+          assert "currentNowPlaying.collectAsStateWithLifecycle()" in view
+          assert "NowPlayingContext(currentNowPlaying" in view
+          assert "firing_now_playing_folder" in view
+          print("V2 reactive source, folder and localization guards: PASS")
           PY
       - name: Compile Android F-Droid Kotlin/UI and Play resource variants
         shell: bash
@@ -214,7 +237,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          bash ./gradlew :app:assembleFdroidDebug -PciVersionCode=166 --no-daemon --stacktrace
+          bash ./gradlew :app:assembleFdroidDebug -PciVersionCode=167 --no-daemon --stacktrace
           test -s app/build/outputs/apk/fdroid/debug/app-fdroid-debug.apk
       - name: Verify APK package, version and persistent upgrade signing
         id: apk_meta
@@ -237,8 +260,8 @@ jobs:
             echo "ERROR: Unexpected package name: $PKG_NAME"
             exit 1
           fi
-          if [[ "$VERSION_CODE" != "166" ]]; then
-            echo "ERROR: Expected alarm reliability versionCode=166 (must exceed v165), got: $VERSION_CODE"
+          if [[ "$VERSION_CODE" != "167" ]]; then
+            echo "ERROR: Expected alarm reliability versionCode=167 (must exceed v166), got: $VERSION_CODE"
             exit 1
           fi
           APKSIGNER_OUT="$("${BUILD_TOOLS_DIR}/apksigner" verify --verbose --print-certs "$APK_PATH")"
@@ -284,6 +307,7 @@ jobs:
               --tests 'com.sysadmindoc.alarmclock.util.AppLanguageManagerTest' \
               --tests 'com.sysadmindoc.alarmclock.service.AlarmServiceControllerTest' \
               --tests 'com.sysadmindoc.alarmclock.service.NowPlayingTitleResolverTest' \
+              --tests 'com.sysadmindoc.alarmclock.service.MusicPlaybackStateTest' \
               --no-daemon --stacktrace 2>&1 | tee "$log"; then
               exit 0
             fi
@@ -344,17 +368,17 @@ jobs:
         run: |
           set -euo pipefail
           short_sha="${GITHUB_SHA:0:7}"
-          tag="s3-s4-debug-v166-${short_sha}"
-          cp "app/build/outputs/apk/fdroid/debug/app-fdroid-debug.apk" "app/build/outputs/apk/fdroid/debug/AlarmClockXtreme-S3S4-v166-debug.apk"
-          apk="app/build/outputs/apk/fdroid/debug/AlarmClockXtreme-S3S4-v166-debug.apk"
+          tag="s3-s4-debug-v167-${short_sha}"
+          cp "app/build/outputs/apk/fdroid/debug/app-fdroid-debug.apk" "app/build/outputs/apk/fdroid/debug/AlarmClockXtreme-S3S4-v167-debug.apk"
+          apk="app/build/outputs/apk/fdroid/debug/AlarmClockXtreme-S3S4-v167-debug.apk"
           if gh release view "$tag" >/dev/null 2>&1; then
             gh release upload "$tag" "$apk" --clobber
           else
             gh release create "$tag" "$apk" \
               --target "$GITHUB_SHA" \
-              --title "Alarm Firing Now Playing V1 v166 ($short_sha)" \
+              --title "Alarm Firing Now Playing V2 v167 ($short_sha)" \
               --notes "Development test build only. VersionCode 165, persistent debug signing certificate matched against Preview 3 v148. Not a production release." \
               --prerelease
           fi
-          gh release view "$tag" --json assets --jq '.assets[] | select(.name=="AlarmClockXtreme-S3S4-v166-debug.apk") | .name' | grep -Fx "AlarmClockXtreme-S3S4-v166-debug.apk"
-          echo "Direct APK: https://github.com/${GITHUB_REPOSITORY}/releases/download/${tag}/AlarmClockXtreme-S3S4-v166-debug.apk" >> "$GITHUB_STEP_SUMMARY"
+          gh release view "$tag" --json assets --jq '.assets[] | select(.name=="AlarmClockXtreme-S3S4-v167-debug.apk") | .name' | grep -Fx "AlarmClockXtreme-S3S4-v167-debug.apk"
+          echo "Direct APK: https://github.com/${GITHUB_REPOSITORY}/releases/download/${tag}/AlarmClockXtreme-S3S4-v167-debug.apk" >> "$GITHUB_STEP_SUMMARY"

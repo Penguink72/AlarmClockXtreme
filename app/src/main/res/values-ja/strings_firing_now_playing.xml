@@ -5,4 +5,11 @@
     <string name="firing_now_playing_unknown">アラーム音</string>
     <string name="firing_now_playing_loading">曲名を読み込み中…</string>
     <string name="firing_now_playing_silent">無音アラーム</string>
+    <string name="firing_now_playing_source">再生元</string>
+    <string name="firing_now_playing_playlist">プレイリスト</string>
+    <string name="firing_now_playing_library">音楽ライブラリ</string>
+    <string name="firing_now_playing_selected_tone">選択した着信音</string>
+    <string name="firing_now_playing_system_tone">システムアラーム音</string>
+    <string name="firing_now_playing_radio">インターネットラジオ</string>
+    <string name="firing_now_playing_folder">フォルダー</string>
 </resources>

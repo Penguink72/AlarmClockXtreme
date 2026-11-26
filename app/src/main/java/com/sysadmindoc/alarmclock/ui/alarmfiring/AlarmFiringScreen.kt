@@ -106,6 +106,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sysadmindoc.alarmclock.R
 import com.sysadmindoc.alarmclock.ui.components.bilingualStringResource
+import com.sysadmindoc.alarmclock.service.NowPlayingInfo
+import com.sysadmindoc.alarmclock.service.NowPlayingSource
 import com.sysadmindoc.alarmclock.ui.alarmfiring.challenges.BarcodeScanChallengeView
 import com.sysadmindoc.alarmclock.ui.alarmfiring.challenges.Challenge
 import com.sysadmindoc.alarmclock.ui.alarmfiring.challenges.MathChallengeView
@@ -171,7 +173,7 @@ fun AlarmFiringScreen(
     viewModel: AlarmFiringViewModel = hiltViewModel()
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
-    val currentMusicTitle by viewModel.currentMusicTitle.collectAsStateWithLifecycle()
+    val currentNowPlaying by viewModel.currentNowPlaying.collectAsStateWithLifecycle()
     // These two prefs gate optional UI surfaces below; collecting them with the
     // lifecycle keeps the firing screen reactive to a settings toggle made
     // mid-alarm (rare, but possible if user pulls down quick settings).
@@ -275,7 +277,7 @@ fun AlarmFiringScreen(
         ?: bilingualStringResource(R.string.notif_alarm_ringing)
     // Show the track which actually reached playback; avoid falsely labelling
     // a loading random track as the default ringtone.
-    val playingTitle = currentMusicTitle?.takeIf { it.isNotBlank() } ?: when {
+    val playingTitle = currentNowPlaying?.title?.takeIf { it.isNotBlank() } ?: when {
         state.alarm?.ringtoneUri == "silent" ->
             bilingualStringResource(R.string.firing_now_playing_silent)
         state.alarm?.randomMusicEnabled == true ->
@@ -460,6 +462,7 @@ fun AlarmFiringScreen(
                                 maxLines = 2,
                                 overflow = TextOverflow.Ellipsis
                             )
+                            NowPlayingContext(currentNowPlaying, centered = false)
                         }
                     }
                     AppStatusChip(
@@ -696,6 +699,7 @@ fun AlarmFiringScreen(
                                     overflow = TextOverflow.Ellipsis,
                                     modifier = Modifier.fillMaxWidth()
                                 )
+                                NowPlayingContext(currentNowPlaying, centered = true)
                                 Text(
                                     text = if (holdToDismissEnabled) {
                                         stringResource(R.string.firing_ready_hold_description)
@@ -1727,5 +1731,47 @@ private fun QuickSnoozeButton(
                 )
             }
         }
+    }
+}
+
+/**
+ * V2 adds already-indexed playback provenance without querying storage in
+ * Compose. The UI is a passive StateFlow reader: next-track transitions in
+ * AlarmService recompose this caption automatically.
+ */
+@Composable
+private fun NowPlayingContext(info: NowPlayingInfo?, centered: Boolean) {
+    if (info == null) return
+    val sourceRes = when (info.source) {
+        NowPlayingSource.PLAYLIST -> R.string.firing_now_playing_playlist
+        NowPlayingSource.MUSIC_LIBRARY -> R.string.firing_now_playing_library
+        NowPlayingSource.SELECTED_RINGTONE -> R.string.firing_now_playing_selected_tone
+        NowPlayingSource.SYSTEM_RINGTONE -> R.string.firing_now_playing_system_tone
+        NowPlayingSource.INTERNET_RADIO -> R.string.firing_now_playing_radio
+        NowPlayingSource.UNKNOWN -> null
+    }
+    val alignment = if (centered) TextAlign.Center else TextAlign.Start
+    if (sourceRes != null) {
+        Text(
+            text = bilingualStringResource(R.string.firing_now_playing_source) +
+                " · " + bilingualStringResource(sourceRes),
+            color = TextMuted,
+            style = MaterialTheme.typography.bodySmall,
+            textAlign = alignment,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.fillMaxWidth()
+        )
+    }
+    info.folderName?.takeIf { it.isNotBlank() }?.let { folder ->
+        Text(
+            text = bilingualStringResource(R.string.firing_now_playing_folder) + " · " + folder,
+            color = TextMuted,
+            style = MaterialTheme.typography.bodySmall,
+            textAlign = alignment,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.fillMaxWidth()
+        )
     }
 }

@@ -1299,7 +1299,12 @@ class AlarmService : Service() {
     private fun announceToneTitle(alarm: Alarm, uri: Uri, defaultTone: Boolean) {
         val epoch = nowPlayingTitleEpoch.incrementAndGet()
         if (defaultTone) {
-            MusicPlaybackState.updateTitle(getString(R.string.firing_now_playing_default))
+            MusicPlaybackState.updateNowPlaying(
+                NowPlayingInfo(
+                    title = getString(R.string.firing_now_playing_default),
+                    source = NowPlayingSource.SYSTEM_RINGTONE
+                )
+            )
             return
         }
         val activeFireId = currentFireId
@@ -1309,8 +1314,11 @@ class AlarmService : Service() {
             }.getOrNull()
             if (currentAlarmId == alarm.id && currentFireId == activeFireId &&
                 nowPlayingTitleEpoch.get() == epoch) {
-                MusicPlaybackState.updateTitle(
-                    title ?: getString(R.string.firing_now_playing_unknown)
+                MusicPlaybackState.updateNowPlaying(
+                    NowPlayingInfo(
+                        title = title ?: getString(R.string.firing_now_playing_unknown),
+                        source = NowPlayingSource.SELECTED_RINGTONE
+                    )
                 )
             }
         }
@@ -1521,7 +1529,14 @@ class AlarmService : Service() {
                                 )
                             )
                         }
-                        MusicPlaybackState.updateTitle(candidate.track.displayTitle)
+                        MusicPlaybackState.updateNowPlaying(
+                            NowPlayingInfo(
+                                title = candidate.track.displayTitle,
+                                source = if (session.snapshot.playlistId != null)
+                                    NowPlayingSource.PLAYLIST else NowPlayingSource.MUSIC_LIBRARY,
+                                folderName = NowPlayingInfo.folderNameFrom(candidate.folderIds)
+                            )
+                        )
                         val testId = activeProductionTestSessionId
                         if (testId != null) {
                             onProductionTestTrackStarted(fireId, testId)
@@ -1798,9 +1813,6 @@ class AlarmService : Service() {
                     playbackStarted.set(true)
                     cancelPlaybackWatchdog()
                     updateAlarmMediaSessionState(PlaybackState.STATE_PLAYING)
-                    MusicPlaybackState.updateTitle(
-                        NowPlayingTitleResolver.radioHost(radioUrl) ?: radioUrl
-                    )
                     recordIncidentAsync(
                         type = AlarmIncidentEvent.TYPE_AUDIO,
                         status = AlarmIncidentEvent.STATUS_SUCCEEDED,
@@ -1812,6 +1824,14 @@ class AlarmService : Service() {
                     }
                     playbackRampGain = 1f
                     applyPlaybackGain()
+                },
+                onStarted = {
+                    MusicPlaybackState.updateNowPlaying(
+                        NowPlayingInfo(
+                            title = NowPlayingTitleResolver.radioHost(radioUrl) ?: radioUrl,
+                            source = NowPlayingSource.INTERNET_RADIO
+                        )
+                    )
                 },
                 onEnded = {},
                 onError = { error ->
@@ -2197,8 +2217,11 @@ class AlarmService : Service() {
                     setOnPreparedListener { mp ->
                         mp.start()
                         updateAlarmMediaSessionState(PlaybackState.STATE_PLAYING)
-                        MusicPlaybackState.updateTitle(
-                            NowPlayingTitleResolver.radioHost(radioUrl) ?: radioUrl
+                        MusicPlaybackState.updateNowPlaying(
+                            NowPlayingInfo(
+                                title = NowPlayingTitleResolver.radioHost(radioUrl) ?: radioUrl,
+                                source = NowPlayingSource.INTERNET_RADIO
+                            )
                         )
                         recordIncidentAsync(
                             type = AlarmIncidentEvent.TYPE_AUDIO,
