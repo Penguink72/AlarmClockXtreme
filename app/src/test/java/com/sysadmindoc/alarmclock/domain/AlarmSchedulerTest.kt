@@ -106,7 +106,7 @@ class AlarmSchedulerTest {
     }
 
     @Test
-    fun scheduleFutureAlarmCanHideStatusIconWithExactIdleRegistration() = runTest {
+    fun scheduleFutureAlarmAlwaysUsesAlarmClockEvenWhenLegacyIconSettingIsDisabled() = runTest {
         val triggerTime = System.currentTimeMillis() + 15 * 60_000L
         val alarm = enabledAlarm(id = 44L)
         every { preferencesManager.getCachedSettings() } returns
@@ -118,8 +118,8 @@ class AlarmSchedulerTest {
         val scheduledAlarm = shadowOf(context.getSystemService(AlarmManager::class.java))
             .scheduledAlarms
             .single()
-        assertEquals(null, scheduledAlarm.alarmClockInfo)
-        assertTrue(scheduledAlarm.isAllowWhileIdle)
+        assertTrue(scheduledAlarm.alarmClockInfo != null)
+        assertEquals(triggerTime, scheduledAlarm.alarmClockInfo.triggerTime)
         verify {
             incidentRepository.recordAsync(
                 alarmId = 44L,
@@ -128,7 +128,7 @@ class AlarmSchedulerTest {
                 eventAt = any(),
                 type = AlarmIncidentEvent.TYPE_SCHEDULE,
                 status = AlarmIncidentEvent.STATUS_SUCCEEDED,
-                reasonCode = "SET_EXACT_ALLOW_WHILE_IDLE",
+                reasonCode = "SET_ALARM_CLOCK",
                 source = "AlarmScheduler"
             )
         }
